@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.music_recent_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -30,8 +31,9 @@ import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.VideoManage;
+import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -64,7 +66,7 @@ import static com.flyingeffects.com.utils.BlogFileResource.FileManager.isLansong
  * creation date: 2020/8/26
  * user : zhangtongju
  */
-public class frag_choose_music_recent_updates extends BaseFragment {
+public class RecentUpdateMusicFragment extends BaseFragment {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -90,7 +92,9 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     private int nowClickPosition;
 
-    private boolean isFromShoot=false;
+    private boolean isFromShoot = false;
+    private int isFrom = ChooseMusicActivity.IS_FROM_SHOOT;
+    private String mCollectionTag;
 
 
     @Override
@@ -107,9 +111,17 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             id = bundle.getInt("id", 0);
             LogUtil.d("oom2", "id=" + id + "bundle != null");
             needDuration = bundle.getLong("needDuration");
-            isFromShoot=bundle.getBoolean("isFromShoot");
+            isFromShoot = bundle.getBoolean("isFromShoot");
+            isFrom = bundle.getInt(ChooseMusicActivity.IS_FROM,0);
+            bundle.getInt(ChooseMusicActivity.IS_FROM);
             LogUtil.d("oom2", "needDuration=" + needDuration);
         }
+        if (isFrom == 0) {
+            mCollectionTag = "12_shoot_music_use";
+        } else {
+            mCollectionTag = "12_mb_shoot_music_use";
+        }
+
         initSmartRefreshLayout();
         initRecycler();
     }
@@ -145,7 +157,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             @Override
             protected void onSubError(String message) {
                 finishData();
-             //   ToastUtil.showToast(message);
+                //   ToastUtil.showToast(message);
             }
 
             @Override
@@ -231,39 +243,39 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 nowClickPosition = position;
                 switch (view.getId()) {
                     case R.id.tv_make:
-                        Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("isFromShoot",isFromShoot);
-                        intent.putExtra("title",listData.get(position).getTitle());
-                        intent.putExtra("videoPath", listData.get(position).getAudio_url());
-                        intent.putExtra("needDuration", needDuration);
-                        intent.putExtra("isAudio", true);
-                        startActivity(intent);
+                        if (!DoubleClick.getInstance().isFastDoubleLongClick(2000)) {
+                            if (id == 1) {
+                                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), mCollectionTag, "本地音频");
+                            } else {
+                                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), mCollectionTag, "在线音乐-" + listData.get(position).getTitle());
+                            }
+                            Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra("isFromShoot", isFromShoot);
+                            intent.putExtra("title", listData.get(position).getTitle());
+                            intent.putExtra("videoPath", listData.get(position).getAudio_url());
+                            intent.putExtra("needDuration", needDuration);
+                            intent.putExtra("isAudio", true);
+                            startActivity(intent);
+                        }
                         break;
-
-
                     case R.id.iv_collect:
                         //收藏
-                        clickCollect(listData.get(position).getId(), listData.get(position).getIs_collection(),listData.get(position).getTitle());
-
+                        clickCollect(listData.get(position).getId(), listData.get(position).getIs_collection(), listData.get(position).getTitle());
                         break;
-
                     case R.id.tv_user:
                         //跳转到用户主页
-                        if(id!=1){
+                        if (id != 1) {
                             Intent intentUserHome = new Intent(getActivity(), UserHomepageActivity.class);
                             intentUserHome.putExtra("toUserId", listData.get(position).getUser_id());
                             startActivity(intentUserHome);
                         }
                         break;
-
-
                     case R.id.iv_play_music:
                         //播放音乐
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "16_paly",listData.get(position).getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "16_paly", listData.get(position).getTitle());
                         playMusic(listData.get(position).getAudio_url(), position);
                         break;
-
                     default:
                         break;
                 }
@@ -346,7 +358,6 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         mTimer.schedule(mTimerTask, 0, 10);
     }
 
-
     private void endTimer() {
         if (mTimer != null) {
             mTimer.purge();
@@ -359,14 +370,13 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         }
     }
 
-
     @Override
     public void onPause() {
         super.onPause();
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
-        if(listData!=null&&listData.size()!=0&&listData.size()>=lastPosition){
+        if (listData != null && listData.size() != 0 && listData.size() >= lastPosition) {
             ChooseMusic chooseMusic2 = listData.get(lastPosition);
             chooseMusic2.setPlaying(false);
             listData.set(lastPosition, chooseMusic2);
@@ -425,34 +435,34 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                             ChooseMusic chooseMusic = new ChooseMusic();
                             chooseMusic.setAudio_url(path);
                             chooseMusic.setImage(album);
-                            if(!TextUtils.isEmpty(artist)){
+                            if (!TextUtils.isEmpty(artist)) {
                                 chooseMusic.setNickname(artist);
-                            }else{
+                            } else {
                                 chooseMusic.setNickname("无作者");
                             }
                             chooseMusic.setTitle(name);
                             listData.add(chooseMusic);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch(Exception e){
-                    e.printStackTrace();
                 }
-            }
-            //倒序
-            Collections.reverse(listData);
-                if(listData.size()==0){
+                //倒序
+                Collections.reverse(listData);
+                if (listData.size() == 0) {
                     showNoData(true);
-                }else{
+                } else {
                     showNoData(false);
                 }
 
-            adapter.notifyDataSetChanged();
-            finishData();
+                adapter.notifyDataSetChanged();
+                finishData();
+            }
         }
     }
-}
 
 
-    public void clickCollect(String music_id, int isCollect,String title) {
+    public void clickCollect(String music_id, int isCollect, String title) {
         HashMap<String, String> params = new HashMap<>();
         params.put("music_id", music_id);
         // 启动时间
@@ -467,13 +477,13 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "收藏音乐返回的值为" + str);
-                updateCollect(isCollect, music_id,title);
+                updateCollect(isCollect, music_id, title);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
-    private void updateCollect(int oldIsCollect, String music_id,String title) {
+    private void updateCollect(int oldIsCollect, String music_id, String title) {
         if (id == 2) {
             //移除收藏item
             listData.remove(nowClickPosition);
@@ -482,14 +492,14 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         } else {
             if (oldIsCollect == 0) {
                 //收藏
-                if(!TextUtils.isEmpty(title)){
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "16_pick music_keep",title);
+                if (!TextUtils.isEmpty(title)) {
+                    StatisticsEventAffair.getInstance().setFlag(getActivity(), "16_pick music_keep", title);
                 }
                 oldIsCollect = 1;
             } else {
                 //取消了收藏
-                if(!TextUtils.isEmpty(title)){
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "16_pick music_keep_cancel",title);
+                if (!TextUtils.isEmpty(title)) {
+                    StatisticsEventAffair.getInstance().setFlag(getActivity(), "16_pick music_keep_cancel", title);
                 }
                 oldIsCollect = 0;
             }
@@ -539,7 +549,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 String needId = listData.get(i).getId();
                 if (needId.equals(musicId)) {
                     nowClickPosition = i;
-                    updateCollect(listData.get(i).getIs_collection(), "","");
+                    updateCollect(listData.get(i).getIs_collection(), "", "");
                     return;
                 }
             }

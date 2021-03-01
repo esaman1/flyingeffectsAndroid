@@ -10,9 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +20,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.music_recent_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ChooseMusic;
@@ -29,12 +28,11 @@ import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.SearchKeyWord;
 import com.flyingeffects.com.enity.SelectMusicCollet;
-import com.flyingeffects.com.enity.SendSearchText;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.ColorCorrectionManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -80,7 +78,6 @@ public class searchMusicActivity extends BaseActivity {
 
     private List<ChooseMusic> listData = new ArrayList<>();
 
-
     @BindView(R.id.ed_search)
     EditText ed_search;
 
@@ -95,7 +92,7 @@ public class searchMusicActivity extends BaseActivity {
     WarpLinearLayout autoNewLineLayout;
 
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
-
+    private int isFrom;
 
     @Override
     protected int getLayoutId() {
@@ -135,7 +132,6 @@ public class searchMusicActivity extends BaseActivity {
         });
         requestKeywordList();
     }
-
 
     /**
      * 请求友友推荐
@@ -215,7 +211,7 @@ public class searchMusicActivity extends BaseActivity {
     @Override
     protected void initAction() {
         needDuration = getIntent().getLongExtra("needDuration", 10000);
-
+        isFrom = getIntent().getIntExtra(ChooseMusicActivity.IS_FROM, ChooseMusicActivity.IS_FROM_OTHERS);
     }
 
 
@@ -260,25 +256,19 @@ public class searchMusicActivity extends BaseActivity {
                         intent.putExtra("isAudio", true);
                         startActivity(intent);
                         break;
-
-
                     case R.id.iv_collect:
                         //收藏
                         clickCollect(listData.get(position).getId(), listData.get(position).getIs_collection());
                         break;
-
-
                     case R.id.iv_play_music:
                         //播放音乐
                         playMusic(listData.get(position).getAudio_url(), position);
                         break;
-
                     case R.id.tv_user:
                         Intent intentUserHome = new Intent(this, UserHomepageActivity.class);
                         intentUserHome.putExtra("toUserId", listData.get(position).getUser_id());
                         startActivity(intentUserHome);
                         break;
-
                     default:
                         break;
                 }
@@ -287,12 +277,10 @@ public class searchMusicActivity extends BaseActivity {
         recyclerView.setAdapter(adapter);
     }
 
-
     private int lastPosition;
     private MediaPlayer mediaPlayer;
 
     private void playMusic(String path, int position) {
-
 
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
@@ -308,8 +296,6 @@ public class searchMusicActivity extends BaseActivity {
         chooseMusic.setPlaying(true);
         listData.set(position, chooseMusic);
         if (lastPosition != position) {
-
-
             ChooseMusic chooseMusic2 = listData.get(lastPosition);
             chooseMusic2.setPlaying(false);
             listData.set(lastPosition, chooseMusic2);
@@ -350,7 +336,6 @@ public class searchMusicActivity extends BaseActivity {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "收藏音乐返回的值为" + str);
                 updateCollect(isCollect, music_id);
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
@@ -373,6 +358,11 @@ public class searchMusicActivity extends BaseActivity {
     private void requestFagData() {
         lastPosition = 0;
         pauseMusic();
+        if (isFrom == ChooseMusicActivity.IS_FROM_SHOOT) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_search", searchText);
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_shoot_music_search", searchText);
+        }
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
@@ -390,10 +380,13 @@ public class searchMusicActivity extends BaseActivity {
             protected void onSubNext(List<ChooseMusic> data) {
                 finishData();
                 String str = StringUtil.beanToJSONString(data);
+
                 LogUtil.d("OOM2", str);
+
                 if (isRefresh) {
                     listData.clear();
                 }
+
                 if (isRefresh && data.size() == 0) {
                     ToastUtil.showToast("没有找到相关内容");
                 }
@@ -401,21 +394,21 @@ public class searchMusicActivity extends BaseActivity {
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getResources().getString(R.string.no_more_data));
                 }
+
                 if (data.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
+
                 listData.addAll(data);
                 adapter.notifyDataSetChanged();
-
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
-        if(mediaPlayer!=null&&mediaPlayer.isPlaying()){
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
                 ChooseMusic chooseMusic2 = listData.get(lastPosition);
@@ -428,25 +421,18 @@ public class searchMusicActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
-
         }
-
         EventBus.getDefault().unregister(this);
     }
 
 
     private void pauseMusic() {
-
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-
         }
-
-
     }
 
     private void finishData() {
@@ -460,9 +446,8 @@ public class searchMusicActivity extends BaseActivity {
         this.finish();
     }
 
-
     @Subscribe
-    public void onEventMainThread( CutSuccess cutSuccess) {
+    public void onEventMainThread(CutSuccess cutSuccess) {
         this.finish();
     }
 

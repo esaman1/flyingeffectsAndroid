@@ -12,17 +12,15 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.LocalMusicTailorMvpView;
 import com.flyingeffects.com.ui.presenter.LocalMusicTailorPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.RangeSeekBarForMusicView;
-import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.histogram.MyBarChartView;
 import com.flyingeffects.com.view.histogram.MyBarChartView.BarData;
-import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.util.ArrayList;
@@ -274,7 +272,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                     this.finish();
                 } else {
                     //裁剪保存
-                    statisticsEventAffair.getInstance().setFlag(LocalMusicTailorActivity.this, "16_pick music_apply", title);
+                    StatisticsEventAffair.getInstance().setFlag(LocalMusicTailorActivity.this, "16_pick music_apply", title);
                    if(nowPlayEndTime-nowPlayStartTime<1000){
                        ToastUtil.showToast("裁剪时间太短啦");
                    }else{
@@ -315,7 +313,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                 handler.sendEmptyMessage(1);
             }
         };
-        timer.schedule(task, 0, 500);
+        timer.schedule(task, 1000, 1000);
     }
 
 

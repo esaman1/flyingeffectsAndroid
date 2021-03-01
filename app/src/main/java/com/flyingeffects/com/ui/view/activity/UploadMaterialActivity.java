@@ -35,9 +35,9 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.manager.mediaManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.UploadMaterialMVPView;
 import com.flyingeffects.com.ui.model.videoAddCover;
@@ -185,7 +185,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         UiStep.isFromDownBj = false;
         FileManager fileManager = new FileManager();
         huaweiFolder = fileManager.getFileCachePath(this, "toHawei");
-        statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "6_customize_bj_Crop");
+        StatisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "6_customize_bj_Crop");
         ed_nickname.addTextChangedListener(textpassWatcher);
         if (!TextUtils.isEmpty(BaseConstans.NickName())) {
             ed_nickname.setText(BaseConstans.NickName());
@@ -563,7 +563,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             protected void onSubNext(UserInfo data) {
 //                String str = StringUtil.beanToJSONString(data);
 //                LogUtil.d("OOM3", "requestLogin=" + str);
-                statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "13_video");
+                StatisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "13_video");
                 WaitingDialog.closePragressDialog();
                 UploadMaterialActivity.this.finish();
             }

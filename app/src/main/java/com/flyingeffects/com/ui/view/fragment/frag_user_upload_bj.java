@@ -23,7 +23,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -205,12 +205,12 @@ public class frag_user_upload_bj extends BaseFragment {
 
     private void initRecycler() {
         adapter = new Upload_bj_list_adapter(R.layout.list_upload_bj_item, allData, getActivity(), (id) -> {
-            statisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj");
+            StatisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj");
             new AlertDialog.Builder(mContext)
                     .setMessage("确定要删除这个背景吗？")
                     .setNegativeButton("取消", (dialog, which) -> {
                         dialog.dismiss();
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj3");
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj3");
                     })
                     .setPositiveButton("确定", (dialog, which) -> {
                         requestDelete(id);
@@ -246,7 +246,7 @@ public class frag_user_upload_bj extends BaseFragment {
     }
 
     private void requestDelete(String id) {
-        statisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj2");
+        StatisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj2");
         HashMap<String, String> params = new HashMap<>();
         params.put("id", id);
         Observable ob = Api.getDefault().deleteBackground(BaseConstans.getRequestHead(params));

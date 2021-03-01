@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,9 +27,8 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.keyboard.KeyboardHeightProvider;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
@@ -173,9 +171,9 @@ public class CreateViewForAddText {
             CreateViewForAddText.this.downFile(listEffect.get(i).getImage(), 0, listEffect.get(i).getType(), listEffect.get(i).getColor(), listEffect.get(i).getTitle());
             createTemplateTextEffectAdapterEffect.select(i);
             if ("bj_template".equals(type)) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_style", listEffect.get(i).getTitle());
+                StatisticsEventAffair.getInstance().setFlag(context, "20_bj_text_style", listEffect.get(i).getTitle());
             } else if ("OneKey_template".equals(type)) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_style", listEffect.get(i).getTitle());
+                StatisticsEventAffair.getInstance().setFlag(context, "20_mb_text_style", listEffect.get(i).getTitle());
             }
 
         });
@@ -192,9 +190,9 @@ public class CreateViewForAddText {
         gridViewFrame.setOnItemClickListener((adapterView, view1, i, l) -> {
             createTemplateTextEffectAdapterFrame.select(i);
             if ("bj_template".equals(type)) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_border", listFrame.get(i).getTitle());
+                StatisticsEventAffair.getInstance().setFlag(context, "20_bj_text_border", listFrame.get(i).getTitle());
             }else{
-                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_border", listFrame.get(i).getTitle());
+                StatisticsEventAffair.getInstance().setFlag(context, "20_mb_text_border", listFrame.get(i).getTitle());
             }
             WaitingDialog.openPragressDialog(context);
             downFileFrame(listFrame.get(i).getImage(), 0, listFrame.get(i).getType(), listFrame.get(i).getColor(), listFrame.get(i).getTitle(), new downFameCallback() {
@@ -219,9 +217,9 @@ public class CreateViewForAddText {
                 }
             });
             if ("bj_template".equals(type)) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFrame.get(i).getTitle());
+                StatisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFrame.get(i).getTitle());
             } else if ("OneKey_template".equals(type)) {
-                statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFrame.get(i).getTitle());
+                StatisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFrame.get(i).getTitle());
             }
 
         });
@@ -234,9 +232,9 @@ public class CreateViewForAddText {
                 CreateViewForAddText.this.downFile(listFont.get(i).getFile(), 1, 1, "", listFont.get(i).getTitle());
                 createTemplateTextEffectAdapterFont.select(i);
                 if ("bj_template".equals(type)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
+                    StatisticsEventAffair.getInstance().setFlag(context, "20_bj_text_font", listFont.get(i).getTitle());
                 } else if ("OneKey_template".equals(type)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFont.get(i).getTitle());
+                    StatisticsEventAffair.getInstance().setFlag(context, "20_mb_text_font", listFont.get(i).getTitle());
                 }
             }
         });

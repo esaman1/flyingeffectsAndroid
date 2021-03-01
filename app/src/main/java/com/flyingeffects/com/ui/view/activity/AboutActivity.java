@@ -19,7 +19,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.DataCleanManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.SystemUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -83,12 +83,12 @@ public class AboutActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.tv_contact_us:
-                statisticsEventAffair.getInstance().setFlag(this, "3_Evaluation");
+                StatisticsEventAffair.getInstance().setFlag(this, "3_Evaluation");
                 reception();
 
                 break;
             case R.id.tv_relation_us:
-                statisticsEventAffair.getInstance().setFlag(this, "3_contact");
+                StatisticsEventAffair.getInstance().setFlag(this, "3_contact");
 
                 contactUs();
                 break;
@@ -128,11 +128,11 @@ public class AboutActivity extends BaseActivity {
 //                }, "");
                 break;
             case R.id.tv_notification_management:
-                statisticsEventAffair.getInstance().setFlag(AboutActivity.this, "3_notifications");
+                StatisticsEventAffair.getInstance().setFlag(AboutActivity.this, "3_notifications");
                 PermissionUtil.gotoPermission(AboutActivity.this);
                 break;
             case R.id.tv_version_number:
-                statisticsEventAffair.getInstance().setFlag(mContext, "3_update");
+                StatisticsEventAffair.getInstance().setFlag(mContext, "3_update");
                 SystemUtil.openMarket(this);
                 break;
             default:

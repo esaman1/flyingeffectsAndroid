@@ -37,7 +37,7 @@ public class AlbumManager {
         }
         num++;
         BaseConstans.setOpenPhotoAlbumNum(num);
-        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
                 .multipleChoice()
                 .columnCount(3)
@@ -119,7 +119,7 @@ public class AlbumManager {
         }
         num++;
         BaseConstans.setOpenPhotoAlbumNum(num);
-        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
                 .multipleChoice()
                 .columnCount(3)
@@ -195,7 +195,7 @@ public class AlbumManager {
         }
         num++;
         BaseConstans.setOpenPhotoAlbumNum(num);
-        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.album(context)
                 .multipleChoice()
                 .columnCount(3)
@@ -274,7 +274,7 @@ public class AlbumManager {
         }
         num++;
         BaseConstans.setOpenPhotoAlbumNum(num);
-        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.image(context) // Image selection.
                 .multipleChoice()
                 .camera(false)
@@ -344,7 +344,7 @@ public class AlbumManager {
         }
         num++;
         BaseConstans.setOpenPhotoAlbumNum(num);
-        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "14_choose_picture");
         Album.video(act) // Video selection.
                 .multipleChoice()
                 .camera(false)

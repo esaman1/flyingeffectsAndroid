@@ -19,18 +19,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewStub;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.faceunity.FURenderer;
 import com.faceunity.gles.core.GlUtil;
@@ -40,6 +34,8 @@ import com.faceunity.utils.FileUtils;
 import com.faceunity.utils.LogUtils;
 import com.faceunity.utils.MiscUtil;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.FUBeautyActivity;
 import com.flyingeffects.com.utils.FuLive.CameraFocus;
 import com.flyingeffects.com.utils.FuLive.CameraUtils;
@@ -94,7 +90,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
     private LinearLayout mLlLight;
     protected CameraFocus mCameraFocus;
     public RelativeLayout relative_content;
-    public  FUBeautyActivity fuBeautyActivity;
+    public FUBeautyActivity fuBeautyActivity;
+    private String recordingFolder;
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private final Runnable mCameraFocusDismiss = new Runnable() {
@@ -239,10 +236,9 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     @Override
     public void onTrackStatusChanged(int type, int status) {
-        LogUtils.debug("OOM2","onTrackStatusChanged");
+        LogUtils.debug("OOM2", "onTrackStatusChanged");
 
     }
-
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~拍照录制部分~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -292,6 +288,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         //     ScreenUtils.fullScreen(this);
         EventBus.getDefault().register(this);
+        FileManager  fileManager = new FileManager();
+        recordingFolder = fileManager.getFileCachePath(this, "recording");
 //        fuBeautyActivity=new FUBeautyActivity();
         ButterKnife.bind(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -354,8 +352,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
     }
 
 
+    public void SwitchCamera() {
 
-    public void SwitchCamera(){
         mCameraRenderer.switchCamera();
     }
 
@@ -423,6 +421,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
      */
     private final MediaEncoder.MediaEncoderListener mMediaEncoderListener = new MediaEncoder.MediaEncoderListener() {
 
+        private long mStartRecordTime;
         @Override
         public void onPrepared(final MediaEncoder encoder) {
             LogUtil.d("OOM22", "onPrepared");
@@ -439,6 +438,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
                     }
                 });
             }
+            mStartRecordTime = System.currentTimeMillis();
         }
 
         @Override
@@ -451,26 +451,45 @@ public abstract class FUBaseActivity extends AppCompatActivity
                 Log.d(TAG, "onStopped: tid:" + Thread.currentThread().getId());
 //                mStartRecordTime = 0;
                 // onStopped is called on codec thread, it may be interrupted, so we execute following code async.
+
+
+
+                if (System.currentTimeMillis() - mStartRecordTime <= 2000) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtil.showToast("录制时间太短");
+                        }
+                    });
+                    return;
+                }
+
                 ThreadHelper.getInstance().execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             final File dcimFile = new File(Constant.VIDEO_FILE_PATH, mVideoOutFile.getName());
+                            LogUtil.d("OOM3","dcimFile="+dcimFile.getPath());
                             FileUtils.copyFile(mVideoOutFile, dcimFile);
+                            LogUtil.d("OOM3","mVideoOutFile="+mVideoOutFile.getPath());
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(dcimFile)));
-                                    if(TextUtils.isEmpty(nowChooseBjPath)){
-                                        intoTemplate(dcimFile.getPath());
-                                    }else{
-                                        compoundVideo(dcimFile.getPath(),nowChooseBjPath );
+                                    if(dcimFile.exists()){
+                                        dcimFile.delete();
                                     }
+                                    LogUtil.d("OOM3","删除的地址为"+dcimFile.getPath());
 
+//                                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(dcimFile)));
+                                    if(TextUtils.isEmpty(nowChooseBjPath)){
+                                        intoTemplate(mVideoOutFile.getPath());
+                                    }else{
+                                        compoundVideo(mVideoOutFile.getPath(),nowChooseBjPath );
+                                    }
                                 }
                             });
                         } catch (IOException e) {
-                            LogUtil.d("OOM22", "copyFile+EEE"+e.getMessage());
+                            LogUtil.d("OOM22", "copyFile+EEE" + e.getMessage());
 
                         }
                     }
@@ -481,12 +500,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
 
     private void intoTemplate(String path) {
-
-
         WaitingDialog.closePragressDialog();
-        fuBeautyActivity.ToNextPage( path);
-
-
+        fuBeautyActivity.toNextPage(path);
     }
 
 
@@ -501,7 +516,12 @@ public abstract class FUBaseActivity extends AppCompatActivity
             //线程同步
             mRecordBarrier = new CountDownLatch(2);
             String videoFileName = Constant.APP_NAME + "_" + MiscUtil.getCurrentDate() + ".mp4";
-            mVideoOutFile = new File(FileUtils.getExternalCacheDir(this), videoFileName);
+
+
+
+//            mVideoOutFile = new File(FileUtils.getExternalCacheDir(this), videoFileName);
+            mVideoOutFile = new File(recordingFolder, videoFileName);
+
             mMuxer = new MediaMuxerWrapper(mVideoOutFile.getAbsolutePath());
 
             // for video capturing
@@ -524,6 +544,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     public void stopRecording() {
         LogUtil.d("OOM", "stopRecording");
         Log.d(TAG, "stopRecording: ");
+
         if (mMuxer != null) {
             synchronized (mRecordLock) {
                 mVideoEncoder = null;
@@ -531,6 +552,14 @@ public abstract class FUBaseActivity extends AppCompatActivity
             mMuxer.stopRecording();
             mMuxer = null;
         }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fuBeautyActivity.ChangeClicKState();
+            }
+        }, 3000);
+
     }
 
 
@@ -577,10 +606,10 @@ public abstract class FUBaseActivity extends AppCompatActivity
     private void compoundVideo(String videoPath, String musicPath) {
         WaitingDialog.openPragressDialog(this);
         MediaInfo mediaInfo = new MediaInfo(videoPath);
-        if (mediaInfo.prepare()){
-            LogUtil.d("OOM2", "mediaInfo=" + mediaInfo.getWidth()+"---"+mediaInfo.getHeight()+"duration="+mediaInfo.getDurationUs());
+        if (mediaInfo.prepare()) {
+            LogUtil.d("OOM2", "mediaInfo=" + mediaInfo.getWidth() + "---" + mediaInfo.getHeight() + "duration=" + mediaInfo.getDurationUs());
             try {
-                DrawPadAllExecute2 execute = new DrawPadAllExecute2(this, mediaInfo.getWidth(), mediaInfo.getHeight(), mediaInfo.getDurationUs() );
+                DrawPadAllExecute2 execute = new DrawPadAllExecute2(this, mediaInfo.getWidth(), mediaInfo.getHeight(), mediaInfo.getDurationUs());
                 execute.setFrameRate(20);
                 execute.setEncodeBitrate(5 * 1024 * 1024);
                 execute.setOnLanSongSDKErrorListener(message -> {
@@ -628,12 +657,12 @@ public abstract class FUBaseActivity extends AppCompatActivity
     }
 
 
-
     private Timer timer;
     private TimerTask task;
     private int nowShootTime;
+
     private void startTimer() {
-        nowShootTime=0;
+        nowShootTime = 0;
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -669,10 +698,6 @@ public abstract class FUBaseActivity extends AppCompatActivity
         }
 
     }
-
-
-
-
 
 
 }

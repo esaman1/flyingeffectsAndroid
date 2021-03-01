@@ -31,8 +31,8 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.huaweiObs;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
@@ -151,7 +151,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         options = UCropOption.getInstance().getUcropOption();
         iv_about.setOnClickListener(view -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
                 Intent intent = new Intent(getActivity(), AboutActivity.class);
                 startActivity(intent);
             }
@@ -261,7 +261,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 break;
             case R.id.ll_comment:
                 if (BaseConstans.hasLogin()) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "12_comment");
+                    StatisticsEventAffair.getInstance().setFlag(getActivity(), "12_comment");
                     Intent intentComment = new Intent(getActivity(), LikeActivity.class);
                     intentComment.putExtra("from", 1);
                     intentComment.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -271,7 +271,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 }
                 break;
             case R.id.ll_private_message:
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
                 if (BaseConstans.hasLogin()) {
                     if (!TextUtils.isEmpty(systemMessageId)) {
                         Intent intent = new Intent(getActivity(), SystemMessageDetailActivity.class);
@@ -313,14 +313,14 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
             case R.id.iv_Peeling:
 
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "3_background");
+                    StatisticsEventAffair.getInstance().setFlag(getActivity(), "3_background");
                     AlbumManager.chooseImageAlbum(getContext(), 1, SELECTALBUMFROMUSETCENTERBJ, this, "");
                 }
                 break;
             case R.id.tv_edit_information:
             case R.id.ll_edit_data:
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "3_Information");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "3_Information");
                     Intent intent = new Intent(getActivity(), EditInformationActivity.class);
                     startActivity(intent);
                 }

@@ -22,7 +22,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -238,12 +238,12 @@ public class WelcomeActivity extends BaseActivity {
      */
     private void showSplashAd() {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
-            statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
             NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
                 @Override
                 public void onAdSuccess() {
                     isShow = true;
-                    statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
+                    StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
                 }
 
                 @Override

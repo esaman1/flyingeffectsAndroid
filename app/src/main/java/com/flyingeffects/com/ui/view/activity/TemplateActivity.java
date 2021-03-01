@@ -37,7 +37,7 @@ import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
@@ -341,7 +341,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             changeMaterialCallbackForVideo(null, imgPath.get(0), false);
                         }
                     } else {
-                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
+                        StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
                         //修改图为裁剪后的素材
                         presenter.ChangeMaterial(originalPath, bottomButtonCount, needAssetsCount);
                     }
@@ -384,7 +384,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             handler.sendEmptyMessage(1);
             new Thread(() -> presenter.intoMattingVideo(imgPath.get(0), templateName)).start();
         } else {
-            statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
+            StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
             //修改为裁剪前的素材
             presenter.ChangeMaterial(imgPath, bottomButtonCount, needAssetsCount);
         }
@@ -500,7 +500,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             ivPlayButton.setImageResource(R.mipmap.pause);
             if (real_time_preview.getVisibility() == View.VISIBLE) {
                 if (mPlayer != null) {
-                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, " 14_preview_video_template");
+                    StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, " 14_preview_video_template");
                     mPlayer.start();
                     showPreview(true, false);
                 } else {
@@ -788,7 +788,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private void initTemplateViews(TemplateModel templateModel) {
         for (int i = 1; i <= templateModel.groupSize; i++) {
             TemplateView templateView = new TemplateView(TemplateActivity.this);
-            templateView.SetonGestureCallback(() -> statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_drag"));
+            templateView.SetonGestureCallback(() -> StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_drag"));
             templateView.setBackgroundColor(Color.BLACK);
             templateView.setVisibility(i == 1 ? View.VISIBLE : View.GONE);
             GroupModel groupModel = templateModel.groups.get(i);
@@ -1037,9 +1037,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             case R.id.tv_top_submit:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
                     if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
-                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
+                        StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                     }
-                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_save", templateName);
+                    StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_save", templateName);
 
 
                     if (isPlaying) {
@@ -1495,7 +1495,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         //如果不是背景模板，那么还是有音乐
                         lastChooseCommonTabLayout = 2;
                         viewPager.setCurrentItem(1);
-                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_muscle");
+                        StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_muscle");
 
                     }
                 } else if (position == 2) {
@@ -1503,7 +1503,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         viewPager.setCurrentItem(2);
                     } else {
                         viewPager.setCurrentItem(1);
-                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_muscle");
+                        StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_muscle");
 
                     }
                     lastChooseCommonTabLayout = 2;
@@ -1706,7 +1706,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private void changeMusic() {
-        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_background");
+        StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_background");
         if (real_time_preview.getVisibility() == View.VISIBLE) {
             //预览暂停状态
             if (!isPlaying) {

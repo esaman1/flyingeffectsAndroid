@@ -32,7 +32,7 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.FromToTemplate;
@@ -73,6 +73,7 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * description ：用户创作页面,里面主要用了langSong 的工具类，对视频进行贴纸的功能
@@ -485,15 +486,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         switchButton.setOnCheckedChangeListener((view, isChecked) -> {
             if (isChecked) {
                 if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutopen");
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutopen");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutopen");
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutopen");
                 }
             } else {
                 if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutoff");
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutoff");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutoff");
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutoff");
                 }
             }
             presenter.CheckedChanged(isChecked);
@@ -518,15 +519,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     endTimer();
                 }
                 if (!TextUtils.isEmpty(title)) {
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_save", title);
+                    StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_save", title);
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_save");
+                    StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_save");
                 }
 
                 if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Preview");
+                    StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Preview");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
+                    StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
                 }
                 if(musicChooseIndex==2){
                     musicEndTime=allVideoDuration;
@@ -561,7 +562,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         nowStateIsPlaying(false);
                         presenter.showAllAnim(false);
                     } else {
-                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, " 14_preview_video_bj");
+                        StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, " 14_preview_video_bj");
                         WaitingDialog.openPragressDialog(this);
                         new Thread(() -> presenter.showAllAnim(true)).start();
                     }
@@ -579,7 +580,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 presenter.addTextSticker();
                 intoTextStyleDialog("");
                 isClickAddTextTag = true;
-                statisticsEventAffair.getInstance().setFlag(this, "20_bj_text");
+                StatisticsEventAffair.getInstance().setFlag(this, "20_bj_text");
                 break;
             case R.id.iv_top_back:
                 onBackPressed();
@@ -595,11 +596,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         nowStateIsPlaying(false);
                     }
                     if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_material");
-                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_material");
+                        StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_material");
+                        StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_material");
                     } else {
-                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_material");
-                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
+                        StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_material");
+                        StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
                     }
                     //添加新的贴纸，这里的贴纸就是用户选择的贴纸
                     AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
@@ -609,7 +610,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             String path = paths.get(0);
                             String pathType = GetPathTypeModel.getInstance().getMediaType(path);
                             if (albumType.isImage(pathType)) {
-                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage");
+                                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage");
                                 CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
                                     presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                                 });
@@ -617,7 +618,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                             } else {
                                 //贴纸选择的视频
                                 intoVideoCropActivity(paths.get(0));
-                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo");
+                                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo");
                             }
                         }
                     }, "");
@@ -901,34 +902,36 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
         if (ll_green_background.getVisibility() == View.VISIBLE) {
             //可见的时候需要修稿这里
-            if (isLandscape) {
+            Observable.just(isLandscape).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> {
+                if (isLandscape) {
+                    //横屏的情况
+                    iv_green_background.post(() -> {
+                        int oriWidth = ll_space.getWidth();
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                        relativeLayoutParams3.width = oriWidth;
+                        relativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
+                        ll_green_background.setLayoutParams(relativeLayoutParams3);
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                        relativeLayoutParams4.width = oriWidth;
+                        relativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
+                        iv_green_background.setLayoutParams(relativeLayoutParams4);
+                    });
+                } else {
+                    iv_green_background.post(() -> {
+                        int oriHeight = ll_space.getHeight();
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                        relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
+                        relativeLayoutParams3.height = oriHeight;
+                        ll_green_background.setLayoutParams(relativeLayoutParams3);
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                        relativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
+                        relativeLayoutParams4.height = oriHeight;
+                        iv_green_background.setLayoutParams(relativeLayoutParams4);
+                    });
+                }
+            });
 
 
-                //横屏的情况
-                iv_green_background.post(() -> {
-                    int oriWidth = ll_space.getWidth();
-                    RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
-                    relativeLayoutParams3.width = oriWidth;
-                    relativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
-                    ll_green_background.setLayoutParams(relativeLayoutParams3);
-                    RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
-                    relativeLayoutParams4.width = oriWidth;
-                    relativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
-                    iv_green_background.setLayoutParams(relativeLayoutParams4);
-                });
-            } else {
-                iv_green_background.post(() -> {
-                    int oriHeight = ll_space.getHeight();
-                    RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
-                    relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
-                    relativeLayoutParams3.height = oriHeight;
-                    ll_green_background.setLayoutParams(relativeLayoutParams3);
-                    RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
-                    relativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
-                    relativeLayoutParams4.height = oriHeight;
-                    iv_green_background.setLayoutParams(relativeLayoutParams4);
-                });
-            }
         }
 
 
