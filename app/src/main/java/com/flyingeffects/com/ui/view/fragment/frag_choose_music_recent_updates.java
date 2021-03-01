@@ -231,14 +231,16 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 nowClickPosition = position;
                 switch (view.getId()) {
                     case R.id.tv_make:
-                        Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("isFromShoot",isFromShoot);
-                        intent.putExtra("title",listData.get(position).getTitle());
-                        intent.putExtra("videoPath", listData.get(position).getAudio_url());
-                        intent.putExtra("needDuration", needDuration);
-                        intent.putExtra("isAudio", true);
-                        startActivity(intent);
+                        if(!DoubleClick.getInstance().isFastDoubleLongClick(2000)){
+                            Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra("isFromShoot",isFromShoot);
+                            intent.putExtra("title",listData.get(position).getTitle());
+                            intent.putExtra("videoPath", listData.get(position).getAudio_url());
+                            intent.putExtra("needDuration", needDuration);
+                            intent.putExtra("isAudio", true);
+                            startActivity(intent);
+                        }
                         break;
 
 

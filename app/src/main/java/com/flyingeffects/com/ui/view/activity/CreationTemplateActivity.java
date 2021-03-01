@@ -73,6 +73,7 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * description ：用户创作页面,里面主要用了langSong 的工具类，对视频进行贴纸的功能
@@ -901,34 +902,36 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
         if (ll_green_background.getVisibility() == View.VISIBLE) {
             //可见的时候需要修稿这里
-            if (isLandscape) {
+            Observable.just(isLandscape).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> {
+                if (isLandscape) {
+                    //横屏的情况
+                    iv_green_background.post(() -> {
+                        int oriWidth = ll_space.getWidth();
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                        relativeLayoutParams3.width = oriWidth;
+                        relativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
+                        ll_green_background.setLayoutParams(relativeLayoutParams3);
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                        relativeLayoutParams4.width = oriWidth;
+                        relativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
+                        iv_green_background.setLayoutParams(relativeLayoutParams4);
+                    });
+                } else {
+                    iv_green_background.post(() -> {
+                        int oriHeight = ll_space.getHeight();
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                        relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
+                        relativeLayoutParams3.height = oriHeight;
+                        ll_green_background.setLayoutParams(relativeLayoutParams3);
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                        relativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
+                        relativeLayoutParams4.height = oriHeight;
+                        iv_green_background.setLayoutParams(relativeLayoutParams4);
+                    });
+                }
+            });
 
 
-                //横屏的情况
-                iv_green_background.post(() -> {
-                    int oriWidth = ll_space.getWidth();
-                    RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
-                    relativeLayoutParams3.width = oriWidth;
-                    relativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
-                    ll_green_background.setLayoutParams(relativeLayoutParams3);
-                    RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
-                    relativeLayoutParams4.width = oriWidth;
-                    relativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
-                    iv_green_background.setLayoutParams(relativeLayoutParams4);
-                });
-            } else {
-                iv_green_background.post(() -> {
-                    int oriHeight = ll_space.getHeight();
-                    RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
-                    relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
-                    relativeLayoutParams3.height = oriHeight;
-                    ll_green_background.setLayoutParams(relativeLayoutParams3);
-                    RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
-                    relativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
-                    relativeLayoutParams4.height = oriHeight;
-                    iv_green_background.setLayoutParams(relativeLayoutParams4);
-                });
-            }
         }
 
 
