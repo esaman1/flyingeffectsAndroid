@@ -481,12 +481,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
 
     private void intoTemplate(String path) {
-
-
         WaitingDialog.closePragressDialog();
         fuBeautyActivity.ToNextPage( path);
-
-
     }
 
 
@@ -531,6 +527,14 @@ public abstract class FUBaseActivity extends AppCompatActivity
             mMuxer.stopRecording();
             mMuxer = null;
         }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fuBeautyActivity.ChangeClicKState();
+            }
+        },3000);
+
     }
 
 

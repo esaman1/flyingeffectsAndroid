@@ -315,7 +315,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                 handler.sendEmptyMessage(1);
             }
         };
-        timer.schedule(task, 0, 500);
+        timer.schedule(task, 1000, 1000);
     }
 
 
