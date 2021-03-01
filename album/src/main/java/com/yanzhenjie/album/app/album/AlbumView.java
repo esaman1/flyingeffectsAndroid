@@ -455,9 +455,6 @@ class AlbumView extends Contract.AlbumView implements View.OnClickListener {
         } else if (v == mBtnPreview) {
             getPresenter().tryPreviewChecked();
         } else if (v == mTvCapture) {
-
-
-
             getPresenter().toCapturePage();
         } else if (v == mIvBack) {
             getPresenter().finishActivity();

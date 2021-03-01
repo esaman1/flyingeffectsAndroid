@@ -23,6 +23,7 @@ import com.flyingeffects.com.enity.FragmentHasSlide;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.VideoManage;
+import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.lansosdk.videoeditor.MediaInfo;
@@ -49,9 +50,10 @@ import static com.flyingeffects.com.utils.BlogFileResource.FileManager.isLansong
 /**
  * description ：选择本地音乐
  * creation date: 2020/8/26
- * user : zhangtongju
+ *
+ * @author zhangtongju
  */
-public class frag_choose_music_extract_audio extends BaseFragment {
+public class ExtractAudioChooseMusicFragment extends BaseFragment {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -64,13 +66,12 @@ public class frag_choose_music_extract_audio extends BaseFragment {
 
     private List<Video> listVideoFiltrateMp4 = new ArrayList<>();
 
-
     private music_local_adapter adapter;
 
     private long needDuration;
 
     private boolean isFromShoot;
-
+    private int mIsFrom;
 
     @Override
     protected int getContentLayout() {
@@ -83,6 +84,7 @@ public class frag_choose_music_extract_audio extends BaseFragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             isFromShoot = bundle.getBoolean("isFromShoot", false);
+            mIsFrom = bundle.getInt(ChooseMusicActivity.IS_FROM, 0);
             needDuration = bundle.getLong("needDuration", 10000);
         }
         initRecycler();
@@ -97,12 +99,10 @@ public class frag_choose_music_extract_audio extends BaseFragment {
         startQuery();
     }
 
-
     private void finishData() {
         smartRefreshLayout.finishRefresh();
         smartRefreshLayout.finishLoadMore();
     }
-
 
     public void initSmartRefreshLayout() {
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
@@ -110,7 +110,6 @@ public class frag_choose_music_extract_audio extends BaseFragment {
         });
         smartRefreshLayout.setEnableLoadMore(true);
     }
-
 
     @Override
     public void onPause() {
@@ -138,7 +137,11 @@ public class frag_choose_music_extract_audio extends BaseFragment {
                 switch (view.getId()) {
                     case R.id.tv_make:
                         if (!DoubleClick.getInstance().isFastDoubleLongClick(2000)) {
-                            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_use", "视频提取音乐");
+                            if (mIsFrom == ChooseMusicActivity.IS_FROM_SHOOT) {
+                                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_use", "视频提取音乐");
+                            } else {
+                                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_shoot_music_use", "视频提取音乐");
+                            }
                             pauseMusic();
                             Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -161,7 +164,6 @@ public class frag_choose_music_extract_audio extends BaseFragment {
         recyclerView.setAdapter(adapter);
     }
 
-
     private void pauseMusic() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
@@ -170,7 +172,6 @@ public class frag_choose_music_extract_audio extends BaseFragment {
             adapter.notifyItemChanged(lastPosition);
         }
     }
-
 
     private int lastPosition;
     private MediaPlayer mediaPlayer;

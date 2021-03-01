@@ -269,7 +269,7 @@ public class AlbumActivity extends BaseActivity implements
                     String imagePath = NullActivity.parsePath(data);
                     String mimeType = AlbumUtils.getMimeType(imagePath);
                     if (!TextUtils.isEmpty(mimeType)) {
-                        mCameraAction.onAction(imagePath,false);
+                        mCameraAction.onAction(imagePath, false);
                     }
                 } else {
                     callbackCancel();
@@ -286,7 +286,7 @@ public class AlbumActivity extends BaseActivity implements
                     albumFileList.add(albumFile);
                     Log.d(TAG, "onActivityResult: " + captureUrl);
                     if (sResult != null) {
-                        sResult.onAction(albumFileList,true);
+                        sResult.onAction(albumFileList, true);
                     }
                     finish();
                 }
@@ -419,7 +419,7 @@ public class AlbumActivity extends BaseActivity implements
 
     private Action<String> mCameraAction = new Action<String>() {
         @Override
-        public void onAction(@NonNull String result,boolean isFromCamera) {
+        public void onAction(@NonNull String result, boolean isFromCamera) {
             if (mMediaScanner == null) {
                 mMediaScanner = new MediaScanner(AlbumActivity.this);
             }
@@ -533,9 +533,6 @@ public class AlbumActivity extends BaseActivity implements
     }
 
     private void setCheckedCount() {
-
-
-
         int count = mCheckedList.size();
         mView.setCheckedCountAndTotal(count, mLimitCount);
     }
@@ -595,8 +592,7 @@ public class AlbumActivity extends BaseActivity implements
 //        intent.putExtras(captureBundle);
 //        startActivityForResult(intent, CODE_TO_CAPTURE);
 
-
-        AlbumFile albumFile=new AlbumFile();
+        AlbumFile albumFile = new AlbumFile();
         albumFile.setClickToCamera(true);
         mCheckedList.clear();
         mCheckedList.add(albumFile);
@@ -606,15 +602,15 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     public void onPreviewComplete() {
-        if(!TextUtils.isEmpty(material_info)&&material_info.equals("pictureAlbum")){
-            if(mCheckedList.size()<20){
-                mCheckedList=toBespreadMaterial();
+        if (!TextUtils.isEmpty(material_info) && material_info.equals("pictureAlbum")) {
+            if (mCheckedList.size() < 20) {
+                mCheckedList = toBespreadMaterial();
                 ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
                 task.execute();
-            }else{
+            } else {
                 callbackResult();
             }
-        }else{
+        } else {
             callbackResult();
         }
 
@@ -663,16 +659,16 @@ public class AlbumActivity extends BaseActivity implements
             }
             mView.toast(messageRes);
         } else {
-            if(!TextUtils.isEmpty(material_info)&&material_info.equals("pictureAlbum")){
-                if(mCheckedList.size()<20){
+            if (!TextUtils.isEmpty(material_info) && material_info.equals("pictureAlbum")) {
+                if (mCheckedList.size() < 20) {
 //                    showMaterialCountDialog();
-                    mCheckedList=toBespreadMaterial();
+                    mCheckedList = toBespreadMaterial();
                     ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
                     task.execute();
-                }else{
+                } else {
                     callbackResult();
                 }
-            }else{
+            } else {
                 callbackResult();
             }
         }
@@ -749,14 +745,6 @@ public class AlbumActivity extends BaseActivity implements
         mDialog.show();
     }
 
-
-
-
-
-
-
-
-
     public void showMaterialCountDialog() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(AlbumActivity.this);
         builder.setTitle("提示");
@@ -768,7 +756,7 @@ public class AlbumActivity extends BaseActivity implements
             dialog.dismiss();
         });
         builder.setPositiveButton("确定", (dialog, which) -> {
-            mCheckedList=toBespreadMaterial();
+            mCheckedList = toBespreadMaterial();
             ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
             task.execute();
             dialog.dismiss();
@@ -780,30 +768,27 @@ public class AlbumActivity extends BaseActivity implements
     }
 
 
-
     /**
      * description ：铺满素材
      * creation date: 2020/11/16
      * user : zhangtongju
      */
-    private ArrayList<AlbumFile> toBespreadMaterial(){
-        if(mCheckedList!=null&&mCheckedList.size()>0){
-            int CheckListSize=mCheckedList.size();
-            if(CheckListSize<20){
-               Random r = new Random(1);
-                int needAddSize=20-mCheckedList.size();
-                for(int i=0;i<needAddSize;i++){
+    private ArrayList<AlbumFile> toBespreadMaterial() {
+        if (mCheckedList != null && mCheckedList.size() > 0) {
+            int CheckListSize = mCheckedList.size();
+            if (CheckListSize < 20) {
+                Random r = new Random(1);
+                int needAddSize = 20 - mCheckedList.size();
+                for (int i = 0; i < needAddSize; i++) {
                     mCheckedList.add(mCheckedList.get(r.nextInt(CheckListSize)));
                 }
             }
         }
 
-        return  mCheckedList;
+        return mCheckedList;
 
 
     }
-
-
 
 
     @Override
@@ -815,7 +800,7 @@ public class AlbumActivity extends BaseActivity implements
     @Override
     public void onThumbnailCallback(ArrayList<AlbumFile> albumFiles) {
         if (sResult != null) {
-            sResult.onAction(albumFiles,false);
+            sResult.onAction(albumFiles, false);
         }
         dismissLoadingDialog();
         finish();
@@ -826,7 +811,7 @@ public class AlbumActivity extends BaseActivity implements
      */
     private void callbackCancel() {
         if (sCancel != null) {
-            sCancel.onAction("User canceled.",false);
+            sCancel.onAction("User canceled.", false);
         }
         finish();
     }
@@ -860,9 +845,9 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     public void returnAdContainer(LinearLayout flAdContainer) {
-        Log.d(TAG,"returnAdContainer");
-        if(sActionView!=null){
-            sActionView.onAction(flAdContainer,false);
+        Log.d(TAG, "returnAdContainer");
+        if (sActionView != null) {
+            sActionView.onAction(flAdContainer, false);
         }
 
     }

@@ -78,7 +78,6 @@ public class searchMusicActivity extends BaseActivity {
 
     private List<ChooseMusic> listData = new ArrayList<>();
 
-
     @BindView(R.id.ed_search)
     EditText ed_search;
 
@@ -93,7 +92,7 @@ public class searchMusicActivity extends BaseActivity {
     WarpLinearLayout autoNewLineLayout;
 
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
-
+    private int isFrom;
 
     @Override
     protected int getLayoutId() {
@@ -212,6 +211,7 @@ public class searchMusicActivity extends BaseActivity {
     @Override
     protected void initAction() {
         needDuration = getIntent().getLongExtra("needDuration", 10000);
+        isFrom = getIntent().getIntExtra(ChooseMusicActivity.IS_FROM, ChooseMusicActivity.IS_FROM_OTHERS);
     }
 
 
@@ -336,7 +336,6 @@ public class searchMusicActivity extends BaseActivity {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "收藏音乐返回的值为" + str);
                 updateCollect(isCollect, music_id);
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
@@ -359,7 +358,11 @@ public class searchMusicActivity extends BaseActivity {
     private void requestFagData() {
         lastPosition = 0;
         pauseMusic();
-        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_shoot_music_search",searchText);
+        if (isFrom == ChooseMusicActivity.IS_FROM_SHOOT) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_search", searchText);
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_shoot_music_search", searchText);
+        }
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
@@ -377,10 +380,13 @@ public class searchMusicActivity extends BaseActivity {
             protected void onSubNext(List<ChooseMusic> data) {
                 finishData();
                 String str = StringUtil.beanToJSONString(data);
+
                 LogUtil.d("OOM2", str);
+
                 if (isRefresh) {
                     listData.clear();
                 }
+
                 if (isRefresh && data.size() == 0) {
                     ToastUtil.showToast("没有找到相关内容");
                 }
@@ -402,7 +408,7 @@ public class searchMusicActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(mediaPlayer!=null&&mediaPlayer.isPlaying()){
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
                 ChooseMusic chooseMusic2 = listData.get(lastPosition);
@@ -441,7 +447,7 @@ public class searchMusicActivity extends BaseActivity {
     }
 
     @Subscribe
-    public void onEventMainThread( CutSuccess cutSuccess) {
+    public void onEventMainThread(CutSuccess cutSuccess) {
         this.finish();
     }
 

@@ -140,7 +140,11 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.relative_choose_music:
-                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_shoot_music");
+                    if (isFrom == 0){
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_shoot_music");
+                    }else {
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_mb_Shoot_music");
+                    }
                     presenter.IntoChooseMusic();
                     break;
                 case R.id.iv_close:
@@ -155,10 +159,15 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                     break;
                 case R.id.iv_count_down:
                     //倒计时功能
-                    presenter.clickCountDown(iv_count_down);
+                    presenter.clickCountDown(iv_count_down,isFrom);
                     break;
                 case R.id.iv_rolling_over:
                     SwitchCamera();
+                    if (isFrom==0){
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_turn");
+                    }else {
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_shoot_turn");
+                    }
                     break;
                 case R.id.ll_stage_property:
                     //道具
@@ -185,11 +194,20 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 tv_count_down.setVisibility(View.GONE);
                 tv_count_down.setText("");
                 stopRecording();
+                if (isFrom==0){
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_Shoot_finish");
+                }else {
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_mb_shoot_finish");
+                }
                 isRecordingState(false);
             } else {
                 LogUtil.d("OOM", "开始录制");
                 isRecording = true;
-                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_Shoot_start");
+                if (isFrom==0){
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_Shoot_start");
+                }else {
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_mb_shoot_start");
+                }
                 presenter.StartCountDown();
                 tv_count_down.setVisibility(View.VISIBLE);
                 lottieAnimationView.setMaxProgress(20 / (float) 47);

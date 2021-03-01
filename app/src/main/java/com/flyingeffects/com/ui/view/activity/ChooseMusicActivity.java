@@ -16,8 +16,8 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.FragmentHasSlide;
+import com.flyingeffects.com.ui.view.fragment.ExtractAudioChooseMusicFragment;
 import com.flyingeffects.com.ui.view.fragment.RecentUpdateMusicFragment;
-import com.flyingeffects.com.ui.view.fragment.frag_choose_music_extract_audio;
 import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.ArrayList;
@@ -33,7 +33,11 @@ import de.greenrobot.event.Subscribe;
  * user : zhangtongju
  */
 public class ChooseMusicActivity extends BaseActivity {
+    public static String IS_FROM = "isFrom";
 
+    public static int IS_FROM_SHOOT = 0;
+    public static int IS_FROM_MB_SHOOT = 1;
+    public static int IS_FROM_OTHERS = 2;
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
@@ -54,6 +58,8 @@ public class ChooseMusicActivity extends BaseActivity {
 
     private boolean isFromShoot = false;
 
+    private int isFrom = IS_FROM_SHOOT;
+
 
     @Override
     protected int getLayoutId() {
@@ -65,6 +71,7 @@ public class ChooseMusicActivity extends BaseActivity {
         EventBus.getDefault().register(this);
         needDuration = getIntent().getLongExtra("needDuration", 10000);
         isFromShoot = getIntent().getBooleanExtra("isFromShoot", false);
+        isFrom = getIntent().getIntExtra(ChooseMusicActivity.IS_FROM, 0);
         LogUtil.d("OOM2", "当前需要的音乐时长为" + needDuration);
         ArrayList<Fragment> list = new ArrayList<>();
         String[] titles = {"最近更新", "本地音频", "视频提取", "收藏音乐"};
@@ -73,6 +80,7 @@ public class ChooseMusicActivity extends BaseActivity {
         Bundle bundle = new Bundle();
         bundle.putSerializable("id", 0);
         bundle.putBoolean("isFromShoot", isFromShoot);
+        bundle.putInt(ChooseMusicActivity.IS_FROM, isFrom);
         bundle.putSerializable("needDuration", needDuration);
         fragment.setArguments(bundle);
         list.add(fragment);
@@ -81,14 +89,16 @@ public class ChooseMusicActivity extends BaseActivity {
         Bundle bundle_1 = new Bundle();
         bundle_1.putSerializable("id", 1);
         bundle.putBoolean("isFromShoot", isFromShoot);
+        bundle.putInt(ChooseMusicActivity.IS_FROM, isFrom);
         bundle_1.putSerializable("needDuration", needDuration);
         fragment_1.setArguments(bundle_1);
         list.add(fragment_1);
 
-        frag_choose_music_extract_audio fragment_local_music = new frag_choose_music_extract_audio();
+        ExtractAudioChooseMusicFragment fragment_local_music = new ExtractAudioChooseMusicFragment();
         Bundle bundle_local_music = new Bundle();
         bundle_local_music.putSerializable("needDuration", needDuration);
         fragment_local_music.setArguments(bundle_local_music);
+        bundle.putInt(ChooseMusicActivity.IS_FROM, isFrom);
         bundle.putBoolean("isFromShoot", isFromShoot);
         list.add(fragment_local_music);
 
@@ -96,6 +106,7 @@ public class ChooseMusicActivity extends BaseActivity {
         Bundle bundle_2 = new Bundle();
         bundle_2.putSerializable("id", 2);
         bundle_2.putSerializable("needDuration", needDuration);
+        bundle.putInt(ChooseMusicActivity.IS_FROM, isFrom);
         bundle.putBoolean("isFromShoot", isFromShoot);
         fragment_2.setArguments(bundle_2);
         list.add(fragment_2);
@@ -103,6 +114,7 @@ public class ChooseMusicActivity extends BaseActivity {
         relative_top.setOnClickListener(view -> {
             Intent intent = new Intent(ChooseMusicActivity.this, searchMusicActivity.class);
             intent.putExtra("needDuration", needDuration);
+            intent.putExtra(ChooseMusicActivity.IS_FROM, isFrom);
             startActivity(intent);
         });
 

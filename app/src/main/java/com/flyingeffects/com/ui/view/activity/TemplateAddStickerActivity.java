@@ -478,7 +478,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 if (!TextUtils.isEmpty("IsFrom") && mIsFrom.equals(FromToTemplate.PICTUREALBUM)) {
                     LogUtil.d("OOM", "保存的模板名字为" + title);
                     StatisticsEventAffair.getInstance().setFlag(this, "21_yj_save", title);
-                }else if (!TextUtils.isEmpty("IsFrom") && mIsFrom.equals(FromToTemplate.SHOOT)) {
+                } else if (!TextUtils.isEmpty("IsFrom") && mIsFrom.equals(FromToTemplate.SHOOT)) {
                     StatisticsEventAffair.getInstance().setFlag(this, "12_shoot_finish_save");
                 }
                 presenter.toSaveVideo(0);
@@ -494,7 +494,6 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                     createViewForAddText.hideInputTextDialog();
                 }
                 break;
-
 
             case R.id.iv_top_back:
                 this.finish();

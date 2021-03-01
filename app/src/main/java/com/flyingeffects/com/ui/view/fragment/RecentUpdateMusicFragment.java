@@ -33,6 +33,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.VideoManage;
+import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -92,6 +93,8 @@ public class RecentUpdateMusicFragment extends BaseFragment {
     private int nowClickPosition;
 
     private boolean isFromShoot = false;
+    private int isFrom = ChooseMusicActivity.IS_FROM_SHOOT;
+    private String mCollectionTag;
 
 
     @Override
@@ -109,8 +112,16 @@ public class RecentUpdateMusicFragment extends BaseFragment {
             LogUtil.d("oom2", "id=" + id + "bundle != null");
             needDuration = bundle.getLong("needDuration");
             isFromShoot = bundle.getBoolean("isFromShoot");
+            isFrom = bundle.getInt(ChooseMusicActivity.IS_FROM,0);
+            bundle.getInt(ChooseMusicActivity.IS_FROM);
             LogUtil.d("oom2", "needDuration=" + needDuration);
         }
+        if (isFrom == 0) {
+            mCollectionTag = "12_shoot_music_use";
+        } else {
+            mCollectionTag = "12_mb_shoot_music_use";
+        }
+
         initSmartRefreshLayout();
         initRecycler();
     }
@@ -232,19 +243,16 @@ public class RecentUpdateMusicFragment extends BaseFragment {
                 nowClickPosition = position;
                 switch (view.getId()) {
                     case R.id.tv_make:
-                        if(!DoubleClick.getInstance().isFastDoubleLongClick(2000)){
-                            switch (id) {
-                                case 1:
-                                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_use", "本地音频");
-                                    break;
-                                default:
-                                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_use", "在线音乐-" + listData.get(position).getTitle());
-                                    break;
+                        if (!DoubleClick.getInstance().isFastDoubleLongClick(2000)) {
+                            if (id == 1) {
+                                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), mCollectionTag, "本地音频");
+                            } else {
+                                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), mCollectionTag, "在线音乐-" + listData.get(position).getTitle());
                             }
                             Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            intent.putExtra("isFromShoot",isFromShoot);
-                            intent.putExtra("title",listData.get(position).getTitle());
+                            intent.putExtra("isFromShoot", isFromShoot);
+                            intent.putExtra("title", listData.get(position).getTitle());
                             intent.putExtra("videoPath", listData.get(position).getAudio_url());
                             intent.putExtra("needDuration", needDuration);
                             intent.putExtra("isAudio", true);

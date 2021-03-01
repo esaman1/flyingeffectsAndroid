@@ -353,7 +353,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
 
     public void SwitchCamera() {
-        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_turn");
+
         mCameraRenderer.switchCamera();
     }
 
@@ -544,7 +544,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     public void stopRecording() {
         LogUtil.d("OOM", "stopRecording");
         Log.d(TAG, "stopRecording: ");
-        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_Shoot_finish");
+
         if (mMuxer != null) {
             synchronized (mRecordLock) {
                 mVideoEncoder = null;

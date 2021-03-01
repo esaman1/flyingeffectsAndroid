@@ -939,16 +939,17 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             LogUtil.d("OOM3", "模型也加载完成");
             if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
                 if (albumFileList.get(0).isClickToCamera()) {
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "12_mb_shoot", templateItem.getTitle());
                     //拍摄新页面
                     Intent intent = new Intent(PreviewUpAndDownActivity.this, FUBeautyActivity.class);
                     if ("2".equals(templateItem.getTemplate_type())) {
                         //背景
                         MediaInfo mediaInfo = new MediaInfo(videoPath);
                         mediaInfo.prepare();
-                        intent.putExtra("musicPath",videoPath);
-                        intent.putExtra("createDownVideoPath",createDownVideoPath);
-                        long duration=mediaInfo.getDurationUs()/1000;
-                        intent.putExtra("duration",duration);
+                        intent.putExtra("musicPath", videoPath);
+                        intent.putExtra("createDownVideoPath", createDownVideoPath);
+                        long duration = mediaInfo.getDurationUs() / 1000;
+                        intent.putExtra("duration", duration);
                         mediaInfo.release();
                     } else {
                         //模板
