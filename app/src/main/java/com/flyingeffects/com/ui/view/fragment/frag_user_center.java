@@ -344,12 +344,12 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         Observable ob = Api.getDefault().systemTotal(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageCountAllEntiy>(getActivity()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(SystemMessageCountAllEntiy data) {
+            protected void onSubNext(SystemMessageCountAllEntiy data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", str);
                 systemMessageId = data.getSystem_message().get(0).getId();
@@ -371,13 +371,13 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
             Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(getActivity()) {
                 @Override
-                protected void _onError(String message) {
+                protected void onSubError(String message) {
                     tv_id.setText("未登录");
                     BaseConstans.SetUserToken("");
                 }
 
                 @Override
-                protected void _onNext(UserInfo data) {
+                protected void onSubNext(UserInfo data) {
                     Hawk.put("UserInfo", data);
                     if (getActivity() != null) {
                         tv_id.setText("飞友号：" + data.getId());
@@ -492,12 +492,12 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         HttpUtil.getInstance().toSubscribe(Api.getDefault().uploadUserSkin(BaseConstans.getRequestHead(params)),
                 new ProgressSubscriber<Object>(getContext()) {
                     @Override
-                    protected void _onError(String message) {
+                    protected void onSubError(String message) {
                         ToastUtil.showToast(message);
                     }
 
                     @Override
-                    protected void _onNext(Object data) {
+                    protected void onSubNext(Object data) {
                         Glide.with(getActivity())
                                 .load(skinPath)
                                 .into(imSkin);
@@ -510,12 +510,12 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         Observable ob = Api.getDefault().getAllMessageNum(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<messageCount>(getActivity()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(messageCount data) {
+            protected void onSubNext(messageCount data) {
                 showMessageCount(data);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

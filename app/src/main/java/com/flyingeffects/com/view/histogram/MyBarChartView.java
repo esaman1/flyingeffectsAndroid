@@ -13,15 +13,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-import androidx.annotation.Nullable;
-
-import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.utils.LogUtil;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+
+import androidx.annotation.Nullable;
 
 /**
  * autour : lbing
@@ -58,26 +55,26 @@ public class MyBarChartView extends View {
     private float lastX = 0;
     private float lastY = 0;
     private int measureWidth = 0;
-    //这是最初的的位置
+    /**这是最初的的位置*/
     private float startOriganalX = 0;
     private HorizontalScrollRunnable horizontalScrollRunnable;
-    //临时滑动的距离
+    /**临时滑动的距离*/
     private float tempLength = 0;
     private long startTime = 0;
     private boolean isFling = false;
     private float dispatchTouchX = 0;
     private float dispatchTouchY = 0;
-    //是否到达边界
+    /**是否到达边界*/
     private boolean isBoundary = false;
     private boolean isMove = false;
 
     private int frameCount;
     private float showPercentage;
-    //素材需要时长
+    /**素材需要时长*/
     private long nowMaterial;
-    //需要截取时间
+    /**需要截取时间*/
     private float needDuration;
-    //是否能够滑动
+    /**是否能够滑动*/
     private boolean isCanSlide = true;
 
     private ProgressCallback callback;
@@ -302,6 +299,8 @@ public class MyBarChartView extends View {
                 case MotionEvent.ACTION_CANCEL:
                     isMove = false;
                     break;
+                default:
+                    break;
             }
             return true;
         }
@@ -348,7 +347,7 @@ public class MyBarChartView extends View {
             //绘制bar
             //  drawBar(canvas, startX, startY, endY);
 
-            drawBar(canvas, startX, halft - haltEndY, halft + haltEndY);
+            drawBar(canvas, startX, halft + haltEndY, halft - haltEndY);
             //绘制下面的文字
 //                float bottomTextWidth = mBottomTextPaint.measureText(innerData.get(i).bottomText);
 //                float bottomStartX = startX + barWidth / 2 - bottomTextWidth / 2;
@@ -380,7 +379,7 @@ public class MyBarChartView extends View {
 //        canvas.drawText(text, textStartX, textStartY, mTopTextPaint);
 //    }
 
-    //绘制bar
+    /**绘制bar*/
     private void drawBar(Canvas canvas, int startX, int startY, int endY) {
         Rect mRect = new Rect(startX, startY, startX + barWidth, endY);
         canvas.drawRect(mRect, mBarPaint);

@@ -67,6 +67,8 @@ public class frag_choose_music_extract_audio extends BaseFragment {
 
     private long needDuration;
 
+    private boolean isFromShoot;
+
 
     @Override
     protected int getContentLayout() {
@@ -78,6 +80,7 @@ public class frag_choose_music_extract_audio extends BaseFragment {
         EventBus.getDefault().register(this);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
+            isFromShoot = bundle.getBoolean("isFromShoot", false);
             needDuration = bundle.getLong("needDuration", 10000);
         }
         initRecycler();
@@ -113,7 +116,7 @@ public class frag_choose_music_extract_audio extends BaseFragment {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
-        if(listVideoFiltrateMp4!=null&&listVideoFiltrateMp4.size()!=0&&listVideoFiltrateMp4.size()>=lastPosition){
+        if (listVideoFiltrateMp4 != null && listVideoFiltrateMp4.size() != 0 && listVideoFiltrateMp4.size() >= lastPosition) {
             Video video3 = listVideoFiltrateMp4.get(lastPosition);
             video3.setPlaying(false);
             listVideoFiltrateMp4.set(lastPosition, video3);
@@ -132,13 +135,16 @@ public class frag_choose_music_extract_audio extends BaseFragment {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 switch (view.getId()) {
                     case R.id.tv_make:
-                        pauseMusic();
-                        Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("videoPath", listVideoFiltrateMp4.get(position).getPath());
-                        intent.putExtra("needDuration", needDuration);
-                        intent.putExtra("isAudio", false);
-                        startActivity(intent);
+                        if (!DoubleClick.getInstance().isFastDoubleLongClick(2000)) {
+                            pauseMusic();
+                            Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra("videoPath", listVideoFiltrateMp4.get(position).getPath());
+                            intent.putExtra("needDuration", needDuration);
+                            intent.putExtra("isFromShoot", isFromShoot);
+                            intent.putExtra("isAudio", false);
+                            startActivity(intent);
+                        }
                         break;
 
 
@@ -244,7 +250,7 @@ public class frag_choose_music_extract_audio extends BaseFragment {
             super.onQueryComplete(token, cookie, c);
             listVideoFiltrateMp4.clear();
             Observable.just(c).map(c1 -> {
-                if(c1 !=null&& c1.getColumnCount()>0) {
+                if (c1 != null && c1.getColumnCount() > 0) {
                     while (c1.moveToNext()) {
                         String path = c1.getString(c1.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));// 路径
                         LogUtil.d("getVideos", "系统筛选出来的视频：" + path);

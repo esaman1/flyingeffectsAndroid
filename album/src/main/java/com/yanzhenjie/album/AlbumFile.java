@@ -84,6 +84,20 @@ public class AlbumFile implements Parcelable, Comparable<AlbumFile> {
      */
     private boolean isDisable;
 
+
+    public boolean isClickToCamera() {
+        return isClickToCamera;
+    }
+
+    public void setClickToCamera(boolean clickToCamera) {
+        isClickToCamera = clickToCamera;
+    }
+
+    /**
+     * 是否是点击的跟随音乐拍摄
+     */
+    private boolean isClickToCamera=false;
+
     public int getNowChooseIndex() {
         return nowChooseIndex;
     }

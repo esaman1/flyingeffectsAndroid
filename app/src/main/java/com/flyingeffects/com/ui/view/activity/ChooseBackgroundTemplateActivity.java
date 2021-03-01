@@ -80,12 +80,12 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
         Observable ob = Api.getDefault().getCategoryList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FirstLevelTypeEntity>>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<FirstLevelTypeEntity> data) {
+            protected void onSubNext(List<FirstLevelTypeEntity> data) {
                 setFragmentList(data);
             }
         }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, false);
@@ -103,10 +103,10 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
                     bundle.putSerializable("id", data.get(i).getId());
                     bundle.putSerializable("from", 3);
                     bundle.putSerializable("num", i);
-                    if (templateItem != null) {
-                        //一键模板选择背景
-                        bundle.putSerializable("cover", templateItem.getImage());
-                    }
+//                    if (templateItem != null) {
+//                        //一键模板选择背景
+//                        bundle.putSerializable("cover", templateItem.getImage());
+//                    }
                     fragBjItem fragment = new fragBjItem();
                     fragment.setArguments(bundle);
                     list.add(fragment);

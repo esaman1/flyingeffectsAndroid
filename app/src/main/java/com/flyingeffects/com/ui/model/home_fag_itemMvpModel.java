@@ -112,13 +112,13 @@ public class home_fag_itemMvpModel {
         LogUtil.d("OOM", StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 finishData();
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<new_fag_template_item> data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.dLong("OOM", "_onNext=" + str);
                 finishData();

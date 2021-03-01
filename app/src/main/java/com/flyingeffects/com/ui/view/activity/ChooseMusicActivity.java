@@ -18,6 +18,7 @@ import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.FragmentHasSlide;
 import com.flyingeffects.com.ui.view.fragment.frag_choose_music_extract_audio;
 import com.flyingeffects.com.ui.view.fragment.frag_choose_music_recent_updates;
+import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.ArrayList;
 
@@ -45,7 +46,13 @@ public class ChooseMusicActivity extends BaseActivity {
     @BindView(R.id.relative_top)
     RelativeLayout relative_top;
 
+    /**如果时长为0，就表示无限裁剪，这里新添加一个功能，可以拖动裁剪*/
     private long needDuration;
+
+
+    private boolean isFromShoot=false;
+
+
 
     @Override
     protected int getLayoutId() {
@@ -56,12 +63,15 @@ public class ChooseMusicActivity extends BaseActivity {
     protected void initView() {
         EventBus.getDefault().register(this);
         needDuration=getIntent().getLongExtra("needDuration",10000);
+        isFromShoot=getIntent().getBooleanExtra("isFromShoot",false);
+        LogUtil.d("OOM2","当前需要的音乐时长为"+needDuration);
         ArrayList<Fragment> list = new ArrayList<>();
         String[] titles = {"最近更新","本地音频","视频提取","收藏音乐"};
 
         frag_choose_music_recent_updates fragment = new frag_choose_music_recent_updates();
         Bundle bundle = new Bundle();
         bundle.putSerializable("id",0);
+        bundle.putBoolean("isFromShoot",isFromShoot);
         bundle.putSerializable("needDuration",needDuration);
         fragment.setArguments(bundle);
         list.add(fragment);
@@ -69,6 +79,7 @@ public class ChooseMusicActivity extends BaseActivity {
         frag_choose_music_recent_updates fragment_1 = new frag_choose_music_recent_updates();
         Bundle bundle_1 = new Bundle();
         bundle_1.putSerializable("id",1);
+        bundle.putBoolean("isFromShoot",isFromShoot);
         bundle_1.putSerializable("needDuration",needDuration);
         fragment_1.setArguments(bundle_1);
         list.add(fragment_1);
@@ -77,6 +88,7 @@ public class ChooseMusicActivity extends BaseActivity {
         Bundle bundle_local_music = new Bundle();
         bundle_local_music.putSerializable("needDuration",needDuration);
         fragment_local_music.setArguments(bundle_local_music);
+        bundle.putBoolean("isFromShoot",isFromShoot);
         list.add(fragment_local_music);
 
 
@@ -84,6 +96,7 @@ public class ChooseMusicActivity extends BaseActivity {
         Bundle bundle_2 = new Bundle();
         bundle_2.putSerializable("id",2);
         bundle_2.putSerializable("needDuration",needDuration);
+        bundle.putBoolean("isFromShoot",isFromShoot);
         fragment_2.setArguments(bundle_2);
         list.add(fragment_2);
 

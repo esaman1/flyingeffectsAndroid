@@ -50,15 +50,19 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!--禁止息屏-->
-    <uses-permission android:name="android.permission.DEVICE_POWER"
+    <uses-permission
+        android:name="android.permission.DEVICE_POWER"
         tools:ignore="ProtectedPermissions" />
 
     <!--震动权限-->
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <!--华为obs提示的-->
-    <uses-permission android:name="android.permission.GET_TOP_ACTIVITY_INFO"
+    <uses-permission
+        android:name="android.permission.GET_TOP_ACTIVITY_INFO"
         tools:ignore="ProtectedPermissions" />
+
+
 
 
     <application
@@ -105,11 +109,19 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateVisible|adjustPan"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity"
+            android:screenOrientation="portrait" />
+
+
+
+
+
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.FUBeautyActivity"
             android:screenOrientation="portrait" />
 
 
@@ -130,8 +142,6 @@
             android:screenOrientation="portrait" />
 
 
-
-
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -140,7 +150,7 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"/>
+            android:windowSoftInputMode="adjustNothing" />
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.ReportActivity"
@@ -148,15 +158,15 @@
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.ChooseMusicActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/AllTransparentTheme" />
+            android:theme="@style/AllTransparentTheme"
+            android:windowSoftInputMode="adjustResize" />
 
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.EditInformationActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateUnspecified|adjustPan"
-            android:theme="@style/AllTransparentTheme" />
+            android:theme="@style/AllTransparentTheme"
+            android:windowSoftInputMode="stateUnspecified|adjustPan" />
 
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
@@ -170,8 +180,8 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity"
             android:configChanges="orientation"
-            android:windowSoftInputMode="stateUnspecified|adjustPan"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnspecified|adjustPan" />
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.UserHomepageActivity"
@@ -181,8 +191,8 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:windowSoftInputMode="stateUnspecified|adjustPan"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnspecified|adjustPan" />
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.VideoCropActivity"
@@ -214,7 +224,7 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.CreationTemplateActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"/>
+            android:windowSoftInputMode="adjustNothing" />
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.TemplateSearchActivity"
@@ -291,7 +301,6 @@
             android:screenOrientation="portrait" />
 
 
-
         <!--铠甲广告配置Start-->
         <activity
             android:name="com.kaijia.adsdk.activity.AppActivity"
@@ -305,41 +314,40 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/kj_file_paths" />
         </provider>
-        <service android:name="com.kaijia.adsdk.service.DownloadService"/>
+        <service android:name="com.kaijia.adsdk.service.DownloadService" />
         <!--铠甲广告配置End-->
-
 
 
         <!-- 广告开始  广点通配置Start-->
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-                <provider
-                    android:name="com.qq.e.comm.GDTFileProvider"
-                    android:authorities="${applicationId}.fileprovider"
-                    android:exported="false"
-                    android:grantUriPermissions="true">
-                    <meta-data
-                        android:name="android.support.FILE_PROVIDER_PATHS"
-                        android:resource="@xml/gdt_file_path" />
-                </provider>
-<!--        <service-->
-<!--            android:name="com.qq.e.comm.DownloadService"-->
-<!--            android:exported="false" />-->
+        <provider
+            android:name="com.qq.e.comm.GDTFileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/gdt_file_path" />
+        </provider>
+        <!--        <service-->
+        <!--            android:name="com.qq.e.comm.DownloadService"-->
+        <!--            android:exported="false" />-->
 
-<!--        <activity-->
-<!--            android:name="com.qq.e.ads.ADActivity"-->
-<!--            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />-->
+        <!--        <activity-->
+        <!--            android:name="com.qq.e.ads.ADActivity"-->
+        <!--            android:configChanges="keyboard|keyboardHidden|orientation|screenSize" />-->
 
-<!--        <activity-->
-<!--            android:name="com.qq.e.ads.PortraitADActivity"-->
-<!--            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"-->
-<!--            android:screenOrientation="portrait" />-->
+        <!--        <activity-->
+        <!--            android:name="com.qq.e.ads.PortraitADActivity"-->
+        <!--            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"-->
+        <!--            android:screenOrientation="portrait" />-->
 
-<!--        <activity-->
-<!--            android:name="com.qq.e.ads.LandscapeADActivity"-->
-<!--            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"-->
-<!--            android:screenOrientation="landscape" />-->
+        <!--        <activity-->
+        <!--            android:name="com.qq.e.ads.LandscapeADActivity"-->
+        <!--            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"-->
+        <!--            android:screenOrientation="landscape" />-->
         <!--广点通配置End-->
         <!--今日头条配置Start-->
         <provider
@@ -442,7 +450,7 @@
             android:name=".douyinapi.DouYinEntryActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:taskAffinity="com.flyingeffects.com"/>
+            android:taskAffinity="com.flyingeffects.com" />
         <receiver android:name=".douyinapi.DouYingBroadcast">
             <intent-filter>
                 <action android:name="com.aweme.opensdk.action.stay.in.dy" />

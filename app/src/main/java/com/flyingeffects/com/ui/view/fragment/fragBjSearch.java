@@ -253,13 +253,13 @@ public class fragBjSearch extends BaseFragment {
             LogUtil.d("oom3", "搜索" + StringUtil.beanToJSONString(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
                 @Override
-                protected void _onError(String message) {
+                protected void onSubError(String message) {
                     finishData();
 //                ToastUtil.showToast(message);
                 }
 
                 @Override
-                protected void _onNext(List<new_fag_template_item> data) {
+                protected void onSubNext(List<new_fag_template_item> data) {
                     LogUtil.d("oom3", "搜索结果" + StringUtil.beanToJSONString(data));
 
                     finishData();

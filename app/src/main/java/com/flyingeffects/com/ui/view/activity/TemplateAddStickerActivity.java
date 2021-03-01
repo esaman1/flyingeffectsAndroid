@@ -461,7 +461,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @Override
     public void stickerOnclickCallback(String str) {
         if (!TextUtils.isEmpty(str) && createViewForAddText != null) {
-            if (!str.equals("输入文本")) {
+            if (!"输入文本".equals(str)) {
                 createViewForAddText.setInputText(str);
             }
         }

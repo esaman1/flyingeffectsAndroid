@@ -106,12 +106,12 @@ public class MessageLongClickActivity extends Activity {
         Observable ob = Api.getDefault().delComment(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 EventBus.getDefault().post(new DeleteMessage(position, isFirstComment));
                 finish();
             }

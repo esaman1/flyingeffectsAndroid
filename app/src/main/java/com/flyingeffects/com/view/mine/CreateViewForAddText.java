@@ -142,7 +142,7 @@ public class CreateViewForAddText {
             }
         });
 
-        if (TextUtils.isEmpty(inputText)||inputText.equals("输入文本")) {
+        if (TextUtils.isEmpty(inputText)|| "输入文本".equals(inputText)) {
             editText.setText("");
             editText.setHint("输入文本");
         }
@@ -548,11 +548,11 @@ public class CreateViewForAddText {
         Observable ob = Api.getDefault().fontList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FontEnity>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(List<FontEnity> data) {
+            protected void onSubNext(List<FontEnity> data) {
                 listFont.clear();
                 listFont.addAll(data);
                 createTemplateTextEffectAdapterFont.notifyDataSetChanged();
@@ -572,11 +572,11 @@ public class CreateViewForAddText {
         Observable ob = Api.getDefault().fontBorder(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FontEnity>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(List<FontEnity> data) {
+            protected void onSubNext(List<FontEnity> data) {
                 listFrame.clear();
                 listFrame.addAll(data);
                 createTemplateTextEffectAdapterFrame.notifyDataSetChanged();
@@ -596,12 +596,12 @@ public class CreateViewForAddText {
         Observable ob = Api.getDefault().fontImage(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FontEnity>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
 
             }
 
             @Override
-            protected void _onNext(List<FontEnity> data) {
+            protected void onSubNext(List<FontEnity> data) {
                 listEffect.clear();
                 listEffect.addAll(data);
                 createTemplateTextEffectAdapterEffect.notifyDataSetChanged();

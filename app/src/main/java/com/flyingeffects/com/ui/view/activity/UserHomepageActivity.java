@@ -42,7 +42,6 @@ import rx.Observable;
  */
 public class UserHomepageActivity extends BaseActivity {
 
-
     private String toUserId;
 
     @BindView(R.id.iv_head)
@@ -181,12 +180,12 @@ public class UserHomepageActivity extends BaseActivity {
         Observable ob = Api.getDefault().followUser(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 if(isFocus){
                     tv_focus.setText("关注");
                     isFocus=false;
@@ -201,11 +200,6 @@ public class UserHomepageActivity extends BaseActivity {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
 
-
-
-
-
-
     /**
      * description ：请求用户信息
      * creation date: 2020/7/30
@@ -218,12 +212,12 @@ public class UserHomepageActivity extends BaseActivity {
         Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(UserInfo data) {
+            protected void onSubNext(UserInfo data) {
                 tv_name.setText(data.getNickname());
                 Glide.with(UserHomepageActivity.this)
                         .load(data.getPhotourl())
@@ -237,7 +231,7 @@ public class UserHomepageActivity extends BaseActivity {
                 tv_video_count.setText(data.getUser_follower());
                 tvNumber.setText("飞友号：" + data.getId());
                 String is_has_follow=data.getIs_has_follow();
-                if(!TextUtils.isEmpty(is_has_follow)&&is_has_follow.equals("0")){
+                if(!TextUtils.isEmpty(is_has_follow)&& "0".equals(is_has_follow)){
                     tv_focus.setText("关注");
                     isFocus=false;
                 }else{

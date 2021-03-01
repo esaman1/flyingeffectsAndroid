@@ -104,12 +104,12 @@ public class FansActivity extends BaseActivity {
         LogUtil.d("OOM2",StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<fansEnity>>(FansActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<fansEnity> data) {
+            protected void onSubNext(List<fansEnity> data) {
 
                 finishData();
                 if (isRefresh) {
@@ -196,12 +196,12 @@ public class FansActivity extends BaseActivity {
         Observable ob = Api.getDefault().followUser(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 LogUtil.d("OOM", StringUtil.beanToJSONString(data));
                 requestMessageCount();
             }

@@ -90,6 +90,8 @@ public class frag_choose_music_recent_updates extends BaseFragment {
 
     private int nowClickPosition;
 
+    private boolean isFromShoot=false;
+
 
     @Override
     protected int getContentLayout() {
@@ -105,6 +107,7 @@ public class frag_choose_music_recent_updates extends BaseFragment {
             id = bundle.getInt("id", 0);
             LogUtil.d("oom2", "id=" + id + "bundle != null");
             needDuration = bundle.getLong("needDuration");
+            isFromShoot=bundle.getBoolean("isFromShoot");
             LogUtil.d("oom2", "needDuration=" + needDuration);
         }
         initSmartRefreshLayout();
@@ -140,13 +143,13 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         }
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<ChooseMusic>>(getActivity()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 finishData();
              //   ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(List<ChooseMusic> data) {
+            protected void onSubNext(List<ChooseMusic> data) {
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -228,13 +231,16 @@ public class frag_choose_music_recent_updates extends BaseFragment {
                 nowClickPosition = position;
                 switch (view.getId()) {
                     case R.id.tv_make:
-                        Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("title",listData.get(position).getTitle());
-                        intent.putExtra("videoPath", listData.get(position).getAudio_url());
-                        intent.putExtra("needDuration", needDuration);
-                        intent.putExtra("isAudio", true);
-                        startActivity(intent);
+                        if(!DoubleClick.getInstance().isFastDoubleLongClick(2000)){
+                            Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra("isFromShoot",isFromShoot);
+                            intent.putExtra("title",listData.get(position).getTitle());
+                            intent.putExtra("videoPath", listData.get(position).getAudio_url());
+                            intent.putExtra("needDuration", needDuration);
+                            intent.putExtra("isAudio", true);
+                            startActivity(intent);
+                        }
                         break;
 
 
@@ -455,12 +461,12 @@ public class frag_choose_music_recent_updates extends BaseFragment {
         Observable ob = Api.getDefault().collectMusic(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getActivity()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "收藏音乐返回的值为" + str);
                 updateCollect(isCollect, music_id,title);

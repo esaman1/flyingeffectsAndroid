@@ -82,12 +82,12 @@ public class SignoutActivity extends BaseActivity {
         Observable ob = Api.getDefault().toDelete(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(SignoutActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 BaseConstans.SetUserToken("");
                 SignoutActivity.this.finish();
             }

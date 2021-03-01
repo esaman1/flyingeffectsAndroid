@@ -146,11 +146,8 @@ public class HomeMainActivity extends FragmentActivity {
         }
         initYouMeng();
         statisticsUpgradeApp();
-       initFaceSdkModel.initFaceSdk();
+        initFaceSdkModel.initFaceSdk();
     }
-
-
-
 
 
     private void initYouMeng() {
@@ -171,13 +168,13 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(UserInfo data) {
-                String str=StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM2","requestUserInfo="+str);
+            protected void onSubNext(UserInfo data) {
+                String str = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM2", "requestUserInfo=" + str);
                 Hawk.put("UserInfo", data);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -230,12 +227,12 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().commentcheck(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 LogUtil.d("checkUpdate", message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 try {
                     JSONObject ob = new JSONObject(str);
@@ -312,13 +309,13 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().checkUpdate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<checkVersion>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 LogUtil.d("checkUpdate", message);
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(checkVersion data) {
+            protected void onSubNext(checkVersion data) {
                 LogUtil.d("checkUpdate", StringUtil.beanToJSONString(data));
                 try {
                     if (data != null) {
@@ -402,10 +399,24 @@ public class HomeMainActivity extends FragmentActivity {
         fragments.add(new DressUpFragment());
         menu3F = new frag_user_center();
         fragments.add(menu3F);
-        home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(),fragments);
+        home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(), fragments);
         viewpager_home.setAdapter(adapter);
         viewpager_home.setOffscreenPageLimit(3);
         whichMenuSelect(1);
+        findViewById(R.id.iv_main_add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(BaseConstans.hasLogin()){
+                    Intent intent = new Intent(HomeMainActivity.this, FUBeautyActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                }else{
+                    Intent intent = new Intent(HomeMainActivity.this, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
 
@@ -535,7 +546,7 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void openMenu(int which) {
         setStatusBar();
-        viewpager_home.setCurrentItem(which,false);
+        viewpager_home.setCurrentItem(which, false);
         EventBus.getDefault().post(new RequestMessage());
     }
 
@@ -633,11 +644,11 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().configListForTemplateList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ConfigForTemplateList>(HomeMainActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(ConfigForTemplateList data) {
+            protected void onSubNext(ConfigForTemplateList data) {
                 if (data != null) {
                     BaseConstans.configList = data;
                 }
@@ -657,12 +668,12 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().getAllMessageNum(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<messageCount>(this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(messageCount data) {
+            protected void onSubNext(messageCount data) {
                 if (message_count != null) {
                     String allCount = data.getAll_num();
                     int intAllCount = Integer.parseInt(allCount);
@@ -695,23 +706,20 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
     /**
      * description ：统计
      * creation date: 2020/12/10
      * user : zhangtongju
      */
-    private void statisticsUpgradeApp(){
-        String  appCode = SystemUtil.getVersionCode(this);
-        String lastCode=Hawk.get("lastAppCode");
-        if(TextUtils.isEmpty(lastCode)||!lastCode.equals(appCode)){
-            if(!DoubleClick.getInstance().isFastDoubleClick()){
+    private void statisticsUpgradeApp() {
+        String appCode = SystemUtil.getVersionCode(this);
+        String lastCode = Hawk.get("lastAppCode");
+        if (TextUtils.isEmpty(lastCode) || !lastCode.equals(appCode)) {
+            if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 statisticsPhoneInfo();
             }
         }
     }
-
-
 
 
     /**
@@ -721,22 +729,21 @@ public class HomeMainActivity extends FragmentActivity {
      */
     private void statisticsPhoneInfo() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("ip",SystemUtil.getIPAddress(this));
+        params.put("ip", SystemUtil.getIPAddress(this));
         // 启动时间
         Observable ob = Api.getDefault().add_active(BaseConstans.getRequestHead(params));
-        LogUtil.d("OOM","用户ip="+StringUtil.beanToJSONString(params));
+        LogUtil.d("OOM", "用户ip=" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(HomeMainActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
 
 
 }

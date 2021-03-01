@@ -438,7 +438,7 @@ public class StringUtil {
         if (str != null && str.length() > 11) {
             String str_0 = str.substring(0, 10);
             String str_1 = str.substring(10, str.length());
-            if (str_1 != null && !str_1.equals("")) {
+            if (str_1 != null && !"".equals(str_1)) {
                 return str_0 + "\n" + str_1;
             }
             return str_0;
@@ -782,7 +782,7 @@ public class StringUtil {
     public static String encryption(String Str) {
         String strr = Str;
         String NowStr = "*";
-        if (Str != null && !Str.equals("")) {
+        if (Str != null && !"".equals(Str)) {
             String ss = Str.substring(1, Str.length() - 1);
             int length_ss = ss.length();
             for (int i = 0; i < length_ss; i++) {
@@ -831,7 +831,7 @@ public class StringUtil {
      * 判断字符串里面是否有汉字,没有就返回金额名称，有就不管
      */
     public static String HasChinase(String str) {
-        if (str != null && !str.equals("")) {
+        if (str != null && !"".equals(str)) {
             try {
                 byte[] bytes = str.getBytes("UTF-8");
                 if (bytes.length == str.length()) {
@@ -851,7 +851,7 @@ public class StringUtil {
      * 判断字符串里面是否有"%"
      */
     public static String HasChinasePercent(String str) {
-        if (str.equals("0")) {
+        if ("0".equals(str)) {
             str = "0.00";
         }
         if (str.contains("%")) {
@@ -869,7 +869,7 @@ public class StringUtil {
      */
     public static String ChangeDoubleToString(String str) {
         try {
-            if (str != null && !str.equals("")) {
+            if (str != null && !"".equals(str)) {
                 if (str.contains("元")) {
                     str = str.replace("元", "");
                 }
@@ -877,7 +877,7 @@ public class StringUtil {
                 //保留二位小数
                 DecimalFormat df = new DecimalFormat("###.00");
                 String str_df = df.format(double_str) + "";
-                if (str_df.equals(".00")) {
+                if (".00".equals(str_df)) {
                     str_df = "0.00";
                 }
                 return str_df;
@@ -896,7 +896,7 @@ public class StringUtil {
      */
     public static String ChangeDoubleToString_2(String str) {
         try {
-            if (str != null && !str.equals("")) {
+            if (str != null && !"".equals(str)) {
                 if (str.contains("元")) {
                     str = str.replace("元", "");
                 }
@@ -910,7 +910,7 @@ public class StringUtil {
                 double f1 = b.setScale(2, BigDecimal.ROUND_DOWN).doubleValue();//直接删除多余的小数位  11.116约=11.11
 //				double f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 String result = f1 + "";
-                if (result.equals(".00")) {
+                if (".00".equals(result)) {
                     result = "0.00";
                 }
                 return result;
@@ -931,7 +931,7 @@ public class StringUtil {
      */
     public static String ChangeDoubleToString_3(String str) {
         try {
-            if (str != null && !str.equals("")) {
+            if (str != null && !"".equals(str)) {
                 if (str.contains("%")) {
                     str = str.replace("%", "");
                 }
@@ -946,7 +946,7 @@ public class StringUtil {
                 double f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 int inter_f1 = (int) f1;
                 String result = inter_f1 + "";
-                if (result.equals(".00")) {
+                if (".00".equals(result)) {
                     result = "";
                 }
                 return result;

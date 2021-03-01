@@ -20,6 +20,10 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.record.SamplePlayer;
 import com.flyingeffects.com.utils.record.soundfile.SoundFile;
+import com.flyingeffects.com.view.RangeSeekBarForMusicView;
+import com.flyingeffects.com.view.RangeSeekBarView;
+import com.flyingeffects.com.view.beans.Thumb;
+import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
@@ -66,19 +70,23 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     }
 
 
-    boolean isCanSeek=true;
+    boolean isCanSeek = true;
+
     public void SeekToPositionMusic(int position) {
 
-
-        
 
         if (mPlayer != null) {
             mPlayer.start();
             mPlayer.seekTo(position);
+            nowTimerDuration=0;
             startTimer();
         }
     }
 
+
+    public String getSoundMusicPath() {
+        return localMusicTailorMvpModel.getSoundPath();
+    }
 
     public void setNeedDuration(int needDuration) {
         this.needDuration = needDuration;
@@ -199,7 +207,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
      */
     public void requestSoundData(String url) {
         String mFilename = url.replaceFirst("file://", "").replaceAll("%20", " ");
-        if (!mFilename.equals("record")) {
+        if (!"record".equals(mFilename)) {
             loadFromFile(mFilename);
         }
     }
@@ -319,7 +327,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             switch (msg.what) {
                 case 1:
                     nowTimerDuration += 500;
-                    if (nowTimerDuration == needDuration) {
+                    if (nowTimerDuration >=needDuration) {
                         nowTimerDuration = 0;
                         endTimer();
                     }
@@ -372,7 +380,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                     }
                     try {
                         FileUtil.copyFile(new File(path), SoundPath);
-                        localMusicTailorMvpView.isAudioCutDone(SoundPath);
+                        localMusicTailorMvpView.isAudioCutDone(SoundPath, localMusicTailorMvpModel.getSoundPath());
                     } catch (IOException e) {
                         e.printStackTrace();
                         LogUtil.d("OOM2", "复制文件报错" + e.getMessage());
@@ -412,6 +420,83 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             downProgressDialog.closePragressDialog();
             downProgressDialog = null;
         }
+    }
+
+
+    /**
+     * description ：初始化拖动条
+     * creation date: 2021/2/19
+     * user : zhangtongju
+     */
+    private RangeSeekBarForMusicView mRangeSeekBarView;
+
+    public void InitRangeSeekBar(RangeSeekBarForMusicView mRangeSeekBarView) {
+        this.mRangeSeekBarView = mRangeSeekBarView;
+        mRangeSeekBarView.addOnRangeSeekBarListener(new OnRangeSeekBarListener() {
+            @Override
+            public void onCreate(RangeSeekBarView rangeSeekBarView, int index, float value) {
+                // Do nothing
+            }
+
+            @Override
+            public void onSeek(RangeSeekBarView rangeSeekBarView, int index, float value) {
+            }
+
+            @Override
+            public void onSeekStart(RangeSeekBarView rangeSeekBarView, int index, float value) {
+                // Do nothing
+            }
+
+            @Override
+            public void onSeekStop(RangeSeekBarView rangeSeekBarView, int index, float value) {
+            }
+
+            @Override
+            public void onCreate(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+
+            }
+
+            @Override
+            public void onSeek(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+                onStopSeekThumbs(index, value);
+
+            }
+
+            @Override
+            public void onSeekStart(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+
+            }
+
+            @Override
+            public void onSeekStop(RangeSeekBarForMusicView rangeSeekBarView, int index, float value) {
+
+                onStopSeekThumbs(index, value);
+            }
+        });
+        setSeekBarPosition();
+        mRangeSeekBarView.setMinDistance(30);
+        mRangeSeekBarView.initMaxWidth();
+    }
+
+
+    private void setSeekBarPosition() {
+        new Handler().postDelayed(() -> mRangeSeekBarView.initMaxWidth(), 500);
+
+    }
+
+    float startPercent;
+    float endPercent;
+    private void onStopSeekThumbs(int index, float value) {
+
+
+        if(index==Thumb.LEFT){
+            startPercent= value / (float) 100;
+        }else{
+            endPercent= value / (float) 100;
+        }
+        localMusicTailorMvpView.onStopSeekThumbs(startPercent,endPercent);
+
+
     }
 
 

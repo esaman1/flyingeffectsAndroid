@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relative_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+
+    <android.opengl.GLSurfaceView
+        android:id="@+id/fu_base_gl_surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <RelativeLayout
+        android:id="@+id/relative_choose_music"
+        android:layout_width="118dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/strok_choose_music_bj"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="5dp">
+
+        <ImageView
+            android:id="@+id/iv_tiktok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:src="@mipmap/tiktok_icon" />
+
+        <com.flyingeffects.com.view.MarqueTextView
+            android:id="@+id/tv_chooseMusic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/iv_tiktok"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:ellipsize="marquee"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            android:text="选择音乐"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+
+    <ImageView
+        android:id="@+id/iv_close"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="36dp"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@mipmap/error" />
+
+
+    <!--右边栏-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="31dp"
+        android:layout_marginEnd="31dp"
+        android:orientation="vertical">
+
+
+        <include layout="@layout/view_shoot_item" />
+
+
+    </LinearLayout>
+
+
+    <!--底部拍摄-->
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="35dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:id="@+id/ll_stage_property"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_stage_property"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@mipmap/prop" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="道具"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/relative_click"
+            android:layout_width="74dp"
+            android:layout_height="74dp"
+            android:layout_gravity="center">
+
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view"
+                android:layout_width="74dp"
+                android:layout_height="74dp"
+                app:lottie_fileName="shoot_btn.json" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view_progress"
+                android:layout_width="74dp"
+                android:layout_height="74dp"
+                app:lottie_fileName="aa.json" />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@mipmap/logo" />
+
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="相冊"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
+
+
+    <TextView
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:id="@+id/tv_show_shoot_time"
+        android:visibility="invisible"
+        android:text="0秒"
+        android:layout_marginBottom="16dp"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/ll_bottom"
+        android:layout_height="wrap_content"/>
+
+
+
+    <com.example.horizontalselectedviewlibrary.HorizontalselectedView
+        android:id="@+id/horizontalselectedView"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_above="@+id/ll_bottom"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        app:HorizontalselectedViewSeesize="5"
+        app:HorizontalselectedViewSelectedTextColor="#FFFFFF"
+        app:HorizontalselectedViewSelectedTextSize="60"
+        app:HorizontalselectedViewTextColor="#566265"
+        app:HorizontalselectedViewTextSize="60"
+
+        />
+
+
+
+
+
+    <LinearLayout
+        android:id="@+id/photograph_light_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="460dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="278dp"
+        android:layout_marginRight="35dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="38dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/photograph_light_sun" />
+
+        <com.flyingeffects.com.utils.FuLive.VerticalSeekBar
+            android:id="@+id/photograph_light_seek"
+            android:layout_width="wrap_content"
+            android:layout_height="360dp"
+            android:layout_weight="1"
+            android:progressDrawable="@drawable/photograph_seek_bar_color"
+            android:thumb="@drawable/photograph_light_thumb" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="38dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/photograph_light_moon" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tv_count_down_right"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="180sp"
+        android:textStyle="bold" />
+
+    <com.flyingeffects.com.utils.FuLive.CameraFocus
+        android:id="@+id/photograph_focus"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/photograph_focus"
+        app:focus_height="150dp"
+        app:focus_scale="0.666"
+        app:focus_width="150dp" />
+
+
+    <RelativeLayout
+        android:id="@+id/relative_content"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_alignParentBottom="true"
+        android:background="#90000000"
+        android:visibility="gone" />
+
+
+<!--    <androidx.viewpager.widget.ViewPager-->
+<!--        android:id="@+id/viewpager"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:visibility="gone" />-->
+
+
+</RelativeLayout>

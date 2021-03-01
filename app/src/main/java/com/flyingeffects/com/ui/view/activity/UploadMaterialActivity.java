@@ -250,7 +250,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 break;
             case R.id.tv_choose_pic:
 
-                if (ed_nickname.getText() == null || ed_nickname.getText().toString().equals("")) {
+                if (ed_nickname.getText() == null || "".equals(ed_nickname.getText().toString())) {
                     ToastUtil.showToast("请填写昵称");
                     return;
                 }
@@ -260,7 +260,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     return;
                 }
 
-                if (ed_describe.getText() == null || ed_describe.getText().toString().equals("")) {
+                if (ed_describe.getText() == null || "".equals(ed_describe.getText().toString())) {
                     ToastUtil.showToast("请填写描述");
                     return;
                 }
@@ -553,14 +553,14 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         LogUtil.d("OOM3", "params="+StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(UploadMaterialActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 LogUtil.d("OOM3", "_onError=" + message);
                 WaitingDialog.closePragressDialog();
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(UserInfo data) {
+            protected void onSubNext(UserInfo data) {
 //                String str = StringUtil.beanToJSONString(data);
 //                LogUtil.d("OOM3", "requestLogin=" + str);
                 statisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "13_video");

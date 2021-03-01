@@ -155,13 +155,13 @@ public class DressUpModel {
         Observable ob = Api.getDefault().meargeHuman(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<String>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 LogUtil.d("OOM3", "_onError");
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(String id) {
+            protected void onSubNext(String id) {
                 LogUtil.d("OOM3", "informServers");
                 startTimer(id);
             }
@@ -219,7 +219,7 @@ public class DressUpModel {
         LogUtil.d("OOM3", "requestDressUpCallback的请求参数为" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<HumanMerageResult>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 LogUtil.d("OOM3", "message=" + message);
                 ToastUtil.showToast(message);
                 progress.closePragressDialog();
@@ -232,7 +232,7 @@ public class DressUpModel {
             }
 
             @Override
-            protected void _onNext(List<HumanMerageResult> data) {
+            protected void onSubNext(List<HumanMerageResult> data) {
                 if (data != null && data.size() > 0) {
                     String str = StringUtil.beanToJSONString(data);
                     LogUtil.d("OOM3", "请求的结果为：" + str);

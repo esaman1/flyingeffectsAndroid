@@ -19,70 +19,69 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     private TemplateMvpView home_mvpView;
     private TemplateMvpModel home_model;
 
-    public TemplatePresenter(Context context, TemplateMvpView mvp_view,String fromTo,String templateName) {
+    public TemplatePresenter(Context context, TemplateMvpView mvp_view, String fromTo, String templateName) {
         this.home_mvpView = mvp_view;
-        home_model = new TemplateMvpModel(context, this,fromTo,templateName);
+        home_model = new TemplateMvpModel(context, this, fromTo, templateName);
     }
 
-    public void intoMattingVideo(String path,String name){
-        home_model.intoMattingVideo(path,name);
+
+    public void intoMattingVideo(String path, String name) {
+        home_model.intoMattingVideo(path, name);
     }
 
-    public void StopBgmMusic(){
+    public void StopBgmMusic() {
         home_model.StopBgmMusic();
     }
 
-    public void chooseBj(new_fag_template_item templateItem){
+    public void chooseBj(new_fag_template_item templateItem) {
         home_model.chooseBj(templateItem);
     }
 
-    public void getBjMusic(String videoPath){
+    public void getBjMusic(String videoPath) {
         home_model.getBjMusic(videoPath);
     }
 
 
-    public void getButtomIcon(String path){
+    public void getButtomIcon(String path) {
         home_model.getButtomIcon(path);
     }
 
-    public void alertAlbumUpdate(boolean isSuccess){
+    public void alertAlbumUpdate(boolean isSuccess) {
 //        home_model.alertAlbumUpdate(isSuccess);
     }
 
 
-    public void onDestroy(){
+    public void onDestroy() {
         home_model.onDestroy();
     }
 
 
-    public void getReplaceableFilePath(){
+    public void getReplaceableFilePath() {
         home_model.getReplaceableFilePath();
     }
 
-    public void playBGMMusic(String path,int progress){
-        home_model.playBGMMusic(path,progress);
+    public void playBGMMusic(String path, int progress) {
+        home_model.playBGMMusic(path, progress);
     }
 
 
-    public void getMattingVideoCover(String path){
+    public void getMattingVideoCover(String path) {
         home_model.getMattingVideoCover(path);
     }
 
 
-    public void renderVideo(String mTemplateFolder,String mAudio1Path,boolean isPreview,int nowTemplateIsAnim,List<String> originalPath){
-        home_model.renderVideo(mTemplateFolder,mAudio1Path,isPreview,nowTemplateIsAnim,originalPath);
+    public void renderVideo(String mTemplateFolder, String mAudio1Path, boolean isPreview, int nowTemplateIsAnim, List<String> originalPath) {
+        home_model.renderVideo(mTemplateFolder, mAudio1Path, isPreview, nowTemplateIsAnim, originalPath);
     }
 
 
-
-    public void loadTemplate(String filePath, AssetDelegate delegate,int nowTemplateIsAnim,int nowTemplateIsMattingVideo){
-        home_model.loadTemplate(filePath,delegate,nowTemplateIsAnim,nowTemplateIsMattingVideo);
+    public void loadTemplate(String filePath, AssetDelegate delegate, int nowTemplateIsAnim, int nowTemplateIsMattingVideo) {
+        home_model.loadTemplate(filePath, delegate, nowTemplateIsAnim, nowTemplateIsMattingVideo);
     }
 
 
-
-    public void ChangeMaterial(List<String> list,int maxChooseNum,int needAssetsCount ){
-        home_model.ChangeMaterial(list,maxChooseNum,needAssetsCount);
+    public void ChangeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
+        home_model.ChangeMaterial(list, maxChooseNum, needAssetsCount);
     }
 
 
@@ -97,8 +96,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
     @Override
-    public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> listItem, List<String> list_all,List<String> listAssets) {
-        home_mvpView.ChangeMaterialCallback(listItem,list_all,listAssets);
+    public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> listItem, List<String> list_all, List<String> listAssets) {
+        home_mvpView.ChangeMaterialCallback(listItem, list_all, listAssets);
     }
 
     @Override
@@ -112,13 +111,13 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
     @Override
-    public void showMattingVideoCover(Bitmap bitmap,String path) {
-        home_mvpView.showMattingVideoCover(bitmap,path);
+    public void showMattingVideoCover(Bitmap bitmap, String path) {
+        home_mvpView.showMattingVideoCover(bitmap, path);
     }
 
     @Override
-    public void ChangeMaterialCallbackForVideo(String originalPath, String path,boolean needMatting) {
-        home_mvpView.ChangeMaterialCallbackForVideo(originalPath,path,needMatting);
+    public void ChangeMaterialCallbackForVideo(String originalPath, String path, boolean needMatting) {
+        home_mvpView.changeMaterialCallbackForVideo(originalPath, path, needMatting);
     }
 
     @Override
@@ -137,14 +136,14 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
-    public void StatisticsToSave(String templateId){
+    public void StatisticsToSave(String templateId) {
         home_model.StatisticsToSave(templateId);
 
     }
 
 
-    public void toDressUp(String path,String templateId){
-        home_model.toDressUp(path,templateId);
+    public void toDressUp(String path, String templateId) {
+        home_model.toDressUp(path, templateId);
     }
 
 

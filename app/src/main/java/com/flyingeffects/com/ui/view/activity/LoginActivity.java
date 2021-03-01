@@ -45,6 +45,7 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.VideoUtils;
 import com.flyingeffects.com.view.MyVideoView;
+import com.nineton.ntadsdk.NTAdConfig;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.UMAuthListener;
@@ -63,6 +64,7 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.nt.lib.analytics.NTAnalytics;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -116,6 +118,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         if (null != shanyan_login_relative) {
             shanyan_login_relative.removeAllViews();
         }
+
         if (null != videoView) {
             videoView.setOnCompletionListener(null);
             videoView.setOnPreparedListener(null);
@@ -180,7 +183,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String strPassword = editTextPassword.getText().toString().trim();
-                if (!strPassword.equals("")) {
+                if (!"".equals(strPassword)) {
                     nextStep(true);
                     tv_login.setEnabled(true);
                     endTimer();
@@ -318,12 +321,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void requestLogin() {
 
-        if (editTextUsername.getText().toString().equals("")) {
+        if ("".equals(editTextUsername.getText().toString())) {
             ToastUtil.showToast("请输入手机号");
             return;
         }
 
-        if (editTextPassword.getText().toString().equals("")) {
+        if ("".equals(editTextPassword.getText().toString())) {
             ToastUtil.showToast("请输入验证码");
             return;
         }
@@ -388,12 +391,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         Observable ob = Api.getDefault().toSms(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(LoginActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 startTimer();
                 ToastUtil.showToast("发送成功");
                 String str = StringUtil.beanToJSONString(data);
@@ -413,17 +416,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         HashMap<String, String> params = new HashMap<>();
         params.put("phone", editTextUsername);
         params.put("code", password);
+
+        params.put("center_imei", NTAnalytics.getIMEI());
         // 启动时间
         LogUtil.d("OOM",StringUtil.beanToJSONString(params));
         Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(UserInfo data) {
+            protected void onSubNext(UserInfo data) {
                 Hawk.put("UserInfo", data);
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "requestLogin=" + str);
@@ -451,12 +456,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             params.put("nickname", nickname);
             params.put("photourl", photourl);
             params.put("openid", openid);
+            params.put("center_imei", NTAnalytics.getIMEI());
             params.put("unionid", unionid);
             // 启动时间
             Observable ob = Api.getDefault().toLoginSms(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
                 @Override
-                protected void _onError(String message) {
+                protected void onSubError(String message) {
                     if (!isOnDestroy) {
                         WaitingDialog.closePragressDialog();
                         ToastUtil.showToast(message);
@@ -466,7 +472,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 }
 
                 @Override
-                protected void _onNext(UserInfo data) {
+                protected void onSubNext(UserInfo data) {
                     if (!isOnDestroy) {
                         Hawk.put("UserInfo", data);
                         String str = StringUtil.beanToJSONString(data);
@@ -622,7 +628,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Subscribe
     public void onEventMainThread(WxLogin event) {
-        if (event.getTag().equals("wxLogin")) {
+        if ("wxLogin".equals(event.getTag())) {
             if (!isWeixinAvilible(this)) {
                 ToastUtil.showToast("您还未安装微信");
             } else {
@@ -645,7 +651,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         if (pinfo != null) {
             for (int i = 0; i < pinfo.size(); i++) {
                 String pn = pinfo.get(i).packageName;
-                if (pn.equals("com.tencent.mm")) {
+                if ("com.tencent.mm".equals(pn)) {
                     return true;
                 }
             }

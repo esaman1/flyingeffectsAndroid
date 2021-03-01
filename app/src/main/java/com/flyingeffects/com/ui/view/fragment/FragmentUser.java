@@ -124,12 +124,12 @@ public class FragmentUser extends BaseFragment {
         Observable ob = Api.getDefault().followUser(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(getContext()) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
                 LogUtil.d("OOM", StringUtil.beanToJSONString(data));
                 attentionUserRequestFagData();
             }
@@ -154,13 +154,13 @@ public class FragmentUser extends BaseFragment {
             Observable ob = Api.getDefault().getSearchUserList(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<SearchUserEntity>>(getContext()) {
                 @Override
-                protected void _onError(String message) {
+                protected void onSubError(String message) {
                     smartRefreshLayoutUser.finishRefresh();
                     smartRefreshLayoutUser.finishLoadMore();
                 }
 
                 @Override
-                protected void _onNext(List<SearchUserEntity> datas) {
+                protected void onSubNext(List<SearchUserEntity> datas) {
                     LogUtil.d("OOM", StringUtil.beanToJSONString(datas));
                     smartRefreshLayoutUser.finishRefresh();
                     smartRefreshLayoutUser.finishLoadMore();

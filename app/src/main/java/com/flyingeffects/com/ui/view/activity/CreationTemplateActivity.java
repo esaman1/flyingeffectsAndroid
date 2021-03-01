@@ -73,6 +73,7 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * description ：用户创作页面,里面主要用了langSong 的工具类，对视频进行贴纸的功能
@@ -102,8 +103,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     @BindView(R.id.id_vview_realtime_gllayout)
     ViewLayerRelativeLayout viewLayerRelativeLayout;
-    @BindView(R.id.relative_playerView)
-    RelativeLayout relative_playerView;
+
     @BindView(R.id.ll_space)
     LinearLayout ll_space;
     @BindView(R.id.tv_music)
@@ -279,13 +279,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             public void progress(long progress, boolean isDrag) {
                 LogUtil.d("OOM4", "mProgressBarViewProgress=" + progress);
                 setgsyVideoProgress(progress);
+
                 if (progress < mCutStartTime) {
                     progress = mCutStartTime;
                 }
+
                 if (progress > mCutEndTime) {
                     progress = mCutEndTime;
                 }
-
 
                 if (isDrag) {
                     mSeekBarViewManualDrag = false;
@@ -492,7 +493,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_delete_all_text, R.id.iv_add_sticker, R.id.iv_top_back,
-            R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.id_vview_realtime_gllayout, R.id.tv_add_text,
+            R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.tv_add_text,
             R.id.rl_creation_container})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -531,9 +532,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 break;
 
 
-            case R.id.id_vview_realtime_gllayout:
-                presenter.onclickRelativeLayout();
-                break;
+//            case R.id.id_vview_realtime_gllayout:
+//                presenter.onclickRelativeLayout();
+//                break;
 
 
             case R.id.ll_play:
@@ -887,34 +888,36 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
         if (ll_green_background.getVisibility() == View.VISIBLE) {
             //可见的时候需要修稿这里
-            if (isLandscape) {
+            Observable.just(isLandscape).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> {
+                if (isLandscape) {
+                    //横屏的情况
+                    iv_green_background.post(() -> {
+                        int oriWidth = ll_space.getWidth();
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                        relativeLayoutParams3.width = oriWidth;
+                        relativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
+                        ll_green_background.setLayoutParams(relativeLayoutParams3);
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                        relativeLayoutParams4.width = oriWidth;
+                        relativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
+                        iv_green_background.setLayoutParams(relativeLayoutParams4);
+                    });
+                } else {
+                    iv_green_background.post(() -> {
+                        int oriHeight = ll_space.getHeight();
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                        relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
+                        relativeLayoutParams3.height = oriHeight;
+                        ll_green_background.setLayoutParams(relativeLayoutParams3);
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                        relativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
+                        relativeLayoutParams4.height = oriHeight;
+                        iv_green_background.setLayoutParams(relativeLayoutParams4);
+                    });
+                }
+            });
 
 
-                //横屏的情况
-                iv_green_background.post(() -> {
-                    int oriWidth = ll_space.getWidth();
-                    RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
-                    relativeLayoutParams3.width = oriWidth;
-                    relativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
-                    ll_green_background.setLayoutParams(relativeLayoutParams3);
-                    RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
-                    relativeLayoutParams4.width = oriWidth;
-                    relativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
-                    iv_green_background.setLayoutParams(relativeLayoutParams4);
-                });
-            } else {
-                iv_green_background.post(() -> {
-                    int oriHeight = ll_space.getHeight();
-                    RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
-                    relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
-                    relativeLayoutParams3.height = oriHeight;
-                    ll_green_background.setLayoutParams(relativeLayoutParams3);
-                    RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
-                    relativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
-                    relativeLayoutParams4.height = oriHeight;
-                    iv_green_background.setLayoutParams(relativeLayoutParams4);
-                });
-            }
         }
 
 
@@ -1022,7 +1025,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void stickerOnclickCallback(String str) {
         if (!TextUtils.isEmpty(str) && createViewForAddText != null) {
-            if (!str.equals("输入文本")) {
+            if (!"输入文本".equals(str)) {
                 createViewForAddText.setInputText(str);
             }
         }
@@ -1438,6 +1441,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         Observable.just(event.getPath()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(event.getPath()))) {
                 ll_green_background.setVisibility(View.VISIBLE);
+                scrollView.setVisibility(View.GONE);
                 presenter.setmVideoPath("");
                 videoPath = "";
                 showGreenBj(false);
@@ -1471,6 +1475,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
                 videoPath = event.getPath();
                 ll_green_background.setVisibility(View.GONE);
+                scrollView.setVisibility(View.VISIBLE);
                 setPlayerViewSize(nowUiIsLandscape);
                 initExo(videoPath);
                 presenter.setmVideoPath(videoPath);
@@ -1816,7 +1821,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             if (TextUtils.equals(id, String.valueOf(stickerView.getStickerNoIncludeAnimId()))) {
-                if (!TextUtils.isEmpty(id) && id.equals("0")) {
+                if (!TextUtils.isEmpty(id) && "0".equals(id)) {
+                    lastmCutTime = 0;
                     LogUtil.d("playBGMMusic", "需要改变开始时间和结束时间---musicStartFirstTime=" + startTime);
                     //需要改变开始时间和结束时间
                     musicStartFirstTime = startTime;

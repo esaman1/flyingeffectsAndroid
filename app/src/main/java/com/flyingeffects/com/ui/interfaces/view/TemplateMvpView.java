@@ -23,7 +23,7 @@ public interface TemplateMvpView {
     void showMattingVideoCover(Bitmap bp,String bpPath);
     void showBottomIcon(String path);
 
-    void ChangeMaterialCallbackForVideo(String originalPath,String path,boolean needMatting);
+    void changeMaterialCallbackForVideo(String originalPath, String path, boolean needMatting);
 
     void getSpliteMusic(String path);
 

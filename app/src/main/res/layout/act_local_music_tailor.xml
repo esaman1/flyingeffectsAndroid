@@ -85,17 +85,43 @@
         </LinearLayout>
 
 
-        <com.flyingeffects.com.view.histogram.MyBarChartView
-            android:id="@+id/mybarCharView"
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            app:bar_color="#5496FF"
             android:layout_marginTop="30dp"
-            app:bottom_line_color="#ededed"
-            app:bottom_text_color="#939393"
-            app:top_text_color="#939393" />
+            android:layout_height="50dp">
+
+            <com.flyingeffects.com.view.histogram.MyBarChartView
+                android:id="@+id/mybarCharView"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                app:bar_color="#5496FF"
+                app:bottom_line_color="#ededed"
+                app:bottom_text_color="#939393"
+                app:top_text_color="#939393" />
+
+
+
+            <com.flyingeffects.com.view.RangeSeekBarForMusicView
+                android:id="@+id/timeLineBar"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_centerInParent="true" />
+
+<!--            <com.flyingeffects.com.view.RangeSeekBarView-->
+<!--                android:id="@+id/timeLineBar"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="52dp"-->
+<!--                android:layout_centerInParent="true" />-->
+
+
+
+        </RelativeLayout>
+
+
+
 
 
 

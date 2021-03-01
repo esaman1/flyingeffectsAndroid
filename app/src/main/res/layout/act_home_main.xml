@@ -17,6 +17,9 @@
 
     <ImageView
         android:id="@+id/iv_back_menu_0"
+
+
+        app:layout_constraintHorizontal_weight="1"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/color_main_menu_back"
@@ -54,11 +57,12 @@
         android:id="@+id/iv_back_menu_1"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layout_constraintHorizontal_weight="1"
         android:background="@color/color_main_menu_back"
         android:contentDescription="@string/text_mould"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/iv_back_menu_2"
         app:layout_constraintStart_toEndOf="@id/iv_back_menu_0"
+        app:layout_constraintEnd_toStartOf="@id/iv_back_menu_add"
         app:layout_constraintTop_toBottomOf="@id/viewpager_home" />
 
 <!--    <ImageView-->
@@ -80,21 +84,61 @@
         android:text="@string/text_mould"
         android:textColor="@color/white"
         android:textSize="@dimen/text_16sp_size"
-        app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_1"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/iv_back_menu_1"
         app:layout_constraintStart_toStartOf="@id/iv_back_menu_1"
         app:layout_constraintTop_toBottomOf="@id/viewpager_home"
         app:layout_constraintVertical_chainStyle="packed" />
 
+
+
+    <ImageView
+        android:id="@+id/iv_back_menu_add"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHorizontal_weight="1"
+        android:background="@color/color_main_menu_back"
+        android:contentDescription="@string/text_mould"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_back_menu_1"
+        app:layout_constraintEnd_toStartOf="@id/iv_back_menu_2"
+        app:layout_constraintTop_toBottomOf="@id/viewpager_home" />
+
+
+
+    <ImageView
+        android:id="@+id/iv_main_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_mould"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/home_add"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_16sp_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_add"
+        app:layout_constraintStart_toStartOf="@id/iv_back_menu_add"
+        app:layout_constraintTop_toBottomOf="@id/viewpager_home"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+
+
+
+
+
+
+
+
     <ImageView
         android:id="@+id/iv_back_menu_2"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layout_constraintHorizontal_weight="1"
         android:background="@color/color_main_menu_back"
         android:contentDescription="@string/text_search"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/iv_back_menu_3"
-        app:layout_constraintStart_toEndOf="@id/iv_back_menu_1"
+        app:layout_constraintStart_toEndOf="@id/iv_back_menu_add"
         app:layout_constraintTop_toBottomOf="@id/viewpager_home" />
 
 <!--    <ImageView-->
@@ -108,6 +152,22 @@
 <!--        app:layout_constraintStart_toStartOf="@id/iv_back_menu_2"-->
 <!--        app:layout_constraintTop_toTopOf="@id/iv_back_menu_2"-->
 <!--        app:layout_constraintVertical_chainStyle="packed" />-->
+
+
+
+
+
+
+    <!--    <ImageView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:src="@mipmap/home_add"-->
+<!--        android:contentDescription="@string/text_search"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_add"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/iv_back_menu_add"-->
+<!--        app:layout_constraintStart_toStartOf="@id/iv_back_menu_add"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/viewpager_home"-->
+<!--        app:layout_constraintVertical_chainStyle="packed"/>-->
 
     <TextView
         android:id="@+id/tv_main_2"
@@ -125,6 +185,7 @@
     <ImageView
         android:id="@+id/iv_back_menu_3"
         android:layout_width="0dp"
+        app:layout_constraintHorizontal_weight="1"
         android:layout_height="0dp"
         android:background="@color/color_main_menu_back"
         android:contentDescription="@string/text_mine"

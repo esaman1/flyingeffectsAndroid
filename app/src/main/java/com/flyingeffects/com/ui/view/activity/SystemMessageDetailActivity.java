@@ -112,12 +112,12 @@ public class SystemMessageDetailActivity extends BaseActivity {
             Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(this) {
                 @Override
-                protected void _onError(String message) {
+                protected void onSubError(String message) {
                     LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
                 }
 
                 @Override
-                protected void _onNext(new_fag_template_item data) {
+                protected void onSubNext(new_fag_template_item data) {
                     allData.clear();
                     Intent intent =new Intent(SystemMessageDetailActivity.this,PreviewUpAndDownActivity.class);
                     String type = data.getTemplate_type();
@@ -129,7 +129,7 @@ public class SystemMessageDetailActivity extends BaseActivity {
                     intent.putExtra("nowSelectPage", 1);
                     intent.putExtra("templateId", data.getTemplate_id());
                     intent.putExtra("isCanLoadMore", false);
-                    if (!TextUtils.isEmpty(type) && type.equals("2")) {
+                    if (!TextUtils.isEmpty(type) && "2".equals(type)) {
                         intent.putExtra("fromTo", FromToTemplate.ISBJ);
                     } else {
                         intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
@@ -178,13 +178,13 @@ public class SystemMessageDetailActivity extends BaseActivity {
         Observable ob = Api.getDefault().systemessageinfo(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageDetailAllEnity>(SystemMessageDetailActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 finishData();
                 Log.e("OOM", "_onError: " + message);
             }
 
             @Override
-            protected void _onNext(SystemMessageDetailAllEnity AllData) {
+            protected void onSubNext(SystemMessageDetailAllEnity AllData) {
                 List<SystemMessageDetailEnity> data=AllData.getList();
                 finishData();
                 if (isRefresh) {
@@ -220,12 +220,12 @@ public class SystemMessageDetailActivity extends BaseActivity {
         Observable ob = Api.getDefault().addTimes(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageDetailAllEnity>(SystemMessageDetailActivity.this) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
 
             }
 
             @Override
-            protected void _onNext(SystemMessageDetailAllEnity AllData) {
+            protected void onSubNext(SystemMessageDetailAllEnity AllData) {
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

@@ -17,8 +17,12 @@ import com.flyingeffects.com.ui.interfaces.view.LocalMusicTailorMvpView;
 import com.flyingeffects.com.ui.presenter.LocalMusicTailorPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
+import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.view.RangeSeekBarForMusicView;
+import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.histogram.MyBarChartView;
 import com.flyingeffects.com.view.histogram.MyBarChartView.BarData;
+import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.util.ArrayList;
@@ -39,6 +43,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
 
     @BindView(R.id.animation_view_2)
     LottieAnimationView animation_view_2;
+
 
     @BindView(R.id.animation_view)
     LottieAnimationView animation_view;
@@ -80,6 +85,21 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     private String title;
 
 
+    @BindView(R.id.timeLineBar)
+    RangeSeekBarForMusicView mRangeSeekBarView;
+
+
+    /**
+     * 当前是不是无限的
+     */
+    private boolean isInfinite = false;
+
+    /**
+     * 是否来自拍摄页面
+     */
+    private boolean isFromShoot;
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_local_music_tailor;
@@ -89,7 +109,8 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     protected void initView() {
         tv_top_submit.setVisibility(View.VISIBLE);
         tv_top_submit.setText("下一步");
-        title=getIntent().getStringExtra("title");
+        isFromShoot = getIntent().getBooleanExtra("isFromShoot", false);
+        title = getIntent().getStringExtra("title");
         ((TextView) findViewById(R.id.tv_top_title)).setText("裁剪音乐");
         findViewById(R.id.iv_top_back).setOnClickListener(view -> finish());
         Presenter = new LocalMusicTailorPresenter(this, this);
@@ -97,6 +118,14 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         allDuration = videoInfo.getDuration();
         needDuration = getIntent().getLongExtra("needDuration", 10000);
+        if (needDuration == 0) {
+            isInfinite = false;
+            needDuration = allDuration;
+            mRangeSeekBarView.setVisibility(View.VISIBLE);
+        } else {
+            isInfinite = true;
+            mRangeSeekBarView.setVisibility(View.GONE);
+        }
         Presenter.setNeedDuration((int) needDuration);
         tv_allDuration.setText("模板时长" + TimeUtils.timeParse(needDuration));
         mybarCharView.setCallback(new MyBarChartView.ProgressCallback() {
@@ -106,23 +135,21 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                     nowPlayStartTime = (long) (allDuration * percent);
                     tv_start.setText(TimeUtils.timeParse(nowPlayStartTime));
                     nowPlayEndTime = nowPlayStartTime + needDuration;
-                    if(allDuration<needDuration){
+                    if (allDuration < needDuration) {
                         tv_end.setText(TimeUtils.timeParse(allDuration));
-                    }else{
+                    } else {
                         tv_end.setText(TimeUtils.timeParse(nowPlayEndTime));
                     }
                 });
             }
 
-
             @Override
             public void isDone() {
                 startTimer();
-
-
             }
         });
         WaitingDialog.openPragressDialog(this);
+        Presenter.InitRangeSeekBar(mRangeSeekBarView);
     }
 
 
@@ -181,8 +208,6 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     }
 
 
-
-
     /**
      * description ：音频播放完成回调
      * creation date: 2020/9/1
@@ -203,9 +228,9 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     }
 
     @Override
-    public void isAudioCutDone(String audioPath) {
+    public void isAudioCutDone(String audioPath, String originalPath) {
         LogUtil.d("OOM2", "裁剪完成后音频的地址为" + audioPath);
-        EventBus.getDefault().post(new CutSuccess(audioPath));
+        EventBus.getDefault().post(new CutSuccess(audioPath, originalPath, title));
         this.finish();
     }
 
@@ -215,15 +240,47 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
     }
 
 
+    /**
+     * description ：无限滑动时候的百分比
+     * creation date: 2021/2/19
+     * user : zhangtongju
+     */
+    @Override
+    public void onStopSeekThumbs(float startPercent, float endPercent) {
+        runOnUiThread(() -> {
+            nowPlayStartTime = (long) (allDuration * startPercent);
+            tv_start.setText(TimeUtils.timeParse(nowPlayStartTime));
+            if (endPercent != 0) {
+                nowPlayEndTime = (long) (allDuration * endPercent);
+            } else {
+                nowPlayEndTime = allDuration;
+            }
+            tv_end.setText(TimeUtils.timeParse(nowPlayEndTime));
+        });
+        Presenter.setNeedDuration((int) (nowPlayEndTime-nowPlayStartTime));
+        startTimer();
+
+    }
+
+
     @Override
     @OnClick({R.id.tv_top_submit})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_top_submit:
-                //裁剪保存
-                statisticsEventAffair.getInstance().setFlag(LocalMusicTailorActivity.this, "16_pick music_apply",title);
-
-                Presenter.toSaveCutMusic(nowPlayStartTime, nowPlayEndTime);
+                if (isFromShoot && needDuration > allDuration) {
+                    //不裁剪大于当前音频的
+                    EventBus.getDefault().post(new CutSuccess(Presenter.getSoundMusicPath(), Presenter.getSoundMusicPath(), title));
+                    this.finish();
+                } else {
+                    //裁剪保存
+                    statisticsEventAffair.getInstance().setFlag(LocalMusicTailorActivity.this, "16_pick music_apply", title);
+                   if(nowPlayEndTime-nowPlayStartTime<1000){
+                       ToastUtil.showToast("裁剪时间太短啦");
+                   }else{
+                       Presenter.toSaveCutMusic(nowPlayStartTime, nowPlayEndTime);
+                   }
+                }
                 break;
 
 
@@ -232,8 +289,6 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
         }
 
     }
-
-    ;
 
 
     private Timer timer;
@@ -260,7 +315,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
                 handler.sendEmptyMessage(1);
             }
         };
-        timer.schedule(task, 0, 500);
+        timer.schedule(task, 1000, 1000);
     }
 
 

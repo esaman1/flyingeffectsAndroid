@@ -454,12 +454,12 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         Observable ob = Api.getDefault().getStickerTypeList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerTypeEntity>>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void _onNext(ArrayList<StickerTypeEntity> list) {
+            protected void onSubNext(ArrayList<StickerTypeEntity> list) {
                 List<Fragment> fragments = new ArrayList<>();
                 String[] titles = new String[list.size()];
                 for (int i = 0; i < list.size(); i++) {
@@ -980,7 +980,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         statisticsEventAffair.getInstance().setFlag(context, "17_zdy_cutout_save");
                         //开启抠像
                         if (isMatting) {
-                            saveToAlbum(stickView.getClipPath());
+                            if(!TextUtils.isEmpty(stickView.getClipPath())){
+                                saveToAlbum(stickView.getClipPath());
+                            }else{
+                                saveToAlbum(stickView.getResPath());
+                            }
                         } else {
                             //没有开启抠像
                             if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
@@ -992,7 +996,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                 });
                             } else {
                                 //取原图片的路径保存
-                                saveToAlbum(stickView.getOriginalPath());
+                                if(!TextUtils.isEmpty(stickView.getOriginalPath())){
+                                    saveToAlbum(stickView.getOriginalPath());
+                                }else{
+                                    saveToAlbum(stickView.getResPath());
+                                }
                             }
                         }
                     }
@@ -1555,11 +1563,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         Observable ob = Api.getDefault().saveTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
             @Override
-            protected void _onError(String message) {
+            protected void onSubError(String message) {
             }
 
             @Override
-            protected void _onNext(Object data) {
+            protected void onSubNext(Object data) {
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

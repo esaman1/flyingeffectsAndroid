@@ -61,7 +61,13 @@ public class videoGetFrameModel {
         nowExtractVideoNum = 0;
         allVideoPathCount = videoPath.size();
         //逻辑修改为 抠图为5-25
-        perAllTime = 25 / allVideoPathCount + 1;
+        if (BaseConstans.IsOpenChannelAdaptive && "huawei".equals(BaseConstans.getChannel())) {
+            perAllTime = 95 / allVideoPathCount + 1;
+        } else {
+            perAllTime = 25 / allVideoPathCount + 1;
+        }
+
+
     }
 
 
@@ -153,9 +159,9 @@ public class videoGetFrameModel {
             mExtractFrame.setOnExtractProgressListener((bmp, ptsUS) -> {
                 frameCount++;
                 progress = (int) ((frameCount / (float) allFrame) * perAllTime);
-                LogUtil.d("oom","当前抠图的进度为"+progress);
+                LogUtil.d("oom", "当前抠图的进度为" + progress);
                 progress = (int) (progress + perAllTime * (nowExtractVideoNum - 1));
-                LogUtil.d("oom","当前抠图总的进度为"+progress);
+                LogUtil.d("oom", "当前抠图总的进度为" + progress);
                 callback.isExtractSuccess(false, progress);
 
 //                    new Handler().post(() -> {
@@ -188,23 +194,23 @@ public class videoGetFrameModel {
 
     private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
         downSuccessNum++;
-   String fileName = nowUseFile + File.separator + frameCount + ".png";
+        String fileName = nowUseFile + File.separator + frameCount + ".png";
 //        LogUtil.d("OOM2", "正在抠图" + downSuccessNum);
-//        mattingImage.mattingImageForMultipleForLucency(OriginBitmap, frameCount, (isSuccess, bitmap) -> {
-//            if (isSuccess) {
-//                BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
-//                        bitmap));
-//            } else {
-//                LogUtil.d("OOM2", "bitmap=null");
-//            }
-//
-//        });
 
 
-        BitmapManager.getInstance().saveBitmapToPathForJpg(OriginBitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
-                OriginBitmap));
-
-        LogUtil.d("OOM2", "allFrame-1=" + allFrame + "downSuccessNum=?" + downSuccessNum);
+        if (BaseConstans.IsOpenChannelAdaptive && "huawei".equals(BaseConstans.getChannel())) {
+            mattingImage.mattingImage(OriginBitmap, frameCount, (isSuccess, bitmap) -> {
+                if (isSuccess) {
+                    BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
+                            bitmap));
+                } else {
+                    LogUtil.d("OOM2", "bitmap=null");
+                }
+            });
+        } else {
+            BitmapManager.getInstance().saveBitmapToPathForJpg(OriginBitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
+                    OriginBitmap));
+        }
     }
 
     interface isSuccess {
