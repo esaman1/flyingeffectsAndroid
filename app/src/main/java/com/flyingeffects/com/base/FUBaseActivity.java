@@ -40,6 +40,7 @@ import com.faceunity.utils.FileUtils;
 import com.faceunity.utils.LogUtils;
 import com.faceunity.utils.MiscUtil;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.ui.view.activity.FUBeautyActivity;
 import com.flyingeffects.com.utils.FuLive.CameraFocus;
 import com.flyingeffects.com.utils.FuLive.CameraUtils;
@@ -94,6 +95,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     private LinearLayout mLlLight;
     protected CameraFocus mCameraFocus;
     public RelativeLayout relative_content;
+    private String recordingFolder;
     public  FUBeautyActivity fuBeautyActivity;
     private SensorManager mSensorManager;
     private Sensor mSensor;
@@ -292,6 +294,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         //     ScreenUtils.fullScreen(this);
         EventBus.getDefault().register(this);
+        FileManager  fileManager = new FileManager();
+        recordingFolder = fileManager.getFileCachePath(this, "recording");
 //        fuBeautyActivity=new FUBeautyActivity();
         ButterKnife.bind(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -423,6 +427,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
      */
     private final MediaEncoder.MediaEncoderListener mMediaEncoderListener = new MediaEncoder.MediaEncoderListener() {
 
+        private long mStartRecordTime;
         @Override
         public void onPrepared(final MediaEncoder encoder) {
             LogUtil.d("OOM22", "onPrepared");
@@ -439,6 +444,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
                     }
                 });
             }
+            mStartRecordTime = System.currentTimeMillis();
         }
 
         @Override
@@ -451,20 +457,40 @@ public abstract class FUBaseActivity extends AppCompatActivity
                 Log.d(TAG, "onStopped: tid:" + Thread.currentThread().getId());
 //                mStartRecordTime = 0;
                 // onStopped is called on codec thread, it may be interrupted, so we execute following code async.
+
+
+
+                if (System.currentTimeMillis() - mStartRecordTime <= 2000) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtil.showToast("录制时间太短");
+                        }
+                    });
+                    return;
+                }
+
                 ThreadHelper.getInstance().execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             final File dcimFile = new File(Constant.VIDEO_FILE_PATH, mVideoOutFile.getName());
+                            LogUtil.d("OOM3","dcimFile="+dcimFile.getPath());
                             FileUtils.copyFile(mVideoOutFile, dcimFile);
+                            LogUtil.d("OOM3","mVideoOutFile="+mVideoOutFile.getPath());
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(dcimFile)));
+                                    if(dcimFile.exists()){
+                                        dcimFile.delete();
+                                    }
+                                    LogUtil.d("OOM3","删除的地址为"+dcimFile.getPath());
+
+//                                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(dcimFile)));
                                     if(TextUtils.isEmpty(nowChooseBjPath)){
-                                        intoTemplate(dcimFile.getPath());
+                                        intoTemplate(mVideoOutFile.getPath());
                                     }else{
-                                        compoundVideo(dcimFile.getPath(),nowChooseBjPath );
+                                        compoundVideo(mVideoOutFile.getPath(),nowChooseBjPath );
                                     }
 
                                 }
@@ -497,7 +523,12 @@ public abstract class FUBaseActivity extends AppCompatActivity
             //线程同步
             mRecordBarrier = new CountDownLatch(2);
             String videoFileName = Constant.APP_NAME + "_" + MiscUtil.getCurrentDate() + ".mp4";
-            mVideoOutFile = new File(FileUtils.getExternalCacheDir(this), videoFileName);
+
+
+
+//            mVideoOutFile = new File(FileUtils.getExternalCacheDir(this), videoFileName);
+            mVideoOutFile = new File(recordingFolder, videoFileName);
+
             mMuxer = new MediaMuxerWrapper(mVideoOutFile.getAbsolutePath());
 
             // for video capturing

@@ -103,10 +103,10 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
                     bundle.putSerializable("id", data.get(i).getId());
                     bundle.putSerializable("from", 3);
                     bundle.putSerializable("num", i);
-                    if (templateItem != null) {
-                        //一键模板选择背景
-                        bundle.putSerializable("cover", templateItem.getImage());
-                    }
+//                    if (templateItem != null) {
+//                        //一键模板选择背景
+//                        bundle.putSerializable("cover", templateItem.getImage());
+//                    }
                     fragBjItem fragment = new fragBjItem();
                     fragment.setArguments(bundle);
                     list.add(fragment);
