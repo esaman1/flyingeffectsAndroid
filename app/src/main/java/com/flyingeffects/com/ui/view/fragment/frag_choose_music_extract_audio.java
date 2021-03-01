@@ -137,15 +137,17 @@ public class frag_choose_music_extract_audio extends BaseFragment {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 switch (view.getId()) {
                     case R.id.tv_make:
-                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_use", "视频提取音乐");
-                        pauseMusic();
-                        Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("videoPath", listVideoFiltrateMp4.get(position).getPath());
-                        intent.putExtra("needDuration", needDuration);
-                        intent.putExtra("isFromShoot", isFromShoot);
-                        intent.putExtra("isAudio", false);
-                        startActivity(intent);
+                        if (!DoubleClick.getInstance().isFastDoubleLongClick(2000)) {
+                            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_use", "视频提取音乐");
+                            pauseMusic();
+                            Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra("videoPath", listVideoFiltrateMp4.get(position).getPath());
+                            intent.putExtra("needDuration", needDuration);
+                            intent.putExtra("isFromShoot", isFromShoot);
+                            intent.putExtra("isAudio", false);
+                            startActivity(intent);
+                        }
                         break;
                     case R.id.iv_play:
                         playMusic(listVideoFiltrateMp4.get(position).getPath(), position);

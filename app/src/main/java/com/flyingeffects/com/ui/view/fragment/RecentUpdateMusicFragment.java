@@ -232,22 +232,24 @@ public class RecentUpdateMusicFragment extends BaseFragment {
                 nowClickPosition = position;
                 switch (view.getId()) {
                     case R.id.tv_make:
-                        switch (id) {
-                            case 1:
-                                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_use", "本地音频");
-                                break;
-                            default:
-                                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_use", "在线音乐-" + listData.get(position).getTitle());
-                                break;
+                        if(!DoubleClick.getInstance().isFastDoubleLongClick(2000)){
+                            switch (id) {
+                                case 1:
+                                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_use", "本地音频");
+                                    break;
+                                default:
+                                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music_use", "在线音乐-" + listData.get(position).getTitle());
+                                    break;
+                            }
+                            Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra("isFromShoot",isFromShoot);
+                            intent.putExtra("title",listData.get(position).getTitle());
+                            intent.putExtra("videoPath", listData.get(position).getAudio_url());
+                            intent.putExtra("needDuration", needDuration);
+                            intent.putExtra("isAudio", true);
+                            startActivity(intent);
                         }
-                        Intent intent = new Intent(getActivity(), LocalMusicTailorActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.putExtra("isFromShoot", isFromShoot);
-                        intent.putExtra("title", listData.get(position).getTitle());
-                        intent.putExtra("videoPath", listData.get(position).getAudio_url());
-                        intent.putExtra("needDuration", needDuration);
-                        intent.putExtra("isAudio", true);
-                        startActivity(intent);
                         break;
                     case R.id.iv_collect:
                         //收藏
