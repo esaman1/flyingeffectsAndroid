@@ -27,6 +27,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
@@ -36,6 +37,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
+import com.flyingeffects.com.manager.CopyFileFromAssets;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.statisticsEventAffair;
@@ -44,6 +46,7 @@ import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
+import com.flyingeffects.com.ui.model.VideoFusionModel;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.ui.view.ViewChooseTemplate;
 import com.flyingeffects.com.utils.LogUtil;
@@ -1060,39 +1063,43 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             case R.id.tv_top_submit:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
 
+                    if(isToSing){
+                        MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
+                        String path= CopyFileFromAssets.copyAssets(this,"test1.mp4");
+                        VideoFusionModel videoFusionModel=new VideoFusionModel(TemplateActivity.this,path,originalPath.get(0),fromTo,templateName,mediaUi2.size.getWidth(),mediaUi2.size.getHeight(),mediaUi2.getMediaUiMatrix(),mediaUi2.GetInverseMatrix());
+                        videoFusionModel.compoundVideo();
 
-
-
-
-
-
-                    if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
-                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
-                    }
-                    statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_save", templateName);
-
-
-                    if (isPlaying) {
-                        if (mPlayer != null) {
-                            mPlayer.pause();
-
-                            mPlayer = null;
-                            ivPlayButton.setImageResource(R.mipmap.iv_play);
-                            isPlaying = false;
-                            showPreview(true, false);
+                    }else{
+                        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
+                            statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                         }
-                    }
-                    if (nowChooseMusic != 0) {
-                        if (nowChooseMusic == 3) {
-                            presenter.renderVideo(mFolder.getPath(), downMusicPath, false, nowTemplateIsAnim, imgPath);
+                        statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_save", templateName);
+
+
+                        if (isPlaying) {
+                            if (mPlayer != null) {
+                                mPlayer.pause();
+
+                                mPlayer = null;
+                                ivPlayButton.setImageResource(R.mipmap.iv_play);
+                                isPlaying = false;
+                                showPreview(true, false);
+                            }
+                        }
+                        if (nowChooseMusic != 0) {
+                            if (nowChooseMusic == 3) {
+                                presenter.renderVideo(mFolder.getPath(), downMusicPath, false, nowTemplateIsAnim, imgPath);
+                            } else {
+                                presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false, nowTemplateIsAnim, imgPath);
+                            }
                         } else {
-                            presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false, nowTemplateIsAnim, imgPath);
+                            presenter.renderVideo(mFolder.getPath(), mAudio1Path, false, nowTemplateIsAnim, imgPath);
                         }
-                    } else {
-                        presenter.renderVideo(mFolder.getPath(), mAudio1Path, false, nowTemplateIsAnim, imgPath);
+
+                        presenter.StatisticsToSave(templateId);
                     }
 
-                    presenter.StatisticsToSave(templateId);
+
                 }
 
 

@@ -432,8 +432,27 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
 
+
+    /**
+     * description ：获得边框大小的matrix
+     * creation date: 2021/3/2
+     * user : zhangtongju
+     */
     public Matrix getMediaUiMatrix() {
         return mMatrix;
+    }
+
+
+
+    /**
+     * description ：获得内边框大小的matrix
+     * creation date: 2021/3/2
+     * user : zhangtongju
+     */
+    public Matrix GetInverseMatrix() {
+        Matrix matrix = new Matrix(mMatrix);
+        matrix.postConcat(mInverseMatrix);
+        return matrix;
     }
 
 
