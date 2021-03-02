@@ -216,14 +216,12 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
     TextWatcher textpassWatcher = new TextWatcher() {
         private CharSequence temp;
 
-
         @Override
         public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
         }
 
         @Override
-        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                      int arg3) {
+        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
             temp = arg0;
         }
 
@@ -268,7 +266,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                 if (isFrom != 2) {
                     saveVideo();
                 } else {
-                    LogUtil.d("oom3","换装开始上传");
+                    LogUtil.d("oom3", "换装开始上传");
                     uploadDressUpImage(videoPath);
                 }
 
@@ -278,7 +276,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             case R.id.add_head:
                 AlbumManager.chooseImageAlbum(UploadMaterialActivity.this, 1, 0, new AlbumChooseCallback() {
                     @Override
-                    public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera,ArrayList<AlbumFile> albumFileList) {
+                    public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
                         if (!isCancel) {
                             Glide.with(UploadMaterialActivity.this).load(paths.get(0)).into(add_head);
                             imageHeadPath = huaweiFolder + File.separator + "head.png";
@@ -527,7 +525,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
      */
     private void requestData() {
         HashMap<String, String> params = new HashMap<>();
-        if(isFrom != 2){
+        if (isFrom != 2) {
             params.put("videofile", huaweiVideoPath);
             params.put("audiourl", huaweiSound);
             params.put("isLandscape", isLandscape + "");
@@ -550,7 +548,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         } else {
             ob = Api.getDefault().toLoadTemplate(BaseConstans.getRequestHead(params));
         }
-        LogUtil.d("OOM3", "params="+StringUtil.beanToJSONString(params));
+        LogUtil.d("OOM3", "params=" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(UploadMaterialActivity.this) {
             @Override
             protected void onSubError(String message) {
@@ -669,12 +667,12 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             String nowTime = StringUtil.getCurrentTimeymd();
             String copyPath = "media/android/dressUpImage/" + nowTime + "/" + System.currentTimeMillis() + type;
             coverImagePath = "http://cdn.flying.flyingeffect.com/" + copyPath;
-            uploadImage(path, copyPath,false);
+            uploadImage(path, copyPath, false);
         }).start();
     }
 
 
-    private void uploadImage(String videoPath, String copyName,boolean isUploadImage) {
+    private void uploadImage(String videoPath, String copyName, boolean isUploadImage) {
         huaweiObs.getInstance().uploadFileToHawei(videoPath, copyName, new huaweiObs.Callback() {
             @Override
             public void isSuccess(String str) {
@@ -685,16 +683,16 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                         Observable.just(s).observeOn(Schedulers.io()).subscribe(new Action1<String>() {
                             @Override
                             public void call(String s) {
-                                LogUtil.d("oom3","华为上传成功");
-                                if(isUploadImage){
+                                LogUtil.d("oom3", "华为上传成功");
+                                if (isUploadImage) {
                                     requestData();
-                                }else{
+                                } else {
                                     if (imageHeadPath.contains("http")) {
-                                        huaweiImagePath=imageHeadPath;
-                                        LogUtil.d("OOM3", "huaweiImagePath="+huaweiImagePath);
+                                        huaweiImagePath = imageHeadPath;
+                                        LogUtil.d("OOM3", "huaweiImagePath=" + huaweiImagePath);
                                         requestData();
-                                    }else{
-                                        uploadImage(imageHeadPath,getPathName(1,imageHeadPath),true);
+                                    } else {
+                                        uploadImage(imageHeadPath, getPathName(1, imageHeadPath), true);
                                     }
 
                                 }

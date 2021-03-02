@@ -5,12 +5,9 @@ import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack;
 public class VideoPlayerCallbackForTemplate implements VideoAllCallBack {
     videoPlayerStopListener callback;
 
-    public VideoPlayerCallbackForTemplate(videoPlayerStopListener callback){
-        this.callback=callback;
-
+    public VideoPlayerCallbackForTemplate(videoPlayerStopListener callback) {
+        this.callback = callback;
     }
-
-
 
     @Override
     public void onStartPrepared(String url, Object... objects) {
@@ -68,6 +65,11 @@ public class VideoPlayerCallbackForTemplate implements VideoAllCallBack {
     }
 
     @Override
+    public void onComplete(String url, Object... objects) {
+
+    }
+
+    @Override
     public void onEnterFullscreen(String url, Object... objects) {
 
     }
@@ -122,9 +124,11 @@ public class VideoPlayerCallbackForTemplate implements VideoAllCallBack {
 
     }
 
-   public  interface videoPlayerStopListener{
+    public interface videoPlayerStopListener {
+
         void isStop(boolean isSuccess);
-       void onPrepared(boolean onPrepared);
+
+        void onPrepared(boolean onPrepared);
 
     }
 }

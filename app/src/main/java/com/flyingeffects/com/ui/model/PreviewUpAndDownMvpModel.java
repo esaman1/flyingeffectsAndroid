@@ -580,7 +580,6 @@ public class PreviewUpAndDownMvpModel {
                     });
                     ad.render();
                 }
-
                 callback.resultAd(ads);
             }
         });
@@ -659,13 +658,10 @@ public class PreviewUpAndDownMvpModel {
                 params.put("template_type", "1");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
-
             case FromToTemplate.DRESSUP:
                 params.put("template_type", "3");
                 ob = Api.getDefault().getMeargeTemplate(BaseConstans.getRequestHead(params));
                 break;
-
-
             default:
                 break;
         }

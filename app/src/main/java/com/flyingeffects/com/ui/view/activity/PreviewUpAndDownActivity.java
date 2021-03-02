@@ -272,6 +272,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+
             }
 
             @Override
@@ -291,7 +292,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     nowChoosePosition = position;
                     //判断当前滑动状态
                     nowSlideOrientationIsUp = nowChoosePosition < lastChoosePosition;
-                    refeshData();
+                    refreshData();
                     if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
                         if (position >= insertMaxNum || position <= insertMinNum) {
                             if (isSlideViewpager) {
@@ -315,7 +316,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         if (templateItem.getId() != 0) {
                             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
                         }
-
                     }
                 }
                 isSlideViewpager = true;
@@ -325,7 +325,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
             }
+
         });
+
         mBinding.page2.setCurrentItem(nowChoosePosition, false);
         if (nowPraise == 1 && BaseConstans.hasLogin()) {
             setIsZan(true);
@@ -395,7 +397,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * creation date: 2020/7/2
      * user : zhangtongju
      */
-    private void refeshData() {
+    private void refreshData() {
         if (nowChoosePosition >= 0 && nowChoosePosition < allData.size()) {
             templateItem = allData.get(nowChoosePosition);
             templateId = templateItem.getId() + "";
@@ -749,6 +751,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (!nowItemIsAd) {
             GSYVideoManager.onResume();
         }
+        adapter.notifyDataSetChanged();
         if (BaseConstans.hasLogin()) {
             //主要用于刷新当前页面
             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
@@ -1069,7 +1072,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                             intoTemplateActivity(paths, TemplateFilePath);
                                         }
 
-
                                     }).start();
                                 });
                             }
@@ -1088,14 +1090,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private void chooseAlbumStatistics(List<String> paths) {
         if (paths != null && paths.size() > 0) {
-            for (String path : paths
-
-            ) {
+            for (String path : paths) {
                 if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(path))) {
-                    {
-                        StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType", "选择的是图片");
-                        LogUtil.d("OOM", "当前选择的是图片");
-                    }
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType", "选择的是图片");
+                    LogUtil.d("OOM", "当前选择的是图片");
                 } else {
                     StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType", "选择的是视频");
                     LogUtil.d("OOM", "当前选择的是视频");

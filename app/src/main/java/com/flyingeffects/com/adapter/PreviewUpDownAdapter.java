@@ -140,8 +140,11 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
             helper.addOnClickListener(R.id.tv_title_music);
+            LogUtil.d(TAG,"nowPreviewPosition = "+ nowPreviewPosition);
+            LogUtil.d(TAG,"offset = "+ offset);
             if (nowPreviewPosition == offset) {
                 videoPlayer.startPlayLogic();
+                LogUtil.d(TAG,"startPlayLogic");
             }
             if (needHideCreate) {
                 ll_down_bj.setVisibility(View.GONE);
@@ -246,7 +249,6 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
         }
     }
 
-
     public void setIsFollow(int isFollow, String Admin_id) {
         if (BaseConstans.hasLogin()) {
             if (Admin_id.equals(BaseConstans.GetUserId())) {
@@ -338,7 +340,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
 
     public void startVideo() {
         if (videoPlayer != null && !videoPlayer.isInPlayingState()) {
-            LogUtil.d("OOM", "isInPlayingState!=null?" + videoPlayer.isInPlayingState());
+            LogUtil.d(TAG, "isInPlayingState!=null?" + videoPlayer.isInPlayingState());
             videoPlayer.startPlayLogic();
         }
     }

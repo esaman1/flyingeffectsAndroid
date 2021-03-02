@@ -22,6 +22,4 @@ public class PreviewUpDownFragment extends Fragment {
         return mBinding.getRoot();
     }
 
-
-
 }

@@ -69,7 +69,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.50">
 
-
         <ImageView
             android:id="@+id/iv_writer"
             android:layout_width="45dp"
@@ -263,7 +262,6 @@
             android:textColor="@color/white"
             android:textSize="11sp" />
 
-
     </LinearLayout>
 
 
@@ -289,8 +287,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="parent"
         app:layout_constraintRight_toLeftOf="parent" />
-
-
 
     <FrameLayout
         android:id="@+id/video_layout"

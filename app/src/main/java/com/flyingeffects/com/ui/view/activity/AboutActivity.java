@@ -74,10 +74,6 @@ public class AboutActivity extends BaseActivity {
                 } else {
                     goActivity(SignoutActivity.class);
                 }
-
-
-
-
                 break;
             case R.id.iv_top_back:
                 this.finish();
