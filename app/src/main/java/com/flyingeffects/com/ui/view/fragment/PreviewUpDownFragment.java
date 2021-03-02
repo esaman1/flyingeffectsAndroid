@@ -9,15 +9,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.flyingeffects.com.base.BaseFragment;
+import com.flyingeffects.com.databinding.FragmentUpDownPreviewBinding;
 
 public class PreviewUpDownFragment extends Fragment {
+
+    private FragmentUpDownPreviewBinding mBinding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        mFragmentPreviewMouldBinding = FragmentPreviewMouldBinding.inflate(inflater, container, false);
-//        return mFragmentPreviewMouldBinding.getRoot();
+        mBinding = FragmentUpDownPreviewBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
     }
+
+
 
 }

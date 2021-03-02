@@ -245,7 +245,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 intoUserHome(position);
             } else if (view.getId() == R.id.iv_download_bj) {
                 StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
-                mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem, OldfromTo);
+                mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem, mOldFromTo);
             } else if (view.getId() == R.id.ll_comment) {
                 BaseFullBottomSheetFragment fullSheetDialogFragment = new BaseFullBottomSheetFragment();
                 int height = (int) (ScreenUtil.getScreenHeight(this) * 0.3f);

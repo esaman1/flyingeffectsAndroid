@@ -153,7 +153,6 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/ll_down_bj"
         android:layout_width="wrap_content"
@@ -181,7 +180,6 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-
     <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_writer_name"
         android:layout_width="wrap_content"
@@ -200,11 +198,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintBottom_toTopOf="@+id/tv_title"
-        app:layout_constraintStart_toStartOf="parent"
-       />
-
-
-
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_title"
@@ -218,8 +212,7 @@
         android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/ll_describe"
-      />
+        app:layout_constraintBottom_toTopOf="@+id/ll_describe" />
 
 
     <LinearLayout
@@ -234,8 +227,7 @@
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/tv_make"
-        android:background="@drawable/preview_video_time_bj"
-    >
+        android:background="@drawable/preview_video_time_bj">
 
 
         <com.flyingeffects.com.view.MarqueTextView
@@ -244,13 +236,11 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:focusableInTouchMode="true"
-
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_11"
             android:visibility="gone" />
-
 
         <ImageView
             android:id="@+id/iv_music"
@@ -259,7 +249,6 @@
             android:layout_marginStart="13dp"
             android:contentDescription="@string/app_name"
             android:src="@mipmap/music_icon" />
-
 
         <com.flyingeffects.com.view.MarqueTextView
             android:id="@+id/tv_title_music"
