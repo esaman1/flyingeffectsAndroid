@@ -69,6 +69,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     @Override
     protected void onCreate() {
         fuBeautyActivity = this;
+        iv_close = findViewById(R.id.iv_close);
+        constraintLayout = findViewById(R.id.constraintLayout);
+
         isFrom = getIntent().getIntExtra("isFrom", 0);
         long duration = getIntent().getLongExtra("duration", 0);
         LogUtil.d("OOM2", "duration=" + duration);
@@ -79,11 +82,12 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         String TemplateFilePath = getIntent().getStringExtra("TemplateFilePath");
         String oldFromTo = getIntent().getStringExtra("OldfromTo");
         createDownVideoPath = getIntent().getStringExtra("createDownVideoPath");
-        iv_close = findViewById(R.id.iv_close);
+
+
         new_fag_template_item templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
         presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView, isFrom, duration, musicPath, templateItem, TemplateFilePath, oldFromTo, defaultnum, videoBjPath);
-        constraintLayout = findViewById(R.id.constraintLayout);
+
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         relative_choose_music = findViewById(R.id.relative_choose_music);
         relative_choose_music.setOnClickListener(listener);
@@ -235,7 +239,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         if (isFrom == 0) {
             LogUtil.d("OOM2", "nowChooseBjPath=" + nowChooseBjPath);
             presenter.SetDefaultTime(nowChooseBjPath);
-            horizontalselectedView.SetChoosePosition(0);
+            horizontalselectedView.setChoosePosition(0);
         }
     }
 

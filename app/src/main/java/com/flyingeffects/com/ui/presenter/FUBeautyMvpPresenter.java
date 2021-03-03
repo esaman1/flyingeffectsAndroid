@@ -124,7 +124,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                horizontalselectedView.SetChoosePosition(0);
+                horizontalselectedView.setChoosePosition(0);
             }
         }, 100);
     }

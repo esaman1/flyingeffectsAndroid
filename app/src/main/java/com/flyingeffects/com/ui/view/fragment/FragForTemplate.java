@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
 import com.flyingeffects.com.ui.presenter.home_fagMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
 import com.flyingeffects.com.utils.StringUtil;
+import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,9 +36,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
@@ -51,7 +55,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     home_fagMvpPresenter Presenter;
     @BindView(R.id.tl_tabs)
-    SlidingTabLayout tabLayout;
+    TabLayout tabLayout;
 
     @BindView(R.id.viewpager_bj)
     ViewPager viewpager;
@@ -123,7 +127,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                         bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
                         bundle.putInt("type", 0);
                         bundle.putSerializable("id", data.get(i).getId());
-                        bundle.putString("categoryTabName",data.get(i).getName());
+                        bundle.putString("categoryTabName", data.get(i).getName());
                         SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                         fragment.setArguments(bundle);
                         list.add(fragment);
@@ -159,18 +163,42 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
                     }
                 });
-                tabLayout.setViewPager(viewpager, titles);
-                tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
+                tabLayout.setupWithViewPager(viewpager);
+                for (int i = 0; i < tabLayout.getTabCount(); i++) {
+                    tabLayout.getTabAt(i).setCustomView(R.layout.item_home_tab);
+                    View view = tabLayout.getTabAt(i).getCustomView();
+                    AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                    tvTabText.setText(titles[i]);
+                    tvTabText.setTextColor(Color.parseColor("#797979"));
+                    if (i == 0) {
+                        tvTabText.setTextSize(24);
+                        tvTabText.setTextColor(Color.parseColor("#ffffff"));
+                    }
+                }
+                tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                     @Override
-                    public void onTabSelect(int position) {
-                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "13_template_tab_click", titles[position]);
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        View view = tab.getCustomView();
+                        AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                        tvTabText.setTextSize(24);
+                        tvTabText.setTextColor(Color.parseColor("#ffffff"));
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "13_template_tab_click", tvTabText.getText().toString());
                     }
 
                     @Override
-                    public void onTabReselect(int position) {
+                    public void onTabUnselected(TabLayout.Tab tab) {
+                        View view = tab.getCustomView();
+                        AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                        tvTabText.setTextSize(16);
+                        tvTabText.setTextColor(Color.parseColor("#797979"));
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
 
                     }
                 });
+
             }
         }
 
@@ -183,7 +211,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
             case R.id.relative_top:
                 //搜索栏目
                 Intent intent = new Intent(getActivity(), TemplateSearchActivity.class);
-                intent.putExtra("isFrom",1);
+                intent.putExtra("isFrom", 1);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
@@ -239,7 +267,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     try {
                         tvSearchHint.setText("友友们都在搜\"" + listSearchKey.get(listSearchKeyIndex) + "\"");
                         listSearchKeyIndex++;
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         tvSearchHint.setText("请输入视频关键字");
                         listSearchKeyIndex++;
                     }

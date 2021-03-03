@@ -116,7 +116,6 @@ public class HorizontalselectedView extends View {
                     anOffset = (float) ((scrollX - downX) / 1.5);//当滑到两端的时候添加一点阻力
                 }
 
-
                 if (scrollX > downX) {
                     //向右滑动，当滑动距离大于每个单元的长度时，则改变被选中的文字。
                     if (scrollX - downX >= anInt) {
@@ -273,7 +272,7 @@ public class HorizontalselectedView extends View {
     }
 
 
-    public void SetChoosePosition(int choose) {
+    public void setChoosePosition(int choose) {
         n = choose;
         invalidate();
     }

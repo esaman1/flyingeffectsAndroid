@@ -52,9 +52,9 @@ import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;
+import com.flyingeffects.com.ui.view.fragment.BackgroundFragment;
 import com.flyingeffects.com.ui.view.fragment.DressUpFragment;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
-import com.flyingeffects.com.ui.view.fragment.frag_Bj;
 import com.flyingeffects.com.ui.view.fragment.frag_user_center;
 import com.flyingeffects.com.utils.AssetsUtils;
 import com.flyingeffects.com.utils.ChannelUtil;
@@ -398,7 +398,7 @@ public class HomeMainActivity extends FragmentActivity {
             mIvMenuBack[i].setOnClickListener(listener);
         }
         List<Fragment> fragments = new ArrayList<>();
-        fragments.add(new frag_Bj());
+        fragments.add(new BackgroundFragment());
         fragments.add(new FragForTemplate());
         fragments.add(new DressUpFragment());
         menu3F = new frag_user_center();

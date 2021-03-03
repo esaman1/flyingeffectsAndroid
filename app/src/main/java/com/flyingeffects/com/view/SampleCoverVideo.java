@@ -177,15 +177,13 @@ public class SampleCoverVideo extends StandardGSYVideoPlayer {
 
     protected boolean byStartedClick;
 
-    @Override
     protected void onClickUiToggle() {
         if (mIfCurrentIsFullscreen && mLockCurScreen && mNeedLockFull) {
             setViewShowState(mLockScreen, VISIBLE);
             return;
         }
         byStartedClick = true;
-        super.onClickUiToggle();
-
+        //super.onClickUiToggle();
     }
 
     @Override
@@ -236,4 +234,5 @@ public class SampleCoverVideo extends StandardGSYVideoPlayer {
         byStartedClick = true;
         super.onStartTrackingTouch(seekBar);
     }
+
 }
