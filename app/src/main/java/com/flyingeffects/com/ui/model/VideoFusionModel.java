@@ -157,10 +157,13 @@ public class VideoFusionModel {
 
     private void addBitmapLayer(DrawPadAllExecute2 execute) {
         Bitmap bp = BitmapFactory.decodeFile(originalPath);
-        Matrix matrix = new Matrix();
-        matrix.setScale(0.5f, 0.5f);
-        bp = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(),
-                bp.getHeight(), matrix, true);
+//        int size=bp.getWidth();
+//        float needScale=size/256f;
+//        LogUtil.d("OOM3","需要缩放比为"+needScale);
+//        Matrix matrix = new Matrix();
+//        matrix.setScale(needScale, needScale);
+//        bp = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(),
+//                bp.getHeight(), matrix, true);
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
         bpLayer.setScaleType(LSOScaleType.FILL_COMPOSITION);
     }
@@ -196,7 +199,7 @@ public class VideoFusionModel {
 
 
     /**
-     * description ：添加底部虚化0.3f
+     * description ：添加底部虚化
      * creation date: 2021/3/4
      * user : zhangtongju
      */
