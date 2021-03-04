@@ -158,7 +158,7 @@ public class VideoFusionModel {
     private void addBitmapLayer(DrawPadAllExecute2 execute) {
         Bitmap bp = BitmapFactory.decodeFile(originalPath);
         Matrix matrix = new Matrix();
-        matrix.setScale(0.1f, 0.1f);
+        matrix.setScale(0.5f, 0.5f);
         bp = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(),
                 bp.getHeight(), matrix, true);
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);

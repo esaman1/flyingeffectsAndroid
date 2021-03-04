@@ -87,7 +87,7 @@ public class MediaUiModel2 extends MediaUiModel {
     private float firstTranX;
     private float FirstTranY;
     private float firstScale;
-    private boolean isFirstMatrix=true;
+    private boolean isFirstMatrix = true;
 
 
     public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size, Size temSize, float fps, int nowTemplateIsAnim, boolean isToSing) throws JSONException {
@@ -99,7 +99,7 @@ public class MediaUiModel2 extends MediaUiModel {
         int[] editSize = getIntArray(ui.getJSONArray("editSize"));
         mClipWidth = editSize[0];
         mClipHeight = editSize[1];
-        Log.d("OOM2","mClipWidth="+size.getWidth()+"mClipHeight="+size.getHeight());
+        Log.d("OOM2", "mClipWidth=" + size.getWidth() + "mClipHeight=" + size.getHeight());
         this.nowTemplateIsAnim = nowTemplateIsAnim;
         int[] p = getIntArray(ui.getJSONArray("p")); //position
         int[] a = getIntArray(ui.getJSONArray("a")); //anchor
@@ -190,7 +190,7 @@ public class MediaUiModel2 extends MediaUiModel {
         }
 
 
-        if (isFirstMatrix&&isToSing) {
+        if (isFirstMatrix && isToSing) {
             float values[] = new float[9];
             mMatrix.getValues(values);
             firstTranX = values[2];
@@ -200,6 +200,18 @@ public class MediaUiModel2 extends MediaUiModel {
             isFirstMatrix = false;
         }
 
+
+
+        float values[] = new float[9];
+        mMatrix.getValues(values);
+        float nowTranX = values[2];
+        float nowTranY = values[5];
+        float nowScale = values[0];
+        float bitmapH = mBitmap.getHeight() * nowScale;
+        float reactLeftX = (0 - nowTranX) + 540f;
+        float reactLeftY = 420 - nowTranY + 540f;
+        float needX = reactLeftX / 1080f;
+        Log.d("OOM22", "needX=" + needX+"reactLeftX="+reactLeftX+"nowTranX="+nowTranX);
 
 
 
@@ -218,25 +230,22 @@ public class MediaUiModel2 extends MediaUiModel {
         float nowTranX = values[2];
         float nowTranY = values[5];
         float nowScale = values[0];
-        float bitmapH=mBitmap.getHeight()*nowScale;
-        float reactLeftX=(0-nowTranX)+540f;
-        float reactLeftY=420-nowTranY+540f;
-        float needX=reactLeftX/1080f;
-        float needY=reactLeftY/(bitmapH);
-        float needScale=nowScale/firstScale;
-        callback.changeBack(needX,needY,needScale);
-        Log.d("OOM22","needScale="+nowScale);
+        float bitmapH = mBitmap.getHeight() * nowScale;
+        float bitmapW = mBitmap.getWidth() * nowScale;
+        float reactLeftX = (0 - nowTranX) + 540f;
+        float reactLeftY = 420 - nowTranY + 540f;
+        float needX = reactLeftX / bitmapW;
+        float needY = reactLeftY / (bitmapH);
+        float needScale = nowScale / firstScale;
+        needScale = 1 / needScale;
+        callback.changeBack(needX, needY, needScale);
+        Log.d("OOM22", "needScale=" + needScale);
     }
 
 
-    public interface TranChangeCallback{
-        void changeBack(float TranX,float TranY,float Scale);
+    public interface TranChangeCallback {
+        void changeBack(float TranX, float TranY, float Scale);
     }
-
-
-
-
-
 
 
     @Override
