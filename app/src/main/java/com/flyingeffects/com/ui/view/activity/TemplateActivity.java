@@ -276,7 +276,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
-            isToSing=bundle.getBoolean("isToSing",true);
+            isToSing = bundle.getBoolean("isToSing", true);
             fromTo = bundle.getString("fromTo");
             needAssetsCount = bundle.getInt("isPicNum");
             templateId = bundle.getString("templateId");
@@ -386,9 +386,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
         //只是唱歌页面
-        if(isToSing){
-            relayout_bottom.setVisibility(View.GONE);
+        if (isToSing) {
+//            relayout_bottom.setVisibility(View.GONE);
             findViewById(R.id.ll_progress).setVisibility(View.GONE);
+            findViewById(R.id.ll_viewpager_container).setVisibility(View.GONE);
         }
 
 
@@ -453,7 +454,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 //            presenter.loadTemplate(mFolder.getPath(), this, 0);
 //        }
 
-        presenter.loadTemplate(mFolder.getPath(), this, nowTemplateIsAnim, nowTemplateIsMattingVideo);
+        presenter.loadTemplate(mFolder.getPath(), this, nowTemplateIsAnim, nowTemplateIsMattingVideo, isToSing);
 
         mPlayerView.setPlayCallback(mListener);
     }
@@ -1063,23 +1064,26 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             case R.id.tv_top_submit:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
 
-                    if(isToSing){
+                    if (isToSing) {
                         MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
-                        String path= CopyFileFromAssets.copyAssets(this,"test1.mp4");
-                        VideoFusionModel videoFusionModel=new VideoFusionModel(TemplateActivity.this,path,originalPath.get(0),fromTo,templateName,mediaUi2.size.getWidth(),mediaUi2.size.getHeight(),mediaUi2.getMediaUiMatrix(),mediaUi2.GetInverseMatrix());
-                        videoFusionModel.compoundVideo();
-
-                    }else{
+                        String path = mediaUi2.getSnapPath(Objects.requireNonNull(this.getExternalFilesDir("runCatch/")).getPath());
+                        LogUtil.d("OOM2", "上传的图片地址为" + path);
+//                        String path = CopyFileFromAssets.copyAssets(this, "test.mp4");
+                        mediaUi2.GetTransFormChangeData(new MediaUiModel2.TranChangeCallback() {
+                            @Override
+                            public void changeBack(float TranX, float TranY, float Scale) {
+                                VideoFusionModel videoFusionModel = new VideoFusionModel(TemplateActivity.this, path, originalPath.get(0), fromTo, templateName, mediaUi2.getOriginalBitmapWidth(), mediaUi2.getOriginalBitmapHeight(), TranX, TranY, Scale);
+                                videoFusionModel.uploadFileToHuawei(path, templateId);
+                            }
+                        });
+                    } else {
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
                             statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                         }
                         statisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_save", templateName);
-
-
                         if (isPlaying) {
                             if (mPlayer != null) {
                                 mPlayer.pause();
-
                                 mPlayer = null;
                                 ivPlayButton.setImageResource(R.mipmap.iv_play);
                                 isPlaying = false;

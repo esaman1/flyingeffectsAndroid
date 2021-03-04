@@ -6,37 +6,43 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Shader;
 import android.util.Log;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.enity.VideoFusiomBean;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.Calculagraph;
+import com.flyingeffects.com.manager.DownloadVideoManage;
+import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
+import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
 import com.lansosdk.box.BitmapLayer;
-import com.lansosdk.box.LSOBitmapAsset;
 import com.lansosdk.box.LSOScaleType;
 import com.lansosdk.box.LSOVideoOption;
-import com.lansosdk.box.Layer;
+import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -52,8 +58,8 @@ public class VideoFusionModel {
 
 
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
-    private  int DRAWPADWIDTH ;
-    private  int DRAWPADHEIGHT ;
+    private int DRAWPADWIDTH;
+    private int DRAWPADHEIGHT;
     private static final int FRAME_RATE = 20;
     private WaitingDialog_progress progress;
 
@@ -77,24 +83,28 @@ public class VideoFusionModel {
 
     private String title;
 
-    private Matrix matrix;
+    private float TranXPercent;
+    private float TranYPercent;
+    private float ScaleTranXPercent;
+    private String serverVideo;
 
-    private Matrix inverseMatrix;
 
-    public VideoFusionModel(Context context, String serversReturnPath, String originalPath,String fromTo,String title,int DRAWPADWIDTH,int DRAWPADHEIGHT,Matrix matrix,Matrix inverseMatrix) {
+    public VideoFusionModel(Context context, String serversReturnPath, String originalPath, String fromTo, String title, int DRAWPADWIDTH, int DRAWPADHEIGHT, float TranX, float TranY, float Scale) {
         this.originalPath = originalPath;
         this.context = context;
         this.serversReturnPath = serversReturnPath;
-        MediaInfo mediaInfo = new MediaInfo(serversReturnPath);
-        mediaInfo.prepare();
-        duration = mediaInfo.getDurationUs();
-        this.fromTo=fromTo;
-        this.title=title;
-        this.matrix=matrix;
-        this.inverseMatrix=inverseMatrix;
-        this.DRAWPADWIDTH=DRAWPADWIDTH;
-        this.DRAWPADHEIGHT=DRAWPADHEIGHT;
-        mediaInfo.release();
+
+        this.fromTo = fromTo;
+        this.title = title;
+        this.DRAWPADWIDTH = DRAWPADWIDTH;
+        this.DRAWPADHEIGHT = DRAWPADHEIGHT;
+
+        this.TranXPercent = TranX;
+        FileManager fileManager = new FileManager();
+        serverVideo = fileManager.getFileCachePath(context, "FusionVideo");
+        this.TranYPercent = TranY;
+        this.ScaleTranXPercent = Scale;
+
     }
 
 
@@ -103,29 +113,36 @@ public class VideoFusionModel {
      * creation date: 2021/3/1
      * user : zhangtongju
      */
-    public  void compoundVideo() {
-        progress = new WaitingDialog_progress(context);
-        progress.openProgressDialog("正在换装中...");
+    public void compoundVideo() {
+
+        MediaInfo mediaInfo = new MediaInfo(serversReturnPath);
+        mediaInfo.prepare();
+        duration = mediaInfo.getDurationUs();
+        mediaInfo.release();
+
+
+
+
 
         try {
-            DrawPadAllExecute2 execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, duration );
+            DrawPadAllExecute2 execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, duration);
             execute.setFrameRate(FRAME_RATE);
 
-            LogUtil.d("OOM2", "时长为" + duration );
+            LogUtil.d("OOM2", "时长为" + duration);
             execute.setEncodeBitrate(5 * 1024 * 1024);
             execute.setOnLanSongSDKErrorListener(message -> {
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
-                progress.setProgress(i+"%");
-                LogUtil.d("OOM2","Progress="+i);
+                progress.setProgress(i + "%");
+                LogUtil.d("OOM2", "Progress=" + i);
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 progress.closePragressDialog();
-                LogUtil.d("OOM2","exportPath="+exportPath);
+                LogUtil.d("OOM2", "exportPath=" + exportPath);
                 Intent intent = new Intent(context, TemplateAddStickerActivity.class);
                 intent.putExtra("videoPath", exportPath);
-                intent.putExtra("title",title);
-                intent.putExtra("IsFrom",fromTo);
+                intent.putExtra("title", title);
+                intent.putExtra("IsFrom", fromTo);
                 context.startActivity(intent);
             });
             addBitmapLayer(execute);
@@ -135,57 +152,41 @@ public class VideoFusionModel {
             progress.closePragressDialog();
             e.printStackTrace();
         }
-
-
     }
 
 
-
-
-    private void addBitmapLayer(DrawPadAllExecute2 execute){
-        Bitmap bitmap = Bitmap.createBitmap(DRAWPADWIDTH, DRAWPADHEIGHT, Bitmap.Config.ARGB_8888);
-        Bitmap bp= BitmapFactory.decodeFile(originalPath);
-        Canvas canvas = new Canvas(bitmap);
-        if (bp != null) {
-            canvas.drawBitmap(bp, matrix, new Paint());
-        }
-        execute.addBitmapLayer(bitmap);
+    private void addBitmapLayer(DrawPadAllExecute2 execute) {
+        Bitmap bp = BitmapFactory.decodeFile(originalPath);
+        Matrix matrix = new Matrix();
+        matrix.setScale(0.1f, 0.1f);
+        bp = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(),
+                bp.getHeight(), matrix, true);
+        BitmapLayer bpLayer = execute.addBitmapLayer(bp);
+        bpLayer.setScaleType(LSOScaleType.FILL_COMPOSITION);
     }
 
 
     private void setVideoLayer(DrawPadAllExecute2 execute) {
-
-
-        float values []=new float[9];
-        inverseMatrix.getValues(values);
-        float tranx=values[2];
-        float tranY=values[5];
-
-        LogUtil.d("OOM2","tranx="+tranx);
-        LogUtil.d("OOM2","tranY="+tranY);
-        float scanx=values[0];
-        float scany=values[4];
-
-        LogUtil.d("OOM2","scanx="+scanx);
-        LogUtil.d("OOM2","scany="+scany);
-
         LSOVideoOption option;
         try {
             option = new LSOVideoOption(serversReturnPath);
-            option.setLooping(false);
-            Layer bgLayer = execute.addVideoLayer(option, 0, Long.MAX_VALUE, false, true);
-//                float LayerWidth = bgLayer.getLayerWidth();
-//                float scale = DRAWPADWIDTH / (float) LayerWidth;
-//                float LayerHeight = bgLayer.getLayerHeight();
-                bgLayer.setScale(scanx, scany);
+            VideoFrameLayer videoLayer = execute.addVideoLayer(option);
+            float LayerWidth = videoLayer.getLayerWidth();
+            LogUtil.d("OOM2", "ScaleTranXPercent=" + ScaleTranXPercent);
+            float scale = DRAWPADWIDTH * ScaleTranXPercent / (float) LayerWidth;
+            float LayerHeight = videoLayer.getLayerHeight();
+            float needDrawHeight = LayerHeight * scale;
+            videoLayer.setScaledValue(DRAWPADWIDTH * ScaleTranXPercent, needDrawHeight);
 
-//            if (transplationPos.getToY() != 0) {
-//                LogUtil.d("translationalXY", "yy=" + transplationPos.getToY());
-//                bgLayer.setPosition(bgLayer.getPositionX(), bgLayer.getPadHeight() * tranY);
-//            }
+            if (TranXPercent != 0) {
+                videoLayer.setPosition(videoLayer.getPadWidth() * TranXPercent, videoLayer.getPositionY());
+            }
 
+            if (TranYPercent != 0) {
+                videoLayer.setPosition(videoLayer.getPositionX(), videoLayer.getPadHeight() * TranYPercent);
+            }
 
-
+            videoLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class,     makeSrc(DRAWPADWIDTH ,DRAWPADHEIGHT,0.1f)));
 
         } catch (Exception e) {
             LogUtil.d("OOM", "e-------" + e.getMessage());
@@ -195,31 +196,86 @@ public class VideoFusionModel {
 
 
     /**
+     * description ：添加底部虚化0.3f
+     * creation date: 2021/3/4
+     * user : zhangtongju
+     */
+    private   Bitmap makeSrc(int w, int h, float percent) {
+        Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bm);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        int graLine = (int) (h - h * percent);
+        LinearGradient gradient = new LinearGradient(w, graLine, w, graLine + 100,
+                Color.parseColor("#ffffff"), Color.TRANSPARENT, Shader.TileMode.CLAMP);
+        p.setShader(gradient);
+        c.drawRect(0, 0, w, h, p);
+        return bm;
+    }
+
+
+    /**
      * description ：上传换装图片到华为云
      * creation date: 2020/12/4
      * user : zhangtongju
      */
-    private void uploadFileToHuawei(String path, String template_id) {
-        String type = path.substring(path.length() - 4);
-        String nowTime = StringUtil.getCurrentTimeymd();
-        String copyName = "media/android/dressUp/" + nowTime + "/" + System.currentTimeMillis() + type;
-        String uploadPath = "http://cdn.flying.flyingeffect.com/" + copyName;
-        Log.d("OOM3", "uploadFileToHuawei" + "当前上传的地址为" + path + "当前的名字为" + copyName);
-        huaweiObs.getInstance().uploadFileToHawei(path, copyName, str -> Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+    public void uploadFileToHuawei(String path, String template_id) {
+        progress = new WaitingDialog_progress(context);
+        progress.openProgressDialog("正在合成中...");
+        new Thread(new Runnable() {
             @Override
-            public void call(String s) {
-                LogUtil.d("OOM3", "上传华为云成功,地址为" + s);
-//                informServers(uploadPath, template_id);
-//                if (dressUpCatchCallback != null) {
-//                    dressUpCatchCallback.isSuccess(uploadPath);
-//                }
-                requestDressUpCallback(uploadPath, template_id);
-//                File file=new File(path);
-//                if(file.exists()){
-//                    file.delete();
-//                }
+            public void run() {
+                String type = path.substring(path.length() - 4);
+                String nowTime = StringUtil.getCurrentTimeymd();
+                String copyName = "media/android/Sideface/" + nowTime + "/" + System.currentTimeMillis() + type;
+                String uploadPath = "http://cdn.flying.flyingeffect.com/" + copyName;
+                Log.d("OOM3", "uploadFileToHuawei" + "当前上传的地址为" + path + "当前的名字为" + copyName);
+                huaweiObs.getInstance().uploadFileToHawei(path, copyName, str -> Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        LogUtil.d("OOM3", "上传华为云成功,地址为" + s);
+                        informServers(uploadPath, template_id);
+                    }
+                }));
             }
-        }));
+        }).start();
+    }
+
+
+    /**
+     * description ：请求结果
+     * creation date: 2020/12/4
+     * user : zhangtongju
+     */
+    private void requestDressUpCallback(String template_id) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("request_id", template_id);
+        Observable ob = Api.getDefault().animalResult(BaseConstans.getRequestHead(params));
+        LogUtil.d("OOM3", "requestDressUpCallback的请求参数为" + StringUtil.beanToJSONString(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<VideoFusiomBean>(context) {
+            @Override
+            protected void onSubError(String message) {
+                LogUtil.d("OOM3", "请求结果=" + message);
+                if (calculagraph != null) {
+                    calculagraph.destroyTimer();
+                }
+            }
+
+            @Override
+            protected void onSubNext(VideoFusiomBean data) {
+                LogUtil.d("OOM3", StringUtil.beanToJSONString(data));
+                if (data.getStatus() == 2) {
+                    calculagraph.destroyTimer();
+                    Observable.just(data.getMp4()).observeOn(Schedulers.io()).subscribe(new Action1<String>() {
+                        @Override
+                        public void call(String s) {
+                            downVideoToLocal(s);
+                        }
+                    });
+
+
+                }
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
@@ -228,46 +284,48 @@ public class VideoFusionModel {
      * creation date: 2020/12/4
      * user : zhangtongju
      */
-    private void requestDressUpCallback(String path, String template_id) {
+    private void informServers(String path, String template_id) {
         HashMap<String, String> params = new HashMap<>();
         params.put("image", path);
         params.put("template_id", template_id);
-
-//        params.put("request_id", request_id);
-        Observable ob = Api.getDefault().humanMerageResult(BaseConstans.getRequestHead(params));
+        Observable ob = Api.getDefault().animalImage(BaseConstans.getRequestHead(params));
         LogUtil.d("OOM3", "requestDressUpCallback的请求参数为" + StringUtil.beanToJSONString(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<HumanMerageResult>>(context) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<String>(context) {
             @Override
             protected void onSubError(String message) {
-//                LogUtil.d("OOM3", "message=" + message);
-//                ToastUtil.showToast(message);
-//                progress.closePragressDialog();
-//                if (calculagraph != null) {
-//                    calculagraph.destroyTimer();
-//                }
-//                if (callback != null) {
-//                    callback.isSuccess(null);
-//                }
+                LogUtil.d("OOM3", "通知服务器失败" + message);
+                progress.closePragressDialog();
             }
 
             @Override
-            protected void onSubNext(List<HumanMerageResult> data) {
-//                if (data != null && data.size() > 0) {
-//                    String str = StringUtil.beanToJSONString(data);
-//                    LogUtil.d("OOM3", "请求的结果为：" + str);
-//                    GetDressUpPath(data);
-////                    if (callback != null) {
-////                        callback.isSuccess(data);
-////                        callback = null;
-////                    }
-//                    if (calculagraph != null) {
-//                        calculagraph.destroyTimer();
-//                    }
-//                } else {
-//                    LogUtil.d("OOM3", "data=null");
-//                }
+            protected void onSubNext(String data) {
+                LogUtil.d("OOM3", "通知服务器成功" + StringUtil.beanToJSONString(data));
+                startTimer(data);
+
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    /**
+     * description ：下载视频在本地
+     * creation date: 2021/3/4
+     * user : zhangtongju
+     */
+    private void downVideoToLocal(String serverPath) {
+        String path = serverVideo + "/video.mp4";
+        Observable.just(serverPath).subscribeOn(Schedulers.io()).subscribe(s -> {
+            DownloadVideoManage manage = new DownloadVideoManage(new DownloadVideoManage.downloadSuccess() {
+                @Override
+                public void isSuccess(boolean isSuccess) {
+                    serversReturnPath=path;
+                    progress.closePragressDialog();
+                    compoundVideo();
+                }
+            });
+            manage.DownloadVideo(serverPath, path);
+        });
+
     }
 
 
@@ -278,23 +336,22 @@ public class VideoFusionModel {
      */
     private Calculagraph calculagraph;
 
-    private void startTimer(String id) {
+    private void startTimer(String Id) {
         calculagraph = new Calculagraph();
-        calculagraph.startTimer(5f, 5, new Calculagraph.Callback() {
+        calculagraph.startTimer(7f, 9, new Calculagraph.Callback() {
             @Override
             public void isTimeUp() {
                 LogUtil.d("OOM3", "开始请求融合结果");
-                Observable.just(id).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                Observable.just(Id).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
-//                        requestDressUpCallback(s);
+                        requestDressUpCallback(s);
                     }
                 });
             }
 
             @Override
             public void isDone() {
-//                progress.closePragressDialog();
             }
         });
     }

@@ -19,6 +19,7 @@ import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
 import com.flyingeffects.com.enity.SystemMessageDetailEnity;
 import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.enity.VideoFusiomBean;
 import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.enity.fansEnity;
 import com.flyingeffects.com.enity.messageCount;
@@ -357,6 +358,21 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/mearge/meargePicture")
     Observable<HttpResult<List<HumanMerageResult>>> humanMerageResult(@FieldMap Map<String,String> params);
+
+
+    /**通知服务器上传成功*/
+    @FormUrlEncoded
+    @POST("/api/mearge/animalImage")
+    Observable<HttpResult<String>> animalImage(@FieldMap Map<String,String> params);
+
+
+    /**请求结果*/
+    @FormUrlEncoded
+    @POST("/api/mearge/animalResult")
+    Observable<HttpResult<VideoFusiomBean>> animalResult(@FieldMap Map<String,String> params);
+
+
+
 
     /**贴纸分类列表*/
     @FormUrlEncoded

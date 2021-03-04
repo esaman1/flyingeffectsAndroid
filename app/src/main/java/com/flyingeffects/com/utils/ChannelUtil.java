@@ -16,45 +16,45 @@ public class ChannelUtil {
     private static String channel = null;
 
     public static String getChannel(Context context) {
-//        if (channel != null) {
-//            return channel;
-//        }
-//
-//        final String start_flag = "META-INF/channel_";
-//        ApplicationInfo appinfo = context.getApplicationInfo();
-//        String sourceDir = appinfo.sourceDir;
-//        ZipFile zipfile = null;
-//        try {
-//            zipfile = new ZipFile(sourceDir);
-//            Enumeration<?> entries = zipfile.entries();
-//            while (entries.hasMoreElements()) {
-//                ZipEntry entry = ((ZipEntry) entries.nextElement());
-//                String entryName = entry.getName();
-//                if (entryName.contains(start_flag)) {
-//                    channel = entryName.replace(start_flag, "");
-//                    break;
-//
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (zipfile != null) {
-//                try {
-//
-//                    zipfile.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//
-//
-//
-//        if (channel == null || channel.length() <= 0) {
-//            channel = "360";
-//        }
-//        return channel;
-        return  "test";
+        if (channel != null) {
+            return channel;
+        }
+
+        final String start_flag = "META-INF/channel_";
+        ApplicationInfo appinfo = context.getApplicationInfo();
+        String sourceDir = appinfo.sourceDir;
+        ZipFile zipfile = null;
+        try {
+            zipfile = new ZipFile(sourceDir);
+            Enumeration<?> entries = zipfile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = ((ZipEntry) entries.nextElement());
+                String entryName = entry.getName();
+                if (entryName.contains(start_flag)) {
+                    channel = entryName.replace(start_flag, "");
+                    break;
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (zipfile != null) {
+                try {
+
+                    zipfile.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+
+        if (channel == null || channel.length() <= 0) {
+            channel = "360";
+        }
+        return channel;
+//        return  "test";
     }
 }
