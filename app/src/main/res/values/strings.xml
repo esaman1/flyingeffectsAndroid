@@ -85,5 +85,6 @@
     <string name="need_login">请先登录</string>
     <string name="make_sure">确定</string>
     <string name="follow">关注</string>
+    <string name="to_make">马上制作</string>
 
 </resources>

@@ -83,7 +83,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         String oldFromTo = getIntent().getStringExtra("OldfromTo");
         createDownVideoPath = getIntent().getStringExtra("createDownVideoPath");
 
-
         new_fag_template_item templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
         presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView, isFrom, duration, musicPath, templateItem, TemplateFilePath, oldFromTo, defaultnum, videoBjPath);
@@ -113,7 +112,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             SetNowChooseMusic(musicPath, musicPath);
             presenter.SetNowChooseMusic(musicPath, musicPath);
         }
+
         presenter.showBottomSheetDialog(getSupportFragmentManager(), relative_content);
+
     }
 
 
@@ -137,7 +138,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 .setOnBundleLoadCompleteListener(null)
                 .build();
     }
-
 
     View.OnClickListener listener = new View.OnClickListener() {
         @Override

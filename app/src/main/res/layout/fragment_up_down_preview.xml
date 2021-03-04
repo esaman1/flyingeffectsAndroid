@@ -15,7 +15,250 @@
 
     </com.flyingeffects.com.view.SampleCoverVideo>
 
-    
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_show_cover"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#1D1D1D"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_video_play"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@mipmap/video_play"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_top_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="18dp"
+        android:contentDescription="@string/app_name"
+        android:padding="10dp"
+        android:src="@mipmap/back"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_writer"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        app:layout_constraintHorizontal_bias="0.94"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.50"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_btn_follow"
+        android:layout_width="41dp"
+        android:layout_height="19dp"
+        android:background="@drawable/tv_make_crice"
+        android:gravity="center"
+        android:text="@string/follow"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_12"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@id/iv_writer"
+        app:layout_constraintEnd_toEndOf="@id/iv_writer"
+        app:layout_constraintTop_toBottomOf="@id/iv_writer"
+        app:layout_constraintBottom_toBottomOf="@id/iv_writer"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_zan"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/zan"
+        app:layout_constraintStart_toStartOf="@id/iv_writer"
+        app:layout_constraintEnd_toEndOf="@id/iv_writer"
+        app:layout_constraintTop_toBottomOf="@id/tv_btn_follow"
+        android:layout_marginTop="@dimen/dp_18"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_zan_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/iv_zan"
+        app:layout_constraintEnd_toEndOf="@id/iv_zan"
+        app:layout_constraintTop_toBottomOf="@id/iv_zan"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_comment"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:src="@mipmap/iv_comment"
+        app:layout_constraintStart_toStartOf="@id/iv_zan"
+        app:layout_constraintEnd_toEndOf="@id/iv_zan"
+        app:layout_constraintTop_toBottomOf="@id/tv_zan_count"
+        android:layout_marginTop="@dimen/dp_18"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_comment_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/iv_comment"
+        app:layout_constraintEnd_toEndOf="@id/iv_comment"
+        app:layout_constraintTop_toBottomOf="@id/iv_comment"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_download_bj"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/down_bj"
+        app:layout_constraintStart_toStartOf="@id/iv_zan"
+        app:layout_constraintEnd_toEndOf="@id/iv_zan"
+        app:layout_constraintTop_toBottomOf="@id/tv_comment_count"
+        android:layout_marginTop="@dimen/dp_18"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_download_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/iv_download_bj"
+        app:layout_constraintEnd_toEndOf="@id/iv_download_bj"
+        app:layout_constraintTop_toBottomOf="@id/iv_download_bj"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_writer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:layout_marginBottom="16dp"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:maxWidth="120dp"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintBottom_toTopOf="@+id/tv_title"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="100dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/ll_describe" />
+
+    <LinearLayout
+        android:id="@+id/ll_describe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="40dp"
+        android:padding="6dp"
+        android:layout_marginEnd="100dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tv_make"
+        android:background="@drawable/preview_video_time_bj">
+
+
+        <com.flyingeffects.com.view.MarqueTextView
+            android:id="@+id/tv_describe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:focusableInTouchMode="true"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_11"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/iv_music"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="13dp"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/music_icon" />
+
+        <com.flyingeffects.com.view.MarqueTextView
+            android:id="@+id/tv_title_music"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ellipsize="marquee"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+
+    <com.flyingeffects.com.view.MarqueTextView
+        android:id="@+id/tv_make"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="56dp"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/tv_make"
+        android:ellipsize="end"
+        android:focusable="true"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:text="@string/to_make"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_17"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/video_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

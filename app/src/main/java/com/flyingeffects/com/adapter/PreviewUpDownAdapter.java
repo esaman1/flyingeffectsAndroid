@@ -45,17 +45,18 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
     private static final String TAG = "Preview_up_and_down_ada";
 
     private Context context;
+
     private SampleCoverVideo videoPlayer;
     private ImageView iv_zan;
     private MarqueTextView tv_describe;
     private MarqueTextView tv_title_music;
-    private int nowPreviewPosition;
-    public TTNativeExpressAd ad;
     private TextView tv_zan_count;
-    private String OldFromTo;
     private TextView tv_comment_count;
     private TextView tv_btn_follow;
 
+    private String OldFromTo;
+    private int nowPreviewPosition;
+    public TTNativeExpressAd ad;
 
     public PreviewUpDownAdapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, String OldFromTo) {
         super(layoutResId, allData);
@@ -63,11 +64,12 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
         this.OldFromTo = OldFromTo;
     }
 
-
     @Override
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
-        int offset = helper.getLayoutPosition();
         ad = item.getAd();
+
+
+        int offset = helper.getLayoutPosition();
         FrameLayout video_layout = helper.getView(R.id.video_layout);
         videoPlayer = helper.getView(R.id.video_item_player);
         LinearLayout ll_down_bj = helper.getView(R.id.ll_down_bj);
@@ -77,31 +79,33 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
         TextView tv_make = helper.getView(R.id.tv_make);
         LinearLayout ll_comment = helper.getView(R.id.ll_comment);
         LinearLayout ll_describe = helper.getView(R.id.ll_describe);
-
         tv_btn_follow = helper.getView(R.id.tv_btn_follow);
         tv_comment_count = helper.getView(R.id.tv_comment_count);
         tv_zan_count = helper.getView(R.id.tv_zan_count);
+        iv_zan = helper.getView(R.id.iv_zan);
+        ImageView iv_writer = helper.getView(R.id.iv_writer);
+        TextView tv_title = helper.getView(R.id.tv_title);
+        tv_describe = helper.getView(R.id.tv_describe);
+        MarqueTextView tv_writer_name = helper.getView(R.id.tv_writer_name);
+
+        helper.addOnClickListener(R.id.iv_writer);
+        helper.addOnClickListener(R.id.tv_describe);
+        helper.addOnClickListener(R.id.iv_download_bj);
+        helper.addOnClickListener(R.id.ll_comment);
+        helper.addOnClickListener(R.id.tv_btn_follow);
+        helper.addOnClickListener(R.id.tv_writer_name);
+
         boolean readOnly = item.getTest() != 0;
         boolean needHideCreate;
+
+        tv_describe.setVisibility(View.GONE);
+
         if (readOnly) {
             needHideCreate = OldFromTo.equals(FromToTemplate.ISHOMEFROMBJ) || OldFromTo.equals(FromToTemplate.ISMESSAGEMYPRODUCTION)
                     || OldFromTo.equals(FromToTemplate.DRESSUP);
         } else {
             needHideCreate = false;
         }
-        iv_zan = helper.getView(R.id.iv_zan);
-        ImageView iv_writer = helper.getView(R.id.iv_writer);
-        helper.addOnClickListener(R.id.iv_writer);
-        helper.addOnClickListener(R.id.tv_describe);
-
-        MarqueTextView tv_writer_name = helper.getView(R.id.tv_writer_name);
-        helper.addOnClickListener(R.id.tv_writer_name);
-        TextView tv_title = helper.getView(R.id.tv_title);
-        tv_describe = helper.getView(R.id.tv_describe);
-        tv_describe.setVisibility(View.GONE);
-        helper.addOnClickListener(R.id.iv_download_bj);
-        helper.addOnClickListener(R.id.ll_comment);
-        helper.addOnClickListener(R.id.tv_btn_follow);
 
         ObjectAnimator animator = ButtonJitterAnimatorUtil.jitter(tv_make);
         animator.setRepeatCount(ValueAnimator.INFINITE);
@@ -140,12 +144,19 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
             helper.addOnClickListener(R.id.tv_title_music);
-            LogUtil.d(TAG,"nowPreviewPosition = "+ nowPreviewPosition);
-            LogUtil.d(TAG,"offset = "+ offset);
+
+            LogUtil.d(TAG, "nowPreviewPosition = " + nowPreviewPosition);
+            LogUtil.d(TAG, "offset = " + offset);
+
             if (nowPreviewPosition == offset) {
                 videoPlayer.startPlayLogic();
-                LogUtil.d(TAG,"startPlayLogic");
+                videoPlayer.onVideoResume();
+
+                LogUtil.d(TAG, "startPlayLogic");
+                LogUtil.d(TAG, "nowPreviewPosition = " + nowPreviewPosition);
+                LogUtil.d(TAG, "offset = " + offset);
             }
+
             if (needHideCreate) {
                 ll_down_bj.setVisibility(View.GONE);
                 tv_make.setVisibility(View.GONE);
@@ -157,6 +168,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
                 tv_make.setVisibility(View.VISIBLE);
                 ll_zan.setVisibility(View.VISIBLE);
             }
+
             Glide.with(context)
                     .load(item.getAuth_image())
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
@@ -250,6 +262,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
     }
 
     public void setIsFollow(int isFollow, String Admin_id) {
+
         if (BaseConstans.hasLogin()) {
             if (Admin_id.equals(BaseConstans.GetUserId())) {
                 tv_btn_follow.setVisibility(View.GONE);

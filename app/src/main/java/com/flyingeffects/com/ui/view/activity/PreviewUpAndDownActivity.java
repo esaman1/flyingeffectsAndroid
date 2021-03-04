@@ -12,6 +12,7 @@ import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.PreviewUpDownAdapter;
+import com.flyingeffects.com.adapter.PreviewUpDownPagerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -65,6 +66,7 @@ import java.util.List;
 import java.util.Random;
 
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import de.greenrobot.event.EventBus;
@@ -89,7 +91,18 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     PreviewUpAndDownMvpPresenter mMvpPresenter;
 
     private PreviewUpDownAdapter adapter;
+    /**
+     * viewpager适配器
+     */
+    private PreviewUpDownPagerAdapter mViewPagerAdapter;
+    /**
+     * fragment容器
+     */
+    private List<Fragment> mFragmentList;
 
+    /**
+     * 所有数据
+     */
     private List<new_fag_template_item> allData = new ArrayList<>();
 
     private new_fag_template_item templateItem;
@@ -165,7 +178,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     //0 表示不是影集，1表示影集
     private int is_pic;
-
 
     private boolean isSlideViewpager = false;
     boolean isCanLoadMore;
