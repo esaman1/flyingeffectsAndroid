@@ -710,12 +710,10 @@ public class PreviewUpAndDownMvpModel {
         return needData;
     }
 
-
     private void finishData() {
         smartRefreshLayout.finishRefresh();
         smartRefreshLayout.finishLoadMore();
     }
-
 
     public void isOnLoadMore() {
 
@@ -760,7 +758,6 @@ public class PreviewUpAndDownMvpModel {
                     iv_collect.setImageResource(R.mipmap.new_version_collect);
                 }
                 EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 

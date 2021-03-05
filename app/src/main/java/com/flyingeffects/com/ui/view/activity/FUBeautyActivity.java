@@ -144,10 +144,10 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.relative_choose_music:
-                    if (isFrom == 0){
-                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_shoot_music");
-                    }else {
-                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_mb_Shoot_music");
+                    if (isFrom == 0) {
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music");
+                    } else {
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_Shoot_music");
                     }
                     presenter.IntoChooseMusic();
                     break;
@@ -156,26 +156,26 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                     break;
                 case R.id.animation_view:
                 case R.id.animation_view_progress:
-                    LogUtil.d("OOM2","isCanClick="+isCanClick);
+                    LogUtil.d("OOM2", "isCanClick=" + isCanClick);
                     if (isCanClick) {
                         clickBtn();
                     }
                     break;
                 case R.id.iv_count_down:
                     //倒计时功能
-                    presenter.clickCountDown(iv_count_down,isFrom);
+                    presenter.clickCountDown(iv_count_down, isFrom);
                     break;
                 case R.id.iv_rolling_over:
                     SwitchCamera();
-                    if (isFrom==0){
+                    if (isFrom == 0) {
                         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_turn");
-                    }else {
+                    } else {
                         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_shoot_turn");
                     }
                     break;
                 case R.id.ll_stage_property:
                     //道具
-                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_shoot_dj");
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_dj");
                     relative_content.setVisibility(View.VISIBLE);
                     showSticker(true);
                     break;
@@ -198,19 +198,19 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 tv_count_down.setVisibility(View.GONE);
                 tv_count_down.setText("");
                 stopRecording();
-                if (isFrom==0){
+                if (isFrom == 0) {
                     StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_Shoot_finish");
-                }else {
-                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_mb_shoot_finish");
+                } else {
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_shoot_finish");
                 }
                 isRecordingState(false);
             } else {
                 LogUtil.d("OOM", "开始录制");
                 isRecording = true;
-                if (isFrom==0){
-                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_Shoot_start");
-                }else {
-                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"12_mb_shoot_start");
+                if (isFrom == 0) {
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_Shoot_start");
+                } else {
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_shoot_start");
                 }
                 presenter.StartCountDown();
                 tv_count_down.setVisibility(View.VISIBLE);
@@ -450,14 +450,13 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         presenter.intoCreationTemplateActivity(event.getCoverPath(), createDownVideoPath, event.getOriginalPath(), event.isNeedCut());
     }
 
-
     /**
      * description ：可点击状态回调
      * creation date: 2021/2/26
      * user : zhangtongju
      */
-    public void ChangeClicKState(){
-        isCanClick=true;
+    public void ChangeClicKState() {
+        isCanClick = true;
     }
 
 }

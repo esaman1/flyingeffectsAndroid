@@ -28,6 +28,8 @@ import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.shixing.sxve.ui.view.WaitingDialog;
+import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +56,7 @@ import static com.flyingeffects.com.utils.BlogFileResource.FileManager.isLansong
  * @author zhangtongju
  */
 public class ExtractAudioChooseMusicFragment extends BaseFragment {
+    private static final String TAG = "ExtractAudioChooseMusic";
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -97,6 +100,7 @@ public class ExtractAudioChooseMusicFragment extends BaseFragment {
     @Override
     protected void initData() {
         startQuery();
+
     }
 
     private void finishData() {

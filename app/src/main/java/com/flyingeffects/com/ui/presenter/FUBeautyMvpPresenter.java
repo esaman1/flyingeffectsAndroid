@@ -147,7 +147,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         }
     }
 
-
     public void SetNowChooseMusic(String musicPath, String originalPath) {
         fUBeautyMvpmodel.SetNowChooseMusic(musicPath, originalPath);
     }
