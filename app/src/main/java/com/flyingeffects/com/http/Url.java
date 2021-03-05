@@ -10,8 +10,11 @@ public class Url {
      * PRODUCTION true为正式服务器地址 false为测试服务器地址
      **/
 
-    public static final String BASE_URL = BaseConstans.PRODUCTION ?
-            "http://www.flyingeffect.com" : "http://test.flyingeffect.com";
+//    public static final String BASE_URL = BaseConstans.PRODUCTION ?
+//            "http://www.flyingeffect.com" : "http://test.flyingeffect.com";
+
+
+    public static final String BASE_URL="http://admin.flyingeffect.com";
 
 }
 

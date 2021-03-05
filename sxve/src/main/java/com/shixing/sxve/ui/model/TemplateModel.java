@@ -42,7 +42,7 @@ public class TemplateModel {
     private AssetModel bgModel;
 
     @WorkerThread
-    public TemplateModel(String templateFolder, AssetDelegate delegate, Context context, int nowTemplateIsAnim,int nowTemplateIsMattingVideo) throws IOException, JSONException {
+    public TemplateModel(String templateFolder, AssetDelegate delegate, Context context, int nowTemplateIsAnim,int nowTemplateIsMattingVideo,boolean isToSing) throws IOException, JSONException {
         File folder = new File(templateFolder);
         File configFile = new File(folder, CONFIG_FILE_NAME);
         if (!configFile.exists()) {
@@ -79,12 +79,12 @@ public class TemplateModel {
                 //可以替换背景功能
                 if (!TextUtils.isEmpty(ui_extra) && ui_extra.equals("BG")) {
                     HasBj = true;
-                    bgModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,null,fps,nowTemplateIsAnim);
+                    bgModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,null,fps,nowTemplateIsAnim,isToSing);
                     int group = bgModel.ui.group;
                     if (groupSize < group)
                         groupSize = group; //得到最大的group 的值，group 就是位置，但这里最大值是没包括背景的
                 } else {
-                    AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,temSize, fps,nowTemplateIsAnim);
+                    AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,temSize, fps,nowTemplateIsAnim,isToSing);
                     mAssets.add(assetModel);
 
                     //单独针对mask 图层

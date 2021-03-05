@@ -151,6 +151,38 @@ public class BitmapManager {
     }
 
 
+    public Bitmap saveBitmapToPathForJpg(Bitmap bitmap, String path,int quality) {
+
+
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out);
+            out.flush();
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return bitmap;
+    }
+
+
     public Bitmap saveBitmapToPath(Bitmap bitmap, String path, saveToFileCallback callback) {
         if (!path.endsWith(".png") && !path.endsWith(".PNG")) {
             throw new IllegalArgumentException();

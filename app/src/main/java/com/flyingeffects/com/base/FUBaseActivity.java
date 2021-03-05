@@ -574,6 +574,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
         if (!file.exists()) {
             return;
         }
+        LogUtil.d("OOM", "loadInternalConfigJson222");
         try {
             String jsonStr = FileUtils.readStringFromFile(file);
             JSONObject jsonObject = new JSONObject(jsonStr);

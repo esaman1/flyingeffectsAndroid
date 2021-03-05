@@ -188,7 +188,7 @@
             android:layout_height="240dp"
             android:background="#000000"
             android:orientation="vertical"
-            android:visibility="gone">
+           >
 
             <com.flyingeffects.com.view.NoSlidingViewPager
                 android:id="@+id/template_viewPager"
