@@ -182,8 +182,8 @@ public class VideoFusionModel {
         Bitmap bp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.watermark);
         BitmapLayer bpLayer = execute.addBitmapLayer(bp);
         float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
-        bpLayer.setScale(layerScale * 0.5f);
-        bpLayer.setPosition(DRAWPADWIDTH / 2f, DRAWPADHEIGHT * 5 / 6f);
+        bpLayer.setScale(layerScale * 0.3f);
+        bpLayer.setPosition(DRAWPADWIDTH *0.3f, DRAWPADHEIGHT * 5 / 6f);
     }
 
 
