@@ -28,6 +28,7 @@ import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.lansosdk.LanSongFilter.LanSongFilter;
 import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.LSOScaleType;
@@ -37,7 +38,9 @@ import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -55,7 +58,10 @@ import rx.subjects.PublishSubject;
 
 
 public class VideoFusionModel {
-
+    private static final int MAKE_SRC_ORIENT_CODE_LEFT = 0;
+    private static final int MAKE_SRC_ORIENT_CODE_RIGHT = 1;
+    private static final int MAKE_SRC_ORIENT_CODE_TOP = 2;
+    private static final int MAKE_SRC_ORIENT_CODE_BOTTOM = 3;
 
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private int DRAWPADWIDTH;
@@ -121,9 +127,6 @@ public class VideoFusionModel {
         mediaInfo.release();
 
 
-
-
-
         try {
             DrawPadAllExecute2 execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, duration);
             execute.setFrameRate(FRAME_RATE);
@@ -157,9 +160,9 @@ public class VideoFusionModel {
 
     private void addBitmapLayer(DrawPadAllExecute2 execute) {
         Bitmap bp = BitmapFactory.decodeFile(originalPath);
-        int size=bp.getWidth();
-        float needScale=size/256f;
-        LogUtil.d("OOM3","需要缩放比为"+needScale);
+        int size = bp.getWidth();
+        float needScale = size / 256f;
+        LogUtil.d("OOM3", "需要缩放比为" + needScale);
         Matrix matrix = new Matrix();
         matrix.setScale(needScale, needScale);
         bp = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(),
@@ -189,7 +192,13 @@ public class VideoFusionModel {
                 videoLayer.setPosition(videoLayer.getPositionX(), videoLayer.getPadHeight() * TranYPercent);
             }
 
-            videoLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class,     makeSrc(DRAWPADWIDTH ,DRAWPADHEIGHT,0.1f)));
+            List<LanSongFilter> list = new ArrayList<>();
+            list.add(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, makeSrc(DRAWPADWIDTH, DRAWPADHEIGHT, 0.1f, MAKE_SRC_ORIENT_CODE_BOTTOM)));
+            list.add(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, makeSrc(DRAWPADWIDTH, DRAWPADHEIGHT, 0.1f, MAKE_SRC_ORIENT_CODE_TOP)));
+            list.add(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, makeSrc(DRAWPADWIDTH, DRAWPADHEIGHT, 0.1f, MAKE_SRC_ORIENT_CODE_LEFT)));
+            list.add(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, makeSrc(DRAWPADWIDTH, DRAWPADHEIGHT, 0.1f, MAKE_SRC_ORIENT_CODE_RIGHT)));
+
+            videoLayer.switchFilterList(list);
 
         } catch (Exception e) {
             LogUtil.d("OOM", "e-------" + e.getMessage());
@@ -203,16 +212,77 @@ public class VideoFusionModel {
      * creation date: 2021/3/4
      * user : zhangtongju
      */
-    private   Bitmap makeSrc(int w, int h, float percent) {
+    private Bitmap makeSrc(int w, int h, float percent, int orientation) {
         Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bm);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
-        int graLine = (int) (h - h * percent);
-        LinearGradient gradient = new LinearGradient(w, graLine, w, graLine + 100,
-                Color.parseColor("#ffffff"), Color.TRANSPARENT, Shader.TileMode.CLAMP);
+        int graLine;
+        LinearGradient gradient;
+        switch (orientation) {
+            case MAKE_SRC_ORIENT_CODE_BOTTOM:
+                graLine = (int) (h - h * percent);
+                gradient = new LinearGradient(w, graLine, w, h,
+                        Color.parseColor("#ffffff"), Color.TRANSPARENT, Shader.TileMode.CLAMP);
+                break;
+            case MAKE_SRC_ORIENT_CODE_RIGHT:
+                graLine = (int) (w - w * percent);
+                gradient = new LinearGradient(graLine, 0, w, 0,
+                        Color.parseColor("#ffffff"), Color.TRANSPARENT, Shader.TileMode.CLAMP);
+                break;
+            case MAKE_SRC_ORIENT_CODE_LEFT:
+                graLine = (int) (w * percent);
+                gradient = new LinearGradient(0, h, graLine, h,
+                        Color.TRANSPARENT, Color.parseColor("#ffffff"), Shader.TileMode.CLAMP);
+                break;
+            default:
+                graLine = (int) (h * percent);
+                gradient = new LinearGradient(w, 0, w, graLine,
+                        Color.TRANSPARENT, Color.parseColor("#ffffff"), Shader.TileMode.CLAMP);
+                break;
+        }
+
         p.setShader(gradient);
         c.drawRect(0, 0, w, h, p);
         return bm;
+    }
+
+    private Bitmap makeSrc(Bitmap bm, int w, int h, float percent, int orientation) {
+        Canvas c = new Canvas(bm);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        int graLine;
+        LinearGradient gradient;
+        switch (orientation) {
+            case MAKE_SRC_ORIENT_CODE_BOTTOM:
+                graLine = (int) (h - h * percent);
+                gradient = new LinearGradient(w, graLine, w, graLine + 100,
+                        Color.parseColor("#ffffff"), Color.TRANSPARENT, Shader.TileMode.CLAMP);
+                break;
+            case MAKE_SRC_ORIENT_CODE_RIGHT:
+                graLine = (int) (w - w * percent);
+                gradient = new LinearGradient(graLine, h, graLine + 100, h,
+                        Color.parseColor("#ffffff"), Color.TRANSPARENT, Shader.TileMode.CLAMP);
+                break;
+            case MAKE_SRC_ORIENT_CODE_LEFT:
+                gradient = new LinearGradient(0, h, 100, h,
+                        Color.TRANSPARENT, Color.parseColor("#ffffff"), Shader.TileMode.CLAMP);
+                break;
+            default:
+                gradient = new LinearGradient(w, 0, w, 100,
+                        Color.TRANSPARENT, Color.parseColor("#ffffff"), Shader.TileMode.CLAMP);
+                break;
+        }
+
+        p.setShader(gradient);
+        c.drawRect(0, 0, w, h, p);
+        return bm;
+    }
+
+    private Bitmap createFilterBitmap(int w, int h, float percent) {
+        Bitmap bitmap = makeSrc(w, h, percent, MAKE_SRC_ORIENT_CODE_LEFT);
+        bitmap = makeSrc(bitmap, w, h, percent, MAKE_SRC_ORIENT_CODE_RIGHT);
+        bitmap = makeSrc(bitmap, w, h, percent, MAKE_SRC_ORIENT_CODE_TOP);
+        bitmap = makeSrc(bitmap, w, h, percent, MAKE_SRC_ORIENT_CODE_BOTTOM);
+        return bitmap;
     }
 
 
@@ -321,7 +391,7 @@ public class VideoFusionModel {
             DownloadVideoManage manage = new DownloadVideoManage(new DownloadVideoManage.downloadSuccess() {
                 @Override
                 public void isSuccess(boolean isSuccess) {
-                    serversReturnPath=path;
+                    serversReturnPath = path;
                     progress.closePragressDialog();
                     compoundVideo();
                 }
