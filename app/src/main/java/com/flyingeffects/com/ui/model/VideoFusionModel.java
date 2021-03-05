@@ -128,9 +128,19 @@ public class VideoFusionModel {
         mediaInfo.prepare();
         duration = mediaInfo.getDurationUs();
         mediaInfo.release();
-
-
+        LogUtil.d("OOM2","DRAWPADWIDTH="+DRAWPADWIDTH+"DRAWPADHEIGHT="+DRAWPADHEIGHT);
         try {
+            if(DRAWPADWIDTH%16!=0){
+                int needAddNum=DRAWPADWIDTH%16;
+                DRAWPADWIDTH=DRAWPADWIDTH-needAddNum;
+            }
+
+            if(DRAWPADHEIGHT%16!=0){
+                int needAddNum2=DRAWPADHEIGHT%16;
+                DRAWPADHEIGHT=DRAWPADHEIGHT-needAddNum2;
+            }
+
+            LogUtil.d("OOM2","DRAWPADWIDTH="+DRAWPADWIDTH+"DRAWPADHEIGHT="+DRAWPADHEIGHT);
             DrawPadAllExecute2 execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, duration);
             execute.setFrameRate(FRAME_RATE);
 
@@ -156,6 +166,7 @@ public class VideoFusionModel {
             DrawWatermark(execute);
             execute.start();
         } catch (Exception e) {
+            LogUtil.d("OOM2",e.getMessage());
             progress.closePragressDialog();
             e.printStackTrace();
         }
@@ -179,7 +190,7 @@ public class VideoFusionModel {
     private void addBitmapLayer(DrawPadAllExecute2 execute) {
         Bitmap bp = BitmapFactory.decodeFile(originalPath);
         int size = bp.getWidth();
-        float needScale = size / 256f;
+        float needScale = 256f / size;
         LogUtil.d("OOM3", "需要缩放比为" + needScale);
         Matrix matrix = new Matrix();
         matrix.setScale(needScale, needScale);
@@ -347,6 +358,7 @@ public class VideoFusionModel {
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "请求结果=" + message);
                 destroyTimer();
+                progress.closePragressDialog();
             }
 
             @Override
@@ -376,7 +388,7 @@ public class VideoFusionModel {
             calculagraph.destroyTimer();
             calculagraph = null;
         }
-        progress.closePragressDialog();
+
     }
 
 
