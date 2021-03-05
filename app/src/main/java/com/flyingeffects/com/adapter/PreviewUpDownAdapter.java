@@ -149,9 +149,13 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
             LogUtil.d(TAG, "offset = " + offset);
 
             if (nowPreviewPosition == offset) {
-                videoPlayer.startPlayLogic();
-                videoPlayer.onVideoResume();
-
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        videoPlayer.startPlayLogic();
+                        videoPlayer.onVideoResume();
+                    }
+                }, 200);
                 LogUtil.d(TAG, "startPlayLogic");
                 LogUtil.d(TAG, "nowPreviewPosition = " + nowPreviewPosition);
                 LogUtil.d(TAG, "offset = " + offset);
