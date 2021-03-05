@@ -12,14 +12,16 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.SecondaryTypeEntity;
 import com.flyingeffects.com.enity.new_fag_template_item;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
 import butterknife.BindView;
 
 /**
@@ -38,8 +40,8 @@ public class SecondaryTypeFragment extends BaseFragment {
     /**
      * 0是模板 1是背景  2是换脸
      */
-    int type,from;
-    String category_id,categoryTabName;
+    int type, from;
+    String category_id, categoryTabName;
     private new_fag_template_item templateItem;
 
     @Override
@@ -81,7 +83,7 @@ public class SecondaryTypeFragment extends BaseFragment {
             textView.setText(mTypeEntities.get(i).getName());
             textView.setTextColor(colorStateList);
             textView.setTextSize(14);
-            textView.setBackground(getResources().getDrawable(R.drawable.secondary_type_selecrot));
+            textView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.secondary_type_selecrot));
             textView.setGravity(Gravity.CENTER);
             textView.setSelected(false);
             textView.setPadding(screenUtil.dip2px(getContext(), 10), screenUtil.dip2px(getContext(), 3),
@@ -95,18 +97,14 @@ public class SecondaryTypeFragment extends BaseFragment {
                     transaction.replace(R.id.fl_container, fragments.get(index));
                     transaction.commitAllowingStateLoss();
                     for (int i = 0; i < mTextViews.size(); i++) {
-                        if (i == index) {
-                            mTextViews.get(i).setSelected(true);
-                        } else {
-                            mTextViews.get(i).setSelected(false);
-                        }
+                        mTextViews.get(i).setSelected(i == index);
                     }
                     if (type == 0) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_mb_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_mb_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
                     } else if (type == 1) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_bj_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_bj_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
                     } else if (type == 2) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_fece_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_fece_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
                     }
                 }
             });
@@ -120,7 +118,7 @@ public class SecondaryTypeFragment extends BaseFragment {
             if (type == 0) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", category_id);
-                bundle.putString("tc_id",mTypeEntities.get(i).getId());
+                bundle.putString("tc_id", mTypeEntities.get(i).getId());
                 bundle.putSerializable("num", i);
                 bundle.putSerializable("from", 0);
                 HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
@@ -129,7 +127,7 @@ public class SecondaryTypeFragment extends BaseFragment {
             } else if (type == 1) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", category_id);
-                bundle.putString("tc_id",mTypeEntities.get(i).getId());
+                bundle.putString("tc_id", mTypeEntities.get(i).getId());
                 bundle.putSerializable("from", from);
                 bundle.putSerializable("num", i);
                 if (templateItem != null) {
@@ -141,7 +139,7 @@ public class SecondaryTypeFragment extends BaseFragment {
             } else if (type == 2) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", category_id);
-                bundle.putString("tc_id",mTypeEntities.get(i).getId());
+                bundle.putString("tc_id", mTypeEntities.get(i).getId());
                 bundle.putSerializable("num", i);
                 bundle.putSerializable("from", 4);
                 HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
@@ -149,7 +147,7 @@ public class SecondaryTypeFragment extends BaseFragment {
                 fragments.add(fragment);
             }
         }
-        if (!fragments.isEmpty()&& !mTextViews.isEmpty()) {
+        if (!fragments.isEmpty() && !mTextViews.isEmpty()) {
             transaction.replace(R.id.fl_container, fragments.get(0));
             transaction.commitAllowingStateLoss();
             mTextViews.get(0).setSelected(true);

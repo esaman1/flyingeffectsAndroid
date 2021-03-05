@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.TemplateDown;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -20,7 +22,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
@@ -34,6 +36,7 @@ import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.tabs.TabLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
@@ -41,6 +44,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
@@ -57,13 +61,13 @@ import rx.functions.Action1;
  * 时间：2018/4/24
  **/
 
-public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.OnOffsetChangedListener {
+public class BackgroundFragment extends BaseFragment implements FagBjMvpView, AppBarLayout.OnOffsetChangedListener {
 
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
     @BindView(R.id.tl_tabs_bj)
-    SlidingTabLayout tl_tabs_bj;
+    TabLayout tl_tabs_bj;
 
 
     @BindView(R.id.ll_expand)
@@ -107,8 +111,8 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
         EventBus.getDefault().register(this);
         waitingDialog_progress = new WaitingDialog_progress(getActivity());
         appbar.addOnOffsetChangedListener(this);
-
     }
+
 
     @Override
     protected void initAction() {
@@ -209,7 +213,41 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                         LogUtil.d("OOM", "i=" + i);
                     }
                 });
-                tl_tabs_bj.setViewPager(viewPager, titles);
+                tl_tabs_bj.setupWithViewPager(viewPager);
+
+                for (int i = 0; i < tl_tabs_bj.getTabCount(); i++) {
+                    tl_tabs_bj.getTabAt(i).setCustomView(R.layout.item_home_tab);
+                    View view = tl_tabs_bj.getTabAt(i).getCustomView();
+                    AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                    tvTabText.setText(titles[i]);
+                    tvTabText.setTextColor(Color.parseColor("#797979"));
+                    if (i == 0) {
+                        tvTabText.setTextSize(24);
+                        tvTabText.setTextColor(Color.parseColor("#ffffff"));
+                    }
+                }
+                tl_tabs_bj.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        View view = tab.getCustomView();
+                        AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                        tvTabText.setTextSize(24);
+                        tvTabText.setTextColor(Color.parseColor("#ffffff"));
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+                        View view = tab.getCustomView();
+                        AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                        tvTabText.setTextSize(16);
+                        tvTabText.setTextColor(Color.parseColor("#797979"));
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+
+                    }
+                });
             }
         }
     }
@@ -269,7 +307,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
         if (lastViewPagerChoosePosition != i) {
             if (i <= data.size() - 1) {
                 showWitchBtn(i);
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
             }
         }
 
@@ -277,7 +315,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
 
     private void showWitchBtn(int showWitch) {
         if (titles != null) {
-            statisticsEventAffair.getInstance().setFlag(getActivity(), "13_back_tab_click", titles[showWitch]);
+            StatisticsEventAffair.getInstance().setFlag(getActivity(), "13_back_tab_click", titles[showWitch]);
         }
         viewPager.setCurrentItem(showWitch);
     }
@@ -305,7 +343,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
                 break;
             case R.id.iv_search:
                 //搜索栏目
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj");
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj");
 
                 Intent intent = new Intent(getActivity(), TemplateSearchActivity.class);
                 intent.putExtra("isFrom", 0);
@@ -316,7 +354,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
             case R.id.ll_crate_photograph_album:
             case R.id.ll_crate_photograph_album_2:
                 if(BaseConstans.hasLogin()){
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "21_yj_click");
+                    StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_yj_click");
                     waitingDialog_progress.openProgressDialog();
                     presenter.requestPictureAlbumData();
                 }else{
@@ -333,7 +371,7 @@ public class frag_Bj extends BaseFragment implements FagBjMvpView, AppBarLayout.
 
 
     private void toAddSticker() {
-        statisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
+        StatisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
         AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
             if (!isCancel) {
                 if (!TextUtils.isEmpty(paths.get(0))) {

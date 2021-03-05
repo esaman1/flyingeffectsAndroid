@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -48,12 +49,12 @@ import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;
+import com.flyingeffects.com.ui.view.fragment.BackgroundFragment;
 import com.flyingeffects.com.ui.view.fragment.DressUpFragment;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
-import com.flyingeffects.com.ui.view.fragment.frag_Bj;
 import com.flyingeffects.com.ui.view.fragment.frag_user_center;
 import com.flyingeffects.com.utils.AssetsUtils;
 import com.flyingeffects.com.utils.ChannelUtil;
@@ -110,9 +111,12 @@ public class HomeMainActivity extends FragmentActivity {
     private TextView message_count;
     private NoSlidingViewPager viewpager_home;
 
+    private Context mContext;
+
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
+        mContext = HomeMainActivity.this;
         setTheme(R.style.AppTheme);
         //禁止休眠
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
@@ -394,7 +398,7 @@ public class HomeMainActivity extends FragmentActivity {
             mIvMenuBack[i].setOnClickListener(listener);
         }
         List<Fragment> fragments = new ArrayList<>();
-        fragments.add(new frag_Bj());
+        fragments.add(new BackgroundFragment());
         fragments.add(new FragForTemplate());
         fragments.add(new DressUpFragment());
         menu3F = new frag_user_center();
@@ -409,6 +413,7 @@ public class HomeMainActivity extends FragmentActivity {
                 if(BaseConstans.hasLogin()){
                     Intent intent = new Intent(HomeMainActivity.this, FUBeautyActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    StatisticsEventAffair.getInstance().setFlag(mContext,"12_Shoot");
                     startActivity(intent);
                 }else{
                     Intent intent = new Intent(HomeMainActivity.this, LoginActivity.class);
@@ -455,7 +460,6 @@ public class HomeMainActivity extends FragmentActivity {
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downCutSoundForMusic"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("fontStyle"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("DressUpFolder"));
-
         }
 
     }
@@ -467,24 +471,24 @@ public class HomeMainActivity extends FragmentActivity {
                 case R.id.iv_back_menu_0:
                     whichMenuSelect(0);
 
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
                     break;
                 case R.id.iv_back_menu_1:
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "2");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "2");
 
                     whichMenuSelect(1);
                     break;
                 case R.id.iv_back_menu_2:
                     whichMenuSelect(2);
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "3");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "3");
 
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "12_news");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "12_news");
                     break;
                 case R.id.iv_back_menu_3:
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "4");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "4");
 
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
                     whichMenuSelect(3);
                     break;
                 default:
@@ -568,8 +572,6 @@ public class HomeMainActivity extends FragmentActivity {
                     "" +
                     "", Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
-
-
         } else {
             finish();
         }

@@ -31,7 +31,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.GlideRoundTransform;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
@@ -234,9 +234,9 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                         AlbumManager.chooseAlbum(context, 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
                             if (!isCancel) {
                                 if (UiStep.isFromDownBj) {
-                                    statisticsEventAffair.getInstance().setFlag(context, "7_local");
+                                    StatisticsEventAffair.getInstance().setFlag(context, "7_local");
                                 } else {
-                                    statisticsEventAffair.getInstance().setFlag(context, "8_local");
+                                    StatisticsEventAffair.getInstance().setFlag(context, "8_local");
                                 }
                                 // EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
                                 String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
@@ -280,7 +280,7 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                     @Override
                     public void onClick(View view) {
                         if(!DoubleClick.getInstance().isFastDoubleClick()){
-                            statisticsEventAffair.getInstance().setFlag(context,"21_face_up");
+                            StatisticsEventAffair.getInstance().setFlag(context,"21_face_up");
                             AlbumManager.chooseImageAlbum(context, 1, 0, new AlbumChooseCallback() {
                                 @Override
                                 public void resultFilePath(int tag, List<String> paths, boolean isCancel,boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {

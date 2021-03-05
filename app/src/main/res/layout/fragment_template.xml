@@ -6,7 +6,6 @@
     android:background="@color/home_base_balk_color"
     android:orientation="vertical">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +20,7 @@
             android:layout_marginEnd="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/strok_search"
+            android:background="@drawable/shape_search"
             android:focusable="false"
             android:orientation="horizontal">
 
@@ -35,15 +34,15 @@
                 android:text="请输入视频关键字"
                 android:gravity="center_vertical"
                 android:paddingStart="40dp"
-                android:textColor="#515151"
-                android:textColorHint="#515151" />
+                android:textColor="#797979"
+                android:textColorHint="#797979" />
 
             <ImageView
-                android:layout_width="21dp"
+                android:layout_width="@dimen/dp_16"
                 android:layout_marginStart="15dp"
-                android:layout_height="21dp"
+                android:layout_height="@dimen/dp_16"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/search" />
+                android:src="@mipmap/ic_search" />
 
             <ImageView
                 android:visibility="gone"
@@ -61,25 +60,34 @@
 
     </LinearLayout>
 
-
-
-    <com.flyco.tablayout.SlidingTabLayout
+    <com.google.android.material.tabs.TabLayout
         android:id="@+id/tl_tabs"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/dp_50"
         android:layout_marginStart="8dp"
-        app:tl_indicator_color="#5694FA"
-        app:tl_indicator_corner_radius="@dimen/dp_5"
-        app:tl_indicator_height="@dimen/dp_4"
-        app:tl_indicator_margin_left="6dp"
-        app:tl_indicator_margin_right="6dp"
-        app:tl_indicator_margin_bottom="8dp"
-        app:tl_tab_padding="10dp"
-        app:tl_textAllCaps="true"
-        app:tl_textBold="BOTH"
-        app:tl_textSelectColor="#FFFFFF"
-        app:tl_textUnselectColor="#BBBBBB"
-        app:tl_textsize="@dimen/sp_16" />
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp"
+        app:tabMode="scrollable"
+        app:tabPaddingEnd="@dimen/dp_0"
+        app:tabPaddingStart="@dimen/dp_0" />
+
+<!--    <com.flyco.tablayout.SlidingTabLayout-->
+<!--        android:id="@+id/tl_tabs"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        app:tl_indicator_color="#5694FA"-->
+<!--        app:tl_indicator_corner_radius="@dimen/dp_5"-->
+<!--        app:tl_indicator_height="@dimen/dp_4"-->
+<!--        app:tl_indicator_margin_left="6dp"-->
+<!--        app:tl_indicator_margin_right="6dp"-->
+<!--        app:tl_indicator_margin_bottom="8dp"-->
+<!--        app:tl_tab_padding="10dp"-->
+<!--        app:tl_textAllCaps="true"-->
+<!--        app:tl_textBold="BOTH"-->
+<!--        app:tl_textSelectColor="#FFFFFF"-->
+<!--        app:tl_textUnselectColor="#BBBBBB"-->
+<!--        app:tl_textsize="@dimen/sp_16" />-->
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager_bj"

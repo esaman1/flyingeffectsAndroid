@@ -13,9 +13,8 @@ import android.widget.ScrollView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.GetPathType;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
-import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.albumType;
 
@@ -505,37 +504,37 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         if (isOverallMove) {
             if (isGreenScreen) {
                 if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd1_move");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd1_move");
                 } else if (TextUtils.isEmpty(view.text)) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd3_move");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd3_move");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd2_move");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd2_move");
                 }
             } else {
                 if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd1_move");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd1_move");
                 } else if (TextUtils.isEmpty(view.text)) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd3_move");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd3_move");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd2_move");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd2_move");
                 }
             }
         } else {
             if (isGreenScreen) {
                 if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd1_clip");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd1_clip");
                 } else if (TextUtils.isEmpty(view.text)) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd3_clip");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd3_clip");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd2_clip");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd2_clip");
                 }
             } else {
                 if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd1_clip");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd1_clip");
                 } else if (TextUtils.isEmpty(view.text)) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd3_clip");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd3_clip");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd2_clip");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd2_clip");
                 }
             }
         }

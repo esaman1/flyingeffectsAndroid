@@ -1,13 +1,10 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,8 +21,8 @@ import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.StimulateControlManage;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplatePreviewMvpView;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplatePreviewPresenter;
@@ -240,21 +237,21 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         switch (v.getId()) {
             case R.id.tv_back:
                 if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(this, "7_return");
+                    StatisticsEventAffair.getInstance().setFlag(this, "7_return");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(this, "8_return");
+                    StatisticsEventAffair.getInstance().setFlag(this, "8_return");
                 }
 
-                statisticsEventAffair.getInstance().setFlag(this, "7_return");
+                StatisticsEventAffair.getInstance().setFlag(this, "7_return");
                 CreationTemplatePreviewActivity.this.finish();
                 break;
 
             case R.id.tv_save:
                 statisticsEventAffair();
                 if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(this, "7_save");
+                    StatisticsEventAffair.getInstance().setFlag(this, "7_save");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(this, "8_save");
+                    StatisticsEventAffair.getInstance().setFlag(this, "8_save");
                 }
                 StimulateControlManage.getInstance().InitRefreshStimulate();
                 if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
@@ -296,7 +293,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             for (String str : titleEffect
             ) {
                 if(!TextUtils.isEmpty(str)){
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_style_save", str);
+                    StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_style_save", str);
                     LogUtil.d("OOM3", "titleEffect=" + str);
                 }
 
@@ -310,7 +307,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             ) {
 
                 if(!TextUtils.isEmpty(str)){
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_font_save", str);
+                    StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_font_save", str);
                     LogUtil.d("OOM3", "titleStyle=" + str);
                 }
 
@@ -326,7 +323,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             ) {
 
                 if(!TextUtils.isEmpty(str)){
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_border_save", str);
+                    StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_border_save", str);
                     LogUtil.d("OOM3", "titleFrame=" + str);
                 }
 
@@ -334,7 +331,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         }
 
         if ((titleStyle != null && titleStyle.size() > 0) || (titleEffect != null && titleEffect.size() > 0)) {
-            statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_save_save");
+            StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_save_save");
 
         }
 
@@ -557,13 +554,13 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 @Override
                 public void onVideoAdSuccess() {
                     onPause();
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "video_ad_alert_request_sucess");
+                    StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "video_ad_alert_request_sucess");
                     LogUtil.d("OOM", "onVideoAdSuccess");
                 }
 
                 @Override
                 public void onVideoAdError(String s) {
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "video_ad_alert_request_fail");
+                    StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "video_ad_alert_request_fail");
                     LogUtil.d("OOM", "onVideoAdError" + s);
                     videoPause();
                     Presenter.toSaveVideo(false, nowUiIsLandscape);

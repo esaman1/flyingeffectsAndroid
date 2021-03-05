@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <com.flyingeffects.com.view.SampleCoverVideo
         android:id="@+id/video_item_player"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
     </com.flyingeffects.com.view.SampleCoverVideo>
 
-
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_show_cover"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="#1D1D1D"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
@@ -26,8 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_video_play"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -38,8 +39,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--点击事件拦截-->
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_top_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,130 +56,97 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0" />
 
-
-    <RelativeLayout
-        android:id="@+id/relative_head_image"
-        android:layout_width="57dp"
-        android:layout_height="57dp"
-        android:layout_marginEnd="6dp"
-        android:gravity="center_horizontal"
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_writer"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         app:layout_constraintHorizontal_bias="0.94"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.50">
-
-        <ImageView
-            android:id="@+id/iv_writer"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_centerInParent="true" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_btn_follow"
-            android:layout_width="41dp"
-            android:layout_centerHorizontal="true"
-            android:layout_height="19dp"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/tv_make_crice"
-            android:gravity="center"
-            android:text="@string/follow"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sp_11"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-
-    </RelativeLayout>
-
-
-    <LinearLayout
-        android:id="@+id/ll_zan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.94"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relative_head_image">
+        app:layout_constraintVertical_bias="0.50"/>
 
-        <ImageView
-            android:id="@+id/iv_zan"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
-            android:contentDescription="@string/app_name"
-            android:scaleType="fitCenter"
-            android:src="@mipmap/zan" />
-
-        <TextView
-            android:id="@+id/tv_zan_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/ll_comment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="20dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_zan">
-
-        <ImageView
-            android:id="@+id/iv_comment"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
-            android:src="@mipmap/iv_comment" />
-
-
-        <TextView
-            android:id="@+id/tv_comment_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_down_bj"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="20dp"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_btn_follow"
+        android:layout_width="41dp"
+        android:layout_height="19dp"
+        android:background="@drawable/tv_make_crice"
         android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/ll_comment"
-        app:layout_constraintTop_toBottomOf="@+id/ll_comment">
+        android:text="@string/follow"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_12"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@id/iv_writer"
+        app:layout_constraintEnd_toEndOf="@id/iv_writer"
+        app:layout_constraintTop_toBottomOf="@id/iv_writer"
+        app:layout_constraintBottom_toBottomOf="@id/iv_writer"/>
 
-        <ImageView
-            android:id="@+id/iv_download_bj"
-            android:layout_width="33dp"
-            android:layout_height="33dp"
-            android:contentDescription="@string/app_name"
-            android:src="@mipmap/down_bj" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_zan"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/zan"
+        app:layout_constraintStart_toStartOf="@id/iv_writer"
+        app:layout_constraintEnd_toEndOf="@id/iv_writer"
+        app:layout_constraintTop_toBottomOf="@id/tv_btn_follow"
+        android:layout_marginTop="@dimen/dp_18"/>
 
-        <TextView
-            android:id="@+id/tv_download_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-    </LinearLayout>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_zan_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/iv_zan"
+        app:layout_constraintEnd_toEndOf="@id/iv_zan"
+        app:layout_constraintTop_toBottomOf="@id/iv_zan"/>
 
-    <com.flyingeffects.com.view.MarqueTextView
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_comment"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:src="@mipmap/iv_comment"
+        app:layout_constraintStart_toStartOf="@id/iv_zan"
+        app:layout_constraintEnd_toEndOf="@id/iv_zan"
+        app:layout_constraintTop_toBottomOf="@id/tv_zan_count"
+        android:layout_marginTop="@dimen/dp_18"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_comment_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/iv_comment"
+        app:layout_constraintEnd_toEndOf="@id/iv_comment"
+        app:layout_constraintTop_toBottomOf="@id/iv_comment"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_download_bj"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/down_bj"
+        app:layout_constraintStart_toStartOf="@id/iv_zan"
+        app:layout_constraintEnd_toEndOf="@id/iv_zan"
+        app:layout_constraintTop_toBottomOf="@id/tv_comment_count"
+        android:layout_marginTop="@dimen/dp_18"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_download_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@id/iv_download_bj"
+        app:layout_constraintEnd_toEndOf="@id/iv_download_bj"
+        app:layout_constraintTop_toBottomOf="@id/iv_download_bj"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_writer_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -199,7 +166,7 @@
         app:layout_constraintBottom_toTopOf="@+id/tv_title"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.flyingeffects.com.view.MarqueTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -212,7 +179,6 @@
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/ll_describe" />
-
 
     <LinearLayout
         android:id="@+id/ll_describe"
@@ -264,7 +230,6 @@
 
     </LinearLayout>
 
-
     <com.flyingeffects.com.view.MarqueTextView
         android:id="@+id/tv_make"
         android:layout_width="match_parent"
@@ -280,9 +245,9 @@
         android:paddingBottom="10dp"
         android:scrollHorizontally="true"
         android:singleLine="true"
-        android:text="马上制作"
+        android:text="@string/to_make"
         android:textColor="@color/white"
-        android:textSize="17sp"
+        android:textSize="@dimen/sp_17"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="parent"

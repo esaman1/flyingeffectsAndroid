@@ -3,13 +3,11 @@ package com.flyingeffects.com.ui.view.activity;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.SystemMessageDetailAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -22,7 +20,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -82,7 +80,7 @@ public class SystemMessageDetailActivity extends BaseActivity {
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (view.getId()){
                 case R.id.tv_make:
-                    statisticsEventAffair.getInstance().setFlag(this, "12_system_click",dataList.get(position).getContent());
+                    StatisticsEventAffair.getInstance().setFlag(this, "12_system_click",dataList.get(position).getContent());
                     requestTemplateDetail(dataList.get(position).getTemplate_id());
                     requestMessageStatistics("3",dataList.get(position).getId(),dataList.get(position).getTemplate_id());
                     break;
@@ -143,7 +141,7 @@ public class SystemMessageDetailActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-        statisticsEventAffair.getInstance().setFlag(this, "12_system_screen");
+        StatisticsEventAffair.getInstance().setFlag(this, "12_system_screen");
 
     }
 

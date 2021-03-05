@@ -17,7 +17,7 @@ import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.TemplateAddStickerMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.TemplateAddStickerMvpPresenter;
@@ -108,7 +108,6 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @BindView(R.id.viewPager)
     ViewPager viewPager;
 
-
     @BindView(R.id.ll_add_text_style)
     LinearLayout ll_add_text_style;
     @BindView(R.id.dialog_share)
@@ -116,7 +115,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     private boolean isShowPreviewAd = false;
 
-    private String IsFrom;
+    private String mIsFrom;
     private String title;
 
     @Override
@@ -128,10 +127,10 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     protected void initView() {
         EventBus.getDefault().register(this);
         videoPath = getIntent().getStringExtra("videoPath");
-        title=getIntent().getStringExtra("title");
+        title = getIntent().getStringExtra("title");
         LogUtil.d("OOM", "path=" + videoPath);
-        IsFrom = getIntent().getStringExtra("IsFrom");
-        presenter = new TemplateAddStickerMvpPresenter(this, this, ll_space, viewLayerRelativeLayout, videoPath,dialogShare,title);
+        mIsFrom = getIntent().getStringExtra("IsFrom");
+        presenter = new TemplateAddStickerMvpPresenter(this, this, ll_space, viewLayerRelativeLayout, videoPath, dialogShare, title);
         if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频值
             presenter.setPlayerViewSize(playerView, scrollView, viewLayerRelativeLayout);
@@ -476,9 +475,11 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                     videoToPause();
                     endTimer();
                 }
-                if (!TextUtils.isEmpty("IsFrom") && IsFrom.equals(FromToTemplate.PICTUREALBUM)) {
-                    LogUtil.d("OOM","保存的模板名字为"+title);
-                    statisticsEventAffair.getInstance().setFlag(this, "21_yj_save",title );
+                if (!TextUtils.isEmpty("IsFrom") && mIsFrom.equals(FromToTemplate.PICTUREALBUM)) {
+                    LogUtil.d("OOM", "保存的模板名字为" + title);
+                    StatisticsEventAffair.getInstance().setFlag(this, "21_yj_save", title);
+                } else if (!TextUtils.isEmpty("IsFrom") && mIsFrom.equals(FromToTemplate.SHOOT)) {
+                    StatisticsEventAffair.getInstance().setFlag(this, "12_shoot_finish_save");
                 }
                 presenter.toSaveVideo(0);
                 break;
@@ -494,7 +495,6 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 }
                 break;
 
-
             case R.id.iv_top_back:
                 this.finish();
                 break;
@@ -504,7 +504,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
                 presenter.addTextSticker();
                 intoTextStyleDialog("");
-                statisticsEventAffair.getInstance().setFlag(this, "20_mb_text");
+                StatisticsEventAffair.getInstance().setFlag(this, "20_mb_text");
                 break;
 
 
@@ -595,13 +595,13 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
             videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
                 @Override
                 public void onVideoAdSuccess() {
-                    statisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_sucess");
+                    StatisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_sucess");
                     LogUtil.d("OOM", "onVideoAdSuccess");
                 }
 
                 @Override
                 public void onVideoAdError(String s) {
-                    statisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_fail");
+                    StatisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_fail");
                     LogUtil.d("OOM", "onVideoAdError" + s);
                     presenter.alertAlbumUpdate(false);
                 }

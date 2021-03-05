@@ -7,17 +7,17 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.Preview_up_and_down_adapter;
+import com.flyingeffects.com.adapter.PreviewUpDownAdapter;
+import com.flyingeffects.com.adapter.PreviewUpDownPagerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.databinding.ActivityPreviewUpAndDownBinding;
 import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
@@ -34,8 +34,8 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.StimulateControlManage;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewUpAndDownMvpView;
 import com.flyingeffects.com.ui.model.DressUpModel;
@@ -53,7 +53,6 @@ import com.github.penfeizhou.animation.loader.ResourceStreamLoader;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
@@ -67,10 +66,9 @@ import java.util.List;
 import java.util.Random;
 
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -87,16 +85,24 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public final static int SELECTALBUMFROMBJ = 1;
     public final static int SELECTALBUMFROMDressUp = 2;
     private static final String TAG = "PreviewUpDownActivity";
-    @BindView(R.id.page2)
-    ViewPager2 viewPage2;
 
-    @BindView(R.id.refresh)
-    SmartRefreshLayout smartRefreshLayout;
+    private ActivityPreviewUpAndDownBinding mBinding;
 
     PreviewUpAndDownMvpPresenter mMvpPresenter;
 
-    private Preview_up_and_down_adapter adapter;
+    private PreviewUpDownAdapter adapter;
+    /**
+     * viewpager适配器
+     */
+    private PreviewUpDownPagerAdapter mViewPagerAdapter;
+    /**
+     * fragment容器
+     */
+    private List<Fragment> mFragmentList;
 
+    /**
+     * 所有数据
+     */
     private List<new_fag_template_item> allData = new ArrayList<>();
 
     private new_fag_template_item templateItem;
@@ -120,7 +126,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private List<String> originalImagePath = new ArrayList<>();
 
-
     //下载视频成功后跳转到创作界面
     private String createDownVideoPath;
 
@@ -130,7 +135,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     //模板下载地址
     private String TemplateFilePath;
 
-
     private WaitingDialog_progress waitingDialog_progress;
 
     //是否需要插入广告
@@ -139,34 +143,22 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     //随机插入位置
     private int randomPosition;
 
-
     //目前已经插入的最大值
     private int insertMaxNum;
 
     //目前已经插入的最小值
     private int insertMinNum;
 
-
-    @BindView(R.id.rela_parent_show_alert)
-    LinearLayout rela_parent_show_alert;
-
-    @BindView(R.id.iv_guide)
-    ImageView iv_guide;
-
     private String alert = "飞闪极速抠图中...";
 
     private TTNativeExpressAd ad;
 
-
     private MattingImage mattingImage;
 
-
     //表示进入的入口
-    private String OldfromTo;
-
+    private String mOldFromTo;
 
     private boolean nowItemIsAd = false;
-
 
     private String templateType;
     private boolean mIsFollow;
@@ -174,7 +166,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_preview_up_and_down;
+        return 0;
     }
 
     private String templateId;
@@ -187,13 +179,19 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     //0 表示不是影集，1表示影集
     private int is_pic;
 
-
     private boolean isSlideViewpager = false;
     boolean isCanLoadMore;
 
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
+
+        mBinding = ActivityPreviewUpAndDownBinding.inflate(getLayoutInflater());
+        View rootView = mBinding.getRoot();
+        setContentView(rootView);
+
+        setOnClickListener();
+
         mattingImage = new MattingImage();
         BaseConstans.TemplateHasWatchingAd = false;
         ListForUpAndDown listForUpAndDown = (ListForUpAndDown) getIntent().getSerializableExtra("person");
@@ -215,97 +213,78 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         templateType = templateItem.getTemplate_type();
         String searchText = getIntent().getStringExtra("searchText");
         defaultnum = templateItem.getDefaultnum();
-        String toUserID = getIntent().getStringExtra("toUserID");
-        OldfromTo = getIntent().getStringExtra("fromTo");
-        keepOldFrom = OldfromTo;
+        String toUserId = getIntent().getStringExtra("toUserID");
+        mOldFromTo = getIntent().getStringExtra("fromTo");
+        keepOldFrom = mOldFromTo;
         //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
         if (!TextUtils.isEmpty(templateItem.getPre_url())) {
-            OldfromTo = FromToTemplate.ISBJ;
+            mOldFromTo = FromToTemplate.ISBJ;
         }
 
         //种类
-        String category_id = getIntent().getStringExtra("category_id");
-        String tc_id = getIntent().getStringExtra("tc_id");
+        String categoryId = getIntent().getStringExtra("category_id");
+        String tcId = getIntent().getStringExtra("tc_id");
+
         templateId = templateItem.getId() + "";
         //需要得到之前allData 已经滑到的页数和分类的类别以及是模板页面或者背景页面等
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowPraise = templateItem.getIs_praise();
-        mMvpPresenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, keepOldFrom, category_id, toUserID, searchText, isCanLoadMore, tc_id);
-        mMvpPresenter.initSmartRefreshLayout(smartRefreshLayout);
+        mMvpPresenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, keepOldFrom, categoryId, toUserId, searchText, isCanLoadMore, tcId);
+        mMvpPresenter.initSmartRefreshLayout(mBinding.refresh);
         if (isCanLoadMore) {
             if (nowChoosePosition >= allData.size() - 2) {
                 mMvpPresenter.requestMoreData();
             }
         }
 
-        adapter = new Preview_up_and_down_adapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, OldfromTo);
+        adapter = new PreviewUpDownAdapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, mOldFromTo);
+
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
-            switch (view.getId()) {
-                case R.id.iv_zan:
-                    if (BaseConstans.hasLogin()) {
-                        onclickZan();
-                    } else {
-                        goActivity(LoginActivity.class);
-                    }
-                    break;
-
-                case R.id.tv_make:
-
-
-                    toClickMake();
-                    break;
-
-
-                case R.id.iv_writer:
-                case R.id.tv_describe:
-                case R.id.tv_writer_name:
-                    intoUserHome(position);
-                    break;
-
-                case R.id.tv_title_music:
-                    if (!TextUtils.isEmpty(OldfromTo) && OldfromTo.equals(FromToTemplate.ISBJ)) {
-                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "13_muisc", templateItem.getAuth());
-                    } else {
-                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "12_muisc", templateItem.getAuth());
-                    }
-                    intoUserHome(position);
-                    break;
-
-                case R.id.iv_download_bj:
-                    statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
-                    mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem, OldfromTo);
-                    break;
-
-                case R.id.ll_comment:
-                    BaseFullBottomSheetFragment fullSheetDialogFragment = new BaseFullBottomSheetFragment();
-                    int height = (int) (ScreenUtil.getScreenHeight(this) * 0.3f);
-                    fullSheetDialogFragment.setTopOffset(height);
-                    fullSheetDialogFragment.setNowTemplateId(templateId);
-                    fullSheetDialogFragment.setNowTemplateTitle(templateItem.getTitle());
-                    fullSheetDialogFragment.setNowTemplateType(templateItem.getTemplate_type());
-                    fullSheetDialogFragment.show(getSupportFragmentManager(), "FullSheetDialogFragment");
-                    break;
-                case R.id.tv_btn_follow:
-                    if (BaseConstans.hasLogin()) {
-                        mIsFollow = allData.get(position).getIs_follow() == 1;
-                        LogUtil.d(TAG, "isfollow = " + mIsFollow);
-                        LogUtil.d(TAG, "isfollow = " + allData.get(position).getIs_follow());
-                        isOnPause = true;
-                        requestFollowThisUser(allData.get(position).getAdmin_id(), view, position);
-                    } else {
-                        goActivity(LoginActivity.class);
-                    }
-                    break;
-                default:
-                    break;
+            if (view.getId() == R.id.iv_zan) {
+                onclickZan();
+            } else if (view.getId() == R.id.tv_make) {
+                toClickMake();
+            } else if (view.getId() == R.id.iv_writer ||
+                    view.getId() == R.id.tv_describe ||
+                    view.getId() == R.id.tv_writer_name) {
+                intoUserHome(position);
+            } else if (view.getId() == R.id.tv_title_music) {
+                if (!TextUtils.isEmpty(mOldFromTo) && mOldFromTo.equals(FromToTemplate.ISBJ)) {
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "13_muisc", templateItem.getAuth());
+                } else {
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "12_muisc", templateItem.getAuth());
+                }
+                intoUserHome(position);
+            } else if (view.getId() == R.id.iv_download_bj) {
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
+                mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem, mOldFromTo);
+            } else if (view.getId() == R.id.ll_comment) {
+                BaseFullBottomSheetFragment fullSheetDialogFragment = new BaseFullBottomSheetFragment();
+                int height = (int) (ScreenUtil.getScreenHeight(this) * 0.3f);
+                fullSheetDialogFragment.setTopOffset(height);
+                fullSheetDialogFragment.setNowTemplateId(templateId);
+                fullSheetDialogFragment.setNowTemplateTitle(templateItem.getTitle());
+                fullSheetDialogFragment.setNowTemplateType(templateItem.getTemplate_type());
+                fullSheetDialogFragment.show(getSupportFragmentManager(), "FullSheetDialogFragment");
+            } else if (view.getId() == R.id.tv_btn_follow) {
+                if (BaseConstans.hasLogin()) {
+                    mIsFollow = allData.get(position).getIs_follow() == 1;
+                    LogUtil.d(TAG, "isfollow = " + mIsFollow);
+                    LogUtil.d(TAG, "isfollow = " + allData.get(position).getIs_follow());
+                    isOnPause = true;
+                    requestFollowThisUser(allData.get(position).getAdmin_id(), view, position);
+                } else {
+                    goActivity(LoginActivity.class);
+                }
             }
         });
 
-        viewPage2.setAdapter(adapter);
-        viewPage2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        mBinding.page2.setAdapter(adapter);
+        mBinding.page2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+
             }
 
             @Override
@@ -314,9 +293,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 if (position != -1) {
                     //置空数据
 //                    fromTo=OldfromTo;
-                    OldfromTo = keepOldFrom;
+                    mOldFromTo = keepOldFrom;
                     LogUtil.d("OOM2", "当前位置为" + position);
-                    adapter.NowPreviewChooseItem(position);
+                    adapter.nowPreviewChooseItem(position);
                     //todo  解决播放卡顿问题 声音在跑，但是画面没动的情况
 //                    if(allData.get(position).getAd()!=null){
                     adapter.notifyItemChanged(position);
@@ -325,7 +304,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     nowChoosePosition = position;
                     //判断当前滑动状态
                     nowSlideOrientationIsUp = nowChoosePosition < lastChoosePosition;
-                    refeshData();
+                    refreshData();
                     if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
                         if (position >= insertMaxNum || position <= insertMinNum) {
                             if (isSlideViewpager) {
@@ -349,7 +328,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         if (templateItem.getId() != 0) {
                             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
                         }
-
                     }
                 }
                 isSlideViewpager = true;
@@ -359,21 +337,28 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             public void onPageScrollStateChanged(int state) {
                 super.onPageScrollStateChanged(state);
             }
+
         });
-        viewPage2.setCurrentItem(nowChoosePosition, false);
+
+        mBinding.page2.setCurrentItem(nowChoosePosition, false);
         if (nowPraise == 1 && BaseConstans.hasLogin()) {
             setIsZan(true);
         }
+
         if (BaseConstans.isFirstUseDownAndUpAct()) {
-            rela_parent_show_alert.setVisibility(View.VISIBLE);
+            mBinding.relaParentShowAlert.setVisibility(View.VISIBLE);
             ResourceStreamLoader resourceLoader = new ResourceStreamLoader(this, R.mipmap.guide);
             APNGDrawable apngDrawable = new APNGDrawable(resourceLoader);
-            iv_guide.setImageDrawable(apngDrawable);
-            rela_parent_show_alert.setOnClickListener(view -> rela_parent_show_alert.setVisibility(View.GONE));
+            mBinding.ivGuide.setImageDrawable(apngDrawable);
+            mBinding.relaParentShowAlert.setOnClickListener(this::onViewClick);
             BaseConstans.setFirstUseDownAndUpAct();
         } else {
-            rela_parent_show_alert.setVisibility(View.GONE);
+            mBinding.relaParentShowAlert.setVisibility(View.GONE);
         }
+    }
+
+    private void setOnClickListener() {
+        mBinding.ibBack.setOnClickListener(this::onViewClick);
     }
 
 
@@ -409,7 +394,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("关注");
                     mIsFollow = false;
                 } else {
-                   // ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("取消关注");
+                    // ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("取消关注");
                     mIsFollow = true;
                 }
                 LogUtil.d("OOM", "requestFollowThisUser");
@@ -424,7 +409,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * creation date: 2020/7/2
      * user : zhangtongju
      */
-    private void refeshData() {
+    private void refreshData() {
         if (nowChoosePosition >= 0 && nowChoosePosition < allData.size()) {
             templateItem = allData.get(nowChoosePosition);
             templateId = templateItem.getId() + "";
@@ -462,15 +447,15 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             iZanNum++;
 
             if ("1".equals(templateType)) {
-                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 12_like", templateItem.getTitle());
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 12_like", templateItem.getTitle());
             } else {
-                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 13_like", templateItem.getTitle());
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 13_like", templateItem.getTitle());
             }
         } else {
             if ("1".equals(templateType)) {
-                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 12_cancel", templateItem.getTitle());
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 12_cancel", templateItem.getTitle());
             } else {
-                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 13_cancel", templateItem.getTitle());
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, " 13_cancel", templateItem.getTitle());
             }
             iZanNum--;
         }
@@ -512,10 +497,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         GSYVideoManager.releaseAllVideos();
     }
 
-    @Override
-    @OnClick({R.id.ibBack})
-    public void onClick(View view) {
-        if (view.getId() == R.id.ibBack) {
+
+    public void onViewClick(View view) {
+        if (view == mBinding.relaParentShowAlert) {
+            mBinding.relaParentShowAlert.setVisibility(View.GONE);
+        } else if (view == mBinding.ibBack) {
             this.finish();
         }
     }
@@ -526,30 +512,32 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * user : zhangtongju
      */
     public void onclickZan() {
-        String needId;
-        int id = templateItem.getTemplate_id();
-        if (id != 0) {
-            needId = id + "";
+        if (BaseConstans.hasLogin()) {
+            String needId;
+            int id = templateItem.getTemplate_id();
+            if (id != 0) {
+                needId = id + "";
+            } else {
+                needId = templateItem.getId() + "";
+            }
+            mMvpPresenter.ZanTemplate(needId, templateItem.getTitle(), templateType);
         } else {
-            needId = templateItem.getId() + "";
+            goActivity(LoginActivity.class);
         }
-        mMvpPresenter.ZanTemplate(needId, templateItem.getTitle(), templateType);
     }
 
     @Override
     public void collectionResult(boolean collectionResult) {
 
+        new_fag_template_item item = allData.get(nowChoosePosition);
         if (collectionResult) {
-            new_fag_template_item item = allData.get(nowChoosePosition);
             item.setIs_collection(1);
-            allData.set(nowChoosePosition, item);
         } else {
-            new_fag_template_item item = allData.get(nowChoosePosition);
             item.setIs_collection(0);
-            allData.set(nowChoosePosition, item);
         }
+        allData.set(nowChoosePosition, item);
 
-        switch (OldfromTo) {
+        switch (mOldFromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
                 EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 1));
                 break;
@@ -612,7 +600,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         toCloseProgressDialog();
         createDownVideoPath = videoPath;
         //背景选择页面
-        if (OldfromTo.equals(FromToTemplate.ISCHOOSEBJ)) {
+        if (mOldFromTo.equals(FromToTemplate.ISCHOOSEBJ)) {
             EventBus.getDefault().post(new DownVideoPath(videoPath));
             finish();
         } else {
@@ -663,6 +651,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     private String bjMp3;
     private float bjMp3Duration;
+
     @Override
     public void getTemplateFileSuccess(String filePath) {
         if (!ondestroy) {
@@ -672,7 +661,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             if (!TextUtils.isEmpty(templateItem.getVideotime()) && !"0".equals(templateItem.getVideotime()) && is_with_play == 1) {
                 bjMp3Duration = Float.parseFloat(templateItem.getVideotime());
                 LogUtil.d("OOM", "bj.mp3=" + TemplateFilePath);
-                 bjMp3 = TemplateFilePath + File.separator + "bj.mp3";
+                bjMp3 = TemplateFilePath + File.separator + "bj.mp3";
                 AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (bjMp3Duration * 1000), templateItem.getTitle(), bjMp3);
             } else {
                 AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
@@ -737,7 +726,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 adapter.notifyDataSetChanged();
                 LogUtil.d("OOM", "广告插入的位置=" + randomPosition);
                 //因为提前插入的，所以需要加1
-                viewPage2.setCurrentItem(nowChoosePosition + 1, false);
+                mBinding.page2.setCurrentItem(nowChoosePosition + 1, false);
             }
 //            else {
 //                //否则永远都是第一个
@@ -774,6 +763,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (!nowItemIsAd) {
             GSYVideoManager.onResume();
         }
+        adapter.notifyDataSetChanged();
         if (BaseConstans.hasLogin()) {
             //主要用于刷新当前页面
             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
@@ -799,7 +789,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             is_pic = templateItem.getIs_pic();
             //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
             if (!TextUtils.isEmpty(templateItem.getPre_url())) {
-                OldfromTo = FromToTemplate.ISBJ;
+                mOldFromTo = FromToTemplate.ISBJ;
             }
             adapter.setCommentCount(data.getComment());
             is_with_play = templateItem.getIs_with_play();
@@ -833,7 +823,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void returnSpliteMusic(String musicPath, String videoPath) {
         this.videoPath = videoPath;
         if (!TextUtils.isEmpty(musicPath) && is_with_play == 1) {
-            if (OldfromTo.equals(FromToTemplate.ISBJ)) {
+            if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
                 AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), musicPath);
             } else {
                 AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), musicPath);
@@ -872,9 +862,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     private void hasLoginToNext() {
         mMvpPresenter.requestMessageStatistics("1", "", templateId);
-        switch (OldfromTo) {
+        switch (mOldFromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
-                statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
+                StatisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
                 mMvpPresenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId() + "", false);
                 break;
             case FromToTemplate.ISCHOOSEBJ:
@@ -888,7 +878,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 break;
             case FromToTemplate.ISBJ:
                 LogUtil.d("OOM", "来自背景");
-                statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
+                StatisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
                 mMvpPresenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId() + "", false);
                 break;
             case FromToTemplate.ISHOMEMYLIKE:
@@ -900,13 +890,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             case FromToTemplate.ISSEARCHBJ:
             case FromToTemplate.ISSEARCHTEMPLATE:
                 if ("2".equals(templateType)) {
-                    statisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
+                    StatisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
                     mMvpPresenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId() + "", false);
                 } else {
-                    if (OldfromTo.equals(FromToTemplate.ISSEARCHBJ) || OldfromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
-                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "4_search_make", templateItem.getTitle());
+                    if (mOldFromTo.equals(FromToTemplate.ISSEARCHBJ) || mOldFromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
+                        StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "4_search_make", templateItem.getTitle());
                     }
-                    statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "mb_make", templateItem.getTitle());
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "mb_make", templateItem.getTitle());
                     adapter.pauseVideo();
                     mMvpPresenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
                 }
@@ -939,13 +929,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
         if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
             adapter.pauseVideo();
-            if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
-                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_Make", templateItem.getTitle());
+            if (mOldFromTo.equals(FromToTemplate.ISBJ) || mOldFromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_Make", templateItem.getTitle());
                 UiStep.isFromDownBj = true;
-            } else if (OldfromTo.equals(FromToTemplate.DRESSUP)) {
-                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "21_face_made", templateItem.getTitle());
+            } else if (mOldFromTo.equals(FromToTemplate.DRESSUP)) {
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "21_face_made", templateItem.getTitle());
             } else {
-                statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_make", templateItem.getTitle());
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_make", templateItem.getTitle());
             }
             if (BaseConstans.hasLogin()) {
                 //登录可能被挤下去，所以这里加个用户信息刷新请求
@@ -964,43 +954,44 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             LogUtil.d("OOM3", "模型也加载完成");
             if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
                 if (albumFileList.get(0).isClickToCamera()) {
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "12_mb_shoot", templateItem.getTitle());
                     //拍摄新页面
                     Intent intent = new Intent(PreviewUpAndDownActivity.this, FUBeautyActivity.class);
-                    if("2".equals(templateItem.getTemplate_type())){
+                    if ("2".equals(templateItem.getTemplate_type())) {
                         //背景
-                        MediaInfo mediaInfo=new MediaInfo(videoPath);
+                        MediaInfo mediaInfo = new MediaInfo(videoPath);
                         mediaInfo.prepare();
-                        intent.putExtra("musicPath",videoPath);
-                        intent.putExtra("createDownVideoPath",createDownVideoPath);
-                        long duration=mediaInfo.getDurationUs()/1000;
-                        intent.putExtra("duration",duration);
+                        intent.putExtra("musicPath", videoPath);
+                        intent.putExtra("createDownVideoPath", createDownVideoPath);
+                        long duration = mediaInfo.getDurationUs() / 1000;
+                        intent.putExtra("duration", duration);
                         mediaInfo.release();
-                    }else{
+                    } else {
                         //模板
-                        intent.putExtra("musicPath",bjMp3);
-                        intent.putExtra("duration",(long) (bjMp3Duration * 1000));
+                        intent.putExtra("musicPath", bjMp3);
+                        intent.putExtra("duration", (long) (bjMp3Duration * 1000));
                     }
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    intent.putExtra("isFrom",1);
-                    intent.putExtra("defaultnum",defaultnum);
-                    intent.putExtra("templateItem",templateItem);
-                    intent.putExtra("TemplateFilePath",TemplateFilePath);
-                    intent.putExtra("videoPath",videoPath);
-                    intent.putExtra("OldfromTo",OldfromTo);
-                    intent.putExtra("title",templateItem.getTitle());
+                    intent.putExtra("isFrom", 1);
+                    intent.putExtra("defaultnum", defaultnum);
+                    intent.putExtra("templateItem", templateItem);
+                    intent.putExtra("TemplateFilePath", TemplateFilePath);
+                    intent.putExtra("videoPath", videoPath);
+                    intent.putExtra("OldfromTo", mOldFromTo);
+                    intent.putExtra("title", templateItem.getTitle());
 
                     startActivity(intent);
                 } else {
                     if (isFromCamera) {
-                        if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
+                        if (mOldFromTo.equals(FromToTemplate.ISBJ) || mOldFromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
                             LogUtil.d("OOM2", "背景页面自己拍摄");
-                            statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_success");
+                            StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_success");
                         } else {
                             LogUtil.d("OOM2", "模板页面自己拍摄");
-                            statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "11_mb_success");
+                            StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "11_mb_success");
                         }
                     }
-                    if (OldfromTo.equals(FromToTemplate.DRESSUP)) {
+                    if (mOldFromTo.equals(FromToTemplate.DRESSUP)) {
                         //来自换装页面
                         mMvpPresenter.toDressUp(paths.get(0), templateId, templateItem.getTitle());
                     } else if (templateItem.getIs_anime() == 1) {
@@ -1019,7 +1010,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         mattingImage.createHandle(PreviewUpAndDownActivity.this, isDone -> {
                             if (isDone) {
                                 Observable.just("tag").subscribeOn(AndroidSchedulers.mainThread()).subscribe(str -> {
-                                    if (OldfromTo.equals(FromToTemplate.ISBJ)) {
+                                    if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
                                         //背景模板文案
                                         alert = "正在生成中~";
                                     } else {
@@ -1044,8 +1035,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                             String pathType = GetPathTypeModel.getInstance().getMediaType(path);
                                             if (albumType.isImage(pathType)) {
                                                 //选择的时图片
-                                                if (OldfromTo.equals(FromToTemplate.ISBJ)) {
-                                                    statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
+                                                if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
+                                                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
                                                 }
 //                                        if (templateItem.getIs_anime() != 1) {
                                                 compressImage(paths, templateItem.getId() + "");
@@ -1093,7 +1084,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                             intoTemplateActivity(paths, TemplateFilePath);
                                         }
 
-
                                     }).start();
                                 });
                             }
@@ -1112,16 +1102,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private void chooseAlbumStatistics(List<String> paths) {
         if (paths != null && paths.size() > 0) {
-            for (String path : paths
-
-            ) {
+            for (String path : paths) {
                 if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(path))) {
-                    {
-                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType", "选择的是图片");
-                        LogUtil.d("OOM", "当前选择的是图片");
-                    }
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType", "选择的是图片");
+                    LogUtil.d("OOM", "当前选择的是图片");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType", "选择的是视频");
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType", "选择的是视频");
                     LogUtil.d("OOM", "当前选择的是视频");
                 }
             }
@@ -1132,9 +1118,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private void compressImageForServers(List<String> paths, String templateId) {
         boolean hasCache = templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
-            if (OldfromTo.equals(FromToTemplate.ISBJ)) {
+            if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
                 mMvpPresenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId() + "", false);
-            } else if (OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
+            } else if (mOldFromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
                 mMvpPresenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId() + "", false);
             } else {
                 toCloseProgressDialog();
@@ -1174,7 +1160,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("paths", (ArrayList<String>) paths);
         bundle.putInt("isPicNum", defaultnum);
-        bundle.putString("fromTo", OldfromTo);
+        bundle.putString("fromTo", mOldFromTo);
         bundle.putInt("picout", templateItem.getIs_picout());
         bundle.putInt("is_anime", templateItem.getIs_anime());
         bundle.putString("templateName", templateItem.getTitle());
@@ -1224,7 +1210,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
             bundle.putStringArrayList("paths", paths);
             bundle.putInt("isPicNum", defaultnum);
-            bundle.putString("fromTo", OldfromTo);
+            bundle.putString("fromTo", mOldFromTo);
             bundle.putString("primitivePath", event.getPrimitivePath());
             bundle.putInt("is_anime", templateItem.getIs_anime());
             LogUtil.d("OOM55", "is_anime=" + templateItem.getIs_anime());
@@ -1274,17 +1260,17 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             //需要激励视频
             if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                 VideoAdManager videoAdManager = new VideoAdManager();
-                videoAdManager.showVideoAd(this, TextUtils.equals(OldfromTo, FromToTemplate.DRESSUP) ?
+                videoAdManager.showVideoAd(this, TextUtils.equals(mOldFromTo, FromToTemplate.DRESSUP) ?
                         AdConfigs.AD_DRESSUP_video : AdConfigs.AD_stimulate_video, new VideoAdCallBack() {
                     @Override
                     public void onVideoAdSuccess() {
-                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_sucess");
+                        StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_sucess");
                         LogUtil.d("OOM4", "onVideoAdSuccess");
                     }
 
                     @Override
                     public void onVideoAdError(String s) {
-                        statisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
+                        StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
                         LogUtil.d("OOM4", "onVideoAdError" + s);
                         BaseConstans.TemplateHasWatchingAd = true;
                         hasLoginToNext();
@@ -1317,8 +1303,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 hasLoginToNext();
             }
         }
-
-
     }
 
 
@@ -1332,17 +1316,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         }
     }
 
-
     /**
      * description ：关注和取消关注回调
      * creation date: 2020/10/27
      * user : zhangtongju
      */
-
     @Subscribe
     public void onEventMainThread(AttentionChange event) {
 
     }
-
-
 }

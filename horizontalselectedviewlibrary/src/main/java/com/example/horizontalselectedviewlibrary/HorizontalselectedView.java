@@ -80,7 +80,6 @@ public class HorizontalselectedView extends View {
         selectedPaint.setTextSize(selectedTextSize);
     }
 
-
     /**
      * 初始化属性
      *
@@ -116,7 +115,6 @@ public class HorizontalselectedView extends View {
                     anOffset = (float) ((scrollX - downX) / 1.5);//当滑到两端的时候添加一点阻力
                 }
 
-
                 if (scrollX > downX) {
                     //向右滑动，当滑动距离大于每个单元的长度时，则改变被选中的文字。
                     if (scrollX - downX >= anInt) {
@@ -149,14 +147,21 @@ public class HorizontalselectedView extends View {
                             float i = (downX - middle) / anInt;
                             Log.d(TAG, "onTouchEvent: i = " + i);
                             n = n + Math.round(i);
+                            if (n > strings.size() - 1) {
+                                n = strings.size() - 1;
+                            }
                         }
                     } else {
                         if ((middle - downX) >= anInt) {
                             float i = (middle - downX) / anInt;
                             Log.d(TAG, "onTouchEvent: i = " + i);
                             n = n - Math.round(i);
+                            if (n < 0) {
+                                n = 0;
+                            }
                         }
                     }
+                    Log.d(TAG, "onTouchEvent: n = " + n);
                 }
                 //抬起手指时，偏移量归零，相当于回弹。
                 anOffset = 0;
@@ -177,34 +182,37 @@ public class HorizontalselectedView extends View {
             anInt = width / seeSize;
             firstVisible = false;
         }
-        if (n >= 0 && n <= strings.size() - 1) {//加个保护；防止越界
+        //加个保护；防止越界
+        if (n >= 0 && n <= strings.size() - 1) {
 
-            String s = strings.get(n);//得到被选中的文字
-            /**
-             * 得到被选中文字 绘制时所需要的宽高
-             */
+            //得到被选中的文字
+            String s = strings.get(n);
+            //得到被选中文字 绘制时所需要的宽高
             selectedPaint.getTextBounds(s, 0, s.length(), rect);
             //3从矩形区域中读出文本内容的宽高
             int centerTextWidth = rect.width();
             centerTextHeight = rect.height();
-            canvas.drawText(strings.get(n), getWidth() / 2 - centerTextWidth / 2 + anOffset, getHeight() / 2 + centerTextHeight / 2, selectedPaint);//绘制被选中文字，注意点是y坐标
-
-            for (int i = 0; i < strings.size(); i++) {//遍历strings，把每个地方都绘制出来，
-                if (n > 0 && n < strings.size() - 1) {//这里主要是因为strings数据源的文字长度不一样，为了让被选中两边文字距离中心宽度一样，我们取得左右两个文字长度的平均值
+            //绘制被选中文字，注意点是y坐标
+            canvas.drawText(strings.get(n), getWidth() / 2 - centerTextWidth / 2 + anOffset, getHeight() / 2 + centerTextHeight / 2, selectedPaint);
+            //遍历strings，把每个地方都绘制出来，
+            for (int i = 0; i < strings.size(); i++) {
+                //这里主要是因为strings数据源的文字长度不一样，为了让被选中两边文字距离中心宽度一样，我们取得左右两个文字长度的平均值
+                if (n > 0 && n < strings.size() - 1) {
                     textPaint.getTextBounds(strings.get(n - 1), 0, strings.get(n - 1).length(), rect);
                     int width1 = rect.width();
                     textPaint.getTextBounds(strings.get(n + 1), 0, strings.get(n + 1).length(), rect);
                     int width2 = rect.width();
                     textWidth = (width1 + width2) / 2;
                 }
-
-                if (i == 0) {//得到高，高度是一样的，所以无所谓
+                //得到高，高度是一样的，所以无所谓
+                if (i == 0) {
                     textPaint.getTextBounds(strings.get(0), 0, strings.get(0).length(), rect);
                     textHeight = rect.height();
                 }
 
                 if (i != n) {
-                    canvas.drawText(strings.get(i), (i - n) * anInt + getWidth() / 2 - textWidth / 2 + anOffset, getHeight() / 2 + textHeight / 2, textPaint);//画出每组文字
+                    //画出每组文字
+                    canvas.drawText(strings.get(i), (i - n) * anInt + getWidth() / 2 - textWidth / 2 + anOffset, getHeight() / 2 + textHeight / 2, textPaint);
                 }
 
             }
@@ -227,7 +235,6 @@ public class HorizontalselectedView extends View {
         }
     }
 
-
     /**
      * 向左移动一个单元
      */
@@ -236,7 +243,6 @@ public class HorizontalselectedView extends View {
             n = n + 1;
             invalidate();
         }
-
     }
 
     /**
@@ -272,8 +278,7 @@ public class HorizontalselectedView extends View {
         return null;
     }
 
-
-    public void SetChoosePosition(int choose) {
+    public void setChoosePosition(int choose) {
         n = choose;
         invalidate();
     }

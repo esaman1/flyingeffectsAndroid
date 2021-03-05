@@ -6,13 +6,13 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.umeng.analytics.MobclickAgent;
 
 
-public class statisticsEventAffair {
+public class StatisticsEventAffair {
 
-    static statisticsEventAffair instance;
+    static StatisticsEventAffair instance;
 
-    public static statisticsEventAffair getInstance() {
+    public static StatisticsEventAffair getInstance() {
         if (instance == null) {
-            instance = new statisticsEventAffair();
+            instance = new StatisticsEventAffair();
         }
         return instance;
     }

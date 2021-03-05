@@ -28,6 +28,7 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -39,6 +40,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.FUBeautyMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.model.FUBeautyMvpModel;
@@ -122,9 +124,9 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                horizontalselectedView.SetChoosePosition(0);
+                horizontalselectedView.setChoosePosition(0);
             }
-        },100);
+        }, 100);
     }
 
 
@@ -145,7 +147,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         }
     }
 
-
     public void SetNowChooseMusic(String musicPath, String originalPath) {
         fUBeautyMvpmodel.SetNowChooseMusic(musicPath, originalPath);
     }
@@ -159,13 +160,13 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
 
 
     public void StartCountDown() {
-        nowCountDownNum=  GetCountDown();
-        countDownStatus=0;
+        nowCountDownNum = GetCountDown();
+        countDownStatus = 0;
         startTimer();
     }
 
-    public int GetCountDown(){
-      int  needTime = 0;
+    public int GetCountDown() {
+        int needTime = 0;
         if (nowChooseCutDownNum == 0) {
             needTime = 4;
         } else if (nowChooseCutDownNum == 1) {
@@ -175,7 +176,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         }
         return needTime;
     }
-
 
 
     /**
@@ -195,6 +195,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         LogUtil.d("OOM2", "当前需要的音乐时长为" + duration);
         intent.putExtra("needDuration", duration);
         intent.putExtra("isFromShoot", true);
+        intent.putExtra(ChooseMusicActivity.IS_FROM, isFrom);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
     }
@@ -205,7 +206,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      * creation date: 2021/2/20
      * user : zhangtongju
      */
-    public void ToNextPage(String path) {
+    public void toNextPage(String path) {
         if (isFrom == 0) {
             Intent intent = new Intent(context, TemplateAddStickerActivity.class);
             intent.putExtra("videoPath", path);
@@ -214,6 +215,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             context.startActivity(intent);
         } else {
             // 这里是跟随相机拍摄页面
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_Shoot_finish_next");
             String templateType = templateItem.getTemplate_type();
             if ("2".equals(templateType)) {
 //                intoCreationTemplateActivity(path, videoBjPath, path, true);
@@ -284,20 +286,28 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      * creation date: 2021/1/29
      * user : zhangtongju
      */
-    public void clickCountDown(ImageView iv) {
+    public void clickCountDown(ImageView iv, int isFrom) {
+        String secondText;
         nowChooseCutDownNum++;
         if (nowChooseCutDownNum > 2) {
             nowChooseCutDownNum = 0;
         }
         if (nowChooseCutDownNum == 0) {
             iv.setImageResource(R.mipmap.cout_down_3);
+            secondText = "3s";
         } else if (nowChooseCutDownNum == 1) {
             iv.setImageResource(R.mipmap.cout_down_7);
+            secondText = "7s";
         } else {
             iv.setImageResource(R.mipmap.cout_down_10);
+            secondText = "10s";
+        }
+        if (isFrom == 0) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_countdown", secondText);
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_shoot_countdown", secondText);
         }
     }
-
 
     /**
      * description 设置View 动画：
@@ -320,7 +330,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         view.startAnimation(animationSet);
     }
 
-
     /**
      * description ：开始录像，1 如果有音乐，就播放音乐，如果切换了下面时长，就播放原视频音乐  2 开启进度动画
      * creation date: 2021/2/1
@@ -340,15 +349,15 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         }
 
         //2  开启进度动画
-
         if (isFrom != 1) {
             String text = horizontalselectedView.getSelectedString();
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_time", text);
             long duration = fUBeautyMvpmodel.FetChooseDuration(text);
             LogUtil.d("OOM2", "duration=" + duration);
             if (duration != 0) {
                 fUBeautyMvpView.nowChooseRecordIsInfinite(false);
                 countDownStatus = 1;
-                nowCountDownNum = (duration / (float)1000);
+                nowCountDownNum = (duration / (float) 1000);
                 LogUtil.d("OOM2", "nowCountDownNum=" + nowCountDownNum);
                 allNeedDuration = nowCountDownNum;
                 startTimer();
@@ -380,8 +389,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             mediaPlayer.release();
         }
         endTimer();
-
-
     }
 
 
@@ -396,7 +403,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             e.printStackTrace();
         }
     }
-
 
     /**
      * description ：倒计时功能
@@ -428,8 +434,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         } else {
             timer.schedule(task, 0, 1000);
         }
-
-
     }
 
 
@@ -457,12 +461,8 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                             endTimer();
                         }
                     }
-
                     break;
-
-
                 default:
-
                     break;
             }
         }
@@ -618,7 +618,6 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         }
         horizontalselectedView.setData(list);
         horizontalselectedView.setSeeSize(4);
-
     }
 
 

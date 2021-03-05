@@ -8,7 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.utils.ToastUtil;
 
@@ -26,9 +26,9 @@ public class PraiseActivity extends Activity {
         setContentView(R.layout.act_praise);
 
 
-        statisticsEventAffair.getInstance().setFlag(PraiseActivity.this, "16_pick 20_hp");
+        StatisticsEventAffair.getInstance().setFlag(PraiseActivity.this, "16_pick 20_hp");
         findViewById(R.id.tv_0).setOnClickListener(view -> {
-            statisticsEventAffair.getInstance().setFlag(PraiseActivity.this, "20_hp_cancel1");
+            StatisticsEventAffair.getInstance().setFlag(PraiseActivity.this, "20_hp_cancel1");
             ShowPraiseModel.statisticsCloseNum();
             finishAct();
         });
@@ -36,7 +36,7 @@ public class PraiseActivity extends Activity {
 
         findViewById(R.id.tv_1).setOnClickListener(view -> {
             ShowPraiseModel.setHasComment();
-            statisticsEventAffair.getInstance().setFlag(PraiseActivity.this, "20_hp_confirm");
+            StatisticsEventAffair.getInstance().setFlag(PraiseActivity.this, "20_hp_confirm");
             reception();
             finishAct();
         });
@@ -68,7 +68,7 @@ public class PraiseActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        statisticsEventAffair.getInstance().setFlag(PraiseActivity.this, "20_hp_cancel2");
+        StatisticsEventAffair.getInstance().setFlag(PraiseActivity.this, "20_hp_cancel2");
         super.onDestroy();
     }
 }

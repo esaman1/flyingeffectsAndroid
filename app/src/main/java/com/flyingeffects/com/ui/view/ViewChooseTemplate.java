@@ -1,7 +1,6 @@
 package com.flyingeffects.com.ui.view;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,7 +16,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -69,7 +68,7 @@ public class ViewChooseTemplate {
                             @Override
                             public void call(String s) {
                                 WaitingDialog.closePragressDialog();
-                                statisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click",list.get(position).getTitle());
+                                StatisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click",list.get(position).getTitle());
                                 if(callback!=null){
                                     callback.onItemClick(position,filePath,items);
                                 }

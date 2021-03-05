@@ -5,18 +5,16 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.faceUtil.SegResultHandleUtils;
 import com.megvii.facepp.multi.sdk.BodySegmentApi;
 import com.megvii.facepp.multi.sdk.FacePPImage;
-import com.megvii.facepp.multi.sdk.segment.SegmentResult;
 import com.megvii.facepp.multi.sdk.utils.ImageTransformUtils;
 import com.shixing.sxve.ui.util.PhotoBitmapUtils;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -56,19 +54,19 @@ public class MattingImage {
     private void updateDuration(float duration, Context context) {
         LogUtil.d("OOM", "initMattingDuration=" + duration);
         if (duration <= 10000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于10秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于10秒");
         } else if (duration <= 20000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于20秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于20秒");
         } else if (duration <= 30000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于30秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于30秒");
         } else if (duration <= 40000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于40秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于40秒");
         } else if (duration <= 50000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于50秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于50秒");
         } else if (duration <= 60000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于60秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于60秒");
         } else {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "大于1分钟");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "大于1分钟");
         }
     }
 

@@ -12,11 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-
     <RelativeLayout
         android:id="@+id/relative_choose_music"
         android:layout_width="118dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/dp_34"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:background="@drawable/strok_choose_music_bj"
@@ -44,7 +43,7 @@
             android:singleLine="true"
             android:text="选择音乐"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="15sp" />
     </RelativeLayout>
 
 
@@ -68,9 +67,7 @@
         android:layout_marginEnd="31dp"
         android:orientation="vertical">
 
-
         <include layout="@layout/view_shoot_item" />
-
 
     </LinearLayout>
 
@@ -106,6 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="道具"
+                android:textSize="@dimen/sp_12"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -131,7 +129,6 @@
                 app:lottie_fileName="aa.json" />
 
         </RelativeLayout>
-
 
         <LinearLayout
             android:id="@+id/ll_album"
@@ -160,10 +157,6 @@
     </LinearLayout>
 
 
-
-
-
-
     <TextView
         android:textColor="@color/white"
         android:textSize="16sp"
@@ -177,8 +170,6 @@
         android:layout_above="@+id/ll_bottom"
         android:layout_height="wrap_content"/>
 
-
-
     <com.example.horizontalselectedviewlibrary.HorizontalselectedView
         android:id="@+id/horizontalselectedView"
         android:layout_width="match_parent"
@@ -190,14 +181,8 @@
         app:HorizontalselectedViewSeesize="5"
         app:HorizontalselectedViewSelectedTextColor="#FFFFFF"
         app:HorizontalselectedViewSelectedTextSize="60"
-        app:HorizontalselectedViewTextColor="#566265"
-        app:HorizontalselectedViewTextSize="60"
-
-        />
-
-
-
-
+        app:HorizontalselectedViewTextColor="#4DFFFFFF"
+        app:HorizontalselectedViewTextSize="60" />
 
     <LinearLayout
         android:id="@+id/photograph_light_layout"

@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
 
 /**
@@ -220,9 +220,9 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
     public void editStatistics(TemplateMaterialItemView view, boolean isOverallMove) {
         if (!isOverallMove) {
             if (TextUtils.isEmpty(resPath)) {
-                statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd_clip");
+                StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd_clip");
             } else {
-                statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd_clip");
+                StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd_clip");
             }
         }
     }

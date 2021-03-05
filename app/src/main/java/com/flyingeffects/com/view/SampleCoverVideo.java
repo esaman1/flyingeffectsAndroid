@@ -24,7 +24,6 @@ import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
  * 带封面
  * Created by guoshuyu on 2017/9/3.
  */
-
 public class SampleCoverVideo extends StandardGSYVideoPlayer {
 
     ImageView mCoverImage;
@@ -48,10 +47,9 @@ public class SampleCoverVideo extends StandardGSYVideoPlayer {
     @Override
     protected void init(Context context) {
         super.init(context);
-        mCoverImage = (ImageView) findViewById(R.id.thumbImage);
-
-        if (mThumbImageViewLayout != null &&
-                (mCurrentState == -1 || mCurrentState == CURRENT_STATE_NORMAL || mCurrentState == CURRENT_STATE_ERROR)) {
+        mCoverImage = findViewById(R.id.thumbImage);
+        boolean viewLayoutVisible = mThumbImageViewLayout != null && (mCurrentState == -1 || mCurrentState == CURRENT_STATE_NORMAL || mCurrentState == CURRENT_STATE_ERROR);
+        if (viewLayoutVisible) {
             mThumbImageViewLayout.setVisibility(VISIBLE);
         }
     }
@@ -179,15 +177,13 @@ public class SampleCoverVideo extends StandardGSYVideoPlayer {
 
     protected boolean byStartedClick;
 
-    @Override
     protected void onClickUiToggle() {
         if (mIfCurrentIsFullscreen && mLockCurScreen && mNeedLockFull) {
             setViewShowState(mLockScreen, VISIBLE);
             return;
         }
         byStartedClick = true;
-        super.onClickUiToggle();
-
+        //super.onClickUiToggle();
     }
 
     @Override
@@ -238,4 +234,5 @@ public class SampleCoverVideo extends StandardGSYVideoPlayer {
         byStartedClick = true;
         super.onStartTrackingTouch(seekBar);
     }
+
 }

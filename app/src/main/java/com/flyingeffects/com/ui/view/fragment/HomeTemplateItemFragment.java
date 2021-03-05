@@ -17,7 +17,7 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.templateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.home_fag_itemMvpPresenter;
@@ -105,7 +105,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                 if(allData.get(position).getIs_ad_recommend()==1){
                     String url = allData.get(position).getRemark();
 //                    String url = "http://transaction.chucitech.cn//#/index/?appid=76&NTExchange=true";
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "21_dl_click", allData.get(position).getTitle());
+                    StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_dl_click", allData.get(position).getTitle());
                     LogUtil.d("OOM",url);
                     boolean result =   AppMarketHelper.of(getActivity()).skipMarket(url);
                     if(!result){
@@ -115,9 +115,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                     }
                 }else{
                     if(fromType==4){
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_face_click", allData.get(position).getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_face_click", allData.get(position).getTitle());
                     }else{
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
                     }
 
 
@@ -250,9 +250,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                 nowData.add(i);
                 if (!hasIncludeNum(i)) {
                     if(fromType==4){
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_face", allData.get(i).getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_face", allData.get(i).getTitle());
                     }else{
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_screen", allData.get(i).getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_screen", allData.get(i).getTitle());
                     }
 
                 }

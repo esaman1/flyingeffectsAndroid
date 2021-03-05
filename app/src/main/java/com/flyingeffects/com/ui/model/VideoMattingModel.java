@@ -10,17 +10,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
-import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.LruCacheManage;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.ThreadJudgeManage;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
@@ -225,7 +223,7 @@ public class VideoMattingModel {
                     String ss = TimeUtils.timeParse(time);
                     LogUtil.d("OOM", "总共扣视频需要了" + ss);
                     //    requestLoginForSdk(ss);
-                    statisticsEventAffair.getInstance().setFlag(context, "mattingVideoTime", templateName);
+                    StatisticsEventAffair.getInstance().setFlag(context, "mattingVideoTime", templateName);
                     if (callback != null) {
                         callback.isSuccess(true, albumPath, cacheCutVideoPath + "/noMatting.mp4");
                     }

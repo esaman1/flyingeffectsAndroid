@@ -52,7 +52,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetVideoCover;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.manager.BitmapManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.TickerAnimated;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
@@ -892,9 +892,9 @@ public class StickerViewCopy<D extends Drawable> extends View implements TickerA
                         return true;
                     } else if (mCurrentMode == RIGHT_BOTTOM_MODE) {
                         if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 5_mb_bj_Spin");
+                            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 5_mb_bj_Spin");
                         } else {
-                            statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 6_customize_bj_Spin");
+                            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), " 6_customize_bj_Spin");
                         }
                     }
                     lastX = x;
@@ -926,9 +926,9 @@ public class StickerViewCopy<D extends Drawable> extends View implements TickerA
                         dragCallback.stickerDragMove();
                     }
                     if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_drag");
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_drag");
                     } else {
-                        statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_drag");
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_drag");
                     }
 
                     if (mCurrentMode == IDLE_MODE) {

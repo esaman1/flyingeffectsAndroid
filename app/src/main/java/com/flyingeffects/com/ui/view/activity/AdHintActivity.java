@@ -11,10 +11,9 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 
-import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 
 
@@ -51,7 +50,7 @@ public class AdHintActivity extends Activity {
             iv_btn.setImageResource(R.mipmap.ad_alert_bt);
         }
         title = getIntent().getStringExtra("templateTitle");
-        statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert", title);
+        StatisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert", title);
     }
 
 
@@ -60,11 +59,11 @@ public class AdHintActivity extends Activity {
             case R.id.tv_cancle:
                 //取消
                 if (from.equals(FromToTemplate.ISTEMPLATE)) {
-                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_cancel", title);
+                    StatisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_cancel", title);
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_cancel", title);
+                    StatisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_cancel", title);
                 }
-                statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert_click_cancel");
+                StatisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert_click_cancel");
                 AdHintActivity.this.finish();
                 break;
 
@@ -73,11 +72,11 @@ public class AdHintActivity extends Activity {
                 if(!DoubleClick.getInstance().isFastZDYDoubleClick(2000)){
                     //观看广告
                     if (from.equals(FromToTemplate.ISTEMPLATE)) {
-                        statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_open", title);
+                        StatisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_open", title);
                     } else {
-                        statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_open", title);
+                        StatisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "bj_ad_open", title);
                     }
-                    statisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert_click_confirm");
+                    StatisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "video_ad_alert_click_confirm");
                     EventBus.getDefault().post(new showAdCallback(from));
                     AdHintActivity.this.finish();
                 }
