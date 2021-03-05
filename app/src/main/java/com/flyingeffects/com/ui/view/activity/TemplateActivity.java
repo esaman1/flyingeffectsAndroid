@@ -259,7 +259,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     /**
      * 如果是仿抖音一样的去唱歌，那么ui 界面需要修改，变成只有下一步功能
      */
-    private boolean isToSing;
+    private boolean isToSing=false;
 
     @Override
     protected int getLayoutId() {
@@ -276,7 +276,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("Message");
         if (bundle != null) {
-            isToSing = bundle.getBoolean("isToSing", true);
             fromTo = bundle.getString("fromTo");
             needAssetsCount = bundle.getInt("isPicNum");
             templateId = bundle.getString("templateId");
@@ -295,6 +294,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         //换装的话需要的素材数量就是后台返回的素材数量
         if (nowTemplateIsAnim == 1) {
             needAssetsCount = imgPath.size();
+        }
+        if (nowTemplateIsAnim == 2) {
+            isToSing = true;
         }
         presenter = new TemplatePresenter(this, this, fromTo, templateName);
         LogUtil.d("OOM3", "initView");
@@ -783,17 +785,21 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             pickIndex = model.getNowIndex();
             pickGroupIndex = model.getNowGroup();
             LogUtil.d("OOM", "当前的点击位置为" + pickIndex + "pickGroupIndex=" + pickGroupIndex);
-            if (isCanChooseVideo || nowIsPhotographAlbum) {
-                // 只有是否选择视频的区别
-                float videoTimeF;
-                if (nowIsPhotographAlbum) {
-                    videoTimeF = 0f;
-                } else {
-                    videoTimeF = Float.parseFloat(videoTime);
-                }
-                AlbumManager.chooseAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, "", (long) (videoTimeF * 1000));
-            } else {
+            if(isToSing){
                 AlbumManager.chooseWhichAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, 1, "");
+            }else{
+                if (isCanChooseVideo || nowIsPhotographAlbum) {
+                    // 只有是否选择视频的区别
+                    float videoTimeF;
+                    if (nowIsPhotographAlbum) {
+                        videoTimeF = 0f;
+                    } else {
+                        videoTimeF = Float.parseFloat(videoTime);
+                    }
+                    AlbumManager.chooseAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, "", (long) (videoTimeF * 1000));
+                } else {
+                    AlbumManager.chooseWhichAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, 1, "");
+                }
             }
         }
     }

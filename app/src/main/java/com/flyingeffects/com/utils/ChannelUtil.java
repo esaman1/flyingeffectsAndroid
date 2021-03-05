@@ -55,6 +55,5 @@ public class ChannelUtil {
             channel = "360";
         }
         return channel;
-//        return  "test";
     }
 }
