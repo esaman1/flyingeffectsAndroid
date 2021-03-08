@@ -76,13 +76,13 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
     public void ZanTemplate(String templateId,String title,String template_type){
-        previewUpAndDownMvpModel.ZanTemplate(templateId, title,template_type);
+        previewUpAndDownMvpModel.zanTemplate(templateId, title,template_type);
     }
 
 
 
     public void DownVideo(String path,String imagePath,String id,boolean isFromAgainChooseBj){
-        previewUpAndDownMvpModel.DownVideo(path,imagePath,id,false,isFromAgainChooseBj);
+        previewUpAndDownMvpModel.downVideo(path,imagePath,id,false,isFromAgainChooseBj);
     }
 
 
@@ -145,7 +145,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
 
     @Override
     public void getSpliteMusic(String path) {
-        previewUpAndDownMvpModel.GetBackgroundMusic(path);
+        previewUpAndDownMvpModel.getBackgroundMusic(path);
     }
 
     @Override

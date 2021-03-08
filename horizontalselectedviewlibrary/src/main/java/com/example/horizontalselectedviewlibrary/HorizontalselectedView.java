@@ -29,8 +29,10 @@ public class HorizontalselectedView extends View {
     private List<String> strings = new ArrayList<String>();//数据源字符串数组
 
     private int seeSize = 5;//可见个数
-
-    private int anInt;//每个字母所占的大小；
+    /**
+     * 每个字母所占的大小；
+     */
+    private int anInt;
     private TextPaint textPaint;
     private boolean firstVisible = true;
     private int width;//控件宽度
@@ -143,23 +145,23 @@ public class HorizontalselectedView extends View {
             case MotionEvent.ACTION_UP:
                 if (!mIsScrolled) {
                     if (downX > middle) {
-                        if ((downX - middle) >= anInt) {
-                            float i = (downX - middle) / anInt;
-                            Log.d(TAG, "onTouchEvent: i = " + i);
-                            n = n + Math.round(i);
-                            if (n > strings.size() - 1) {
-                                n = strings.size() - 1;
-                            }
+
+                        float i = (downX - middle) / anInt;
+                        Log.d(TAG, "onTouchEvent: i = " + i);
+                        n = n + Math.round(i);
+                        if (n > strings.size() - 1) {
+                            n = strings.size() - 1;
                         }
+
                     } else {
-                        if ((middle - downX) >= anInt) {
-                            float i = (middle - downX) / anInt;
-                            Log.d(TAG, "onTouchEvent: i = " + i);
-                            n = n - Math.round(i);
-                            if (n < 0) {
-                                n = 0;
-                            }
+
+                        float i = (middle - downX) / anInt;
+                        Log.d(TAG, "onTouchEvent: i = " + i);
+                        n = n - Math.round(i);
+                        if (n < 0) {
+                            n = 0;
                         }
+
                     }
                     Log.d(TAG, "onTouchEvent: n = " + n);
                 }

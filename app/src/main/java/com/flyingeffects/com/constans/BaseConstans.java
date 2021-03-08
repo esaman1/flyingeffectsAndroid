@@ -72,7 +72,7 @@ public class BaseConstans {
     public static final String FILE_PATH;
     public static final String FRAME_TEMP_PATH;
 
-    public static HashMap getRequestHead(HashMap<String, String> map) {
+    public static HashMap<String, String> getRequestHead(HashMap<String, String> map) {
         String nowTimestamp = getTimestamp() + "";
         map.put("app_id", "10000");
         map.put("platform", "android");
