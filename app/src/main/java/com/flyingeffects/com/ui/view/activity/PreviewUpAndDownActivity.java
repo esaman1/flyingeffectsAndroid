@@ -122,7 +122,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private boolean ondestroy;
 
     //是否需要抠图
-    private int is_picout;
+    private int mIsPicOut;
 
     private List<String> originalImagePath = new ArrayList<>();
 
@@ -172,7 +172,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private String templateId;
 
     //1表示可以合拍，而0表示不能合拍
-    private int is_with_play;
+    private int mIsWithPlay;
 
     private String keepOldFrom;
 
@@ -198,6 +198,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         allData = listForUpAndDown.getAllData();
 
         ondestroy = false;
+
         waitingDialog_progress = new WaitingDialog_progress(this);
         nowChoosePosition = getIntent().getIntExtra("position", 0);
         LogUtil.d("OOM2", "nowChoosePosition=" + nowChoosePosition);
@@ -207,9 +208,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         insertMaxNum = nowChoosePosition;
         insertMinNum = nowChoosePosition;
         templateItem = allData.get(nowChoosePosition);
-        is_picout = templateItem.getIs_picout();
+        mIsPicOut = templateItem.getIs_picout();
         is_pic = templateItem.getIs_pic();
-        is_with_play = templateItem.getIs_with_play();
+        mIsWithPlay = templateItem.getIs_with_play();
         templateType = templateItem.getTemplate_type();
         String searchText = getIntent().getStringExtra("searchText");
         defaultnum = templateItem.getDefaultnum();
@@ -414,9 +415,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             templateItem = allData.get(nowChoosePosition);
             templateId = templateItem.getId() + "";
             defaultnum = templateItem.getDefaultnum();
-            is_picout = templateItem.getIs_picout();
+            mIsPicOut = templateItem.getIs_picout();
             nowPraise = templateItem.getIs_praise();
-            is_with_play = templateItem.getIs_with_play();
+            mIsWithPlay = templateItem.getIs_with_play();
         }
     }
 
@@ -658,7 +659,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             //file 文件下载成功
             this.TemplateFilePath = filePath;
             Log.d(TAG, "getTemplateFileSuccess: TemplateFilePath = " + TemplateFilePath);
-            if (!TextUtils.isEmpty(templateItem.getVideotime()) && !"0".equals(templateItem.getVideotime()) && is_with_play == 1) {
+            if (!TextUtils.isEmpty(templateItem.getVideotime()) && !"0".equals(templateItem.getVideotime()) && mIsWithPlay == 1) {
                 bjMp3Duration = Float.parseFloat(templateItem.getVideotime());
                 LogUtil.d("OOM", "bj.mp3=" + TemplateFilePath);
                 bjMp3 = TemplateFilePath + File.separator + "bj.mp3";
@@ -792,7 +793,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 mOldFromTo = FromToTemplate.ISBJ;
             }
             adapter.setCommentCount(data.getComment());
-            is_with_play = templateItem.getIs_with_play();
+            mIsWithPlay = templateItem.getIs_with_play();
             mIsFollow = data.getIs_follow() == 1;
             adapter.setIsFollow(templateItem.getIs_follow(), templateItem.getAdmin_id());
             //更新页面数据，防止数据不全的情况
@@ -822,7 +823,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void returnSpliteMusic(String musicPath, String videoPath) {
         this.videoPath = videoPath;
-        if (!TextUtils.isEmpty(musicPath) && is_with_play == 1) {
+        if (!TextUtils.isEmpty(musicPath) && mIsWithPlay == 1) {
             if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
                 AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), musicPath);
             } else {
@@ -1015,7 +1016,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                         alert = "正在生成中~";
                                     } else {
                                         //一键模板不抠图的情况下
-                                        if (is_picout == 0) {
+                                        if (mIsPicOut == 0) {
                                             alert = "正在生成中~";
                                         }
                                     }
