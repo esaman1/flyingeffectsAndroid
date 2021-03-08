@@ -68,7 +68,6 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         ad = item.getAd();
 
-
         int offset = helper.getLayoutPosition();
         FrameLayout video_layout = helper.getView(R.id.video_layout);
         videoPlayer = helper.getView(R.id.video_item_player);
@@ -177,6 +176,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
                     .load(item.getAuth_image())
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(iv_writer);
+
             tv_writer_name.setText("@" + item.getAuth());
             tv_title.setText(item.getTitle());
             String str = item.getAuth() + "的原声音乐                        " + item.getAuth() + "的原声音乐                        ";

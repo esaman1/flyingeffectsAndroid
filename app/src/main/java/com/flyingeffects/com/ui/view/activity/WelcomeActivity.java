@@ -7,14 +7,15 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.databinding.ActWelcomeBinding;
 import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.http.Api;
@@ -29,7 +30,6 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
-import com.nineton.ntadsdk.view.NTSkipView;
 import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONArray;
@@ -42,7 +42,6 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 
-import butterknife.BindView;
 import rx.Observable;
 
 public class WelcomeActivity extends BaseActivity {
@@ -50,10 +49,6 @@ public class WelcomeActivity extends BaseActivity {
     private final int BUILD_VERSION = 23;
     private final int PERMISSION_REQUEST_CODE = 1024;
     private static final int RESULT_CODE = 3;
-    @BindView(R.id.rl_ad_container)
-    FrameLayout rlAdContainer;
-
-    private NTSkipView tvSkip;
 
     private boolean isShow = false;
 
@@ -65,15 +60,20 @@ public class WelcomeActivity extends BaseActivity {
     public boolean canJump = false;
 
     private boolean hasPermission = false;
+    private ActWelcomeBinding mBinding;
 
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_welcome;
+        return 0;
     }
 
     @Override
     protected void initView() {
+        mBinding = ActWelcomeBinding.inflate(getLayoutInflater());
+        View rootView = mBinding.getRoot();
+        setContentView(rootView);
+
         LogUtil.d("OOM", "WelcomeActivity");
         BaseConstans.setOddNum();
         //解决广告bug ,点击图标后广告爆款广告不弹出来
@@ -84,7 +84,6 @@ public class WelcomeActivity extends BaseActivity {
             finish();
             return;
         }
-        tvSkip = findViewById(R.id.tv_skip);
 //        if (!fromBackstage) {
         //记录是不是新用户
         if (BaseConstans.isFirstOpenApp()) {
@@ -177,7 +176,7 @@ public class WelcomeActivity extends BaseActivity {
 
 
     private void getPermission() {
-        rlAdContainer.post(() -> {
+        mBinding.rlAdContainer.post(() -> {
             if (Build.VERSION.SDK_INT >= BUILD_VERSION) {
                 checkPermission();
             } else {
@@ -191,13 +190,15 @@ public class WelcomeActivity extends BaseActivity {
                 }
             }
         });
-        rlAdContainer.postDelayed(() -> {
+
+        mBinding.rlAdContainer.postDelayed(() -> {
             if (!isShow && hasPermission) {
                 intoMain();
                 finish();
                 overridePendingTransition(R.anim.nt_ad_fade_in, R.anim.nt_ad_fade_out);
             }
         }, BaseConstans.getKaiPingADTimeOut());
+
         LogUtil.d("oom", "开屏广告的时长为" + BaseConstans.getKaiPingADTimeOut());
     }
 
@@ -239,7 +240,7 @@ public class WelcomeActivity extends BaseActivity {
     private void showSplashAd() {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
-            NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
+            NTAdSDK.getInstance().showSplashAd(this, mBinding.rlAdContainer, mBinding.tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
                 @Override
                 public void onAdSuccess() {
                     isShow = true;
@@ -260,7 +261,7 @@ public class WelcomeActivity extends BaseActivity {
 
                 @Override
                 public void onAdTick(long millisUntilFinished) {
-                    tvSkip.setText(String.format("跳过 %d", Math.round(millisUntilFinished / 1000f)));
+                    mBinding.tvSkip.setText(String.format("跳过 %d", Math.round(millisUntilFinished / 1000f)));
                 }
 
                 @Override
@@ -369,7 +370,7 @@ public class WelcomeActivity extends BaseActivity {
                         } else if (id == 20) {
                             //android 审核数据
                             String AuditModeJson = config.getValue();
-                            AuditModeConfig(AuditModeJson);
+                            auditModeConfig(AuditModeJson);
                         } else if (id == 22) {
                             //获得热更新时长
                             String outTime = config.getValue();
@@ -454,7 +455,7 @@ public class WelcomeActivity extends BaseActivity {
 
     int isVideoadvertisingId;
 
-    private void AuditModeConfig(String str) {
+    private void auditModeConfig(String str) {
         LogUtil.d("AuditModeConfig", "AuditModeConfig=" + str);
         Hawk.put("AuditModeConfig", str);
         JSONArray jsonArray;

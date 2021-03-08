@@ -93,6 +93,7 @@ public class PreviewUpAndDownMvpModel {
      */
     private static int sIsRefresh = 0;
     private PreviewUpAndDownMvpCallback callback;
+
     private Context context;
     private int selectPage = 1;
     private String mVideoFolder;
@@ -129,7 +130,6 @@ public class PreviewUpAndDownMvpModel {
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
     }
 
-
     public void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout) {
         this.smartRefreshLayout = smartRefreshLayout;
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
@@ -155,7 +155,7 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-    public void GetBackgroundMusic(String videoPath) {
+    public void getBackgroundMusic(String videoPath) {
         mediaManager manager = new mediaManager(context);
         manager.splitMp4(videoPath, new File(soundFolder), new mediaManager.splitMp4Callback() {
             @Override
@@ -197,7 +197,8 @@ public class PreviewUpAndDownMvpModel {
                 protected void onSubNext(new_fag_template_item data) {
                     callback.getTemplateLInfo(data);
                 }
-            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+            }, "cacheKey", ActivityLifeCycleEvent.DESTROY,
+                    lifecycleSubject, false, true, false);
 
         }
     }
@@ -207,21 +208,21 @@ public class PreviewUpAndDownMvpModel {
     private BottomSheetDialog bottomSheetDialog;
 
     private boolean nowHasCollect;
-    private ImageView iv_collect;
+    private ImageView mIvCollect;
 
     public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item, String fromTo) {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
         LinearLayout ll_collect = view.findViewById(R.id.ll_collect);
-        iv_collect = view.findViewById(R.id.iv_collect);
+        mIvCollect = view.findViewById(R.id.iv_collect);
         if (BaseConstans.hasLogin() && fag_template_item.getIs_collection() == 1) {
             nowHasCollect = true;
             //表示收藏
-            iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
+            mIvCollect.setImageResource(R.mipmap.new_version_collect_ed);
         } else {
             nowHasCollect = false;
-            iv_collect.setImageResource(R.mipmap.new_version_collect);
+            mIvCollect.setImageResource(R.mipmap.new_version_collect);
         }
         ll_collect.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -269,7 +270,7 @@ public class PreviewUpAndDownMvpModel {
                     });
                 } else {
                     //保存的是视频
-                    DownVideo(path, imagePath, id, true, false);
+                    downVideo(path, imagePath, id, true, false);
                     dismissDialog();
                 }
             } else {
@@ -278,8 +279,8 @@ public class PreviewUpAndDownMvpModel {
                 context.startActivity(intent);
             }
         });
-        LinearLayout ll_friend_circle = view.findViewById(R.id.ll_friend_circle);
-        ll_friend_circle.setOnClickListener(new View.OnClickListener() {
+        LinearLayout llFriendCircle = view.findViewById(R.id.ll_friend_circle);
+        llFriendCircle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -303,8 +304,8 @@ public class PreviewUpAndDownMvpModel {
 
 
         //分享小程序飞给好友
-        LinearLayout ll_share_wx = view.findViewById(R.id.ll_share_wx);
-        ll_share_wx.setOnClickListener(new View.OnClickListener() {
+        LinearLayout llShareWx = view.findViewById(R.id.ll_share_wx);
+        llShareWx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -318,8 +319,8 @@ public class PreviewUpAndDownMvpModel {
             }
         });
 
-        LinearLayout ll_report = view.findViewById(R.id.ll_report);
-        ll_report.setOnClickListener(new View.OnClickListener() {
+        LinearLayout llReport = view.findViewById(R.id.ll_report);
+        llReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -337,8 +338,8 @@ public class PreviewUpAndDownMvpModel {
         });
 
 
-        TextView tv_cancle = view.findViewById(R.id.tv_cancle);
-        tv_cancle.setOnClickListener(view1 -> {
+        TextView tvCancel = view.findViewById(R.id.tv_cancle);
+        tvCancel.setOnClickListener(view1 -> {
             bottomSheetDialog.dismiss();
 
 
@@ -347,6 +348,7 @@ public class PreviewUpAndDownMvpModel {
         bottomSheetDialog.setCanceledOnTouchOutside(true);
         View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
         parent.setBackgroundResource(android.R.color.transparent);
+
         BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
         view.measure(0, 0);
         behavior.setPeekHeight(view.getMeasuredHeight());
@@ -455,13 +457,13 @@ public class PreviewUpAndDownMvpModel {
      */
     private String getShareWeiXinCircleText(String id) {
         String str = "http://www.flyingeffect.com/index/index/share?id=" + id + "&";
-        HashMap params = BaseConstans.getRequestHead(new HashMap<>());
-        String str_params = params.toString();
-        str_params = str_params.replace("{", "");
-        str_params = str_params.replace("}", "");
-        str_params = str_params.replaceAll(",", "&");
-        str_params = str_params.trim();
-        return str + str_params;
+        HashMap<String,String> params = BaseConstans.getRequestHead(new HashMap<>());
+        String strParams = params.toString();
+        strParams = strParams.replace("{", "");
+        strParams = strParams.replace("}", "");
+        strParams = strParams.replaceAll(",", "&");
+        strParams = strParams.trim();
+        return str + strParams;
     }
 
 
@@ -752,10 +754,10 @@ public class PreviewUpAndDownMvpModel {
                 nowHasCollect = !nowHasCollect;
                 callback.collectionResult(nowHasCollect);
                 if (nowHasCollect) {
-                    iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
+                    mIvCollect.setImageResource(R.mipmap.new_version_collect_ed);
                     templateBehaviorStatistics(4, templateId);
                 } else {
-                    iv_collect.setImageResource(R.mipmap.new_version_collect);
+                    mIvCollect.setImageResource(R.mipmap.new_version_collect);
                 }
                 EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
             }
@@ -770,7 +772,7 @@ public class PreviewUpAndDownMvpModel {
      * param : template_type 1 muban  2背景
      * user : zhangtongju
      */
-    public void ZanTemplate(String templateId, String title, String template_type) {
+    public void zanTemplate(String templateId, String title, String template_type) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
 //        params.put("token", BaseConstans.GetUserToken());
@@ -817,7 +819,7 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-    public void DownVideo(String path, String imagePath, String id, boolean keepAlbum, boolean isFromAgainChooseBj) {
+    public void downVideo(String path, String imagePath, String id, boolean keepAlbum, boolean isFromAgainChooseBj) {
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
         File file = new File(videoName);
         if (file.exists()) {
