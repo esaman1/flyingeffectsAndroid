@@ -50,6 +50,7 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.github.penfeizhou.animation.apng.APNGDrawable;
 import com.github.penfeizhou.animation.loader.ResourceStreamLoader;
+import com.kwad.sdk.mvp.Presenter;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
@@ -482,6 +483,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     protected void onPause() {
         super.onPause();
         GSYVideoManager.onPause();
+        adapter.pauseVideo();
         isOnPause = true;
         LogUtil.d("OOM22", "onPause");
     }
