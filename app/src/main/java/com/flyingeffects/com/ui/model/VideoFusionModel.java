@@ -154,6 +154,7 @@ public class VideoFusionModel {
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 progress.closePragressDialog();
+                releaseBp();
                 LogUtil.d("OOM2", "exportPath=" + exportPath);
                 Intent intent = new Intent(context, TemplateAddStickerActivity.class);
                 intent.putExtra("videoPath", exportPath);
@@ -173,30 +174,43 @@ public class VideoFusionModel {
     }
 
 
+
+    private void releaseBp(){
+        if(bpDrawWater!=null&&!bpDrawWater.isRecycled()){
+            bpDrawWater.recycle();
+        }
+
+        if(bpBj!=null&&!bpBj.isRecycled()){
+            bpBj.recycle();
+        }
+        System.gc();
+    }
+
     /**
      * description ：绘制水印
      * creation date: 2021/3/5
      * user : zhangtongju
      */
+    Bitmap bpDrawWater;
     public void DrawWatermark(DrawPadAllExecute2 execute) {
-        Bitmap bp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.watermark);
-        BitmapLayer bpLayer = execute.addBitmapLayer(bp);
+        bpDrawWater = BitmapFactory.decodeResource(context.getResources(), R.mipmap.watermark);
+        BitmapLayer bpLayer = execute.addBitmapLayer(bpDrawWater);
         float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
         bpLayer.setScale(layerScale * 0.3f);
-        bpLayer.setPosition(DRAWPADWIDTH *0.3f, DRAWPADHEIGHT * 5 / 6f);
+        bpLayer.setPosition(DRAWPADWIDTH *0.3f, DRAWPADHEIGHT *0.9f);
     }
 
-
+    Bitmap bpBj;
     private void addBitmapLayer(DrawPadAllExecute2 execute) {
-        Bitmap bp = BitmapFactory.decodeFile(originalPath);
-        int size = bp.getWidth();
+        bpBj= BitmapFactory.decodeFile(originalPath);
+        int size = bpBj.getWidth();
         float needScale = 256f / size;
         LogUtil.d("OOM3", "需要缩放比为" + needScale);
         Matrix matrix = new Matrix();
         matrix.setScale(needScale, needScale);
-        bp = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(),
-                bp.getHeight(), matrix, true);
-        BitmapLayer bpLayer = execute.addBitmapLayer(bp);
+        bpBj = Bitmap.createBitmap(bpBj, 0, 0, bpBj.getWidth(),
+                bpBj.getHeight(), matrix, true);
+        BitmapLayer bpLayer = execute.addBitmapLayer(bpBj);
         bpLayer.setScaleType(LSOScaleType.FILL_COMPOSITION);
     }
 
@@ -306,13 +320,6 @@ public class VideoFusionModel {
         return bm;
     }
 
-    private Bitmap createFilterBitmap(int w, int h, float percent) {
-        Bitmap bitmap = makeSrc(w, h, percent, MAKE_SRC_ORIENT_CODE_LEFT);
-        bitmap = makeSrc(bitmap, w, h, percent, MAKE_SRC_ORIENT_CODE_RIGHT);
-        bitmap = makeSrc(bitmap, w, h, percent, MAKE_SRC_ORIENT_CODE_TOP);
-        bitmap = makeSrc(bitmap, w, h, percent, MAKE_SRC_ORIENT_CODE_BOTTOM);
-        return bitmap;
-    }
 
 
     /**

@@ -187,6 +187,9 @@ public class MediaUiModel2 extends MediaUiModel {
             if (activeLayer > 0) {
                 mPaint = mTransparentPaint;
             }
+
+
+
             canvas.drawBitmap(f, 0, 0, mPaint);
         }
 
@@ -424,6 +427,7 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     public void setImageAsset(String path) {
+        isFirstMatrix=true;
         this.path = path;
         isVideoSlide = true;
         isMaskSlide = true;

@@ -1075,7 +1075,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         mediaUi2.GetTransFormChangeData(new MediaUiModel2.TranChangeCallback() {
                             @Override
                             public void changeBack(float TranX, float TranY, float Scale) {
-                                VideoFusionModel videoFusionModel = new VideoFusionModel(TemplateActivity.this, path, originalPath.get(0), fromTo, templateName, mediaUi2.getOriginalBitmapWidth(), mediaUi2.getOriginalBitmapHeight(), TranX, TranY, Scale);
+                                String  bjPath=originalPath.get(0);
+                                if(nowIsChooseMatting){
+                                    bjPath=imgPath.get(0);
+                                }
+                                VideoFusionModel videoFusionModel = new VideoFusionModel(TemplateActivity.this, path, bjPath, fromTo, templateName, mediaUi2.getOriginalBitmapWidth(), mediaUi2.getOriginalBitmapHeight(), TranX, TranY, Scale);
                                 videoFusionModel.uploadFileToHuawei(path, templateId);
                             }
                         });
