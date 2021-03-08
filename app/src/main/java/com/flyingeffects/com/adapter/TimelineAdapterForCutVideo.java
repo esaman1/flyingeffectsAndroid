@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.HashMap;
 
@@ -41,7 +42,14 @@ public class TimelineAdapterForCutVideo extends RecyclerView.Adapter<TimelineAda
         //    itemView.setImageBitmap(null);
         //}
 
+
+        if(position==mTimePositions.length-1){
+            //todo 强力解决最后一帧黑屏
+            position=position-1;
+            LogUtil.d("OOM2","当前已经为了最后一帧");
+        }
         RequestOptions options = RequestOptions.frameOf(mTimePositions[position]); //截取视频指定的屏幕 ，微妙
+
         RequestOptions cacheOptions = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE);
         Glide.with(holder.itemView.getContext())
                 .load(mUri)

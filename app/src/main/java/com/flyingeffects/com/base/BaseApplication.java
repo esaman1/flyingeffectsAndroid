@@ -74,7 +74,7 @@ public class BaseApplication extends MultiDexApplication {
         //闪验SDK初始化（建议放在Application的onCreate方法中执行）
         initShanyanSDK(this);
         initByteDanceShare();
-        keepCrash();
+//        keepCrash();
         initNTAdSDK();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         TTAdManagerHolder.init(this);

@@ -1091,9 +1091,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     }
 
                 }
-
-
             }
+            new Handler().postDelayed(() -> adapter.pauseVideo(),500);
         }, this);
 
 

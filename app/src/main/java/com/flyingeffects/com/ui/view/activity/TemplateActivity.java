@@ -1065,8 +1065,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         switch (v.getId()) {
             case R.id.tv_top_submit:
-                if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
-
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
                     if (isToSing) {
                         MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
                         String path = mediaUi2.getSnapPath(Objects.requireNonNull(this.getExternalFilesDir("runCatch/")).getPath());
@@ -1516,7 +1515,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_edit),
                         getString(R.string.template_music)};
-            } else {
+            } else if(isToSing){
+                LogUtil.d("OOM3", "0000+");
+                titlesHasBj = new String[]{getString(R.string.template_edit)
+                      };
+            }else{
                 LogUtil.d("OOM3", "0000+");
                 titlesHasBj = new String[]{getString(R.string.template_edit),
                         getString(R.string.template_music)};

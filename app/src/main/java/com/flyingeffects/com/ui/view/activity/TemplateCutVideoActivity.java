@@ -148,6 +148,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
         videoPath = getIntent().getStringExtra("videoPath");
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
         templateName = getIntent().getStringExtra("templateName");
+        LogUtil.d(TAG, "videoPath = " + videoPath);
+        LogUtil.d(TAG, "needDuration = " + needDuration);
         isFrom = getIntent().getIntExtra("isFrom", 0);
         LogUtil.d(TAG, "isFrom = " + isFrom);
         nowIsPhotographAlbum = getIntent().getBooleanExtra("nowIsPhotographAlbum", false);
@@ -420,6 +422,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
         int thumbCount = (int) (listWidth * (duration / mTemplateDuration / thumbWidth));
 //        int thumbCount = (int) (listWidth * (duration / mTemplateDuration) / thumbWidth);
         thumbCount = thumbCount > 0 ? thumbCount : 0;
+        LogUtil.d("OOM2","thumbCount="+thumbCount);
         //每帧所占的时间
         final int interval = (int) (duration / thumbCount * 1000);
         int[] mTimeUs = new int[thumbCount];

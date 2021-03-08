@@ -256,6 +256,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
             tv_end.setText(TimeUtils.timeParse(nowPlayEndTime));
         });
         Presenter.setNeedDuration((int) (nowPlayEndTime-nowPlayStartTime));
+        tv_allDuration.setText("模板时长" + TimeUtils.timeParse(nowPlayEndTime-nowPlayStartTime));
         startTimer();
 
     }
