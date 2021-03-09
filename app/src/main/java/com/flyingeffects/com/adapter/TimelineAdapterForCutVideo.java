@@ -43,11 +43,11 @@ public class TimelineAdapterForCutVideo extends RecyclerView.Adapter<TimelineAda
         //}
 
 
-        if(position==mTimePositions.length-1){
-            //todo 强力解决最后一帧黑屏
-            position=position-1;
-            LogUtil.d("OOM2","当前已经为了最后一帧");
-        }
+//        if(position==mTimePositions.length-1){
+//            //todo 强力解决最后一帧黑屏
+//            position=position-1;
+//            LogUtil.d("OOM2","当前已经为了最后一帧");
+//        }
         RequestOptions options = RequestOptions.frameOf(mTimePositions[position]); //截取视频指定的屏幕 ，微妙
 
         RequestOptions cacheOptions = RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE);

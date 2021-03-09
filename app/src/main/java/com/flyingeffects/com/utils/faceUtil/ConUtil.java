@@ -1,8 +1,10 @@
 package com.flyingeffects.com.utils.faceUtil;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,17 +18,21 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.BitSet;
 import java.util.UUID;
 
 public class ConUtil {
     public static final int SEGMENT_THREAD_COUNT = 2; //抠像视频流检测使用线程数
 
     //在这边填写 API_KEY 和 API_SECRET
-    public static String API_KEY = "S8Vp0j_-sZEXqG0T4otVxauVCVz5M0ef";
-    public static String API_SECRET = "MvJ5QLW4twaMOiVBZ-lCTQ0BzT4072hY";
+    public static String API_KEY = "";
+    public static String API_SECRET = "";
 
     public static String CN_LICENSE_URL = "https://api-cn.faceplusplus.com/sdk/v3/auth";
     public static String TEST_LICENSE_URL = "http://10.104.43.63/sdk/v3/auth";
@@ -36,9 +42,8 @@ public class ConUtil {
         String KEY_UUID = "key_uuid";
         SharedUtil sharedUtil = new SharedUtil(mContext);
         String uuid = sharedUtil.getStringValueByKey(KEY_UUID);
-        if (uuid != null && uuid.trim().length() != 0) {
+        if (uuid != null && uuid.trim().length() != 0)
             return uuid;
-        }
 
         uuid = UUID.randomUUID().toString();
         uuid = Base64.encodeToString(uuid.getBytes(),
@@ -77,8 +82,8 @@ public class ConUtil {
     }
 
     public static String getRealPathFromURI(Context context, Uri contentURI) {
-        Log.e("initData","uri:"+contentURI.toString());
-        Log.e("initData","uri.path:"+contentURI.getPath());
+        Log.e("initData", "uri:" + contentURI.toString());
+        Log.e("initData", "uri.path:" + contentURI.getPath());
         String result;
         Cursor cursor = context.getContentResolver().query(contentURI, null, null, null, null);
         if (cursor == null) {
@@ -94,8 +99,8 @@ public class ConUtil {
     }
 
     public static String getVideoRealPathFromURI(Context context, Uri selectedUri) {
-        Log.e("initData","uri:"+selectedUri.toString());
-        Log.e("initData","uri.path:"+selectedUri.getPath());
+        Log.e("initData", "uri:" + selectedUri.toString());
+        Log.e("initData", "uri.path:" + selectedUri.getPath());
         if (isQQMediaDocument(selectedUri)) {
             String path = selectedUri.getPath();
             File fileDir = Environment.getExternalStorageDirectory();
@@ -106,9 +111,9 @@ public class ConUtil {
         String[] columns = {MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media.MIME_TYPE};
         Cursor cursor = context.getContentResolver().query(selectedUri, columns, null, null, null);
-        if (cursor == null){
+        if (cursor == null) {
             contentPath = selectedUri.getPath();
-        }else{
+        } else {
             cursor.moveToFirst();
 
             int pathColumnIndex = cursor.getColumnIndex(columns[0]);
@@ -126,16 +131,98 @@ public class ConUtil {
         return "com.tencent.mtt.fileprovider".equals(uri.getAuthority());
     }
 
-    public static Bitmap getImage(String path) {
-        try {
-            Bitmap src = BitmapFactory.decodeFile(path);
+    public static Bitmap decodeSampledBitmapFromResource(String path,
+                                                         int reqWidth, int reqHeight) {
+        // 先将inJustDecodeBounds设置为true来获取图片的长宽属性
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
 
+        // 计算inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // 加载压缩版图片
+        options.inJustDecodeBounds = false;
+        // 根据具体情况选择具体的解码方法
+        return BitmapFactory.decodeFile(path, options);
+    }
+
+    /**
+     * 计算inSampleSize值
+     *
+     * @param options   用于获取原图的长宽
+     * @param reqWidth  要求压缩后的图片宽度
+     * @param reqHeight 要求压缩后的图片长度
+     * @return 返回计算后的inSampleSize值
+     */
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // 原图片的宽高
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+
+            // 计算inSampleSize值
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    public static void saveJPG_After(Bitmap bitmap, String name) {
+        File file = new File(name);
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
+                out.flush();
+                out.close();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static File bitmapToFile(Context context, Bitmap bitmap, String fileNameToSave) { // File name like "image.png"
+        //create a file to write bitmap data
+        File file = null;
+        try {
+            file = new File(Environment.getExternalStorageDirectory() + File.separator + fileNameToSave);
+            file.createNewFile();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos); // YOU can also save it in JPEG
+            byte[] bitmapdata = bos.toByteArray();
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+            return file;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return file; // it will return null
+        }
+    }
+
+    @SuppressLint("NewApi")
+    public static Bitmap getImage(String path) {
+
+        try {
+
+            Bitmap src = BitmapFactory.decodeFile(path);
             ExifInterface exif = new ExifInterface(path);
             int rotation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface
                     .ORIENTATION_NORMAL);
             Matrix matrix = new Matrix();
-
-
             Log.d("GetImage Rotation", "" + rotation);
             switch (rotation) {
                 case ExifInterface.ORIENTATION_NORMAL:
@@ -167,27 +254,24 @@ public class ConUtil {
                 default:
                     break;
             }
-
-//
             int hight = src.getHeight() > src.getWidth() ? src
                     .getHeight() : src.getWidth();
-//
             float scale = 1080.0f / hight;
-//
-//
             if (scale < 1) {
                 matrix.postScale(scale, scale);
-
             }
             Bitmap dst = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
+            if(dst.getConfig().ordinal()!=Bitmap.Config.ARGB_8888.ordinal()) {
+                dst = dst.copy(Bitmap.Config.ARGB_8888, true);
+            }
             //src.recycle();
             return dst;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+
         }
     }
-
     public static Bitmap getImage(Context context, int mipmapId) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
@@ -208,11 +292,11 @@ public class ConUtil {
         options.inScaled = false;
         Bitmap src = BitmapFactory.decodeResource(context.getResources(), mipmapId, options);
         Matrix matrix = new Matrix();
-        float sx = src.getWidth() * 1.0f/ width;
-        float sy = src.getHeight() * 1.0f/ height;
+        float sx = src.getWidth() * 1.0f / width;
+        float sy = src.getHeight() * 1.0f / height;
 //        float scale = 1080.0f / hight;
 //        if (scale < 1) {
-            matrix.postScale(sx, sy);
+        matrix.postScale(sx, sy);
 //        }
         Bitmap dst = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
         return dst;
