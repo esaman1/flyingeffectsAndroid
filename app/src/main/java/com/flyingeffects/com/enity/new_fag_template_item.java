@@ -518,7 +518,12 @@ public class new_fag_template_item implements Serializable, MultiItemEntity {
         this.feedAdResultBean = feedAdResultBean;
     }
 
-    private FeedAdConfigBean.FeedAdResultBean feedAdResultBean;
+    /**
+     * description ： transient  设置可以不被序列化
+     * creation date: 2021/3/11
+     * user : zhangtongju
+     */
+    private  transient  FeedAdConfigBean.FeedAdResultBean feedAdResultBean;
 
 
     @Override

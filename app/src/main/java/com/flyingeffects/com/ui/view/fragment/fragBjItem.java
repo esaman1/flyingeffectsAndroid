@@ -128,7 +128,7 @@ public class fragBjItem extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType,false);
+        adapter = new main_recycler_adapter( allData, getActivity(), fromType,false);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.
                         VERTICAL);

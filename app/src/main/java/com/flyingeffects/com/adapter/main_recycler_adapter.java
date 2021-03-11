@@ -79,13 +79,12 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
     public final static String TAG = "main_recycler_adapter";
     //0 模板  1 背景 2 搜索/我的收藏 3 表示背景模板下载 4 换装
     private int fromType;
-    private TextView csjTitle;
     boolean isFromSearch;
     public FeedAdManager mAdManager;
     private NativeUnifiedADData mAdBean;
 
 
-    public main_recycler_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, int fromType, boolean isFromSearch) {
+    public main_recycler_adapter(@Nullable List<new_fag_template_item> allData, Context context, int fromType, boolean isFromSearch) {
         super(allData);
         this.context = context;
         this.fromType = fromType;

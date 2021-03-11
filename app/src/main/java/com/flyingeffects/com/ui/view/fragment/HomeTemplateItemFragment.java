@@ -50,7 +50,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     RecyclerView recyclerView;
     private main_recycler_adapter adapter;
     private List<new_fag_template_item> allData = new ArrayList<>();
-    private String category_id = "",tc_id ="",tabName = "";
+    private String category_id = "", tc_id = "", tabName = "";
     private StaggeredGridLayoutManager layoutManager;
     private int actTag;
     @BindView(R.id.smart_refresh_layout)
@@ -88,17 +88,14 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
         if (getActivity() != null) {
             if (NetworkUtils.isNetworkAvailable(getActivity())) {
-                Presenter.requestData(category_id, tc_id,actTag);
+                Presenter.requestData(category_id, tc_id, actTag);
             }
         }
-
-
-//        Presenter.requestAd();
     }
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType,false);
+        adapter = new main_recycler_adapter(allData, getActivity(), fromType, false);
         adapter.setDressUPTabNameFavorites(tabName);
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -106,37 +103,34 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                if(allData.get(position).getIs_ad_recommend()==1){
+                if (allData.get(position).getIs_ad_recommend() == 1) {
                     String url = allData.get(position).getRemark();
-//                    String url = "http://transaction.chucitech.cn//#/index/?appid=76&NTExchange=true";
                     StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_dl_click", allData.get(position).getTitle());
-                    LogUtil.d("OOM",url);
-                    boolean result =   AppMarketHelper.of(getActivity()).skipMarket(url);
-                    if(!result){
+                    LogUtil.d("OOM", url);
+                    boolean result = AppMarketHelper.of(getActivity()).skipMarket(url);
+                    if (!result) {
                         Intent intent = new Intent(getActivity(), webViewActivity.class);
                         intent.putExtra("webUrl", url);
                         startActivity(intent);
                     }
-                }else{
-                    if(fromType==4){
+                } else {
+                    if (fromType == 4) {
                         StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_face_click", allData.get(position).getTitle());
-                    }else{
+                    } else {
                         StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
                     }
-
-
                     Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
-                    List<new_fag_template_item> data=  getFiltration(allData,position);
+                    List<new_fag_template_item> data = getFiltration(allData, position);
                     ListForUpAndDown listForUpAndDown = new ListForUpAndDown(data);
                     intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
                     intent.putExtra("category_id", category_id);//直接存入被序列化的对象实例
-                    intent.putExtra("tc_id",tc_id);
+                    intent.putExtra("tc_id", tc_id);
                     intent.putExtra("position", intoTiktokClickPosition);
                     int selectPage = Presenter.getselectPage();
                     intent.putExtra("nowSelectPage", selectPage);
-                    if(fromType==4){
+                    if (fromType == 4) {
                         intent.putExtra("fromTo", FromToTemplate.DRESSUP);
-                    }else{
+                    } else {
                         intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                     }
                     startActivity(intent);
@@ -146,20 +140,24 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     }
 
 
-    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData,int position) {
-        intoTiktokClickPosition=position;
+
+
+
+
+    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData, int position) {
+        intoTiktokClickPosition = position;
         List<new_fag_template_item> needData = new ArrayList<>();
         for (int i = 0; i < allData.size(); i++) {
             new_fag_template_item item = allData.get(i);
             if (item.getIs_ad_recommend() == 0) {
                 needData.add(item);
-            }else{
-                if(i<position){
+            } else {
+                if (i < position) {
                     intoTiktokClickPosition--;
                 }
             }
         }
-        return  needData;
+        return needData;
     }
 
 
@@ -178,15 +176,13 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
-            if (allData == null || allData.size() == 0|| "11".equals(category_id)|| "12".equals(category_id)) {
+            if (allData == null || allData.size() == 0 || "11".equals(category_id) || "12".equals(category_id)) {
                 LogUtil.d("OOM", "allData==null");
-                Presenter.requestData(category_id,tc_id, actTag);
+                Presenter.requestData(category_id, tc_id, actTag);
             } else {
                 LogUtil.d("OOM", "allData!=null");
             }
         }
-
-
     }
 
 
@@ -216,7 +212,6 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     @Override
     public void isShowData(ArrayList<new_fag_template_item> listData) {
         if (getActivity() != null) {
-
             allData.clear();
             allData.addAll(listData);
             adapter.notifyDataSetChanged();
@@ -253,9 +248,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
             for (int i = start; i <= end; i++) {
                 nowData.add(i);
                 if (!hasIncludeNum(i)) {
-                    if(fromType==4){
+                    if (fromType == 4) {
                         StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_face", allData.get(i).getTitle());
-                    }else{
+                    } else {
                         StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_screen", allData.get(i).getTitle());
                     }
 
@@ -287,7 +282,6 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     }
 
 
-
     /**
      * description ：请求到广告的回调
      * creation date: 2021/3/11
@@ -295,22 +289,22 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
      */
     @Override
     public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
-        LogUtil.d("OOM2","GetAdCallback");
-        if(allData!=null&&allData.size()>0){
-            int allSize=allData.size()-1;
-            LogUtil.d("OOM2","allSize="+allSize);
-            for(int i=allSize;i>0;i--){
-                boolean hasAd=allData.get(i).isHasShowAd();
-                LogUtil.d("OOM2","hasAd="+hasAd);
-                if(hasAd){
-                    if(allData.get(i).getFeedAdResultBean()==null){
+        LogUtil.d("OOM2", "GetAdCallback");
+        if (allData != null && allData.size() > 0) {
+            int allSize = allData.size() - 1;
+            LogUtil.d("OOM2", "allSize=" + allSize);
+            for (int i = allSize; i > 0; i--) {
+                boolean hasAd = allData.get(i).isHasShowAd();
+                LogUtil.d("OOM2", "hasAd=" + hasAd);
+                if (hasAd) {
+                    if (allData.get(i).getFeedAdResultBean() == null) {
                         allData.get(i).setFeedAdResultBean(feedAdResultBean);
                         adapter.notifyItemChanged(i);
-                        LogUtil.d("OOM2","取消循环更新item"+i);
+                        LogUtil.d("OOM2", "取消循环更新item" + i);
                         return;
                     }
                 }
-                LogUtil.d("OOM2","还在循环"+i);
+                LogUtil.d("OOM2", "还在循环" + i);
             }
         }
     }
@@ -329,18 +323,18 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
      */
     @Subscribe
     public void onEventMainThread(templateDataZanRefresh event) {
-        if(event.getTemplateId()!=0){
-            if(allData != null && allData.size() > 0){
-                int changeId=event.getTemplateId();
+        if (event.getTemplateId() != 0) {
+            if (allData != null && allData.size() > 0) {
+                int changeId = event.getTemplateId();
                 boolean isPraise = event.isSeleted();
-                for (int i=0;i<allData.size();i++){
+                for (int i = 0; i < allData.size(); i++) {
 
                     int needId = allData.get(i).getTemplate_id();
                     if (needId == 0) {
                         needId = allData.get(i).getId();
                     }
 
-                    if(needId==changeId){
+                    if (needId == changeId) {
                         new_fag_template_item item = allData.get(i);
                         item.setPraise(event.getZanCount() + "");
                         if (isPraise) {
@@ -360,12 +354,12 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
     @Subscribe
     public void onEventMainThread(templateDataCollectRefresh event) {
-        if(event.getFrom()==3){
+        if (event.getFrom() == 3) {
             int position = event.getPosition();
             boolean isPraise = event.isSeleted();
             if (allData != null && allData.size() > position) {
                 new_fag_template_item item = allData.get(position);
-                item.setIs_collection(event.isSeleted()?1:0);
+                item.setIs_collection(event.isSeleted() ? 1 : 0);
                 allData.set(position, item);
                 adapter.notifyItemChanged(position);
             }

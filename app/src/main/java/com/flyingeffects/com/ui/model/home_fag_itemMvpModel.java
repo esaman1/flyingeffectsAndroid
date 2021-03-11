@@ -155,8 +155,9 @@ public class home_fag_itemMvpModel {
                 if(BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()&&data.size()>BaseConstans.NOWADSHOWPOSITION){
                     new_fag_template_item item=new new_fag_template_item();
                     item.setHasShowAd(true);
+                    //设置当前是导流，进入抖音列表页就会自动过滤
+                    item.setIs_ad_recommend(1);
                     data.add(BaseConstans.NOWADSHOWPOSITION,item);
-
                 }
                 listData.addAll(data);
                 callback.showData(listData);
