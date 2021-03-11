@@ -41,13 +41,17 @@ public class BaseConstans {
     public static final boolean UserFaceSdk = true;
     //    public static final boolean isTitokChannel=true;
     public static final int THREADCOUNT = 4;
+    /**
+     * 信息流广告插入的位置
+     */
+    public static final int NOWADSHOWPOSITION=5;
     public static boolean hasCreatingSegJni = true;
     public static String titok;
     public static String kuaishou;
     /**
      * 是否是正式环境
      */
-    public static final boolean PRODUCTION =true ;
+    public static final boolean PRODUCTION =false ;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";

@@ -27,6 +27,7 @@ import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.nineton.market.android.sdk.AppMarketHelper;
+import com.nineton.ntadsdk.bean.FeedAdConfigBean;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ import de.greenrobot.event.Subscribe;
 
 
 /**
- * description ：模板详情
+ * description ：模板列表页，广告逻辑（先放置null 的广告占位符，一页请求一次广告，更新广告占位符）
  * creation date: 2020/8/18
  * user : zhangtongju
  */
@@ -90,6 +91,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                 Presenter.requestData(category_id, tc_id,actTag);
             }
         }
+
+
+//        Presenter.requestAd();
     }
 
 
@@ -280,6 +284,35 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
             lin_show_nodata.setVisibility(View.GONE);
         }
 
+    }
+
+
+
+    /**
+     * description ：请求到广告的回调
+     * creation date: 2021/3/11
+     * user : zhangtongju
+     */
+    @Override
+    public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
+        LogUtil.d("OOM2","GetAdCallback");
+        if(allData!=null&&allData.size()>0){
+            int allSize=allData.size()-1;
+            LogUtil.d("OOM2","allSize="+allSize);
+            for(int i=allSize;i>0;i--){
+                boolean hasAd=allData.get(i).isHasShowAd();
+                LogUtil.d("OOM2","hasAd="+hasAd);
+                if(hasAd){
+                    if(allData.get(i).getFeedAdResultBean()==null){
+                        allData.get(i).setFeedAdResultBean(feedAdResultBean);
+                        adapter.notifyItemChanged(i);
+                        LogUtil.d("OOM2","取消循环更新item"+i);
+                        return;
+                    }
+                }
+                LogUtil.d("OOM2","还在循环"+i);
+            }
+        }
     }
 
 

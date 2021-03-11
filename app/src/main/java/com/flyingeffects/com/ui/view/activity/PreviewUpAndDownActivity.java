@@ -1282,8 +1282,15 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     @Override
                     public void onVideoAdClose() {
                         LogUtil.d("OOM4", "onVideoAdClose");
-                        BaseConstans.TemplateHasWatchingAd = true;
+                        BaseConstans.TemplateHasWatchingAd = false;
                         ToastUtil.showToast("看完广告才可获取权益");
+//                        hasLoginToNext();
+                    }
+
+                    @Override
+                    public void onRewardVerify() {
+                        StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
+                        BaseConstans.TemplateHasWatchingAd = true;
                         hasLoginToNext();
                     }
 

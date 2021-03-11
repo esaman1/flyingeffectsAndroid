@@ -573,6 +573,11 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 }
 
                 @Override
+                public void onRewardVerify() {
+                    
+                }
+
+                @Override
                 public void onVideoAdSkip() {
                     LogUtil.d("OOM", "onVideoAdSkip");
                 }
