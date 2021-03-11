@@ -102,6 +102,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     //当前页面类型 0是老板ui ,1 是新版ui
     private int nowPageType = 1;
+    private Context mContext;
 
     @Override
     protected int getLayoutId() {
@@ -258,6 +259,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initView() {
+        mContext = LoginActivity.this;
         isOnDestroy = false;
         EventBus.getDefault().register(this);
         clearUmData();
@@ -419,7 +421,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         params.put("center_imei", NTAnalytics.getIMEI());
         // 启动时间
-        LogUtil.d("OOM",StringUtil.beanToJSONString(params));
+        LogUtil.d("OOM", StringUtil.beanToJSONString(params));
         Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
             @Override
@@ -622,8 +624,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             Toast.makeText(mContext, getString(R.string.cancel_login), Toast.LENGTH_LONG).show();
         }
     };
-
-
 
 
     @Subscribe

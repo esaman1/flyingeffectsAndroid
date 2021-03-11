@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
@@ -78,6 +79,7 @@ public class DressUpPreviewActivity extends BaseActivity {
     private String templateTitle;
     /**换装切换次数*/
     int dressupSwitchNumber = 0;
+    private Context mContext;
 
     @Override
     protected int getLayoutId() {
@@ -86,6 +88,7 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        mContext = DressUpPreviewActivity.this;
         LogUtil.d("OOM3", "换装页面initView");
         String urlPath = getIntent().getStringExtra("url");
         template_id = getIntent().getStringExtra("template_id");

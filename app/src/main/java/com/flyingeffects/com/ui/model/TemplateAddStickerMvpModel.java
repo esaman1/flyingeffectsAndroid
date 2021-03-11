@@ -37,6 +37,7 @@ import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.StickerAnim;
 import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -50,6 +51,7 @@ import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateAddStickerMvpCallback;
 import com.flyingeffects.com.ui.view.activity.AdHintActivity;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -83,6 +85,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.viewpager.widget.ViewPager;
+
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -1358,6 +1362,35 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
     }
 
+    private void showMessageDialog() {
+        StatisticsEventAffair.getInstance().setFlag(context, "video_ad_alert", "");
+        CommonMessageDialog.getBuilder(context)
+                .setContentView(R.layout.dialog_common_message_ad_under)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_BOTTOM)
+                .setTitle("亲爱的友友")
+                .setMessage("这个模板需要观看几秒广告")
+                .setMessage2("「看完后就能制作飞闪视频」")
+                .setPositiveButton("观看广告并制作")
+                .setNegativeButton("取消")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(context, "bj_ad_open", "");
+                        StatisticsEventAffair.getInstance().setFlag(context, "video_ad_alert_click_confirm");
+                        EventBus.getDefault().post(new showAdCallback("PreviewActivity"));
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        //取消
+                        StatisticsEventAffair.getInstance().setFlag(context, "bj_ad_cancel", "");
+                        StatisticsEventAffair.getInstance().setFlag(context, "video_ad_alert_click_cancel");
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
+    }
 
     /**
      * description ：保存在相册
@@ -1368,10 +1401,11 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         StimulateControlManage.getInstance().InitRefreshStimulate();
         outputPathForVideoSaveToPhoto = path;
         if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
-            Intent intent = new Intent(context, AdHintActivity.class);
-            intent.putExtra("from", "isFormPreviewVideo");
-            intent.putExtra("templateTitle", "");
-            context.startActivity(intent);
+//            Intent intent = new Intent(context, AdHintActivity.class);
+//            intent.putExtra("from", "isFormPreviewVideo");
+//            intent.putExtra("templateTitle", "");
+//            context.startActivity(intent);
+            showMessageDialog();
         } else {
             try {
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {

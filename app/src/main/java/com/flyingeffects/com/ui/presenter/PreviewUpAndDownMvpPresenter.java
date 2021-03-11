@@ -94,7 +94,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
     @Override
-    public void ZanResult() {
+    public void zanResult() {
         previewUpAndDownMvpView.zanResult();
     }
 
@@ -109,8 +109,8 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
     @Override
-    public void GetDressUpPathResult(List<String> paths) {
-        previewUpAndDownMvpView.GetDressUpPathResult(paths);
+    public void getDressUpPathResult(List<String> paths) {
+        previewUpAndDownMvpView.getDressUpPathResult(paths);
     }
 
     @Override

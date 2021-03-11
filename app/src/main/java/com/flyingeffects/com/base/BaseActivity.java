@@ -43,11 +43,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
      * actionbar 默认只需调用 super.setPageTitle("title") 设置标题, 如不需要actionbar, 调用 mActionbar.hide();
      */
     protected ActionBar mActionBar;
-    /**
-     * application context
-     */
 
-    protected Context mContext;
     /**
      * TAG = Class.class.getSimpleName();
      */
@@ -105,7 +101,6 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
         overridePendingTransition(0, 0);
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
 //        StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"), true);
-        mContext = getApplicationContext();
         mActionBar = getActionBar();
         if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(false);

@@ -44,7 +44,6 @@ import androidx.annotation.Nullable;
 public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item, BaseViewHolder> {
     private static final String TAG = "Preview_up_and_down_ada";
 
-    private Context context;
 
     private SampleCoverVideo videoPlayer;
     private ImageView iv_zan;
@@ -58,16 +57,14 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
     private int nowPreviewPosition;
     public TTNativeExpressAd ad;
 
-    public PreviewUpDownAdapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, String OldFromTo) {
+    public PreviewUpDownAdapter(int layoutResId, @Nullable List<new_fag_template_item> allData, String OldFromTo) {
         super(layoutResId, allData);
-        this.context = context;
         this.OldFromTo = OldFromTo;
     }
 
     @Override
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         ad = item.getAd();
-
         int offset = helper.getLayoutPosition();
         FrameLayout video_layout = helper.getView(R.id.video_layout);
         videoPlayer = helper.getView(R.id.video_item_player);
@@ -120,7 +117,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
             if (OldFromTo.equals(FromToTemplate.DRESSUP)) {
                 videoPlayer.setVisibility(View.GONE);
                 iv_show_cover.setVisibility(View.VISIBLE);
-                Glide.with(context)
+                Glide.with(mContext)
                         .load(item.getImage())
                         .into(iv_show_cover);
             } else {
@@ -172,7 +169,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
                 ll_zan.setVisibility(View.VISIBLE);
             }
 
-            Glide.with(context)
+            Glide.with(mContext)
                     .load(item.getAuth_image())
                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                     .into(iv_writer);

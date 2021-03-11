@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.main_recycler_adapter;
+import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -223,7 +223,7 @@ public class frag_user_collect extends BaseFragment {
         } else {
             fromType = 2;
         }
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType,false);
+        adapter = new MainRecyclerAdapter(R.layout.list_main_item, allData, fromType,false);
         layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);

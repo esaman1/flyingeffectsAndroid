@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.androidquery.util.Common;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
@@ -24,8 +26,10 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplatePreviewMvpView;
+import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplatePreviewPresenter;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -66,6 +70,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     @BindView(R.id.exo_player)
     PlayerView playerView;
 
+    private Context mContext;
 
     private String imagePath;
 
@@ -113,16 +118,17 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     @Override
     protected void initView() {
+        mContext = CreationTemplatePreviewActivity.this;
         EventBus.getDefault().register(this);
         Bundle bundle = getIntent().getBundleExtra("bundle");
         imagePath = bundle.getString("path");
         titleEffect = bundle.getStringArrayList("titleEffect");
         LogUtil.d("OOM3", StringUtil.beanToJSONString(titleEffect));
         titleStyle = bundle.getStringArrayList("titleStyle");
-        titleFrame= bundle.getStringArrayList("titleFrame");
+        titleFrame = bundle.getStringArrayList("titleFrame");
         templateTitle = bundle.getString("templateTitle");
-        if(titleFrame!=null&&titleFrame.size()>0){
-            LogUtil.d("OOM3","titleFrameSize="+titleFrame.get(0));
+        if (titleFrame != null && titleFrame.size() > 0) {
+            LogUtil.d("OOM3", "titleFrameSize=" + titleFrame.get(0));
         }
         nowUiIsLandscape = bundle.getBoolean("nowUiIsLandscape", false);
         Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
@@ -130,7 +136,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         LogUtil.d("OOM", "TimeUtils.timeParse(videoInfo.getDuration())=" + TimeUtils.timeParse(videoInfo.getDuration()));
         tv_duration.setText(TimeUtils.timeParse(videoInfo.getDuration()));
         initExo();
-        mShareDialog = new SaveShareDialog(this,dialogShare);
+        mShareDialog = new SaveShareDialog(this, dialogShare);
     }
 
     @Override
@@ -152,7 +158,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 LogUtil.d("video", "play");
                 exoPlayer.setPlayWhenReady(true);
             }
-        },200);
+        }, 200);
 
 
 //        startTimer();
@@ -169,7 +175,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
 
-
     private void videoPause2() {
         if (exoPlayer != null) {
             LogUtil.d("video", "videoPause");
@@ -182,9 +187,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 //        playIcon.setVisibility(View.VISIBLE);
         progressCursor.setVisibility(View.INVISIBLE);
     }
-
-
-
 
 
     /**
@@ -243,7 +245,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 }
 
                 StatisticsEventAffair.getInstance().setFlag(this, "7_return");
-                CreationTemplatePreviewActivity.this.finish();
+                finish();
                 break;
 
             case R.id.tv_save:
@@ -255,24 +257,21 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 }
                 StimulateControlManage.getInstance().InitRefreshStimulate();
                 if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
-                    Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
-                    intent.putExtra("from", "isFormPreviewVideo");
-                    intent.putExtra("templateTitle", "");
-                    startActivity(intent);
+//                    Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
+//                    intent.putExtra("from", "isFormPreviewVideo");
+//                    intent.putExtra("templateTitle", "");
+//                    startActivity(intent);
+                    showMessageDialog();
                 } else {
-
                     videoPause();
                     Presenter.destroyTimer();
                     Presenter.toSaveVideo(false, nowUiIsLandscape);
-
-
                 }
                 break;
             case R.id.rela_parent_content:
                 if (isPlaying()) {
                     videoPause();
-                }
-                else {
+                } else {
                     videoResume();
                 }
                 if (!isShowPreviewAd && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
@@ -281,58 +280,75 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 }
                 break;
             default:
-              break;
+                break;
         }
         super.onClick(v);
     }
 
+    private void showMessageDialog() {
+        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert", "");
+        CommonMessageDialog.getBuilder(mContext)
+                .setContentView(R.layout.dialog_common_message_ad_under)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_BOTTOM)
+                .setTitle("亲爱的友友")
+                .setMessage("这个模板需要观看几秒广告")
+                .setMessage2("「看完后就能制作飞闪视频」")
+                .setPositiveButton("观看广告并制作")
+                .setNegativeButton("取消")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "bj_ad_open", "");
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_confirm");
+                        EventBus.getDefault().post(new showAdCallback("isFormPreviewVideo"));
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        //取消
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "bj_ad_cancel", "");
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_cancel");
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
+    }
+
+
 
     private void statisticsEventAffair() {
         if (titleEffect != null && titleEffect.size() > 0) {
-
-            for (String str : titleEffect
-            ) {
-                if(!TextUtils.isEmpty(str)){
+            for (String str : titleEffect) {
+                if (!TextUtils.isEmpty(str)) {
                     StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_style_save", str);
                     LogUtil.d("OOM3", "titleEffect=" + str);
                 }
-
             }
         }
 
 
         if (titleStyle != null && titleStyle.size() > 0) {
-
-            for (String str : titleStyle
-            ) {
-
-                if(!TextUtils.isEmpty(str)){
+            for (String str : titleStyle) {
+                if (!TextUtils.isEmpty(str)) {
                     StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_font_save", str);
                     LogUtil.d("OOM3", "titleStyle=" + str);
                 }
-
-
             }
         }
 
 
-
         if (titleFrame != null && titleFrame.size() > 0) {
-
-            for (String str : titleFrame
-            ) {
-
-                if(!TextUtils.isEmpty(str)){
+            for (String str : titleFrame) {
+                if (!TextUtils.isEmpty(str)) {
                     StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_border_save", str);
                     LogUtil.d("OOM3", "titleFrame=" + str);
                 }
-
             }
         }
 
         if ((titleStyle != null && titleStyle.size() > 0) || (titleEffect != null && titleEffect.size() > 0)) {
             StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_save_save");
-
         }
 
 
@@ -393,7 +409,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                             isIntoInitTrimmer = true;
                         }
                         Presenter.initTimer();
-
                         break;
                     case Player.STATE_ENDED:
                         seekTo(0);
@@ -405,6 +420,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 }
             }
         });
+
         mediaSource = new ExtractorMediaSource.Factory(
                 new DefaultDataSourceFactory(CreationTemplatePreviewActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(imagePath)));

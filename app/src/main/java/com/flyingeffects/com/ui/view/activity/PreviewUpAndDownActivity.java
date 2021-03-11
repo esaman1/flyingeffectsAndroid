@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,7 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;
 import com.flyingeffects.com.ui.presenter.PreviewUpAndDownMvpPresenter;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -85,6 +87,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public final static int SELECTALBUMFROMBJ = 1;
     public final static int SELECTALBUMFROMDressUp = 2;
     private static final String TAG = "PreviewUpDownActivity";
+    private Context mContext;
 
     private ActivityPreviewUpAndDownBinding mBinding;
 
@@ -184,6 +187,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     protected void initView() {
+        mContext = PreviewUpAndDownActivity.this;
         EventBus.getDefault().register(this);
 
         mBinding = ActivityPreviewUpAndDownBinding.inflate(getLayoutInflater());
@@ -238,7 +242,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
         }
 
-        adapter = new PreviewUpDownAdapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, mOldFromTo);
+        adapter = new PreviewUpDownAdapter(R.layout.list_preview_up_down_item, allData, mOldFromTo);
 
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (view.getId() == R.id.iv_zan) {
@@ -362,14 +366,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         mBinding.ibBack.setOnClickListener(this::onViewClick);
     }
 
-
     private void intoUserHome(int position) {
         Intent intent = new Intent(PreviewUpAndDownActivity.this, UserHomepageActivity.class);
         intent.putExtra("toUserId", allData.get(position).getAdmin_id());
         intent.putExtra("templateType", templateType);
         startActivity(intent);
     }
-
 
     /**
      * description ：点击关注当前作者
@@ -586,13 +588,43 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
         if (!TextUtils.isEmpty(templateItem.getType()) && "1".equals(templateItem.getType()) && BaseConstans.getIncentiveVideo()) {
-            Intent intent = new Intent(PreviewUpAndDownActivity.this, AdHintActivity.class);
-            intent.putExtra("from", "PreviewActivity");
-            intent.putExtra("templateTitle", templateItem.getTitle());
-            startActivity(intent);
+//            Intent intent = new Intent(PreviewUpAndDownActivity.this, AdHintActivity.class);
+//            intent.putExtra("from", "PreviewActivity");
+//            intent.putExtra("templateTitle", templateItem.getTitle());
+//            startActivity(intent);
+            showMessageDialog();
         } else {
             hasLoginToNext();
         }
+    }
+
+    private void showMessageDialog() {
+        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert", "");
+        CommonMessageDialog.getBuilder(mContext)
+                .setContentView(R.layout.dialog_common_message_ad_under)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_BOTTOM)
+                .setTitle("亲爱的友友")
+                .setMessage("这个模板需要观看几秒广告")
+                .setMessage2("「看完后就能制作飞闪视频」")
+                .setPositiveButton("观看广告并制作")
+                .setNegativeButton("取消")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "bj_ad_open", templateItem.getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_confirm");
+                        EventBus.getDefault().post(new showAdCallback("PreviewActivity"));
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "mb_ad_cancel", templateItem.getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_cancel");
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
     }
 
     @Override
@@ -847,7 +879,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
     @Override
-    public void GetDressUpPathResult(List<String> paths) {
+    public void getDressUpPathResult(List<String> paths) {
         if (paths != null) {
             for (int i = 0; i < paths.size(); i++) {
                 LogUtil.d("OOM3", "换装之后保存本地的地址" + paths.get(i));

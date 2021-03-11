@@ -35,6 +35,8 @@ public class AboutActivity extends BaseActivity {
     @BindView(R.id.tv_version_number)
     TextView tvVersionNumber;
 
+    private Context mContext;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_about;
@@ -42,6 +44,7 @@ public class AboutActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        mContext = AboutActivity.this;
         ((TextView) findViewById(R.id.tv_top_title)).setText("关于");
         tvVersionNumber.setText("飞闪版本 " + SystemUtil.getVersionName(this));
     }

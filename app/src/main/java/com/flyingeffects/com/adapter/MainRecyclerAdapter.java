@@ -1,6 +1,10 @@
 package com.flyingeffects.com.adapter;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -38,7 +42,9 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.ui.view.activity.intoOtherAppActivity;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.nativ.MediaView;
 import com.qq.e.ads.nativ.NativeADEventListener;
@@ -54,6 +60,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
 import de.greenrobot.event.EventBus;
 
 import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.GDT_FEED_AD_EVENT;
@@ -65,73 +73,83 @@ import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED
  * time：2019/1/25
  * describe:首页适配
  **/
-public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_item, BaseViewHolder> {
+public class MainRecyclerAdapter extends BaseQuickAdapter<new_fag_template_item, BaseViewHolder> {
+    public static final int FROM_TEMPLATE_CODE = 0;
+    public static final int FROM_BACK_CODE = 1;
+    public static final int FROM_SEARCH_CODE = 2;
+    public static final int FROM_DOWNLOAD_CODE = 3;
+    public static final int FROM_DRESS_CODE = 4;
 
-    private Context context;
-    public final static String TAG = "main_recycler_adapter";
+    public final static String TAG = "MainRecyclerAdapter";
     //0 模板  1 背景 2 搜索/我的收藏 3 表示背景模板下载 4 换装
-    private int fromType;
-    private TextView tv_advertising_title;
+    private final int fromType;
+    private TextView tvAdvertisingTitle;
     private TextView csjTitle;
-    private FrameLayout custom_container;
+    private FrameLayout customContainer;
     private ImageView poster;
     private NativeAdContainer container;
     private MediaView mediaView;
     private VideoOption videoOption = null;
-    private ImageView csj_listitem_image;
-    private FrameLayout videoView;// 穿山甲的视频
-    private ArrayList<CommonNewsBean>listCommentBean;
+    private ImageView csjListitemImage;
+    /**
+     * 穿山甲的视频
+     */
+    private FrameLayout videoView;
+    private ArrayList<CommonNewsBean> listCommentBean;
     boolean isFromSearch;
 
 
-    public main_recycler_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context, int fromType,boolean isFromSearch) {
+    public MainRecyclerAdapter(int layoutResId, @Nullable
+            List<new_fag_template_item> allData, int fromType, boolean isFromSearch) {
         super(layoutResId, allData);
-        this.context = context;
         this.fromType = fromType;
-        this.isFromSearch=isFromSearch;
-        SetVideoOption();
+        this.isFromSearch = isFromSearch;
+        setVideoOption();
     }
 
 
     @Override
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         int offset = helper.getLayoutPosition();
-        LinearLayout ll_content_patents = helper.getView(R.id.ll_content_patents);
-        custom_container = helper.getView(R.id.custom_container);
+
+        LinearLayout llContentPatents = helper.getView(R.id.ll_content_patents);
+        customContainer = helper.getView(R.id.custom_container);
         container = helper.getView(R.id.native_ad_container);
         videoView = helper.getView(R.id.iv_listitem_video);
-        csj_listitem_image = helper.getView(R.id.iv_listitem_image);
+        csjListitemImage = helper.getView(R.id.iv_listitem_image);
         mediaView = helper.getView(R.id.gdt_media_view);
         poster = helper.getView(R.id.img_poster);
-        NativeAdContainer ll_ad_container = helper.getView(R.id.native_ad_container); //广告通
+
+        NativeAdContainer llAdContainer = helper.getView(R.id.native_ad_container); //广告通
         csjTitle = helper.getView(R.id.tv_advertising_title_csj);
-        tv_advertising_title = helper.getView(R.id.tv_advertising_title);
-        LinearLayout csj_ad_container = helper.getView(R.id.listitem_ad_large_video); //穿山甲
-        if (item.isHasShowAd()&&listCommentBean!=null) {
-            int needGetAdPosition=offset%10;
-            LogUtil.d("OOM","needGetAdPosition="+needGetAdPosition);
-            if(listCommentBean.size()>=needGetAdPosition){
-                CommonNewsBean commonNewsBean=listCommentBean.get(needGetAdPosition);
-                ll_content_patents.setVisibility(View.GONE);
+        tvAdvertisingTitle = helper.getView(R.id.tv_advertising_title);
+
+        LinearLayout csjAdContainer = helper.getView(R.id.listitem_ad_large_video); //穿山甲
+        if (item.isHasShowAd() && listCommentBean != null) {
+            int needGetAdPosition = offset % 10;
+            LogUtil.d("OOM", "needGetAdPosition=" + needGetAdPosition);
+            if (listCommentBean.size() >= needGetAdPosition) {
+                CommonNewsBean commonNewsBean = listCommentBean.get(needGetAdPosition);
+                llContentPatents.setVisibility(View.GONE);
                 if (commonNewsBean.getEventType() == GDT_FEED_AD_EVENT) {
-                    NativeUnifiedADData ad =commonNewsBean.getGdtAdData();
+                    NativeUnifiedADData ad = commonNewsBean.getGdtAdData();
                     if (ad != null) {
-                        ll_ad_container.setVisibility(View.VISIBLE);
-                        csj_ad_container.setVisibility(View.GONE);
+                        llAdContainer.setVisibility(View.VISIBLE);
+                        csjAdContainer.setVisibility(View.GONE);
                         initItemView(ad);
                     } else { //没有数据就隐藏,全部数据隐藏
-                        showNullView(ll_content_patents, ll_ad_container, csj_ad_container);
+                        showNullView(llContentPatents, llAdContainer, csjAdContainer);
                     }
                 } else if (commonNewsBean.getEventType() == TT_FEED_AD_EVENT) {
-                    TTFeedAd ad= commonNewsBean.getTtFeedAd();
-                    if (ad != null ) {  //有数据才显示
-                        ll_content_patents.setVisibility(View.GONE);
-                        ll_ad_container.setVisibility(View.GONE);
-                        csj_ad_container.setVisibility(View.VISIBLE);
-                        bindData(csj_ad_container, ad);
+                    TTFeedAd ad = commonNewsBean.getTtFeedAd();
+                    if (ad != null) {  //有数据才显示
+                        llContentPatents.setVisibility(View.GONE);
+                        llAdContainer.setVisibility(View.GONE);
+                        csjAdContainer.setVisibility(View.VISIBLE);
+                        bindData(csjAdContainer, ad);
                         int adMode = ad.getImageMode();
                         if (adMode == TTAdConstant.IMAGE_MODE_VIDEO) {  //视频类型广告
-                            csj_listitem_image.setVisibility(View.GONE);
+                            csjListitemImage.setVisibility(View.GONE);
                             videoView.setVisibility(View.VISIBLE);
                             if (videoView != null) {
                                 //获取视频播放view,该view SDK内部渲染，在媒体平台可配置视频是否自动播放等设置。
@@ -144,99 +162,95 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                                 }
                             }
                         } else { //其他均默认为图文广告类型，不区分其他类型广告
-                            csj_listitem_image.setVisibility(View.VISIBLE);
+                            csjListitemImage.setVisibility(View.VISIBLE);
                             videoView.setVisibility(View.GONE);
                             if (ad.getImageList() != null && !ad.getImageList().isEmpty()) {
                                 TTImage image = ad.getImageList().get(0);
                                 if (image != null && image.isValid()) {
-                                    Glide.with(mContext).load(image.getImageUrl()).into(csj_listitem_image);
+                                    Glide.with(mContext).load(image.getImageUrl()).into(csjListitemImage);
                                 }
                             }
                         }
                     } else {
-                        showNullView(ll_content_patents, ll_ad_container, csj_ad_container);
+                        showNullView(llContentPatents, llAdContainer, csjAdContainer);
                     }
 
 
                 } else {
                     //其他类型的格式。百度，目前暂时不配置
                     LogUtil.d("OOM", "其他的数据格式");
-                    showNullView(ll_content_patents, ll_ad_container, csj_ad_container);
-
+                    showNullView(llContentPatents, llAdContainer, csjAdContainer);
                 }
-            }else{
-                showNullView(ll_content_patents, ll_ad_container, csj_ad_container);
+            } else {
+                showNullView(llContentPatents, llAdContainer, csjAdContainer);
             }
 
         } else {
-            ll_ad_container.setVisibility(View.GONE);
-            csj_ad_container.setVisibility(View.GONE);
-            Glide.with(context)
+            llAdContainer.setVisibility(View.GONE);
+            csjAdContainer.setVisibility(View.GONE);
+            Glide.with(mContext)
                     .load(item.getImage())
-                    .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
+                    .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(mContext, 5)))
                     .apply(RequestOptions.placeholderOf(R.mipmap.placeholder))
                     .into((ImageView) helper.getView(R.id.iv_cover));
-            ImageView iv_show_author = helper.getView(R.id.iv_show_author);
-            RelativeLayout ConstraintLayout_addVideo = helper.getView(R.id.ConstraintLayout_addVideo);
-            RelativeLayout ll_relative_2 = helper.getView(R.id.ll_relative_2);
-            RelativeLayout add_image=helper.getView(R.id.add_image);
-            LinearLayout ll_relative_1 = helper.getView(R.id.ll_relative_1);
-            RelativeLayout ll_relative_0 = helper.getView(R.id.ll_relative_0);
-            TextView tv_name = helper.getView(R.id.tv_name);
-            tv_name.setText(item.getTitle());
-            if (fromType == 1) {
+            ImageView ivShowAuthor = helper.getView(R.id.iv_show_author);
+            RelativeLayout constraintLayoutAddVideo = helper.getView(R.id.ConstraintLayout_addVideo);
+            RelativeLayout llRelative2 = helper.getView(R.id.ll_relative_2);
+            RelativeLayout addImage = helper.getView(R.id.add_image);
+            LinearLayout llRelative1 = helper.getView(R.id.ll_relative_1);
+            RelativeLayout llRelative0 = helper.getView(R.id.ll_relative_0);
+            TextView tvName = helper.getView(R.id.tv_name);
+            tvName.setText(item.getTitle());
+            if (fromType == FROM_BACK_CODE) {
                 if (offset == 1) {
-                    ll_relative_2.setVisibility(View.GONE);
-                    ll_relative_1.setVisibility(View.VISIBLE);
-                    ll_relative_0.setVisibility(View.VISIBLE);
-                    ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
-                    if(!TextUtils.isEmpty(BaseConstans.configList.getFirstline())){
+                    llRelative2.setVisibility(View.GONE);
+                    llRelative1.setVisibility(View.VISIBLE);
+                    llRelative0.setVisibility(View.VISIBLE);
+                    constraintLayoutAddVideo.setVisibility(View.VISIBLE);
+                    if (!TextUtils.isEmpty(BaseConstans.configList.getFirstline())) {
                         helper.setText(R.id.firstline, BaseConstans.configList.getFirstline());
                     }
 
-                    if(!TextUtils.isEmpty(BaseConstans.configList.getSecondline())){
+                    if (!TextUtils.isEmpty(BaseConstans.configList.getSecondline())) {
                         helper.setText(R.id.secondline, BaseConstans.configList.getSecondline());
                     }
 
-                    if(!TextUtils.isEmpty(BaseConstans.configList.getThirdline())){
+                    if (!TextUtils.isEmpty(BaseConstans.configList.getThirdline())) {
                         helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
                     }
 
-                    ConstraintLayout_addVideo.setOnClickListener(v -> {
-                        Intent intent = new Intent(context, intoOtherAppActivity.class);
-                        intent.putExtra("wx", "");
-                        intent.putExtra("kuaishou", "");
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        context.startActivity(intent);
+                    constraintLayoutAddVideo.setOnClickListener(v -> {
+                        //jumpToIntoOtherApp();
+                        showMessageDialog();
                     });
                 } else {
-                    ConstraintLayout_addVideo.setVisibility(View.GONE);
+                    constraintLayoutAddVideo.setVisibility(View.GONE);
                 }
                 helper.setText(R.id.tv_name2, item.getAuth());
-                ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
-                Glide.with(context)
+                ImageView ivShowAuthorTemplate = helper.getView(R.id.iv_show_author_template);
+                Glide.with(mContext)
                         .load(item.getAuth_image())
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                        .into(iv_show_author_template);
-                iv_show_author.setVisibility(View.GONE);
+                        .into(ivShowAuthorTemplate);
+                ivShowAuthor.setVisibility(View.GONE);
                 helper.setText(R.id.tv_zan_count, item.getPraise());
-                tv_name.setVisibility(View.VISIBLE);
-                ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
-                iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
-            } else if (fromType == 3) {
+                tvName.setVisibility(View.VISIBLE);
+                ImageView ivZanState = helper.getView(R.id.iv_zan_state);
+                ivZanState.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
+            } else if (fromType == FROM_DOWNLOAD_CODE) {
                 //背景下载
-                if (offset == 0&&!isFromSearch) {
-                    ll_relative_2.setVisibility(View.VISIBLE);
-                    ll_relative_1.setVisibility(View.GONE);
-                    ll_relative_0.setVisibility(View.GONE);
-                    ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
-                    ConstraintLayout_addVideo.setOnClickListener(v -> {
-                        AlbumManager.chooseAlbum(context, 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
+                if (offset == 0 && !isFromSearch) {
+                    llRelative2.setVisibility(View.VISIBLE);
+                    llRelative1.setVisibility(View.GONE);
+                    llRelative0.setVisibility(View.GONE);
+                    constraintLayoutAddVideo.setVisibility(View.VISIBLE);
+                    constraintLayoutAddVideo.setOnClickListener(v -> {
+                        AlbumManager.chooseAlbum(mContext, 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
                             if (!isCancel) {
                                 if (UiStep.isFromDownBj) {
-                                    StatisticsEventAffair.getInstance().setFlag(context, "7_local");
+                                    StatisticsEventAffair.getInstance().setFlag(mContext, "7_local");
                                 } else {
-                                    StatisticsEventAffair.getInstance().setFlag(context, "8_local");
+                                    StatisticsEventAffair.getInstance().setFlag(mContext, "8_local");
                                 }
                                 // EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
                                 String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
@@ -244,120 +258,168 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                                     EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
                                 } else {
                                     //如果选择的视频
-                                    Intent intent = new Intent(context, VideoCropActivity.class);
+                                    Intent intent = new Intent(mContext, VideoCropActivity.class);
                                     intent.putExtra("videoPath", paths.get(0));
                                     intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEOFORUSER);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    context.startActivity(intent);
+                                    mContext.startActivity(intent);
                                 }
                             }
                         }, "");
                     });
                 } else {
-                    ConstraintLayout_addVideo.setVisibility(View.GONE);
+                    constraintLayoutAddVideo.setVisibility(View.GONE);
                 }
                 helper.setText(R.id.tv_name2, item.getAuth());
-                ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
-                Glide.with(context)
+                ImageView ivShowAuthorTemplate = helper.getView(R.id.iv_show_author_template);
+                Glide.with(mContext)
                         .load(item.getAuth_image())
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                        .into(iv_show_author_template);
-                iv_show_author.setVisibility(View.GONE);
+                        .into(ivShowAuthorTemplate);
+                ivShowAuthor.setVisibility(View.GONE);
                 helper.setText(R.id.tv_zan_count, item.getPraise());
-                tv_name.setVisibility(View.VISIBLE);
-                ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
-                iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
-                iv_show_author.setVisibility(View.GONE);
-            } else if (fromType == 4) {
+                tvName.setVisibility(View.VISIBLE);
+                ImageView ivZanState = helper.getView(R.id.iv_zan_state);
+                ivZanState.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
+                ivShowAuthor.setVisibility(View.GONE);
+            } else if (fromType == FROM_DRESS_CODE) {
                 //换装
                 if (offset == 1 && TextUtils.isEmpty(tabName)) {
-                    add_image.setVisibility(View.VISIBLE);
-                    ConstraintLayout_addVideo.setVisibility(View.GONE);
+                    addImage.setVisibility(View.VISIBLE);
+                    constraintLayoutAddVideo.setVisibility(View.GONE);
                 } else {
-                    add_image.setVisibility(View.GONE);
+                    addImage.setVisibility(View.GONE);
                 }
-                add_image.setOnClickListener(new View.OnClickListener() {
+                addImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(!DoubleClick.getInstance().isFastDoubleClick()){
-                            StatisticsEventAffair.getInstance().setFlag(context,"21_face_up");
-                            AlbumManager.chooseImageAlbum(context, 1, 0, new AlbumChooseCallback() {
+                        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                            StatisticsEventAffair.getInstance().setFlag(mContext, "21_face_up");
+                            AlbumManager.chooseImageAlbum(mContext, 1, 0, new AlbumChooseCallback() {
                                 @Override
-                                public void resultFilePath(int tag, List<String> paths, boolean isCancel,boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
-                                  if(!isCancel){
-                                      intoUploadMaterialActivity(paths.get(0));
-                                  }
+                                public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
+                                    if (!isCancel) {
+                                        intoUploadMaterialActivity(paths.get(0));
+                                    }
                                 }
-                            },"");
+                            }, "");
                         }
                     }
                 });
                 helper.setText(R.id.tv_name2, item.getAuth());
-                ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
-                Glide.with(context)
+                ImageView ivShowAuthorTemplate = helper.getView(R.id.iv_show_author_template);
+                Glide.with(mContext)
                         .load(item.getAuth_image())
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                        .into(iv_show_author_template);
-                iv_show_author.setVisibility(View.GONE);
+                        .into(ivShowAuthorTemplate);
+                ivShowAuthor.setVisibility(View.GONE);
                 helper.setText(R.id.tv_zan_count, item.getPraise());
-                tv_name.setVisibility(View.VISIBLE);
-                ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
-                iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
-                iv_show_author.setVisibility(View.GONE);
+                tvName.setVisibility(View.VISIBLE);
+                ImageView ivZanState = helper.getView(R.id.iv_zan_state);
+                ivZanState.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
+                ivShowAuthor.setVisibility(View.GONE);
             } else {
                 //模板
-                if (offset == 1 && fromType == 0) {
-                    ll_relative_1.setVisibility(View.VISIBLE);
-                    ll_relative_0.setVisibility(View.VISIBLE);
-                    ll_relative_2.setVisibility(View.GONE);
-                    if(!TextUtils.isEmpty(BaseConstans.configList.getFirstline())){
+                if (offset == 1 && fromType == FROM_TEMPLATE_CODE) {
+                    llRelative1.setVisibility(View.VISIBLE);
+                    llRelative0.setVisibility(View.VISIBLE);
+                    llRelative2.setVisibility(View.GONE);
+                    if (!TextUtils.isEmpty(BaseConstans.configList.getFirstline())) {
                         helper.setText(R.id.firstline, BaseConstans.configList.getFirstline());
                     }
-                    if(!TextUtils.isEmpty(BaseConstans.configList.getSecondline())){
+                    if (!TextUtils.isEmpty(BaseConstans.configList.getSecondline())) {
                         helper.setText(R.id.secondline, BaseConstans.configList.getSecondline());
                     }
-                    if(!TextUtils.isEmpty(BaseConstans.configList.getThirdline())){
+                    if (!TextUtils.isEmpty(BaseConstans.configList.getThirdline())) {
                         helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
                     }
-                    ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
-                    ConstraintLayout_addVideo.setOnClickListener(v -> {
-                        Intent intent = new Intent(context, intoOtherAppActivity.class);
-                        intent.putExtra("wx", "");
-                        intent.putExtra("kuaishou", "");
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        context.startActivity(intent);
+                    constraintLayoutAddVideo.setVisibility(View.VISIBLE);
+                    constraintLayoutAddVideo.setOnClickListener(v -> {
+                        //jumpToIntoOtherApp();
+                        showMessageDialog();
                     });
                 } else {
-                    ConstraintLayout_addVideo.setVisibility(View.GONE);
+                    constraintLayoutAddVideo.setVisibility(View.GONE);
                 }
                 helper.setText(R.id.tv_name2, item.getAuth());
-                ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
-                Glide.with(context)
+                ImageView ivShowAuthorTemplate = helper.getView(R.id.iv_show_author_template);
+                Glide.with(mContext)
                         .load(item.getAuth_image())
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                        .into(iv_show_author_template);
-                iv_show_author.setVisibility(View.GONE);
+                        .into(ivShowAuthorTemplate);
+                ivShowAuthor.setVisibility(View.GONE);
                 helper.setText(R.id.tv_zan_count, item.getPraise());
-                tv_name.setVisibility(View.VISIBLE);
-                ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
-                iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
-                ll_content_patents.setVisibility(View.VISIBLE);
+                tvName.setVisibility(View.VISIBLE);
+                ImageView ivZanState = helper.getView(R.id.iv_zan_state);
+                ivZanState.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
+                llContentPatents.setVisibility(View.VISIBLE);
             }
         }
-        ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
-        if(item.getIs_ad_recommend()==1){
-            iv_zan_state.setVisibility(View.GONE);
+        ImageView ivZanState = helper.getView(R.id.iv_zan_state);
+        if (item.getIs_ad_recommend() == 1) {
+            ivZanState.setVisibility(View.GONE);
             helper.setText(R.id.tv_zan_count, "");
-        }else{
-            iv_zan_state.setVisibility(View.VISIBLE);
+        } else {
+            ivZanState.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * 弹出dialog
+     */
+    private void showMessageDialog() {
+        //复制到剪贴板
+        ClipboardManager tvCopy = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+        tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.getService_wxi()));
+        //弹出dialog
+        CommonMessageDialog.getBuilder(mContext)
+                .setContentView(R.layout.dialog_common_message)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setTitle(BaseConstans.configList.getTitle())
+                .setMessage(BaseConstans.configList.getContent())
+                .setMessage2(BaseConstans.configList.getCopydata())
+                .setMessage3(BaseConstans.configList.getDescription())
+                .setPositiveButton("立即打开微信获取")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        openWx();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).build()
+                .show();
+    }
+
+    private void openWx() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setComponent(cmp);
+            mContext.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            ToastUtil.showToast(mContext.getString(R.string.check_login_notification));
+        }
+    }
+
+    private void jumpToIntoOtherApp() {
+        Intent intent = new Intent(mContext, intoOtherAppActivity.class);
+        intent.putExtra("wx", "");
+        intent.putExtra("kuaishou", "");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        mContext.startActivity(intent);
     }
 
 
     private void initItemView(NativeUnifiedADData ad) {
-        tv_advertising_title.setText(ad.getTitle());
+        tvAdvertisingTitle.setText(ad.getTitle());
         List<View> clickableViews = new ArrayList<>();
-        clickableViews.add(custom_container);
+        clickableViews.add(customContainer);
         if (ad.getAdPatternType() == 2) {  // 视频广告
 //            LogUtil.d("onNoAD","视频来了");
             poster.setVisibility(View.INVISIBLE);
@@ -365,9 +427,9 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
         } else {
             poster.setVisibility(View.VISIBLE);
             mediaView.setVisibility(View.INVISIBLE);
-            Glide.with(context).load(ad.getImgUrl()).into(poster);
+            Glide.with(mContext).load(ad.getImgUrl()).into(poster);
         }
-        ad.bindAdToView(context, container, null,
+        ad.bindAdToView(mContext, container, null,
                 clickableViews);
         setAdListener(ad);
     }
@@ -466,7 +528,7 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
     }
 
 
-    private void SetVideoOption() {
+    private void setVideoOption() {
         VideoOption.Builder builder = new VideoOption.Builder();
         builder.setAutoPlayMuted(true);
         builder.setNeedCoverImage(true);
@@ -477,12 +539,11 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
     }
 
 
-    private void showNullView(LinearLayout iv_show_content, NativeAdContainer ll_ad_container, LinearLayout csj_ad_container) {
-        iv_show_content.setVisibility(View.GONE);
-        ll_ad_container.setVisibility(View.GONE);
-        csj_ad_container.setVisibility(View.GONE);
+    private void showNullView(LinearLayout ivShowContent, NativeAdContainer llAdContainer, LinearLayout csjAdContainer) {
+        ivShowContent.setVisibility(View.GONE);
+        llAdContainer.setVisibility(View.GONE);
+        csjAdContainer.setVisibility(View.GONE);
     }
-
 
 
     /**
@@ -490,7 +551,6 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
      * date: ：2019/10/16 13:42
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
-
     private void bindData(View convertView, TTFeedAd ad) {
         //可以被点击的view, 也可以把convertView放进来意味item可被点击
         List<View> clickViewList = new ArrayList<>();
@@ -521,18 +581,22 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
                 }
             }
         });
-        csjTitle.setText(ad.getTitle()); //title为广告的简单信息提示
+        //title为广告的简单信息提示
+        csjTitle.setText(ad.getTitle());
         switch (ad.getInteractionType()) {
-            case TTAdConstant.INTERACTION_TYPE_DOWNLOAD:  //下载
+            //下载
+            case TTAdConstant.INTERACTION_TYPE_DOWNLOAD:
                 //如果初始化ttAdManager.createAdNative(getApplicationContext())没有传入activity 则需要在此传activity，否则影响使用Dislike逻辑
                 if (mContext instanceof Activity) {
                     ad.setActivityForDownloadApp((Activity) mContext);
                 }
                 break;
-            case TTAdConstant.INTERACTION_TYPE_DIAL:  //拨打电话
+            //拨打电话
+            case TTAdConstant.INTERACTION_TYPE_DIAL:
                 break;
-            case TTAdConstant.INTERACTION_TYPE_LANDING_PAGE:  //
-            case TTAdConstant.INTERACTION_TYPE_BROWSER:  //浏览
+            case TTAdConstant.INTERACTION_TYPE_LANDING_PAGE:
+            //浏览
+            case TTAdConstant.INTERACTION_TYPE_BROWSER:
 
                 break;
             default:
@@ -540,13 +604,9 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
     }
 
 
-
-    public void setAdList(ArrayList<CommonNewsBean>listCommentBean){
-        this.listCommentBean=listCommentBean;
+    public void setAdList(ArrayList<CommonNewsBean> listCommentBean) {
+        this.listCommentBean = listCommentBean;
     }
-
-
-
 
 
     /**
@@ -554,17 +614,19 @@ public class main_recycler_adapter extends BaseQuickAdapter<new_fag_template_ite
      * creation date: 2020/12/7
      * user : zhangtongju
      */
-    private void intoUploadMaterialActivity(String path){
-        Intent intent=new Intent(context, UploadMaterialActivity.class);
-        intent.putExtra("isFrom",2);
-        intent.putExtra("videoPath",path);
-        context.startActivity(intent);
-
+    private void intoUploadMaterialActivity(String path) {
+        Intent intent = new Intent(mContext, UploadMaterialActivity.class);
+        intent.putExtra("isFrom", 2);
+        intent.putExtra("videoPath", path);
+        mContext.startActivity(intent);
     }
 
     String tabName;
-    /**设置换装收藏tab没有上传功能*/
-    public void setDressUPTabNameFavorites(String tabName){
+
+    /**
+     * 设置换装收藏tab没有上传功能
+     */
+    public void setDressUPTabNameFavorites(String tabName) {
         this.tabName = tabName;
     }
 

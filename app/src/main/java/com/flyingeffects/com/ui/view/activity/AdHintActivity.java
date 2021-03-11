@@ -2,7 +2,9 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,17 +37,17 @@ public class AdHintActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_ad_hint);
         findViewById(R.id.tv_cancle).setOnClickListener(listenner);
-        iv_btn=findViewById(R.id.iv_btn);
-        tv_content_1=findViewById(R.id.tv_content_1);
+        iv_btn = findViewById(R.id.iv_btn);
+        tv_content_1 = findViewById(R.id.tv_content_1);
         findViewById(R.id.tv_watch_ad).setOnClickListener(listenner);
         from = getIntent().getStringExtra("from");
-        if(!TextUtils.isEmpty(from) && "isFormPreviewVideo".equals(from)){
+        if (!TextUtils.isEmpty(from) && "isFormPreviewVideo".equals(from)) {
             tv_content_1.setText("「看完后就能一键保存视频」");
             iv_btn.setImageResource(R.mipmap.ad_alert_bt_keep);//ad_alert_bt_save
-        }else if(!TextUtils.isEmpty(from) && "isFormDressUp".equals(from)){
+        } else if (!TextUtils.isEmpty(from) && "isFormDressUp".equals(from)) {
             tv_content_1.setText("「看完后就能一键保存图片」");
             iv_btn.setImageResource(R.mipmap.ad_alert_bt_keep);//ad_alert_bt_save
-        }else{
+        } else {
             tv_content_1.setText("「看完后就能制作飞闪视频」");
             iv_btn.setImageResource(R.mipmap.ad_alert_bt);
         }
@@ -69,7 +71,7 @@ public class AdHintActivity extends Activity {
 
             case R.id.tv_watch_ad:
 
-                if(!DoubleClick.getInstance().isFastZDYDoubleClick(2000)){
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
                     //观看广告
                     if (from.equals(FromToTemplate.ISTEMPLATE)) {
                         StatisticsEventAffair.getInstance().setFlag(AdHintActivity.this, "mb_ad_open", title);
@@ -80,8 +82,6 @@ public class AdHintActivity extends Activity {
                     EventBus.getDefault().post(new showAdCallback(from));
                     AdHintActivity.this.finish();
                 }
-
-
                 break;
 
         }

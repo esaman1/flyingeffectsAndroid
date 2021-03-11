@@ -187,17 +187,17 @@ public class PreviewUpAndDownMvpModel {
             Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
             LogUtil.d("OOM", StringUtil.beanToJSONString(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(context) {
-                @Override
-                protected void onSubError(String message) {
+                        @Override
+                        protected void onSubError(String message) {
 //                ToastUtil.showToast(message);
-                    LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
-                }
+                            LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
+                        }
 
-                @Override
-                protected void onSubNext(new_fag_template_item data) {
-                    callback.getTemplateLInfo(data);
-                }
-            }, "cacheKey", ActivityLifeCycleEvent.DESTROY,
+                        @Override
+                        protected void onSubNext(new_fag_template_item data) {
+                            callback.getTemplateLInfo(data);
+                        }
+                    }, "cacheKey", ActivityLifeCycleEvent.DESTROY,
                     lifecycleSubject, false, true, false);
 
         }
@@ -457,7 +457,7 @@ public class PreviewUpAndDownMvpModel {
      */
     private String getShareWeiXinCircleText(String id) {
         String str = "http://www.flyingeffect.com/index/index/share?id=" + id + "&";
-        HashMap<String,String> params = BaseConstans.getRequestHead(new HashMap<>());
+        HashMap<String, String> params = BaseConstans.getRequestHead(new HashMap<>());
         String strParams = params.toString();
         strParams = strParams.replace("{", "");
         strParams = strParams.replace("}", "");
@@ -772,11 +772,11 @@ public class PreviewUpAndDownMvpModel {
      * param : template_type 1 muban  2背景
      * user : zhangtongju
      */
-    public void zanTemplate(String templateId, String title, String template_type) {
+    public void zanTemplate(String templateId, String title, String templateType) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
 //        params.put("token", BaseConstans.GetUserToken());
-        params.put("type", template_type);
+        params.put("type", templateType);
         // 启动时间
         Observable ob = Api.getDefault().addPraise(BaseConstans.getRequestHead(params));
 
@@ -793,7 +793,7 @@ public class PreviewUpAndDownMvpModel {
             protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
-                callback.ZanResult();
+                callback.zanResult();
             }
 
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -817,7 +817,6 @@ public class PreviewUpAndDownMvpModel {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
 
     public void downVideo(String path, String imagePath, String id, boolean keepAlbum, boolean isFromAgainChooseBj) {
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
@@ -889,9 +888,9 @@ public class PreviewUpAndDownMvpModel {
 
     private void saveToAlbum(String path) {
         String albumPath;
-        if(TextUtils.equals(FromToTemplate.DRESSUP, fromTo)){
+        if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
             albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForImage();
-        }else{
+        } else {
             albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
         }
         try {
@@ -904,7 +903,6 @@ public class PreviewUpAndDownMvpModel {
             e.printStackTrace();
         }
     }
-
 
     private void showKeepSuccessDialog(String path) {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
@@ -1044,7 +1042,7 @@ public class PreviewUpAndDownMvpModel {
                     @Override
                     public void isSuccess(List<String> paths) {
                         LogUtil.d("OOM3", "跳转到换装页面");
-                        if(paths!=null){
+                        if (paths != null) {
                             Intent intent = new Intent(context, DressUpPreviewActivity.class);
                             intent.putExtra("url", paths.get(0));
                             intent.putExtra("template_id", templateId);
@@ -1054,7 +1052,7 @@ public class PreviewUpAndDownMvpModel {
                             context.startActivity(intent);
                         }
                     }
-                },false);
+                }, false);
                 dressUpModel.toDressUp(path, templateId);
             }
         });
@@ -1067,7 +1065,7 @@ public class PreviewUpAndDownMvpModel {
      * user : zhangtongju
      */
     public void GetDressUpPath(List<String> paths) {
-        callback.GetDressUpPathResult(paths);
+        callback.getDressUpPathResult(paths);
     }
 
 

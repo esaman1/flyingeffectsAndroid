@@ -3,18 +3,16 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.main_recycler_adapter;
+import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
-import com.flyingeffects.com.enity.CommonNewsBean;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -23,7 +21,6 @@ import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
@@ -33,8 +30,6 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.market.android.sdk.AppMarketHelper;
-import com.nineton.ntadsdk.bean.FeedAdConfigBean;
-import com.nineton.ntadsdk.itr.FeedAdCallBack;
 import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -50,10 +45,6 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.BAIDU_FEED_AD_EVENT;
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.GDT_FEED_AD_EVENT;
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED_AD_EVENT;
-
 
 /**
  * description ：背景页面，背景栏目下面模板列表，
@@ -67,7 +58,7 @@ public class fragBjItem extends BaseFragment {
     private int perPageCount = 10;
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
-    private main_recycler_adapter adapter;
+    private MainRecyclerAdapter adapter;
     private List<new_fag_template_item> allData = new ArrayList<>();
     private String templateId = "";
     @BindView(R.id.smart_refresh_layout_bj)
@@ -128,7 +119,7 @@ public class fragBjItem extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType,false);
+        adapter = new MainRecyclerAdapter(R.layout.list_main_item, allData, fromType,false);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.
                         VERTICAL);

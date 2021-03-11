@@ -28,10 +28,10 @@ import butterknife.OnClick;
 
 public class intoOtherAppActivity extends Activity {
 
-
-    ImageView iv_show_bg;
     //1是微信  ，2是快手和抖音
     private int pageType;
+
+    ImageView iv_show_bg;
 
     TextView tv_title;
 
@@ -41,16 +41,17 @@ public class intoOtherAppActivity extends Activity {
 
     TextView tv_content;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.act_into_other_app);
         iv_show_bg = findViewById(R.id.iv_show_bg);
-        tv_title=findViewById(R.id.tv_title);
-        tv_title_1=findViewById(R.id.tv_title_1);
-        tv_tencent=findViewById(R.id.tv_tencent);
-        tv_content=findViewById(R.id.tv_content);
+        tv_title = findViewById(R.id.tv_title);
+        tv_title_1 = findViewById(R.id.tv_title_1);
+        tv_tencent = findViewById(R.id.tv_tencent);
+        tv_content = findViewById(R.id.tv_content);
+
         if (BaseConstans.configList != null) {
             pageType = BaseConstans.configList.getType();
             if (pageType == 1) {
@@ -67,10 +68,7 @@ public class intoOtherAppActivity extends Activity {
             tv_title_1.setText(BaseConstans.configList.getContent());
             tv_tencent.setText(BaseConstans.configList.getCopydata());
 
-
         }
-
-
 
         ButterKnife.bind(this);
     }
@@ -80,22 +78,19 @@ public class intoOtherAppActivity extends Activity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_goto_kuaishou:
-                if(pageType==1){
+                if (pageType == 1) {
                     contactUs();
-                }else{
+                } else {
                     ClipboardManager tvCopy = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.configList.getKuaishouurl()));
                     doStartApplicationWithPackageName(this, "com.smile.gifmaker");
                 }
-
                 break;
 
             case R.id.tv_goto_douyin:
-
-
-                if(pageType==1){
+                if (pageType == 1) {
                     contactUs();
-                }else{
+                } else {
                     ClipboardManager tvCopy_dy = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     tvCopy_dy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.configList.getDouyinurl()));
                     doStartApplicationWithPackageName(this, "com.ss.android.ugc.aweme");
@@ -105,6 +100,7 @@ public class intoOtherAppActivity extends Activity {
             case R.id.iv_close:
                 this.finish();
                 break;
+
         }
     }
 
@@ -114,7 +110,6 @@ public class intoOtherAppActivity extends Activity {
         tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.getService_wxi()));
         openWx();
     }
-
 
 
     private void openWx() {
@@ -137,10 +132,8 @@ public class intoOtherAppActivity extends Activity {
         PackageInfo packageinfo = null;
         try {
             packageinfo = context.getPackageManager().getPackageInfo(packagename, 0);
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
         if (packageinfo == null) {
             ToastUtil.showToast("你还未安装该应用");
