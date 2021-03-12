@@ -166,7 +166,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private String templateType;
     private boolean mIsFollow;
 
-
     @Override
     protected int getLayoutId() {
         return 0;
@@ -180,7 +179,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private String keepOldFrom;
 
     //0 表示不是影集，1表示影集
-    private int is_pic;
+    private int isPic;
 
     private boolean isSlideViewpager = false;
     boolean isCanLoadMore;
@@ -213,7 +212,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         insertMinNum = nowChoosePosition;
         templateItem = allData.get(nowChoosePosition);
         mIsPicOut = templateItem.getIs_picout();
-        is_pic = templateItem.getIs_pic();
+        isPic = templateItem.getIs_pic();
         mIsWithPlay = templateItem.getIs_with_play();
         templateType = templateItem.getTemplate_type();
         String searchText = getIntent().getStringExtra("searchText");
@@ -403,7 +402,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 LogUtil.d("OOM", "requestFollowThisUser");
                 mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
             }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject,
+                false, true, true);
     }
 
 
@@ -819,7 +819,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             setIsZan(data.getIs_praise() == 1);
             nowPraise = data.getIs_praise();
             templateType = data.getTemplate_type();
-            is_pic = templateItem.getIs_pic();
+            isPic = templateItem.getIs_pic();
             //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
             if (!TextUtils.isEmpty(templateItem.getPre_url())) {
                 mOldFromTo = FromToTemplate.ISBJ;
@@ -1062,7 +1062,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                     new Thread(() -> {
                                         originalImagePath = paths;
                                         //如果是视频，就不抠图了
-                                        if (is_pic == 0) {
+                                        if (isPic == 0) {
                                             LogUtil.d("OOM6", "is_pic==0");
                                             String path = paths.get(0);
                                             String pathType = GetPathTypeModel.getInstance().getMediaType(path);

@@ -119,7 +119,7 @@
         <attr name="focus_scale" format="float" />
     </declare-styleable>
 
-    <declare-styleable name="LoadingProgressStyle">
+    <declare-styleable name="LoadingDialogProgress">
         <attr name="progress_color" format="color"/>
         <attr name="progress_track_color" format="color"/>
         <attr name="progress_width" format="dimension"/>
