@@ -30,6 +30,8 @@ public class BaseConstans {
      */
     public static final String DOUYINSHARE_CLIENTKEY = "awikd2g333hd0ien";
 
+
+
     /**
      * 是否开启华为渠道适配
      */
@@ -251,6 +253,25 @@ public class BaseConstans {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("AdvertisingNum", num);
     }
+
+
+    /**
+     * description ：设置入口
+     * creation date: 2021/3/12
+     * user : zhangtongju
+     */
+    public static void setHasAdEntrance(String json) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("AdEntrance", json);
+    }
+
+
+    public static String getHasAdEntrance() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+      return   spUtil.getString("AdEntrance","");
+    }
+
+
 
 
     /**

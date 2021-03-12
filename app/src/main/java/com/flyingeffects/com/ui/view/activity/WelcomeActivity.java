@@ -433,6 +433,9 @@ public class WelcomeActivity extends BaseActivity {
                             //换装制作页面切换模板按钮加载视频广告的间隔次数
                             int dressupIntervalsNumber = Integer.parseInt(config.getValue());
                             BaseConstans.setDressupIntervalsNumber(dressupIntervalsNumber);
+                        }else if(id == 72){
+                            String value = config.getValue();
+                            BaseConstans.setHasAdEntrance(value);
                         }
                     }
                 }

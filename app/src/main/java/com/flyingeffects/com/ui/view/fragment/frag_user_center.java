@@ -65,6 +65,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -147,6 +151,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @Override
     protected void initView() {
+
         EventBus.getDefault().register(this);
         options = UCropOption.getInstance().getUcropOption();
         iv_about.setOnClickListener(view -> {
@@ -163,6 +168,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 }
             });
         }
+        showAdEntrance();
     }
 
     @Override
@@ -334,7 +340,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
             case R.id.iv_ad_entrance:
                 //互动广告入口
-                Uri uri = Uri.parse("https://www.baidu.com");
+                Uri uri = Uri.parse(adv_web_url);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 break;
@@ -589,6 +595,44 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 //            tv_top_name.setVisibility(View.VISIBLE);
 //        }
     }
+
+
+
+    /**
+     * description ：显示广告入口
+     * creation date: 2021/3/12
+     * user : zhangtongju
+     */
+    private  String adv_web_url;
+    private void showAdEntrance(){
+        if(getActivity()!=null){
+            String str=BaseConstans.getHasAdEntrance();
+            LogUtil.d("OOM2","得到的广告浏览器配置为"+str);
+            if(!TextUtils.isEmpty(str)){
+                try {
+                    JSONObject js=new JSONObject(str);
+                    String url=js.getString("adv_icon");
+                    adv_web_url=js.getString("adv_url");
+                    Glide.with(getActivity()).load(url).into(iv_ad_entrance);
+                    iv_ad_entrance.setVisibility(View.VISIBLE);
+
+
+                } catch (JSONException e) {
+                    iv_ad_entrance.setVisibility(View.GONE);
+                    e.printStackTrace();
+                }
+            }else{
+                iv_ad_entrance.setVisibility(View.GONE);
+            }
+
+        }
+
+
+
+    }
+
+
+
 }
 
 
