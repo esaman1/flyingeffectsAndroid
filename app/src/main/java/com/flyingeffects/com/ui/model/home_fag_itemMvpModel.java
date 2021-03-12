@@ -53,12 +53,13 @@ public class home_fag_itemMvpModel {
     private int template_type;
     private int fromType;
 
-    public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback, int fromType) {
+    public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback, int fromType,FeedAdManager mAdManager) {
         this.context = context;
         this.callback = callback;
         this.fromType = fromType;
         template_type = template_type == 0 ? 1 : 2;
-        mAdManager = new FeedAdManager();
+        this.mAdManager=mAdManager;
+
     }
 
 
@@ -225,12 +226,12 @@ public class home_fag_itemMvpModel {
 
             @Override
             public void onFeedAdExposed() {
-                com.nineton.ntadsdk.utils.LogUtil.e("onFeedAdExposed");
+                LogUtil.e("onFeedAdExposed");
             }
 
             @Override
             public boolean onFeedAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser, int adapterPosition) {
-                com.nineton.ntadsdk.utils.LogUtil.e("onFeedAdClicked" + adapterPosition);
+                LogUtil.e("onFeedAdClicked" + adapterPosition);
                 return false;
             }
         });

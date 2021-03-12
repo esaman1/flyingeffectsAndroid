@@ -28,6 +28,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
 import com.nineton.market.android.sdk.AppMarketHelper;
 import com.nineton.ntadsdk.bean.FeedAdConfigBean;
+import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
      */
     private int fromType;
     private int intoTiktokClickPosition;
-
+    private FeedAdManager mAdManager;
 
     @Override
     protected int getContentLayout() {
@@ -72,6 +73,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
     @Override
     protected void initView() {
+        mAdManager = new FeedAdManager();
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             category_id = bundle.getString("id");
@@ -82,7 +84,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         }
         EventBus.getDefault().register(this);
         LogUtil.d("OOM", "2222fromType=" + fromType);
-        Presenter = new home_fag_itemMvpPresenter(getActivity(), this, fromType);
+        Presenter = new home_fag_itemMvpPresenter(getActivity(), this, fromType,mAdManager);
         initRecycler();
         Presenter.initSmartRefreshLayout(smartRefreshLayout);
 
@@ -95,7 +97,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(allData, getActivity(), fromType, false);
+        adapter = new main_recycler_adapter(allData, getActivity(), fromType, false,mAdManager);
         adapter.setDressUPTabNameFavorites(tabName);
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);

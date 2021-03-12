@@ -8,6 +8,7 @@ import com.flyingeffects.com.ui.interfaces.model.homeItemMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
 import com.flyingeffects.com.ui.model.home_fag_itemMvpModel;
 import com.nineton.ntadsdk.bean.FeedAdConfigBean;
+import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
     private HomeItemMvpView mvp_view;
     private home_fag_itemMvpModel homeItemModel;
 
-    public home_fag_itemMvpPresenter(Context context, HomeItemMvpView mvp_view, int fromType) {
+    public home_fag_itemMvpPresenter(Context context, HomeItemMvpView mvp_view, int fromType, FeedAdManager mAdManager) {
         this.mvp_view = mvp_view;
-        homeItemModel = new home_fag_itemMvpModel(context, this, fromType);
+        homeItemModel = new home_fag_itemMvpModel(context, this, fromType,mAdManager);
     }
 
 

@@ -84,12 +84,12 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
     private NativeUnifiedADData mAdBean;
 
 
-    public main_recycler_adapter(@Nullable List<new_fag_template_item> allData, Context context, int fromType, boolean isFromSearch) {
+    public main_recycler_adapter(@Nullable List<new_fag_template_item> allData, Context context, int fromType, boolean isFromSearch, FeedAdManager mAdManager) {
         super(allData);
         this.context = context;
         this.fromType = fromType;
         this.isFromSearch = isFromSearch;
-        mAdManager = new FeedAdManager();
+        this.mAdManager = mAdManager;
         addItemType(0, R.layout.item_home_normal);
         addItemType(11, R.layout.item_news_right_image);
         addItemType(12, R.layout.item_gdt_news_right_image);
@@ -444,7 +444,7 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
             }
         }
 
-        if(item.getFeedAdResultBean()!=null){
+        if (item.getFeedAdResultBean() != null) {
             //根据类型注册广告点击事件
             switch (item.getFeedAdResultBean().getEventType()) {
                 case BAIDU_FEED_AD_EVENT:

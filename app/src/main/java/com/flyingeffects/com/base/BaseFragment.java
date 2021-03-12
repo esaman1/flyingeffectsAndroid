@@ -1,5 +1,6 @@
 package com.flyingeffects.com.base;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -12,7 +13,15 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
+import com.flyingeffects.com.enity.CommonNewsBean;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.ui.interfaces.PermissionListener;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.screenUtil;
+import com.nineton.ntadsdk.bean.FeedAdConfigBean;
+import com.nineton.ntadsdk.itr.FeedAdCallBack;
+import com.nineton.ntadsdk.manager.FeedAdManager;
+import com.nineton.ntadsdk.utils.DeviceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +29,12 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import rx.subjects.PublishSubject;
+
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.BAIDU_FEED_AD_EVENT;
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.GDT_FEED_AD_EVENT;
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED_AD_EVENT;
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_GDT_FEED_EXPRESS_AD;
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_TT_FEED_EXPRESS_AD;
 
 /**
  * Created by 张sir
@@ -38,6 +53,8 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     protected abstract void initAction();
 
     protected abstract void initData();
+
+//    public      FeedAdManager mAdManager;
 
     @Nullable
     @Override
@@ -227,6 +244,78 @@ public abstract class BaseFragment extends Fragment implements IActivity {
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 break;
         }
+    }
+
+
+    /**
+     * description ：请求Feed 广告
+     * creation date: 2021/3/12
+     * user : zhangtongju
+     */
+    public void requestFeedAd(FeedAdManager mAdManager,RequestFeedBack callback){
+        LogUtil.d("OOM2","requestAd");
+        if(getActivity()!=null&&mAdManager!=null){
+            float needScreenWidth= DeviceUtil.getScreenWidthInPX(getActivity())/(float)2- screenUtil.dip2px(getActivity(),10);
+            LogUtil.d("OOM2","needScreenWidth="+needScreenWidth);
+            mAdManager.setViewWidth((int) needScreenWidth);
+            mAdManager.getFeedAd(getActivity(), AdConfigs.AD_FEED, new FeedAdCallBack() {
+                @Override
+                public void onFeedAdShow(int typeId, FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
+                    LogUtil.d("OOM2","onFeedAdShow");
+                    CommonNewsBean bean =new CommonNewsBean();
+                    bean.setTitle(feedAdResultBean.getTitle());
+                    bean.setHide(false);
+                    bean.setImageUrl(feedAdResultBean.getImageUrl());
+                    bean.setEventType(feedAdResultBean.getEventType());
+                    bean.setChannel(feedAdResultBean.getChannel());
+                    bean.setReadCounts(feedAdResultBean.getAdReadCount());
+                    bean.setShowCloseButton(feedAdResultBean.isShowCloseButton());
+                    //根据类型设置对应的属性
+                    switch (typeId) {
+                        case BAIDU_FEED_AD_EVENT:
+                        case GDT_FEED_AD_EVENT:
+                        case TT_FEED_AD_EVENT:
+                        case TYPE_TT_FEED_EXPRESS_AD:
+                            bean.setFeedResultBean(feedAdResultBean.getFeedResultBean());
+                            break;
+                        case TYPE_GDT_FEED_EXPRESS_AD:
+                            bean.setAdView(feedAdResultBean.getAdView());
+                            break;
+                    }
+                    callback.GetAdCallback(feedAdResultBean);
+                }
+
+                @Override
+                public void onFeedAdError(String error) {
+                    LogUtil.d("OOM2","onFeedAdError="+error);
+                }
+
+                @Override
+                public void onFeedAdClose(int type, int adIndex) {
+                    LogUtil.d("OOM2","onFeedAdClose=");
+                }
+
+                @Override
+                public void onFeedAdExposed() {
+                    LogUtil.e("onFeedAdExposed");
+                }
+
+                @Override
+                public boolean onFeedAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser, int adapterPosition) {
+                    LogUtil.e("onFeedAdClicked" + adapterPosition);
+                    return false;
+                }
+            });
+        }else{
+            LogUtil.d("OOM2","adManage为null");
+        }
+
+    }
+
+
+    public interface RequestFeedBack{
+        void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean);
+
     }
 
 
