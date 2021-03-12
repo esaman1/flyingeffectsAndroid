@@ -11,8 +11,12 @@ import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
+import com.flyingeffects.com.view.LoadingDialogProgress;
 
 
 public class LoadingDialog extends Dialog {
@@ -33,10 +37,9 @@ public class LoadingDialog extends Dialog {
         private Context mContext;
         private String mTitle;
         private String mMessage;
-        private String mPositiveBtnStr;
-        private String mCancelBtnStr;
         private View mView;
-        private DialogBtnClickListener mDialogBtnClickListener;
+        private boolean mHasAd;
+
         private DialogDismissListener mDialogDismissListener;
 
         public Builder(Context context) {
@@ -58,6 +61,7 @@ public class LoadingDialog extends Dialog {
             mMessage = (String) mContext.getText(message);
             return this;
         }
+
 
         /**
          * Set the Dialog title from resource
@@ -81,6 +85,11 @@ public class LoadingDialog extends Dialog {
             return this;
         }
 
+        public Builder setHasAd(boolean hasAd) {
+            mHasAd = hasAd;
+            return this;
+        }
+
         public Builder setContentView(View v) {
             mView = v;
             return this;
@@ -88,37 +97,6 @@ public class LoadingDialog extends Dialog {
 
         public Builder setContentView(@LayoutRes int layoutInt) {
             mView = LayoutInflater.from(mContext).inflate(layoutInt, null);
-            return this;
-        }
-
-        /**
-         * Set the positive button resource and it's listener
-         */
-        public Builder setPositiveButton(int positiveBtnStr) {
-            mPositiveBtnStr = (String) mContext
-                    .getText(positiveBtnStr);
-            return this;
-        }
-
-        public Builder setPositiveButton(String positiveBtnStr) {
-            mPositiveBtnStr = positiveBtnStr;
-            return this;
-        }
-
-
-        public Builder setNegativeButton(int cancelBtnStr) {
-            mCancelBtnStr = (String) mContext
-                    .getText(cancelBtnStr);
-            return this;
-        }
-
-        public Builder setNegativeButton(String cancelBtnStr) {
-            mCancelBtnStr = cancelBtnStr;
-            return this;
-        }
-
-        public Builder setDialogBtnClickListener(DialogBtnClickListener listener) {
-            mDialogBtnClickListener = listener;
             return this;
         }
 
@@ -135,73 +113,79 @@ public class LoadingDialog extends Dialog {
 
             if (mView == null) {
                 mView = LayoutInflater.from(mContext)
-                        .inflate(R.layout.dialog_common_message, null);
+                        .inflate(R.layout.dialog_loading, null);
             }
             dialog.setContentView(mView);
-            if (mTitle == null) {
-                mTitle = mContext.getString(R.string.make_sure_exit);
-            }
-            LinearLayout llAdContainer = mView.findViewById(R.id.ll_ad_container);
 
-            // set the dialog title
-            ((TextView) mView.findViewById(R.id.tv_dialog_title)).setText(mTitle);
-            // set the confirm button
-            if (mPositiveBtnStr == null) {
-                mPositiveBtnStr = mContext.getString(R.string.make_sure);
-            }
+            AppCompatTextView tvTitle = mView.findViewById(R.id.tv_dialog_title);
+            AppCompatTextView tvContent = mView.findViewById(R.id.tv_content_1);
+            LinearLayout llContainer = mView.findViewById(R.id.ll_ad_container);
 
-            // set the cancel button
-            if (mCancelBtnStr == null) {
-                mCancelBtnStr = mContext.getString(R.string.cancel);
+
+            if (!TextUtils.isEmpty(mTitle)) {
+                tvTitle.setText(mTitle);
+            } else {
+                tvTitle.setVisibility(View.GONE);
             }
 
-            if (!TextUtils.isEmpty(mPositiveBtnStr)) {
-                ((TextView) mView.findViewById(R.id.tv_positive_button))
-                        .setText(mPositiveBtnStr);
+            if (!TextUtils.isEmpty(mMessage)) {
+                tvContent.setText(mMessage);
+            } else {
+                tvContent.setVisibility(View.GONE);
             }
 
-            if (!TextUtils.isEmpty(mCancelBtnStr)) {
-                ((TextView) mView.findViewById(R.id.tv_cancel_button))
-                        .setText(mCancelBtnStr);
+            if (mHasAd) {
+                loadAd(llContainer);
             }
 
 
-            if (mDialogBtnClickListener != null) {
-                mView.findViewById(R.id.tv_positive_button)
-                        .setOnClickListener(v -> mDialogBtnClickListener.onPositiveBtnClick(dialog));
-                mView.findViewById(R.id.tv_cancel_button)
-                        .setOnClickListener(v -> mDialogBtnClickListener.onCancelBtnClick(dialog));
-            }
-
-            // set the content message
-            if (mMessage == null) {
-                mMessage = "已为您复制微信号";
-            }
-
-            ((TextView) mView.findViewById(R.id.tv_content_1)).setText(mMessage);
-
-
-            if (mDialogDismissListener != null) {
-                dialog.setOnDismissListener(new OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
+            dialog.setOnDismissListener(new OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    if (mDialogDismissListener != null) {
                         mDialogDismissListener.onDismiss();
                     }
-                });
-            }
+                    if (llContainer != null) {
+                        AdManager.getInstance().ImageAdClose(llContainer);
+                    }
+                }
+            });
 
             return dialog;
         }
 
+        private void loadAd(LinearLayout llAdContainer) {
+            AdManager.getInstance().showImageAd(mContext, AdConfigs.AD_IMAGE, llAdContainer, new AdManager.Callback() {
+                @Override
+                public void adClose() {
+
+                }
+            });
+        }
+
     }
 
-    public interface DialogBtnClickListener {
-
-        void onPositiveBtnClick(LoadingDialog dialog);
-
-        void onCancelBtnClick(LoadingDialog dialog);
-
+    public void setProgress(int progress) {
+        LoadingDialogProgress progressView = findViewById(R.id.loading_progress);
+        if (progressView != null) {
+            progressView.setProgress(progress);
+        }
     }
+
+    public void setTitleStr(String title) {
+        AppCompatTextView tvTitle= findViewById(R.id.tv_dialog_title);
+        if (tvTitle != null) {
+            tvTitle.setText(title);
+        }
+    }
+
+    public void setContentStr(String content) {
+        AppCompatTextView tvContent= findViewById(R.id.tv_content_1);
+        if (tvContent != null) {
+            tvContent.setText(content);
+        }
+    }
+
 
     public interface DialogDismissListener {
         void onDismiss();

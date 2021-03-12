@@ -108,5 +108,7 @@
 
     <color name="color_close_gray">#787878</color>
 
+    <color name="color_progress_track">#E7E7E7</color>
+    <color name="color_progress">#53b0ff</color>
 
 </resources>

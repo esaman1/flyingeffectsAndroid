@@ -34,7 +34,7 @@ public class LoadingDialogProgress extends View {
     private Paint mProgressTrackPaint;
     private Paint mTextPaint;
 
-    private int mProgress = 100;
+    private int mProgress = 0;
     private String mProgressStr;
     private int mProgressMaxValue = MAX_VALUE;
     private float mTxtHeight;
@@ -142,6 +142,7 @@ public class LoadingDialogProgress extends View {
 
     public void setProgress(int progress) {
         mProgress = progress;
+        invalidate();
     }
 
     public void setMaxDuration(int maxDuration) {

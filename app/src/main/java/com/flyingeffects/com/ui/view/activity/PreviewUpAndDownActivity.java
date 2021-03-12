@@ -505,8 +505,34 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (view == mBinding.relaParentShowAlert) {
             mBinding.relaParentShowAlert.setVisibility(View.GONE);
         } else if (view == mBinding.ibBack) {
-            this.finish();
+            showBackDialog();
         }
+    }
+
+    private void showBackDialog() {
+        CommonMessageDialog.getBuilder(mContext)
+                .setTitle("确定要退出吗？")
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setPositiveButton("确定")
+                .setNegativeButton("取消")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        finish();
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        showBackDialog();
     }
 
     /**
@@ -937,7 +963,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             case FromToTemplate.DRESSUP:
 //                mMvpPresenter.toDressUp();
                 AlbumManager.chooseImageAlbum(this, 1, SELECTALBUMFROMDressUp, this, "");
-
                 break;
             default:
                 break;

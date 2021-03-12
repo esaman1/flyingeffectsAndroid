@@ -21,8 +21,6 @@ import com.flyingeffects.com.manager.AdManager;
 public class CommonMessageDialog extends Dialog {
     public static final int AD_STATUS_MIDDLE = 1;
     public static final int AD_STATUS_BOTTOM = 2;
-    public static final int AD_STATUS_MIDDLE_WITHOUT_CONTENT= 3;
-    public static final int AD_STATUS_BOTTOM_WITHOUT_TITLE_AND_CONTENT = 4;
     public static final int AD_STATUS_NONE = 0;
 
 
@@ -173,6 +171,7 @@ public class CommonMessageDialog extends Dialog {
 
             LinearLayout llAdContainer = mView.findViewById(R.id.ll_ad_container);
 
+
             if (mAdStatus != AD_STATUS_NONE) {
                 loadAd(llAdContainer);
             }
@@ -195,6 +194,8 @@ public class CommonMessageDialog extends Dialog {
 
             if (!TextUtils.isEmpty(mTitle)) {
                 ((TextView) mView.findViewById(R.id.tv_dialog_title)).setText(mTitle);
+            } else {
+                ((TextView) mView.findViewById(R.id.tv_dialog_title)).setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(mPositiveBtnStr)) {
@@ -217,16 +218,22 @@ public class CommonMessageDialog extends Dialog {
 
             if (!TextUtils.isEmpty(mMessage)) {
                 ((TextView) mView.findViewById(R.id.tv_content_1)).setText(mMessage);
+            } else {
+                ((TextView) mView.findViewById(R.id.tv_content_1)).setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(mMessage2)) {
                 ((TextView) mView.findViewById(R.id.tv_content_2))
                         .setText(mMessage2);
+            } else {
+                ((TextView) mView.findViewById(R.id.tv_content_2)).setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(mMessage3)) {
                 ((TextView) mView.findViewById(R.id.tv_content_3))
                         .setText(mMessage3);
+            } else {
+                ((TextView) mView.findViewById(R.id.tv_content_3)).setVisibility(View.GONE);
             }
 
             dialog.setOnDismissListener(new OnDismissListener() {

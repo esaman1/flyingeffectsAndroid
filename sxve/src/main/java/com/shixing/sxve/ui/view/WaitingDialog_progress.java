@@ -29,8 +29,7 @@ public class WaitingDialog_progress {
     /**
      * 打开Loading
      */
-    public void openProgressDialog(
-    ) {
+    public void openProgressDialog() {
         if (loadingDialog != null) {
             loadingDialog.dismiss();
             loadingDialog = null;

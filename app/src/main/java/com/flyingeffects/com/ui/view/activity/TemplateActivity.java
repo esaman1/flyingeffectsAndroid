@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -49,6 +50,7 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.VideoFusionModel;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.ui.view.ViewChooseTemplate;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -98,6 +100,7 @@ import rx.schedulers.Schedulers;
  */
 public class TemplateActivity extends BaseActivity implements TemplateMvpView, AssetDelegate, AlbumChooseCallback {
     private static final String TAG = "TemplateActivity";
+    private Context mContext;
 
     @BindView(R.id.switch_button)
     SwitchButton switch_button;
@@ -268,6 +271,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     protected void initView() {
+        mContext = TemplateActivity.this;
         EventBus.getDefault().register(this);
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
@@ -1060,9 +1064,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     @Override
-    @OnClick({R.id.tv_top_submit, R.id.iv_play, R.id.edit_view_container})
+    @OnClick({R.id.tv_top_submit, R.id.iv_play, R.id.edit_view_container,R.id.iv_top_back})
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.tv_top_submit:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
@@ -1120,12 +1123,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
             case R.id.edit_view_container:
                 break;
+            case R.id.iv_top_back:
+                onBackPressed();
+                break;
 
             default:
                 break;
 
         }
-        super.onClick(v);
     }
 
     @Override
@@ -1133,8 +1138,29 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (mTextEditLayout.getVisibility() == View.VISIBLE) {
             mTextEditLayout.hide();
         } else {
-            super.onBackPressed();
+            showBackMessage();
         }
+    }
+
+    private void showBackMessage() {
+        CommonMessageDialog.getBuilder(mContext)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setTitle("确定退出吗？")
+                .setPositiveButton("确定")
+                .setNegativeButton("取消")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
     }
 
 
