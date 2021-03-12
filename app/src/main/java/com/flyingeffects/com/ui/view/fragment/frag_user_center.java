@@ -132,8 +132,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     AppBarLayout appbar;
     @BindView(R.id.ll_ad_content)
     LinearLayout mLLADContent;
-
-
+    @BindView(R.id.iv_ad_entrance)
+    ImageView iv_ad_entrance;
 
     private UCrop.Options options;
     String systemMessageId ="";
@@ -245,7 +245,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
 
     @OnClick({R.id.ll_icon_zan, R.id.ll_comment,R.id.ll_private_message,R.id.ll_attention_count,
-            R.id.ll_video_count, R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data,R.id.tv_go_login})
+            R.id.ll_video_count, R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data,R.id.tv_go_login,R.id.iv_ad_entrance})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_icon_zan:
@@ -331,6 +331,12 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                 }
+
+            case R.id.iv_ad_entrance:
+                //互动广告入口
+                Uri uri = Uri.parse("https://www.baidu.com");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
                 break;
             default:
                 break;
