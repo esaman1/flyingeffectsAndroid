@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -28,7 +27,6 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
-import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
@@ -38,7 +36,6 @@ import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
-import com.flyingeffects.com.manager.CopyFileFromAssets;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
@@ -607,7 +604,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             @Override
                             public void call(Integer integer) {
                                 Log.d("OOM5", "showMattingVideoCover");
-                                WaitingDialog.closePragressDialog();
+                                WaitingDialog.closeProgressDialog();
                                 mTemplateViews.get(nowChoosePosition).invalidate(); //提示重新绘制预览图
                             }
                         });
@@ -627,7 +624,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         listItem.set(lastChoosePosition, item1);
         templateThumbAdapter.notifyItemChanged(lastChoosePosition);
     }
-
 
     /**
      * description ：是否抠图按钮切换 针对于视频
@@ -683,7 +679,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             imgPath.add(path);
             mTemplateModel.cartoonPath = path;
             mTemplateModel.setReplaceAllMaterial(imgPath);
-            WaitingDialog.closePragressDialog();
+            WaitingDialog.closeProgressDialog();
             presenter.getButtomIcon(path);
             Observable.just(nowChoosePosition).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(), 200));
         }
@@ -916,6 +912,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     listAssets.add(SxveConstans.default_bg_path);
                 }
             }
+
             mTemplateModel.setReplaceAllFiles(listAssets, complete -> TemplateActivity.this.runOnUiThread(() -> {
                 LogUtil.d("OOM4", "替换图片isCOMPALTE");
                 if (!isOndestroy) {
@@ -936,8 +933,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     }
 
                     LogUtil.d("OOM4", "关闭加载框");
-                    progress.closePragressDialog();
-                    WaitingDialog.closePragressDialog();
+                    progress.closeProgressDialog();
+                    WaitingDialog.closeProgressDialog();
                 }
 
             }));  //批量替换图片
@@ -1070,7 +1067,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         switch (v.getId()) {
             case R.id.tv_top_submit:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
-
                     if (isToSing) {
                         MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
                         String path = mediaUi2.getSnapPath(Objects.requireNonNull(this.getExternalFilesDir("runCatch/")).getPath());
@@ -1225,7 +1221,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             public void run() {
                 template.commit();
                 runOnUiThread(() -> {
-                    new Handler().post(waitingDialogProgress::closePragressDialog);
+                    new Handler().post(waitingDialogProgress::closeProgressDialog);
                     showPreview(true, false);
                     mDuration = template.realDuration();
                     seekBar.setMax(mDuration);

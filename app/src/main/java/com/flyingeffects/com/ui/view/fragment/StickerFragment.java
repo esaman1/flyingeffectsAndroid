@@ -318,7 +318,7 @@ public class StickerFragment extends BaseFragment {
                 if (mStickerListener != null) {
                     mStickerListener.copyGif(fileName, copyName, title);
                 }
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
                 return;
             }
             Observable.just(path).map(s -> {
@@ -339,15 +339,15 @@ public class StickerFragment extends BaseFragment {
                         if (mStickerListener != null) {
                             mStickerListener.addSticker(fileName, title);
                         }
-                        WaitingDialog.closePragressDialog();
+                        WaitingDialog.closeProgressDialog();
                         modificationSingleItem(position);
                     } else {
-                        WaitingDialog.closePragressDialog();
+                        WaitingDialog.closeProgressDialog();
                         ToastUtil.showToast("请重试");
                     }
 
                 } catch (IOException e) {
-                    WaitingDialog.closePragressDialog();
+                    WaitingDialog.closeProgressDialog();
                     e.printStackTrace();
                 }
             });
@@ -364,7 +364,7 @@ public class StickerFragment extends BaseFragment {
                     originalBitmap = futureTarget.get();
                     Bitmap finalOriginalBitmap = originalBitmap;
                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                        WaitingDialog.closePragressDialog();
+                        WaitingDialog.closeProgressDialog();
                         String aa = path.substring(path.length() - 4);
                         String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
                         saveBitmapToPath(finalOriginalBitmap, copyName, isSucceed -> {

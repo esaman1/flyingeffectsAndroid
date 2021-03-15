@@ -317,6 +317,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(VideoCropActivity.this) {
                 @Override
                 protected void onSubError(String message) {
+
                 }
 
                 @Override

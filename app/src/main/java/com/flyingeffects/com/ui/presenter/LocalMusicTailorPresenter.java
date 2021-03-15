@@ -192,7 +192,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                 LogUtil.d("OOM2", "分离出来的因为地址为null");
                 localMusicTailorMvpModel.setSoundPath("");
                 if (downProgressDialog != null) {
-                    downProgressDialog.closePragressDialog();
+                    downProgressDialog.closeProgressDialog();
                     downProgressDialog = null;
                 }
             }
@@ -274,7 +274,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     private void finishOpeningSoundFile() {
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             if (downProgressDialog != null) {
-                downProgressDialog.closePragressDialog();
+                downProgressDialog.closeProgressDialog();
                 downProgressDialog = null;
             }
             String mCaption =
@@ -417,7 +417,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
 
     private void closeProgress() {
         if (downProgressDialog != null) {
-            downProgressDialog.closePragressDialog();
+            downProgressDialog.closeProgressDialog();
             downProgressDialog = null;
         }
     }

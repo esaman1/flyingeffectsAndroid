@@ -35,7 +35,7 @@ public class MattingImage {
                 WaitingDialog.openPragressDialog(context, "正在上传中...");
             }, 200);
         } else {
-            WaitingDialog.closePragressDialog();
+            WaitingDialog.closeProgressDialog();
             callback.isDone(true);
         }
     }

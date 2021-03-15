@@ -50,8 +50,8 @@ import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateAddStickerMvpCallback;
-import com.flyingeffects.com.ui.view.activity.AdHintActivity;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -93,7 +93,7 @@ import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
 
-public class TemplateAddStickerMvpModel implements StickerFragment.StickerListener{
+public class TemplateAddStickerMvpModel implements StickerFragment.StickerListener {
     private StickerView nowChooseStickerView;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private TemplateAddStickerMvpCallback callback;
@@ -125,7 +125,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
      * 默认视频时长,如果没选择背景的时候会用到
      */
     private long defaultVideoDuration = 0;
-    private WaitingDialogProgressNowAnim dialog;
+    private LoadingDialog mLoadingDialog;
     private ArrayList<StickerView> needDeleteList = new ArrayList<>();
     private int dialogProgress;
     private List<View> listForInitBottom = new ArrayList<>();
@@ -144,21 +144,30 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
 
     public TemplateAddStickerMvpModel(Activity context, TemplateAddStickerMvpCallback callback, ViewLayerRelativeLayout viewLayerRelativeLayout,
-                                      String mVideoPath, LinearLayout dialogShare,String title) {
+                                      String mVideoPath, LinearLayout dialogShare, String title) {
         this.context = context;
         this.callback = callback;
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         this.mVideoPath = mVideoPath;
         this.templateTitle = title;
-        dialog = new WaitingDialogProgressNowAnim(context);
+        mLoadingDialog = buildLoadingDialog();
         this.originalPath = mVideoPath;
         FileManager fileManager = new FileManager();
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
         videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
         mGifFolder = fileManager.getFileCachePath(context, "gifFolder");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
-        mShareDialog= new SaveShareDialog(context,dialogShare);
+        mShareDialog = new SaveShareDialog(context, dialogShare);
     }
+
+    private LoadingDialog buildLoadingDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(context)
+                .setHasAd(false)
+                .setTitle("生成中...")
+                .build();
+        return dialog;
+    }
+
 
 
     //    private TimelineAdapter mTimelineAdapter;
@@ -299,9 +308,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     }
 
 
-    public void ChangeTextColor(String color0, String color1,String title) {
+    public void ChangeTextColor(String color0, String color1, String title) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.setTextPaintColor(color0, color1,title);
+            nowChooseStickerView.setTextPaintColor(color0, color1, title);
         }
     }
 
@@ -310,15 +319,15 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
      * creation date: 2020/10/23
      * user : zhangtongju
      */
-    public void  ChangeTextFrame(String textBjPath, String textFramePath,String Frametitle){
+    public void ChangeTextFrame(String textBjPath, String textFramePath, String Frametitle) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath,Frametitle);
+            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath, Frametitle);
         }
     }
 
-    public void ChangeTextFrame(String color0, String color1, String textFramePath,String Frametitle) {
+    public void ChangeTextFrame(String color0, String color1, String textFramePath, String Frametitle) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(color0,color1, textFramePath,Frametitle);
+            nowChooseStickerView.ChangeTextFrame(color0, color1, textFramePath, Frametitle);
         }
     }
 
@@ -367,7 +376,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         });
         templateThumbView.findViewById(R.id.iv_down_sticker).setVisibility(View.GONE);
         SlidingTabLayout stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
-        getStickerTypeList(fragmentManager,stickerViewPager,stickerTab);
+        getStickerTypeList(fragmentManager, stickerViewPager, stickerTab);
 
 
         listForInitBottom.add(templateThumbView);
@@ -411,7 +420,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     titles[i] = list.get(i).getName();
                     Bundle bundle = new Bundle();
                     bundle.putInt("stickerType", list.get(i).getId());
-                    LogUtil.d("OOM2","贴纸id为"+list.get(i).getId());
+                    LogUtil.d("OOM2", "贴纸id为" + list.get(i).getId());
                     StickerFragment fragment = new StickerFragment();
                     fragment.setStickerListener(TemplateAddStickerMvpModel.this);
                     fragment.setArguments(bundle);
@@ -662,9 +671,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                         LogUtil.d("startPlayAnim", "当前动画复制的主id为" + targetStickerView.getId());
                         if (!TextUtils.isEmpty(targetStickerView.getClipPath())) {
                             //gif 贴纸，没得抠图
-                            copyGif(targetStickerView.getClipPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true,targetStickerView.getDownStickerTitle());
+                            copyGif(targetStickerView.getClipPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true, targetStickerView.getDownStickerTitle());
                         } else {
-                            copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true,targetStickerView.getDownStickerTitle());
+                            copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true, targetStickerView.getDownStickerTitle());
                         }
                         if (x == animCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
                             ArrayList<StickerView> list = new ArrayList<>();
@@ -685,7 +694,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             }
         } else {
             if (!isFromPreview) {
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
             }
         }
 
@@ -722,7 +731,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 callback.animIsComplate();
             }
             if (!isFromPreview) {
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
             }
         }, 1500);
 
@@ -735,12 +744,12 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
      * creation date: 2020/9/21
      * user : zhangtongju
      */
-    public void ChangeTextStyle(String path, int type,String title) {
+    public void ChangeTextStyle(String path, int type, String title) {
         if (nowChooseStickerView.getIsTextSticker()) {
             if (type == 0) {
-                nowChooseStickerView.setTextBitmapStyle(path,title);
+                nowChooseStickerView.setTextBitmapStyle(path, title);
             } else {
-                nowChooseStickerView.setTextStyle(path,title);
+                nowChooseStickerView.setTextStyle(path, title);
             }
         }
     }
@@ -752,10 +761,10 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
      * param :  getResPath 图片地址，path  isFromAubum 是否来自相册 stickerView 原贴纸 OriginalPath 原图地址 isFromShowAnim 是否是因为来自动画分身
      * user : zhangtongju
      */
-    private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim,String title) {
+    private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim, String title) {
 
         if (stickerView != null && stickerView.getIsTextSticker()) {
-            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true,null);
+            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true, null);
         } else {
 
             try {
@@ -792,7 +801,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
                         @Override
                         public void isSucceed() {
-                            addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false,null);
+                            addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false, null);
                         }
                     });
                 }
@@ -807,7 +816,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     private int stickerViewID;
     private boolean isIntoDragMove = false;
 
-    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText,String title) {
+    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText, String title) {
         closeAllAnim();
         StickerView stickView = new StickerView(BaseApplication.getInstance(), isText);
         stickerViewID++;
@@ -824,7 +833,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     //copy
-                    copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false,title);
+                    copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false, title);
                     if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                         if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
                             if (UiStep.isFromDownBj) {
@@ -869,7 +878,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                             StatisticsEventAffair.getInstance().setFlag(context, " 6_customize_bj_replace");
                         }
                         //切換素材
-                        AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
+                        AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
                             if (!isCancel) {
                                 if (albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))) {
                                     GetVideoCover getVideoCover = new GetVideoCover(context);
@@ -945,7 +954,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 viewLayerRelativeLayout.addView(stickView);
                 stickView.start();
 
-                nowChooseStickerView=stickView;
+                nowChooseStickerView = stickView;
                 callback.stickerOnclickCallback(stickView.getStickerText());
 
 
@@ -973,7 +982,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 //                }
 
 
-                if(!stickView.getIsTextSticker()){
+                if (!stickView.getIsTextSticker()) {
                     callback.hideKeyBord();
                 }
                 nowChooseStickerView = stickView;
@@ -1036,24 +1045,24 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             if (copyStickerView.getIsTextSticker()) {
                 //是否是图片文字效果
                 if (copyStickerView.GetIsChooseTextBjEffect()) {
-                    if(copyStickerView.GetOpenThePattern()){
+                    if (copyStickerView.GetOpenThePattern()) {
                         //当前有边框
-                        stickView.ChangeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath(),copyStickerView.GetTextFrameTitle());
-                    }else{
+                        stickView.ChangeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath(), copyStickerView.GetTextFrameTitle());
+                    } else {
                         if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(),copyStickerView.GetTextEffectTitle());
+                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(), copyStickerView.GetTextEffectTitle());
                         }
                     }
                 } else {
                     ArrayList<String> colors = copyStickerView.GetTextColors();
-                    if(copyStickerView.GetOpenThePattern()){
-                        nowChooseStickerView.ChangeTextFrame(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
-                    }else{
-                        stickView.setTextPaintColor(colors.get(0), colors.get(1),copyStickerView.GetTextEffectTitle());
+                    if (copyStickerView.GetOpenThePattern()) {
+                        nowChooseStickerView.ChangeTextFrame(colors.get(0), colors.get(1), copyStickerView.GetTextEffectTitle());
+                    } else {
+                        stickView.setTextPaintColor(colors.get(0), colors.get(1), copyStickerView.GetTextEffectTitle());
                     }
                 }
                 if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                    stickView.setTextStyle(copyStickerView.getTypefacePath(),copyStickerView.GetTextStyleTitle());
+                    stickView.setTextStyle(copyStickerView.getTypefacePath(), copyStickerView.GetTextStyleTitle());
                 }
                 stickView.setStickerText(copyStickerView.getStickerText());
                 stickView.SetTextAngle(copyStickerView.getRotateAngle());
@@ -1122,10 +1131,10 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
      * user : zhangtongju
      */
     public void ChangeTextLabe(String text) {
-        if (nowChooseStickerView!=null&&nowChooseStickerView.getIsTextSticker()) {
-            if(TextUtils.isEmpty(text)){
+        if (nowChooseStickerView != null && nowChooseStickerView.getIsTextSticker()) {
+            if (TextUtils.isEmpty(text)) {
                 deleteStickView(nowChooseStickerView);
-            }else{
+            } else {
                 nowChooseStickerView.setStickerText(text);
             }
         }
@@ -1142,7 +1151,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 //        new Thread(() -> {
             mediaManager manager = new mediaManager(context);
             manager.splitMp4(videoPath, new File(outputPath), (isSuccess, putPath) -> {
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
                 if (isSuccess) {
                     LogUtil.d("OOM2", "分离出来的因为地址为" + outputPath);
                     videoVoicePath = outputPath + File.separator + "bgm.mp3";
@@ -1242,12 +1251,12 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, "",0,0, 0,new backgroundDraw.saveCallback() {
+                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, "", 0, 0, 0, new backgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {
                             if (!isDestroy) {
                                 if (!TextUtils.isEmpty(path)) {
-                                    dialog.closePragressDialog();
+                                    mLoadingDialog.dismiss();
 //                                    try {
 //                                        String keepPath = getKeepOutput();
 //                                        FileUtil.copyFile(new File(path), keepPath);
@@ -1262,7 +1271,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                                     if (progress == 10000) {
                                         isIntoSaveVideo = false;
                                         //渲染失败
-                                        dialog.closePragressDialog();
+                                        mLoadingDialog.dismiss();
                                     } else {
                                         dialogProgress = progress;
                                         handler.sendEmptyMessage(1);
@@ -1270,7 +1279,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                                 }
                             }
                         }
-                    }, animCollect,false);
+                    }, animCollect, false);
 
 
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
@@ -1278,7 +1287,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                         listAllSticker.add(GetAllStickerDataModel.getInstance().getStickerData(stickerView, false, videoInfo));
 
                         if (!TextUtils.isEmpty(stickerView.getDownStickerTitle())) {
-                            StatisticsEventAffair.getInstance().setFlag(context, "11_yj_Sticker",stickerView.getDownStickerTitle() );
+                            StatisticsEventAffair.getInstance().setFlag(context, "11_yj_Sticker", stickerView.getDownStickerTitle());
                         }
 
                     }
@@ -1298,11 +1307,11 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                         }
                     }
                     if (cutVideoPathList.size() == 0) {
-                        dialog.openProgressDialog();
+                        mLoadingDialog.show();
                         //都不是视频的情况下，就直接渲染
                         backgroundDraw.toSaveVideo(listAllSticker, false, false, percentageH);
                     } else {
-                        dialog.openProgressDialog();
+                        mLoadingDialog.show();
                         cutList.clear();
                         if (videoInfo != null) {
                             cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration(), false);
@@ -1317,13 +1326,11 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     }
 
 
-
-
     private void statisticsEventAffair() {
 
-         ArrayList<String> titleEffect=GetAllStickerDataModel.getInstance().GettitleEffect();
-         ArrayList<String> titleStyle=GetAllStickerDataModel.getInstance().GetTitleStyle();
-        ArrayList<String> titleFrame=GetAllStickerDataModel.getInstance().GetTitleFrame();
+        ArrayList<String> titleEffect = GetAllStickerDataModel.getInstance().GettitleEffect();
+        ArrayList<String> titleStyle = GetAllStickerDataModel.getInstance().GetTitleStyle();
+        ArrayList<String> titleFrame = GetAllStickerDataModel.getInstance().GetTitleFrame();
         if (titleEffect != null && titleEffect.size() > 0) {
 
             for (String str : titleEffect
@@ -1473,13 +1480,13 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     }
 
     @Override
-    public void addSticker(String stickerPath,String title) {
-        addSticker(stickerPath, false, false, false, null, false, null, false, false,title);
+    public void addSticker(String stickerPath, String title) {
+        addSticker(stickerPath, false, false, false, null, false, null, false, false, title);
     }
 
     @Override
-    public void copyGif(String fileName, String copyName,String title) {
-        copyGif(fileName, copyName, false, null, fileName, false,title);
+    public void copyGif(String fileName, String copyName, String title) {
+        copyGif(fileName, copyName, false, null, fileName, false, title);
     }
 
     @Override
@@ -1593,27 +1600,35 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     }
 
     @SuppressLint("HandlerLeak")
-    Handler handler = new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            String  title = "正在保存中";
+            String content;
             if (dialogProgress <= 25) {
-                dialog.setProgress("正在保存中" + dialogProgress + "%\n" + "请耐心等待 不要离开");
+                content = "请耐心等待 不要离开";
             } else if (dialogProgress <= 40) {
-                dialog.setProgress("正在保存中" + dialogProgress + "%\n" + "快了，友友稍等片刻");
+                content = "快了，友友稍等片刻";
             } else if (dialogProgress <= 60) {
-                dialog.setProgress("正在保存中" + dialogProgress + "%\n" + "抠像太强大，即将生成");
+                content = "抠像太强大，即将生成";
             } else if (dialogProgress <= 80) {
-                dialog.setProgress("正在保存中" + dialogProgress + "%\n" + "马上就好，不要离开");
+                content = "马上就好，不要离开";
             } else {
-                dialog.setProgress("正在保存中" + dialogProgress + "%\n" + "最后合成中，请稍后");
+                content = "最后合成中，请稍后";
             }
+            mLoadingDialog.setTitleStr(title);
+            mLoadingDialog.setContentStr(content);
+            mLoadingDialog.setProgress(dialogProgress);
+
         }
     };
 
 
+
+
     public void addTextSticker() {
-        addSticker("", false, false, false, "", false, null, false, true,null);
+        addSticker("", false, false, false, "", false, null, false, true, null);
     }
 
 

@@ -476,7 +476,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                         @Override
                         public void call(String s) {
-                            WaitingDialog.closePragressDialog();
+                            WaitingDialog.closeProgressDialog();
                             uploadUserSkin(s);
                         }
                     });

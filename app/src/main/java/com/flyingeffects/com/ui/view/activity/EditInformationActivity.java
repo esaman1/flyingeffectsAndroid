@@ -130,7 +130,7 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
                                     .load(avatarPath)
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                                     .into(ivAvatar);
-                            WaitingDialog.closePragressDialog();
+                            WaitingDialog.closeProgressDialog();
                         }
                     });
                 }

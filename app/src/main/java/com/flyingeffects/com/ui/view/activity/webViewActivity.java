@@ -140,7 +140,7 @@ public class webViewActivity extends BaseWebActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
             }
         });
 
@@ -201,7 +201,7 @@ public class webViewActivity extends BaseWebActivity {
                     new Thread(() -> {
                         try {
                             Thread.sleep(500);
-                            WaitingDialog.closePragressDialog();
+                            WaitingDialog.closeProgressDialog();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

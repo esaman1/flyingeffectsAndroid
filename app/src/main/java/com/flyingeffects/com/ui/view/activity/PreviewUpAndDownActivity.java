@@ -46,6 +46,7 @@ import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;
 import com.flyingeffects.com.ui.presenter.PreviewUpAndDownMvpPresenter;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -138,7 +139,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     //模板下载地址
     private String TemplateFilePath;
 
-    private WaitingDialog_progress waitingDialog_progress;
+    private LoadingDialog mLoadingDialog;
 
     //是否需要插入广告
     private boolean isNeedAddaD = false;
@@ -202,7 +203,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
         ondestroy = false;
 
-        waitingDialog_progress = new WaitingDialog_progress(this);
+        mLoadingDialog = buildLoadingDialog();
         nowChoosePosition = getIntent().getIntExtra("position", 0);
         LogUtil.d("OOM2", "nowChoosePosition=" + nowChoosePosition);
         isCanLoadMore = getIntent().getBooleanExtra("isCanLoadMore", true);
@@ -372,6 +373,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         startActivity(intent);
     }
 
+    private LoadingDialog buildLoadingDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(mContext)
+                .setHasAd(false)
+                .setTitle("生成中...")
+                .build();
+        return dialog;
+    }
+
     /**
      * description ：点击关注当前作者
      * creation date: 2020/7/30
@@ -384,25 +393,25 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         // 启动时间
         Observable ob = Api.getDefault().followUser(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
-            @Override
-            protected void onSubError(String message) {
-                ToastUtil.showToast(message);
-            }
+                    @Override
+                    protected void onSubError(String message) {
+                        ToastUtil.showToast(message);
+                    }
 
-            @Override
-            protected void onSubNext(Object data) {
-                LogUtil.d("follow", StringUtil.beanToJSONString(data));
-                if (mIsFollow) {
-                    ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("关注");
-                    mIsFollow = false;
-                } else {
-                    // ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("取消关注");
-                    mIsFollow = true;
-                }
-                LogUtil.d("OOM", "requestFollowThisUser");
-                mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject,
+                    @Override
+                    protected void onSubNext(Object data) {
+                        LogUtil.d("follow", StringUtil.beanToJSONString(data));
+                        if (mIsFollow) {
+                            ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("关注");
+                            mIsFollow = false;
+                        } else {
+                            // ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("取消关注");
+                            mIsFollow = true;
+                        }
+                        LogUtil.d("OOM", "requestFollowThisUser");
+                        mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
+                    }
+                }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject,
                 false, true, true);
     }
 
@@ -690,13 +699,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             if (!ondestroy) {
                 if (integer >= 100) {
                     isDownIng = false;
-                    waitingDialog_progress.closePragressDialog();
+                    mLoadingDialog.dismiss();
                 } else {
                     if (!isDownIng) {
-                        waitingDialog_progress.openProgressDialog();
+                        mLoadingDialog.show();
                         isDownIng = true;
                     }
-                    waitingDialog_progress.setProgress(integer + "%");
+                    mLoadingDialog.setProgress(integer);
                 }
             }
         });
@@ -828,7 +837,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
         }
         LogUtil.d("OOM", "onResume");
-        WaitingDialog.closePragressDialog();
+        WaitingDialog.closeProgressDialog();
     }
 
 
@@ -866,7 +875,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private void toCloseProgressDialog() {
         if (!ondestroy) {
-            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(WaitingDialog::closePragressDialog, 200));
+            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(WaitingDialog::closeProgressDialog, 200));
         }
     }
 

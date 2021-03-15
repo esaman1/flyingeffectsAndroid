@@ -51,6 +51,7 @@ import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -204,11 +205,21 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-    private WaitingDialog_progress downProgressDialog;
+    private LoadingDialog mLoadingDialog;
     private BottomSheetDialog bottomSheetDialog;
 
     private boolean nowHasCollect;
     private ImageView mIvCollect;
+
+
+    private LoadingDialog buildLoadingDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(context)
+                .setHasAd(false)
+                .setTitle("生成中...")
+                .build();
+        dialog.show();
+        return dialog;
+    }
 
     public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item, String fromTo) {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
@@ -247,14 +258,13 @@ public class PreviewUpAndDownMvpModel {
                 templateBehaviorStatistics(3, id);
 
                 StatisticsEventAffair.getInstance().setFlag(context, "save_back_template");
-                downProgressDialog = new WaitingDialog_progress(context);
-                downProgressDialog.openProgressDialog();
+                mLoadingDialog = buildLoadingDialog();
                 //换装保存的是图片
                 if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
                     Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
                         @Override
                         public void call(Bitmap bitmap) {
-                            downProgressDialog.closePragressDialog();
+                            mLoadingDialog.dismiss();
                             LogUtil.d("OOM3", "整合bitmap");
                             String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
                             BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, new BitmapManager.saveToFileCallback() {
@@ -822,14 +832,14 @@ public class PreviewUpAndDownMvpModel {
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
         File file = new File(videoName);
         if (file.exists()) {
-            if (downProgressDialog != null) {
-                downProgressDialog.closePragressDialog();
+            if (mLoadingDialog != null) {
+                mLoadingDialog.dismiss();
             }
             if (!keepAlbum) {
                 //文件已存在，直接回传path
                 callback.downVideoSuccess(videoName, imagePath);
             } else {
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
                 saveToAlbum(videoName);
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_DOWNLOAD);
@@ -838,10 +848,9 @@ public class PreviewUpAndDownMvpModel {
             return;
         }
 
-        if (downProgressDialog == null) {
+        if (mLoadingDialog == null) {
             LogUtil.d("OOM", "downProgressDialog != null");
-            downProgressDialog = new WaitingDialog_progress(context);
-            downProgressDialog.openProgressDialog();
+            mLoadingDialog = buildLoadingDialog();
         }
 
         Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
@@ -853,25 +862,26 @@ public class PreviewUpAndDownMvpModel {
                         @Override
                         public void progresss(int progress) {
                             LogUtil.d("oom", "下载时候后重新裁剪进度为=" + progress);
-                            if (downProgressDialog != null) {
+                            if (mLoadingDialog != null) {
                                 if (isFromAgainChooseBj) {
-                                    downProgressDialog.setProgress("正在生成中" + progress + "%");
+                                    mLoadingDialog.setTitleStr("正在生成中");
                                 } else {
-                                    downProgressDialog.setProgress("下载进度为" + progress + "%");
+                                    mLoadingDialog.setTitleStr("下载进度为");
                                 }
+                                mLoadingDialog.setProgress(progress);
                             }
                         }
 
                         @Override
                         public void isSuccess(boolean isSuccess, String path1) {
-                            if (downProgressDialog != null) {
-                                downProgressDialog.closePragressDialog();
-                                downProgressDialog = null;
+                            if (mLoadingDialog != null) {
+                                mLoadingDialog.dismiss();
+                                mLoadingDialog = null;
                             }
                             if (!keepAlbum) {
                                 callback.downVideoSuccess(path1, imagePath);//下载成功后的回调
                             } else {
-                                WaitingDialog.closePragressDialog();
+                                WaitingDialog.closeProgressDialog();
                                 saveToAlbum(path1);
                                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                                     AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_DOWNLOAD);

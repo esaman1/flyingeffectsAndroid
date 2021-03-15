@@ -19,12 +19,12 @@ import com.flyingeffects.com.enity.VideoFusiomBean;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.Calculagraph;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -67,7 +67,7 @@ public class VideoFusionModel {
     private int DRAWPADWIDTH;
     private int DRAWPADHEIGHT;
     private static final int FRAME_RATE = 20;
-    private WaitingDialog_progress progress;
+    private LoadingDialog mLoadingDialog;
 
     /**
      * 服務器返回的視頻地址
@@ -136,11 +136,11 @@ public class VideoFusionModel {
             execute.setOnLanSongSDKErrorListener(message -> {
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
-                progress.setProgress(i + "%");
+                mLoadingDialog.setProgress(i);
                 LogUtil.d("OOM2", "Progress=" + i);
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
-                progress.closePragressDialog();
+                mLoadingDialog.dismiss();
                 LogUtil.d("OOM2", "exportPath=" + exportPath);
                 Intent intent = new Intent(context, TemplateAddStickerActivity.class);
                 intent.putExtra("videoPath", exportPath);
@@ -152,7 +152,7 @@ public class VideoFusionModel {
             setVideoLayer(execute);
             execute.start();
         } catch (Exception e) {
-            progress.closePragressDialog();
+            mLoadingDialog.dismiss();
             e.printStackTrace();
         }
     }
@@ -204,6 +204,14 @@ public class VideoFusionModel {
             LogUtil.d("OOM", "e-------" + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private LoadingDialog buildLoadingDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(context)
+                .setHasAd(false)
+                .setTitle("正在合成中...")
+                .build();
+        return dialog;
     }
 
 
@@ -292,8 +300,9 @@ public class VideoFusionModel {
      * user : zhangtongju
      */
     public void uploadFileToHuawei(String path, String template_id) {
-        progress = new WaitingDialog_progress(context);
-        progress.openProgressDialog("正在合成中...");
+        mLoadingDialog = buildLoadingDialog();
+        mLoadingDialog.show();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -367,7 +376,7 @@ public class VideoFusionModel {
             @Override
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "通知服务器失败" + message);
-                progress.closePragressDialog();
+                mLoadingDialog.dismiss();
             }
 
             @Override
@@ -392,7 +401,7 @@ public class VideoFusionModel {
                 @Override
                 public void isSuccess(boolean isSuccess) {
                     serversReturnPath = path;
-                    progress.closePragressDialog();
+                    mLoadingDialog.dismiss();
                     compoundVideo();
                 }
             });

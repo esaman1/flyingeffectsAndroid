@@ -68,15 +68,12 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import androidx.appcompat.app.AlertDialog;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 /**
  * description ：用户创作页面,里面主要用了langSong 的工具类，对视频进行贴纸的功能
@@ -514,6 +511,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             case R.id.tv_top_submit:
                 DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
                 DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
+
                 if (isPlaying) {
                     videoToPause();//submit
                     pauseBgmMusic();
@@ -1216,7 +1214,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void animIsComplate() {
         LogUtil.d("OOM", "animIsComplate");
-        WaitingDialog.closePragressDialog();
+        WaitingDialog.closeProgressDialog();
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             nowStateIsPlaying(true);
             if (!TextUtils.isEmpty(videoPath)) {

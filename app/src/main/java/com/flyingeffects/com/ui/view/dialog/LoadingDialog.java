@@ -120,7 +120,6 @@ public class LoadingDialog extends Dialog {
             AppCompatTextView tvContent = mView.findViewById(R.id.tv_content_1);
             LinearLayout llContainer = mView.findViewById(R.id.ll_ad_container);
 
-
             if (!TextUtils.isEmpty(mTitle)) {
                 tvTitle.setText(mTitle);
             } else {
@@ -136,7 +135,6 @@ public class LoadingDialog extends Dialog {
             if (mHasAd) {
                 loadAd(llContainer);
             }
-
 
             dialog.setOnDismissListener(new OnDismissListener() {
                 @Override
@@ -184,6 +182,9 @@ public class LoadingDialog extends Dialog {
         AppCompatTextView tvContent = findViewById(R.id.tv_content_1);
         if (tvContent != null) {
             tvContent.setText(content);
+            if (tvContent.getVisibility() != View.VISIBLE) {
+                tvContent.setVisibility(View.VISIBLE);
+            }
         }
     }
 

@@ -9,10 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
-import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.TemplateDown;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -34,11 +32,11 @@ import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.shixing.sxve.ui.albumType;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -97,7 +95,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
     private int lastViewPagerChoosePosition;
 
     private new_fag_template_item template_item;
-    WaitingDialog_progress waitingDialog_progress;
+    private LoadingDialog mLoadingDialog;
 
     @Override
     protected int getContentLayout() {
@@ -110,8 +108,16 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         presenter = new FagBjMvpPresenter(getActivity(), this);
         presenter.requestData();
         EventBus.getDefault().register(this);
-        waitingDialog_progress = new WaitingDialog_progress(getActivity());
+        mLoadingDialog = buildLoadingDialog();
         appbar.addOnOffsetChangedListener(this);
+    }
+
+    private LoadingDialog buildLoadingDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(getActivity())
+                .setHasAd(false)
+                .setTitle("加载中...")
+                .build();
+        return dialog;
     }
 
 
@@ -253,12 +259,12 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         }
     }
 
-    public void ShowProgress(int progress) {
-        if (getActivity() != null && waitingDialog_progress != null) {
+    public void showProgress(int progress) {
+        if (getActivity() != null && mLoadingDialog != null) {
             Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                 @Override
                 public void call(Integer integer) {
-                    waitingDialog_progress.setProgress(integer + "%");
+                    mLoadingDialog.setProgress(integer);
                 }
             });
         }
@@ -285,7 +291,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
                         @Override
                         public void showDownProgress(int progress) {
-                            ShowProgress(progress);
+                            showProgress(progress);
                         }
                     });
                     templateDown.prepareDownZip(template_item.getTemplatefile(), template_item.getZipid());
@@ -298,7 +304,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
     public void IntoTemplateActivity(String path) {
         if (getActivity() != null) {
-            waitingDialog_progress.closePragressDialog();
+            mLoadingDialog.dismiss();
             Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> toPhotographAlbum(template_item, path));
 
         }
@@ -357,7 +363,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
             case R.id.ll_crate_photograph_album_2:
                 if (BaseConstans.hasLogin()) {
                     StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_yj_click");
-                    waitingDialog_progress.openProgressDialog();
+                    mLoadingDialog.show();
                     presenter.requestPictureAlbumData();
                 } else {
                     Intent intentToLogin = new Intent(getActivity(), LoginActivity.class);
@@ -399,7 +405,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
 
     private void toPhotographAlbum(new_fag_template_item item, String templateFilePath) {
-        waitingDialog_progress.closePragressDialog();
+        mLoadingDialog.dismiss();
         if (getActivity() != null) {
             AlbumManager.chooseAlbum(getActivity(), 20, SELECTALBUM, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
                 if (!isCancel) {
