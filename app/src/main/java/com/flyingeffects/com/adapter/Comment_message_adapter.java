@@ -28,7 +28,7 @@ import java.util.List;
 public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, BaseViewHolder> {
 
     private Context context;
-    public final static String TAG = "main_recycler_adapter";
+    public final static String TAG = "MainRecyclerAdapter";
     private Comment_message_item_adapter adapter;
     private LinearLayout ll_more_comment;
     private CommentOnItemClick callback;

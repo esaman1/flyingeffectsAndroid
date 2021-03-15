@@ -35,7 +35,6 @@ import com.faceunity.utils.LogUtils;
 import com.faceunity.utils.MiscUtil;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.manager.FileManager;
-import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.FUBeautyActivity;
 import com.flyingeffects.com.utils.FuLive.CameraFocus;
 import com.flyingeffects.com.utils.FuLive.CameraUtils;
@@ -500,7 +499,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
 
     private void intoTemplate(String path) {
-        WaitingDialog.closePragressDialog();
+        WaitingDialog.closeProgressDialog();
         fuBeautyActivity.toNextPage(path);
     }
 

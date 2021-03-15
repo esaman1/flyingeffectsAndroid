@@ -20,12 +20,12 @@ import com.flyingeffects.com.enity.VideoFusiomBean;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.Calculagraph;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -69,7 +69,7 @@ public class VideoFusionModel {
     private int DRAWPADWIDTH;
     private int DRAWPADHEIGHT;
     private static final int FRAME_RATE = 20;
-    private WaitingDialog_progress progress;
+    private LoadingDialog mLoadingDialog;
 
     /**
      * 服務器返回的視頻地址
@@ -128,19 +128,19 @@ public class VideoFusionModel {
         mediaInfo.prepare();
         duration = mediaInfo.getDurationUs();
         mediaInfo.release();
-        LogUtil.d("OOM2","DRAWPADWIDTH="+DRAWPADWIDTH+"DRAWPADHEIGHT="+DRAWPADHEIGHT);
+        LogUtil.d("OOM2", "DRAWPADWIDTH=" + DRAWPADWIDTH + "DRAWPADHEIGHT=" + DRAWPADHEIGHT);
         try {
-            if(DRAWPADWIDTH%16!=0){
-                int needAddNum=DRAWPADWIDTH%16;
-                DRAWPADWIDTH=DRAWPADWIDTH-needAddNum;
+            if (DRAWPADWIDTH % 16 != 0) {
+                int needAddNum = DRAWPADWIDTH % 16;
+                DRAWPADWIDTH = DRAWPADWIDTH - needAddNum;
             }
 
-            if(DRAWPADHEIGHT%16!=0){
-                int needAddNum2=DRAWPADHEIGHT%16;
-                DRAWPADHEIGHT=DRAWPADHEIGHT-needAddNum2;
+            if (DRAWPADHEIGHT % 16 != 0) {
+                int needAddNum2 = DRAWPADHEIGHT % 16;
+                DRAWPADHEIGHT = DRAWPADHEIGHT - needAddNum2;
             }
 
-            LogUtil.d("OOM2","DRAWPADWIDTH="+DRAWPADWIDTH+"DRAWPADHEIGHT="+DRAWPADHEIGHT);
+            LogUtil.d("OOM2", "DRAWPADWIDTH=" + DRAWPADWIDTH + "DRAWPADHEIGHT=" + DRAWPADHEIGHT);
             DrawPadAllExecute2 execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, duration);
             execute.setFrameRate(FRAME_RATE);
 
@@ -149,11 +149,11 @@ public class VideoFusionModel {
             execute.setOnLanSongSDKErrorListener(message -> {
             });
             execute.setOnLanSongSDKProgressListener((l, i) -> {
-                progress.setProgress(i + "%");
+                mLoadingDialog.setProgress(i);
                 LogUtil.d("OOM2", "Progress=" + i);
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
-                progress.closePragressDialog();
+                mLoadingDialog.dismiss();
                 releaseBp();
                 LogUtil.d("OOM2", "exportPath=" + exportPath);
                 Intent intent = new Intent(context, TemplateAddStickerActivity.class);
@@ -167,20 +167,19 @@ public class VideoFusionModel {
             DrawWatermark(execute);
             execute.start();
         } catch (Exception e) {
-            LogUtil.d("OOM2",e.getMessage());
-            progress.closePragressDialog();
+            LogUtil.d("OOM2", e.getMessage());
+            mLoadingDialog.dismiss();
             e.printStackTrace();
         }
     }
 
 
-
-    private void releaseBp(){
-        if(bpDrawWater!=null&&!bpDrawWater.isRecycled()){
+    private void releaseBp() {
+        if (bpDrawWater != null && !bpDrawWater.isRecycled()) {
             bpDrawWater.recycle();
         }
 
-        if(bpBj!=null&&!bpBj.isRecycled()){
+        if (bpBj != null && !bpBj.isRecycled()) {
             bpBj.recycle();
         }
         System.gc();
@@ -192,17 +191,19 @@ public class VideoFusionModel {
      * user : zhangtongju
      */
     Bitmap bpDrawWater;
+
     public void DrawWatermark(DrawPadAllExecute2 execute) {
         bpDrawWater = BitmapFactory.decodeResource(context.getResources(), R.mipmap.watermark);
         BitmapLayer bpLayer = execute.addBitmapLayer(bpDrawWater);
         float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
         bpLayer.setScale(layerScale * 0.3f);
-        bpLayer.setPosition(DRAWPADWIDTH *0.3f, DRAWPADHEIGHT *0.9f);
+        bpLayer.setPosition(DRAWPADWIDTH * 0.3f, DRAWPADHEIGHT * 0.9f);
     }
 
     Bitmap bpBj;
+
     private void addBitmapLayer(DrawPadAllExecute2 execute) {
-        bpBj= BitmapFactory.decodeFile(originalPath);
+        bpBj = BitmapFactory.decodeFile(originalPath);
         int size = bpBj.getWidth();
         float needScale = 256f / size;
         LogUtil.d("OOM3", "需要缩放比为" + needScale);
@@ -247,6 +248,14 @@ public class VideoFusionModel {
             LogUtil.d("OOM", "e-------" + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private LoadingDialog buildLoadingDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(context)
+                .setHasAd(false)
+                .setTitle("正在合成中...")
+                .build();
+        return dialog;
     }
 
 
@@ -321,15 +330,15 @@ public class VideoFusionModel {
     }
 
 
-
     /**
      * description ：上传换装图片到华为云
      * creation date: 2020/12/4
      * user : zhangtongju
      */
     public void uploadFileToHuawei(String path, String template_id) {
-        progress = new WaitingDialog_progress(context);
-        progress.openProgressDialog("正在合成中...");
+        mLoadingDialog = buildLoadingDialog();
+        mLoadingDialog.show();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -365,7 +374,7 @@ public class VideoFusionModel {
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "请求结果=" + message);
                 destroyTimer();
-                progress.closePragressDialog();
+                mLoadingDialog.dismiss();
             }
 
             @Override
@@ -414,7 +423,7 @@ public class VideoFusionModel {
             @Override
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "通知服务器失败" + message);
-                progress.closePragressDialog();
+                mLoadingDialog.dismiss();
             }
 
             @Override
@@ -440,7 +449,7 @@ public class VideoFusionModel {
                 @Override
                 public void isSuccess(boolean isSuccess) {
                     serversReturnPath = path;
-
+                    mLoadingDialog.dismiss();
                     compoundVideo();
                 }
             });

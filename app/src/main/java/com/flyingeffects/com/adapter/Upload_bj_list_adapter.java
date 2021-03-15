@@ -37,7 +37,7 @@ import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_item, BaseViewHolder> {
 
     private Context context;
-    public final static String TAG = "main_recycler_adapter";
+    public final static String TAG = "MainRecyclerAdapter";
     UploadBackgroundListener mListener;
 
     public Upload_bj_list_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context,UploadBackgroundListener listener) {

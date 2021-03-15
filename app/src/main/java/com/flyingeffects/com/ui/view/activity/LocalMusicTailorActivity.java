@@ -234,7 +234,7 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
 
     @Override
     public void initComplate() {
-        WaitingDialog.closePragressDialog();
+        WaitingDialog.closeProgressDialog();
     }
 
 

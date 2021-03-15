@@ -55,6 +55,7 @@ import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -85,6 +86,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -123,7 +125,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      */
     private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
     private backgroundDraw backgroundDraw;
-    private WaitingDialogProgressNowAnim dialog;
+    private LoadingDialog mLoadingDialog;
     private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
     /**
      * 视频默认声音
@@ -146,7 +148,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
     private StickerView nowChooseStickerView;
 
-    /**所有动画集合*/
+    /**
+     * 所有动画集合
+     */
     private ArrayList<StickerAnim> listAllAnima;
     private ArrayList<StickerView> nowChooseSubLayerAnimList = new ArrayList<>();
     private SparseArrayCompat<ArrayList<StickerView>> sublayerListForBitmapLayer = new SparseArrayCompat<>();
@@ -158,7 +162,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         this.callback = callback;
         this.originalPath = originalPath;
         this.mVideoPath = mVideoPath;
-        dialog = new WaitingDialogProgressNowAnim(context);
+        mLoadingDialog = buildLoadingDialog();
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
         if (!TextUtils.isEmpty(mVideoPath)) {
@@ -170,6 +174,14 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         mImageCopyFolder = fileManager.getFileCachePath(context, "imageCopy");
         animCollect = new AnimCollect();
         listAllAnima = animCollect.getAnimList();
+    }
+
+    private LoadingDialog buildLoadingDialog() {
+        return LoadingDialog.getBuilder(context)
+                .setHasAd(true)
+                .setTitle("飞闪预览处理中")
+                .setMessage("请耐心等待，不要离开")
+                .build();
     }
 
 
@@ -189,12 +201,10 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
 
-    public void onclickRelativeLayout(){
+    public void onclickRelativeLayout() {
         stopAllAnim();
         deleteSubLayerSticker();
     }
-
-
 
 
     /**
@@ -205,7 +215,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     public void ChangeTextLabe(String text) {
         if (nowChooseStickerView.getIsTextSticker()) {
             if (TextUtils.isEmpty(text)) {
-                deleteStickView(nowChooseStickerView,false);
+                deleteStickView(nowChooseStickerView, false);
             } else {
                 nowChooseStickerView.setStickerText(text);
                 callback.updateTimeLineSickerText(text, String.valueOf(nowChooseStickerView.getStickerNoIncludeAnimId()));
@@ -254,7 +264,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         if (!TextUtils.isEmpty(mVideoPath)) {
             this.mVideoPath = mVideoPath;
             videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
-            if (TextUtils.isEmpty(videoVoicePath)||nowChooseMusicId==0) {
+            if (TextUtils.isEmpty(videoVoicePath) || nowChooseMusicId == 0) {
                 chooseTemplateMusic(true);
             }
         } else {
@@ -608,7 +618,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
 
     private void clearCheckBox() {
-        nowChooseMusicId=0;
+        nowChooseMusicId = 0;
         check_box_0.setImageResource(R.mipmap.template_btn_unselected);
         check_box_1.setImageResource(R.mipmap.template_btn_unselected);
         check_box_2.setImageResource(R.mipmap.template_btn_unselected);
@@ -690,7 +700,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             }
         } else {
             if (!isFromPreview) {
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
             }
         }
 
@@ -728,7 +738,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 callback.animIsComplate();
             }
             if (!isFromPreview) {
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
             }
         }, 1500);
 
@@ -748,7 +758,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 //删除动画贴纸
                 if (nowChooseSubLayerAnimList != null && nowChooseSubLayerAnimList.size() > 0) {
                     for (StickerView stickerView : nowChooseSubLayerAnimList) {
-                        deleteStickView(stickerView,true);
+                        deleteStickView(stickerView, true);
                     }
                 }
             }
@@ -775,7 +785,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         }
 
         for (StickerView stickerView : needDeleteList) {
-            deleteStickView(stickerView,false);
+            deleteStickView(stickerView, false);
         }
 
     }
@@ -846,7 +856,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      */
 
     private int stickerViewID = 0;
-    /**不包含动画的id*/
+    /**
+     * 不包含动画的id
+     */
     private int stickerId = 0;
     private boolean isIntoDragMove = false;
 
@@ -870,7 +882,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     if (stickView.getIsTextSticker()) {
                         callback.hineTextDialog();
                     }
-                    deleteStickView(stickView,false);
+                    deleteStickView(stickView, false);
 
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
@@ -937,10 +949,10 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                             if (stickView.isFirstAddSticker()) {
                                                 stickView.setShowStickerStartTime(0);
                                                 callback.changFirstVideoSticker(paths.get(0));
-                                                if(TextUtils.isEmpty(mVideoPath)){
+                                                if (TextUtils.isEmpty(mVideoPath)) {
                                                     //没得背景的情况下,重新分离出音乐来
                                                     chooseMaterialMusic(paths.get(0));
-                                                }else{
+                                                } else {
 //                                                    callback.getBgmPath("");
                                                     //只是分离，但是不选择素材音乐
 //                                                    getVideoVoice(paths.get(0), soundFolder);
@@ -948,7 +960,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                                 }
 
                                             }
-                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0),stickView);
+                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0), stickView);
                                         });
                                     });
                                 } else {
@@ -962,12 +974,12 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                                 stickView.changeImage(s, false);
                                             }
                                             callback.getBgmPath("");
-                                            if(nowChooseMusicId==1){
+                                            if (nowChooseMusicId == 1) {
 
-                                                if(!TextUtils.isEmpty(mVideoPath)){
+                                                if (!TextUtils.isEmpty(mVideoPath)) {
                                                     callback.ChooseMusicIndex(1);
                                                     chooseTemplateMusic(true);
-                                                }else{
+                                                } else {
                                                     clearCheckBox();
 
                                                 }
@@ -977,7 +989,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                             if (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                                                 stickView.setLeftBitmap(ContextCompat.getDrawable(context, R.mipmap.icon_pic_save));
                                             }
-                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0),stickView);
+                                            callback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0), stickView);
                                         });
                                     });
                                     manage.toMatting(paths);
@@ -1000,9 +1012,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         StatisticsEventAffair.getInstance().setFlag(context, "17_zdy_cutout_save");
                         //开启抠像
                         if (isMatting) {
-                            if(!TextUtils.isEmpty(stickView.getClipPath())){
+                            if (!TextUtils.isEmpty(stickView.getClipPath())) {
                                 saveToAlbum(stickView.getClipPath());
-                            }else{
+                            } else {
                                 saveToAlbum(stickView.getResPath());
                             }
                         } else {
@@ -1016,9 +1028,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                 });
                             } else {
                                 //取原图片的路径保存
-                                if(!TextUtils.isEmpty(stickView.getOriginalPath())){
+                                if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                                     saveToAlbum(stickView.getOriginalPath());
-                                }else{
+                                } else {
                                     saveToAlbum(stickView.getResPath());
                                 }
                             }
@@ -1257,7 +1269,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         }
     }
 
-    /**保存到相册*/
+    /**
+     * 保存到相册
+     */
     private void saveToAlbum(String path) {
         String albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForImage();
         try {
@@ -1273,7 +1287,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         }
     }
 
-    /**通知相册更新*/
+    /**
+     * 通知相册更新
+     */
     private void albumBroadcast(String outputFile) {
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         intent.setData(Uri.fromFile(new File(outputFile)));
@@ -1297,7 +1313,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         }
     }
 
-    private void deleteStickView(StickerView stickView,boolean isAnimDelete) {
+    private void deleteStickView(StickerView stickView, boolean isAnimDelete) {
         viewLayerRelativeLayout.removeView(stickView);
         int nowId = stickView.getStickerNoIncludeAnimId();
         if (stickView.isFirstAddSticker()) {
@@ -1362,7 +1378,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                             } else {
                                 if (stickerView != null) {
                                     addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false, stickerView.getDownStickerTitle());
-                                }else{
+                                } else {
                                     addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false, null);
                                 }
                             }
@@ -1472,7 +1488,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private boolean isIntoSaveVideo = false;
     private float percentageH;
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime, long cutStartTime,long cutEndTime, String title) {
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime, long cutStartTime, long cutEndTime, String title) {
         disMissStickerFrame();
         if (templateId != 0) {
             LogUtil.d("OOM", "toSaveVideo-templateId=" + templateId);
@@ -1494,7 +1510,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         public void saveSuccessPath(String path, int progress) {
                             if (!isDestroy) {
                                 if (!TextUtils.isEmpty(path)) {
-                                    dialog.closePragressDialog();
+                                    dismissLoadingDialog();
                                     //成功后的回调
                                     Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
                                     Bundle bundle = new Bundle();
@@ -1514,7 +1530,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                     if (progress == 10000) {
                                         isIntoSaveVideo = false;
                                         //渲染失败
-                                        dialog.closePragressDialog();
+                                        dismissLoadingDialog();
                                     } else {
                                         dialogProgress = progress;
                                         handler.sendEmptyMessage(1);
@@ -1522,7 +1538,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                 }
                             }
                         }
-                    }, animCollect,true);
+                    }, animCollect, true);
                     backgroundDraw.setCutStartTime(cutStartTime);
                     backgroundDraw.setCutEndTime(cutEndTime);
 
@@ -1556,11 +1572,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         }
                     }
                     if (cutVideoPathList.size() == 0) {
-                        dialog.openProgressDialog();
+                        showLoadingDialog();
                         //都不是视频的情况下，就直接渲染
                         backgroundDraw.toSaveVideo(listAllSticker, isMatting, nowUiIsLandscape, percentageH);
                     } else {
-                        dialog.openProgressDialog();
+                        showLoadingDialog();
                         cutList.clear();
                         if (videoInfo != null) {
                             cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration(), nowUiIsLandscape);
@@ -1572,6 +1588,20 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 }
             }
         }, 200);
+    }
+
+    private void showLoadingDialog() {
+        if (mLoadingDialog != null) {
+            mLoadingDialog.show();
+        } else {
+            mLoadingDialog = buildLoadingDialog();
+            mLoadingDialog.show();
+        }
+    }
+
+    private void dismissLoadingDialog() {
+        mLoadingDialog.dismiss();
+        mLoadingDialog = null;
     }
 
 
@@ -1716,7 +1746,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 //        new Thread(() -> {
         mediaManager manager = new mediaManager(context);
         manager.splitMp4(videoPath, new File(outputPath), (isSuccess, putPath) -> {
-            WaitingDialog.closePragressDialog();
+            WaitingDialog.closeProgressDialog();
             if (isSuccess) {
                 LogUtil.d("OOM2", "分离出来的因为地址为" + outputPath);
                 videoVoicePath = outputPath + File.separator + "bgm.mp3";
@@ -1792,17 +1822,27 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            String title;
+            String content;
             if (dialogProgress <= 25) {
-                dialog.setProgress("飞闪预览处理中" + dialogProgress + "%\n" + "请耐心等待 不要离开");
+                title = "飞闪预览处理中";
+                content = "请耐心等待 不要离开";
             } else if (dialogProgress <= 40) {
-                dialog.setProgress("飞闪音频添加中" + dialogProgress + "%\n" + "快了，友友稍等片刻");
+                title = "飞闪音频添加中";
+                content = "快了，友友稍等片刻";
             } else if (dialogProgress <= 60) {
-                dialog.setProgress("飞闪视频处理中" + dialogProgress + "%\n" + "抠像太强大，即将生成");
+                title = "飞闪视频处理中";
+                content = "抠像太强大，即将生成";
             } else if (dialogProgress <= 80) {
-                dialog.setProgress("飞闪视频合成中" + dialogProgress + "%\n" + "马上就好，不要离开");
+                title = "飞闪视频合成中";
+                content = "马上就好，不要离开";
             } else {
-                dialog.setProgress("视频即将呈现啦" + dialogProgress + "%\n" + "最后合成中，请稍后");
+                title = "视频即将呈现啦";
+                content = "最后合成中，请稍后";
             }
+            mLoadingDialog.setTitleStr(title);
+            mLoadingDialog.setProgress(dialogProgress);
+            mLoadingDialog.setContentStr(content);
         }
     };
 
@@ -1864,7 +1904,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      * user : zhangtongju
      */
     private synchronized void stopAllAnim() {
-        LogUtil.d("OOM4","stopAllAnim");
+        LogUtil.d("OOM4", "stopAllAnim");
         if (animCollect != null) {
             animCollect.stopAnim();
         }
@@ -2022,7 +2062,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         }
 
         for (StickerView stickerView : needDeleteTextList) {
-            deleteStickView(stickerView,false);
+            deleteStickView(stickerView, false);
         }
     }
 
@@ -2041,7 +2081,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 if (stickerView != null) {
                     long startTime = stickerView.getShowStickerStartTime();
                     long endTime = stickerView.getShowStickerEndTime();
-                    LogUtil.d("OOM4", "endTime" + endTime+"startTime" + startTime+"progress="+progress);
+                    LogUtil.d("OOM4", "endTime" + endTime + "startTime" + startTime + "progress=" + progress);
                     if (endTime != 0) {
                         if (startTime <= progress && progress <= endTime) {
                             stickerView.setVisibility(View.VISIBLE);

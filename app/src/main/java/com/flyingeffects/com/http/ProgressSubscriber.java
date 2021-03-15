@@ -51,7 +51,7 @@ public abstract class ProgressSubscriber<T> extends Subscriber<T> implements Pro
      * 隐藏Dialog
      */
     private void dismissProgressDialog() {
-        WaitingDialog.closePragressDialog();
+        WaitingDialog.closeProgressDialog();
     }
 
     @Override

@@ -79,6 +79,7 @@ public class SecondaryTypeFragment extends BaseFragment {
         int[] colors = new int[]{Color.parseColor("#787878"), Color.parseColor("#46AAFF")};
         ColorStateList colorStateList = new ColorStateList(states, colors);
         for (int i = 0; i < mTypeEntities.size(); i++) {
+
             TextView textView = new TextView(getContext());
             textView.setText(mTypeEntities.get(i).getName());
             textView.setTextColor(colorStateList);

@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.main_recycler_adapter;
+import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.new_fag_template_item;
@@ -49,7 +49,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     private home_fag_itemMvpPresenter Presenter;
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
-    private main_recycler_adapter adapter;
+    private MainRecyclerAdapter adapter;
     private List<new_fag_template_item> allData = new ArrayList<>();
     private String category_id = "", tc_id = "", tabName = "";
     private StaggeredGridLayoutManager layoutManager;
@@ -97,7 +97,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(allData, getActivity(), fromType, false,mAdManager);
+        adapter = new MainRecyclerAdapter(allData, fromType,false,mAdManager);
         adapter.setDressUPTabNameFavorites(tabName);
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);

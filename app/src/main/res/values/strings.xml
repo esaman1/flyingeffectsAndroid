@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">飞闪</string>
-    <string name="loading">加载中...</string>
+    <string name="loading">加载中…</string>
     <string name="no_more_data">没有更多数据了</string>
     <string name="better_to_choose_all">选清晰素材最佳</string>
     <string name="confirm">确定</string>
@@ -86,5 +86,7 @@
     <string name="make_sure">确定</string>
     <string name="follow">关注</string>
     <string name="to_make">马上制作</string>
+    <string name="make_sure_exit">确定要退出码？</string>
+    <string name="close">关闭</string>
 
 </resources>

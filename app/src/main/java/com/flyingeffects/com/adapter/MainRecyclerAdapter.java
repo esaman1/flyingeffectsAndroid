@@ -1,6 +1,10 @@
 package com.flyingeffects.com.adapter;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,6 +34,7 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.CommonNewsBean;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.GlideRoundTransform;
@@ -40,10 +45,12 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.ui.view.activity.intoOtherAppActivity;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.nineton.ntadsdk.utils.DeviceUtil;
 import com.nineton.ntadsdk.utils.ScreenUtils;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.nativ.MediaView;
 import com.qq.e.ads.nativ.NativeADMediaListener;
@@ -59,6 +66,8 @@ import java.util.List;
 
 import androidx.annotation.Nullable;
 
+import androidx.core.content.ContextCompat;
+
 import de.greenrobot.event.EventBus;
 
 import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.BAIDU_FEED_AD_EVENT;
@@ -73,10 +82,14 @@ import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_TT
  * time：2019/1/25
  * describe:首页适配
  **/
-public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_template_item, BaseViewHolder> {
+public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_template_item, BaseViewHolder> {
+    public static final int FROM_TEMPLATE_CODE = 0;
+    public static final int FROM_BACK_CODE = 1;
+    public static final int FROM_SEARCH_CODE = 2;
+    public static final int FROM_DOWNLOAD_CODE = 3;
+    public static final int FROM_DRESS_CODE = 4;
 
-    private Context context;
-    public final static String TAG = "main_recycler_adapter";
+    public final static String TAG = "MainRecyclerAdapter";
     //0 模板  1 背景 2 搜索/我的收藏 3 表示背景模板下载 4 换装
     private int fromType;
     boolean isFromSearch;
@@ -84,9 +97,8 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
     private NativeUnifiedADData mAdBean;
 
 
-    public main_recycler_adapter(@Nullable List<new_fag_template_item> allData, Context context, int fromType, boolean isFromSearch, FeedAdManager mAdManager) {
+    public MainRecyclerAdapter(@Nullable List<new_fag_template_item> allData, int fromType, boolean isFromSearch, FeedAdManager mAdManager) {
         super(allData);
-        this.context = context;
         this.fromType = fromType;
         this.isFromSearch = isFromSearch;
         this.mAdManager = mAdManager;
@@ -104,29 +116,29 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         int offset = helper.getLayoutPosition();
         LinearLayout ll_content_patents = helper.getView(R.id.ll_content_patents);
-        LogUtil.d("OOM3","getItemViewType="+helper.getItemViewType());
+        LogUtil.d("OOM3", "getItemViewType=" + helper.getItemViewType());
         switch (helper.getItemViewType()) {
             case 0: {
                 //默认样式，正常的模板
-                Glide.with(context)
+                Glide.with(mContext)
                         .load(item.getImage())
-                        .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
+                        .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(mContext, 5)))
                         .apply(RequestOptions.placeholderOf(R.mipmap.placeholder))
                         .into((ImageView) helper.getView(R.id.iv_cover));
                 ImageView iv_show_author = helper.getView(R.id.iv_show_author);
-                RelativeLayout ConstraintLayout_addVideo = helper.getView(R.id.ConstraintLayout_addVideo);
+                RelativeLayout constraintLayoutAddVideo = helper.getView(R.id.ConstraintLayout_addVideo);
                 RelativeLayout ll_relative_2 = helper.getView(R.id.ll_relative_2);
                 RelativeLayout add_image = helper.getView(R.id.add_image);
                 LinearLayout ll_relative_1 = helper.getView(R.id.ll_relative_1);
                 RelativeLayout ll_relative_0 = helper.getView(R.id.ll_relative_0);
                 TextView tv_name = helper.getView(R.id.tv_name);
                 tv_name.setText(item.getTitle());
-                if (fromType == 1) {
+                if (fromType == FROM_BACK_CODE) {
                     if (offset == 1) {
                         ll_relative_2.setVisibility(View.GONE);
                         ll_relative_1.setVisibility(View.VISIBLE);
                         ll_relative_0.setVisibility(View.VISIBLE);
-                        ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
+                        constraintLayoutAddVideo.setVisibility(View.VISIBLE);
                         if (!TextUtils.isEmpty(BaseConstans.configList.getFirstline())) {
                             helper.setText(R.id.firstline, BaseConstans.configList.getFirstline());
                         }
@@ -139,19 +151,15 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                             helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
                         }
 
-                        ConstraintLayout_addVideo.setOnClickListener(v -> {
-                            Intent intent = new Intent(context, intoOtherAppActivity.class);
-                            intent.putExtra("wx", "");
-                            intent.putExtra("kuaishou", "");
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            context.startActivity(intent);
+                        constraintLayoutAddVideo.setOnClickListener(v -> {
+                            showMessageDialog();
                         });
                     } else {
-                        ConstraintLayout_addVideo.setVisibility(View.GONE);
+                        constraintLayoutAddVideo.setVisibility(View.GONE);
                     }
                     helper.setText(R.id.tv_name2, item.getAuth());
                     ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
-                    Glide.with(context)
+                    Glide.with(mContext)
                             .load(item.getAuth_image())
                             .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                             .into(iv_show_author_template);
@@ -160,20 +168,20 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                     tv_name.setVisibility(View.VISIBLE);
                     ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
                     iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
-                } else if (fromType == 3) {
+                } else if (fromType == FROM_DOWNLOAD_CODE) {
                     //背景下载
                     if (offset == 0 && !isFromSearch) {
                         ll_relative_2.setVisibility(View.VISIBLE);
                         ll_relative_1.setVisibility(View.GONE);
                         ll_relative_0.setVisibility(View.GONE);
-                        ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
-                        ConstraintLayout_addVideo.setOnClickListener(v -> {
-                            AlbumManager.chooseAlbum(context, 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
+                        constraintLayoutAddVideo.setVisibility(View.VISIBLE);
+                        constraintLayoutAddVideo.setOnClickListener(v -> {
+                            AlbumManager.chooseAlbum(mContext, 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
                                 if (!isCancel) {
                                     if (UiStep.isFromDownBj) {
-                                        StatisticsEventAffair.getInstance().setFlag(context, "7_local");
+                                        StatisticsEventAffair.getInstance().setFlag(mContext, "7_local");
                                     } else {
-                                        StatisticsEventAffair.getInstance().setFlag(context, "8_local");
+                                        StatisticsEventAffair.getInstance().setFlag(mContext, "8_local");
                                     }
                                     // EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
                                     String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
@@ -181,21 +189,21 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                                         EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
                                     } else {
                                         //如果选择的视频
-                                        Intent intent = new Intent(context, VideoCropActivity.class);
+                                        Intent intent = new Intent(mContext, VideoCropActivity.class);
                                         intent.putExtra("videoPath", paths.get(0));
                                         intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEOFORUSER);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        context.startActivity(intent);
+                                        mContext.startActivity(intent);
                                     }
                                 }
                             }, "");
                         });
                     } else {
-                        ConstraintLayout_addVideo.setVisibility(View.GONE);
+                        constraintLayoutAddVideo.setVisibility(View.GONE);
                     }
                     helper.setText(R.id.tv_name2, item.getAuth());
                     ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
-                    Glide.with(context)
+                    Glide.with(mContext)
                             .load(item.getAuth_image())
                             .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                             .into(iv_show_author_template);
@@ -205,11 +213,11 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                     ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
                     iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
                     iv_show_author.setVisibility(View.GONE);
-                } else if (fromType == 4) {
+                } else if (fromType == FROM_DRESS_CODE) {
                     //换装
                     if (offset == 1 && TextUtils.isEmpty(tabName)) {
                         add_image.setVisibility(View.VISIBLE);
-                        ConstraintLayout_addVideo.setVisibility(View.GONE);
+                        constraintLayoutAddVideo.setVisibility(View.GONE);
                     } else {
                         add_image.setVisibility(View.GONE);
                     }
@@ -217,8 +225,8 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                         @Override
                         public void onClick(View view) {
                             if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                                StatisticsEventAffair.getInstance().setFlag(context, "21_face_up");
-                                AlbumManager.chooseImageAlbum(context, 1, 0, new AlbumChooseCallback() {
+                                StatisticsEventAffair.getInstance().setFlag(mContext, "21_face_up");
+                                AlbumManager.chooseImageAlbum(mContext, 1, 0, new AlbumChooseCallback() {
                                     @Override
                                     public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
                                         if (!isCancel) {
@@ -231,7 +239,7 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                     });
                     helper.setText(R.id.tv_name2, item.getAuth());
                     ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
-                    Glide.with(context)
+                    Glide.with(mContext)
                             .load(item.getAuth_image())
                             .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                             .into(iv_show_author_template);
@@ -243,7 +251,7 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                     iv_show_author.setVisibility(View.GONE);
                 } else {
                     //模板
-                    if (offset == 1 && fromType == 0) {
+                    if (offset == FROM_BACK_CODE && fromType == FROM_TEMPLATE_CODE) {
                         ll_relative_1.setVisibility(View.VISIBLE);
                         ll_relative_0.setVisibility(View.VISIBLE);
                         ll_relative_2.setVisibility(View.GONE);
@@ -256,20 +264,16 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                         if (!TextUtils.isEmpty(BaseConstans.configList.getThirdline())) {
                             helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
                         }
-                        ConstraintLayout_addVideo.setVisibility(View.VISIBLE);
-                        ConstraintLayout_addVideo.setOnClickListener(v -> {
-                            Intent intent = new Intent(context, intoOtherAppActivity.class);
-                            intent.putExtra("wx", "");
-                            intent.putExtra("kuaishou", "");
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            context.startActivity(intent);
+                        constraintLayoutAddVideo.setVisibility(View.VISIBLE);
+                        constraintLayoutAddVideo.setOnClickListener(v -> {
+                            showMessageDialog();
                         });
                     } else {
-                        ConstraintLayout_addVideo.setVisibility(View.GONE);
+                        constraintLayoutAddVideo.setVisibility(View.GONE);
                     }
                     helper.setText(R.id.tv_name2, item.getAuth());
                     ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
-                    Glide.with(context)
+                    Glide.with(mContext)
                             .load(item.getAuth_image())
                             .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                             .into(iv_show_author_template);
@@ -425,6 +429,8 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                 ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).addView(item.getFeedAdResultBean().getAdView());
                 break;
             }
+            default:
+                break;
         }
 
         if (item.getFeedAdResultBean() != null) {
@@ -457,6 +463,50 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
 
     }
 
+    /**
+     * 弹出dialog
+     */
+    private void showMessageDialog() {
+        //复制到剪贴板
+        ClipboardManager tvCopy = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+        tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.getService_wxi()));
+        //弹出dialog
+        CommonMessageDialog.getBuilder(mContext)
+                .setContentView(R.layout.dialog_common_message)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_WX_DIALOG)
+                .setTitle(BaseConstans.configList.getTitle())
+                .setMessage(BaseConstans.configList.getContent())
+                .setMessage2(BaseConstans.configList.getCopydata())
+                .setMessage3(BaseConstans.configList.getDescription())
+                .setPositiveButton("立即打开微信获取")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        openWx();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).build()
+                .show();
+    }
+
+    private void openWx() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setComponent(cmp);
+            mContext.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            ToastUtil.showToast(mContext.getString(R.string.check_login_notification));
+        }
+    }
+
 
     /**
      * description ：跳转到上传页面
@@ -464,10 +514,10 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
      * user : zhangtongju
      */
     private void intoUploadMaterialActivity(String path) {
-        Intent intent = new Intent(context, UploadMaterialActivity.class);
+        Intent intent = new Intent(mContext, UploadMaterialActivity.class);
         intent.putExtra("isFrom", 2);
         intent.putExtra("videoPath", path);
-        context.startActivity(intent);
+        mContext.startActivity(intent);
 
     }
 

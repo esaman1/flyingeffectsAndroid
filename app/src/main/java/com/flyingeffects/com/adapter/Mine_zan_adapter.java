@@ -27,7 +27,7 @@ public class Mine_zan_adapter extends BaseQuickAdapter<MineZanEnity, BaseViewHol
     private Context context;
     //1是消息页面的赞
     int isFrom;
-    public final static String TAG = "main_recycler_adapter";
+    public final static String TAG = "MainRecyclerAdapter";
 
     public Mine_zan_adapter(int layoutResId, @Nullable List<MineZanEnity> data,int isFrom, Context context) {
         super(layoutResId, data);

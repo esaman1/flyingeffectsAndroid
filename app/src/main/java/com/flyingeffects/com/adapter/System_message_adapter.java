@@ -21,7 +21,7 @@ import java.util.List;
 public class System_message_adapter extends BaseItemDraggableAdapter<systemessagelist, BaseViewHolder> {
 
     private Context context;
-    public final static String TAG = "main_recycler_adapter";
+    public final static String TAG = "MainRecyclerAdapter";
 
     public System_message_adapter(int layoutResId, @Nullable List<systemessagelist> allData, Context context) {
         super(layoutResId, allData);

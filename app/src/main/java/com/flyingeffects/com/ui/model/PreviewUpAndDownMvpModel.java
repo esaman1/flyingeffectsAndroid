@@ -51,6 +51,7 @@ import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -187,28 +188,38 @@ public class PreviewUpAndDownMvpModel {
             Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
             LogUtil.d("OOM", StringUtil.beanToJSONString(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(context) {
-                @Override
-                protected void onSubError(String message) {
+                        @Override
+                        protected void onSubError(String message) {
 //                ToastUtil.showToast(message);
-                    LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
-                }
+                            LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
+                        }
 
-                @Override
-                protected void onSubNext(new_fag_template_item data) {
-                    callback.getTemplateLInfo(data);
-                }
-            }, "cacheKey", ActivityLifeCycleEvent.DESTROY,
+                        @Override
+                        protected void onSubNext(new_fag_template_item data) {
+                            callback.getTemplateLInfo(data);
+                        }
+                    }, "cacheKey", ActivityLifeCycleEvent.DESTROY,
                     lifecycleSubject, false, true, false);
 
         }
     }
 
 
-    private WaitingDialog_progress downProgressDialog;
+    private LoadingDialog mLoadingDialog;
     private BottomSheetDialog bottomSheetDialog;
 
     private boolean nowHasCollect;
     private ImageView mIvCollect;
+
+
+    private LoadingDialog buildLoadingDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(context)
+                .setHasAd(false)
+                .setTitle("生成中...")
+                .build();
+        dialog.show();
+        return dialog;
+    }
 
     public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item, String fromTo) {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
@@ -247,14 +258,13 @@ public class PreviewUpAndDownMvpModel {
                 templateBehaviorStatistics(3, id);
 
                 StatisticsEventAffair.getInstance().setFlag(context, "save_back_template");
-                downProgressDialog = new WaitingDialog_progress(context);
-                downProgressDialog.openProgressDialog();
+                mLoadingDialog = buildLoadingDialog();
                 //换装保存的是图片
                 if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
                     Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
                         @Override
                         public void call(Bitmap bitmap) {
-                            downProgressDialog.closePragressDialog();
+                            mLoadingDialog.dismiss();
                             LogUtil.d("OOM3", "整合bitmap");
                             String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
                             BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, new BitmapManager.saveToFileCallback() {
@@ -457,7 +467,7 @@ public class PreviewUpAndDownMvpModel {
      */
     private String getShareWeiXinCircleText(String id) {
         String str = "http://www.flyingeffect.com/index/index/share?id=" + id + "&";
-        HashMap<String,String> params = BaseConstans.getRequestHead(new HashMap<>());
+        HashMap<String, String> params = BaseConstans.getRequestHead(new HashMap<>());
         String strParams = params.toString();
         strParams = strParams.replace("{", "");
         strParams = strParams.replace("}", "");
@@ -772,11 +782,11 @@ public class PreviewUpAndDownMvpModel {
      * param : template_type 1 muban  2背景
      * user : zhangtongju
      */
-    public void zanTemplate(String templateId, String title, String template_type) {
+    public void zanTemplate(String templateId, String title, String templateType) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
 //        params.put("token", BaseConstans.GetUserToken());
-        params.put("type", template_type);
+        params.put("type", templateType);
         // 启动时间
         Observable ob = Api.getDefault().addPraise(BaseConstans.getRequestHead(params));
 
@@ -793,7 +803,7 @@ public class PreviewUpAndDownMvpModel {
             protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
-                callback.ZanResult();
+                callback.zanResult();
             }
 
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -818,19 +828,18 @@ public class PreviewUpAndDownMvpModel {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
-
     public void downVideo(String path, String imagePath, String id, boolean keepAlbum, boolean isFromAgainChooseBj) {
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
         File file = new File(videoName);
         if (file.exists()) {
-            if (downProgressDialog != null) {
-                downProgressDialog.closePragressDialog();
+            if (mLoadingDialog != null) {
+                mLoadingDialog.dismiss();
             }
             if (!keepAlbum) {
                 //文件已存在，直接回传path
                 callback.downVideoSuccess(videoName, imagePath);
             } else {
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
                 saveToAlbum(videoName);
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_DOWNLOAD);
@@ -839,10 +848,9 @@ public class PreviewUpAndDownMvpModel {
             return;
         }
 
-        if (downProgressDialog == null) {
+        if (mLoadingDialog == null) {
             LogUtil.d("OOM", "downProgressDialog != null");
-            downProgressDialog = new WaitingDialog_progress(context);
-            downProgressDialog.openProgressDialog();
+            mLoadingDialog = buildLoadingDialog();
         }
 
         Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
@@ -854,25 +862,26 @@ public class PreviewUpAndDownMvpModel {
                         @Override
                         public void progresss(int progress) {
                             LogUtil.d("oom", "下载时候后重新裁剪进度为=" + progress);
-                            if (downProgressDialog != null) {
+                            if (mLoadingDialog != null) {
                                 if (isFromAgainChooseBj) {
-                                    downProgressDialog.setProgress("正在生成中" + progress + "%");
+                                    mLoadingDialog.setTitleStr("正在生成中");
                                 } else {
-                                    downProgressDialog.setProgress("下载进度为" + progress + "%");
+                                    mLoadingDialog.setTitleStr("下载进度为");
                                 }
+                                mLoadingDialog.setProgress(progress);
                             }
                         }
 
                         @Override
                         public void isSuccess(boolean isSuccess, String path1) {
-                            if (downProgressDialog != null) {
-                                downProgressDialog.closePragressDialog();
-                                downProgressDialog = null;
+                            if (mLoadingDialog != null) {
+                                mLoadingDialog.dismiss();
+                                mLoadingDialog = null;
                             }
                             if (!keepAlbum) {
                                 callback.downVideoSuccess(path1, imagePath);//下载成功后的回调
                             } else {
-                                WaitingDialog.closePragressDialog();
+                                WaitingDialog.closeProgressDialog();
                                 saveToAlbum(path1);
                                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                                     AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_DOWNLOAD);
@@ -889,9 +898,9 @@ public class PreviewUpAndDownMvpModel {
 
     private void saveToAlbum(String path) {
         String albumPath;
-        if(TextUtils.equals(FromToTemplate.DRESSUP, fromTo)){
+        if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
             albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForImage();
-        }else{
+        } else {
             albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
         }
         try {
@@ -904,7 +913,6 @@ public class PreviewUpAndDownMvpModel {
             e.printStackTrace();
         }
     }
-
 
     private void showKeepSuccessDialog(String path) {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
@@ -1044,7 +1052,7 @@ public class PreviewUpAndDownMvpModel {
                     @Override
                     public void isSuccess(List<String> paths) {
                         LogUtil.d("OOM3", "跳转到换装页面");
-                        if(paths!=null){
+                        if (paths != null) {
                             Intent intent = new Intent(context, DressUpPreviewActivity.class);
                             intent.putExtra("url", paths.get(0));
                             intent.putExtra("template_id", templateId);
@@ -1054,7 +1062,7 @@ public class PreviewUpAndDownMvpModel {
                             context.startActivity(intent);
                         }
                     }
-                },false);
+                }, false);
                 dressUpModel.toDressUp(path, templateId);
             }
         });
@@ -1067,7 +1075,7 @@ public class PreviewUpAndDownMvpModel {
      * user : zhangtongju
      */
     public void GetDressUpPath(List<String> paths) {
-        callback.GetDressUpPathResult(paths);
+        callback.getDressUpPathResult(paths);
     }
 
 

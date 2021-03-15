@@ -67,7 +67,7 @@ public class ViewChooseTemplate {
                         Observable.just(filePath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                             @Override
                             public void call(String s) {
-                                WaitingDialog.closePragressDialog();
+                                WaitingDialog.closeProgressDialog();
                                 StatisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click",list.get(position).getTitle());
                                 if(callback!=null){
                                     callback.onItemClick(position,filePath,items);

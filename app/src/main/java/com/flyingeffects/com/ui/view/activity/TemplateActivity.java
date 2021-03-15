@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -16,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -27,17 +27,16 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
-import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
-import com.flyingeffects.com.manager.CopyFileFromAssets;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
@@ -49,6 +48,7 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.VideoFusionModel;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.ui.view.ViewChooseTemplate;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -98,6 +98,7 @@ import rx.schedulers.Schedulers;
  */
 public class TemplateActivity extends BaseActivity implements TemplateMvpView, AssetDelegate, AlbumChooseCallback {
     private static final String TAG = "TemplateActivity";
+    private Context mContext;
 
     @BindView(R.id.switch_button)
     SwitchButton switch_button;
@@ -259,7 +260,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     /**
      * 如果是仿抖音一样的去唱歌，那么ui 界面需要修改，变成只有下一步功能
      */
-    private boolean isToSing=false;
+    private boolean isToSing = false;
 
     @Override
     protected int getLayoutId() {
@@ -268,6 +269,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     protected void initView() {
+        mContext = TemplateActivity.this;
         EventBus.getDefault().register(this);
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
@@ -280,6 +282,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             needAssetsCount = bundle.getInt("isPicNum");
             templateId = bundle.getString("templateId");
             templateFilePath = bundle.getString("templateFilePath");
+            LogUtil.d(TAG, "templateFilePath = " + templateFilePath);
             imgPath = bundle.getStringArrayList("paths");
             videoTime = bundle.getString("videoTime");
             changeTemplatePosition = bundle.getInt("changeTemplatePosition");
@@ -602,7 +605,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             @Override
                             public void call(Integer integer) {
                                 Log.d("OOM5", "showMattingVideoCover");
-                                WaitingDialog.closePragressDialog();
+                                WaitingDialog.closeProgressDialog();
                                 mTemplateViews.get(nowChoosePosition).invalidate(); //提示重新绘制预览图
                             }
                         });
@@ -622,7 +625,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         listItem.set(lastChoosePosition, item1);
         templateThumbAdapter.notifyItemChanged(lastChoosePosition);
     }
-
 
     /**
      * description ：是否抠图按钮切换 针对于视频
@@ -678,7 +680,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             imgPath.add(path);
             mTemplateModel.cartoonPath = path;
             mTemplateModel.setReplaceAllMaterial(imgPath);
-            WaitingDialog.closePragressDialog();
+            WaitingDialog.closeProgressDialog();
             presenter.getButtomIcon(path);
             Observable.just(nowChoosePosition).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> mTemplateViews.get(integer).invalidate(), 200));
         }
@@ -782,9 +784,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             pickIndex = model.getNowIndex();
             pickGroupIndex = model.getNowGroup();
             LogUtil.d("OOM", "当前的点击位置为" + pickIndex + "pickGroupIndex=" + pickGroupIndex);
-            if(isToSing){
+            if (isToSing) {
                 AlbumManager.chooseWhichAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, 1, "");
-            }else{
+            } else {
                 if (isCanChooseVideo || nowIsPhotographAlbum) {
                     // 只有是否选择视频的区别
                     float videoTimeF;
@@ -911,6 +913,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     listAssets.add(SxveConstans.default_bg_path);
                 }
             }
+
             mTemplateModel.setReplaceAllFiles(listAssets, complete -> TemplateActivity.this.runOnUiThread(() -> {
                 LogUtil.d("OOM4", "替换图片isCOMPALTE");
                 if (!isOndestroy) {
@@ -931,8 +934,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     }
 
                     LogUtil.d("OOM4", "关闭加载框");
-                    progress.closePragressDialog();
-                    WaitingDialog.closePragressDialog();
+                    progress.closeProgressDialog();
+                    WaitingDialog.closeProgressDialog();
                 }
 
             }));  //批量替换图片
@@ -1060,9 +1063,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     @Override
-    @OnClick({R.id.tv_top_submit, R.id.iv_play, R.id.edit_view_container})
+    @OnClick({R.id.tv_top_submit, R.id.iv_play, R.id.edit_view_container, R.id.iv_top_back})
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.tv_top_submit:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
@@ -1123,12 +1125,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
             case R.id.edit_view_container:
                 break;
+            case R.id.iv_top_back:
+                onBackPressed();
+                break;
 
             default:
                 break;
 
         }
-        super.onClick(v);
     }
 
     @Override
@@ -1136,8 +1140,30 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (mTextEditLayout.getVisibility() == View.VISIBLE) {
             mTextEditLayout.hide();
         } else {
-            super.onBackPressed();
+            showBackMessage();
         }
+    }
+
+    private void showBackMessage() {
+        CommonMessageDialog.getBuilder(mContext)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_EXIT)
+                .setTitle("确定退出吗？")
+                .setPositiveButton("确定")
+                .setNegativeButton("取消")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
     }
 
 
@@ -1201,7 +1227,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             public void run() {
                 template.commit();
                 runOnUiThread(() -> {
-                    new Handler().post(waitingDialogProgress::closePragressDialog);
+                    new Handler().post(waitingDialogProgress::closeProgressDialog);
                     showPreview(true, false);
                     mDuration = template.realDuration();
                     seekBar.setMax(mDuration);

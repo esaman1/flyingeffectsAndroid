@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.main_recycler_adapter;
+import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -67,7 +67,7 @@ public class fragBjSearch extends BaseFragment {
     TextView mAddTitle;
 
     private int perPageCount = 10;
-    private main_recycler_adapter adapter;
+    private MainRecyclerAdapter adapter;
     private List<new_fag_template_item> allData = new ArrayList<>();
 
     private boolean isRefresh = true;
@@ -107,7 +107,7 @@ public class fragBjSearch extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(allData, getActivity(), isFrom, true,null);
+        adapter = new MainRecyclerAdapter(allData, isFrom, true,null);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);

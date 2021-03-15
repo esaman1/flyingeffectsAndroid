@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,8 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;
 import com.flyingeffects.com.ui.presenter.PreviewUpAndDownMvpPresenter;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -86,6 +89,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public final static int SELECTALBUMFROMBJ = 1;
     public final static int SELECTALBUMFROMDressUp = 2;
     private static final String TAG = "PreviewUpDownActivity";
+    private Context mContext;
 
     private ActivityPreviewUpAndDownBinding mBinding;
 
@@ -136,7 +140,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     //模板下载地址
     private String TemplateFilePath;
 
-    private WaitingDialog_progress waitingDialog_progress;
+    private LoadingDialog mLoadingDialog;
 
     //是否需要插入广告
     private boolean isNeedAddaD = false;
@@ -164,7 +168,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private String templateType;
     private boolean mIsFollow;
 
-
     @Override
     protected int getLayoutId() {
         return 0;
@@ -178,13 +181,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private String keepOldFrom;
 
     //0 表示不是影集，1表示影集
-    private int is_pic;
+    private int isPic;
 
     private boolean isSlideViewpager = false;
     boolean isCanLoadMore;
 
     @Override
     protected void initView() {
+        mContext = PreviewUpAndDownActivity.this;
         EventBus.getDefault().register(this);
 
         mBinding = ActivityPreviewUpAndDownBinding.inflate(getLayoutInflater());
@@ -200,7 +204,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
         ondestroy = false;
 
-        waitingDialog_progress = new WaitingDialog_progress(this);
+        mLoadingDialog = buildLoadingDialog();
         nowChoosePosition = getIntent().getIntExtra("position", 0);
         LogUtil.d("OOM2", "nowChoosePosition=" + nowChoosePosition);
         isCanLoadMore = getIntent().getBooleanExtra("isCanLoadMore", true);
@@ -210,7 +214,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         insertMinNum = nowChoosePosition;
         templateItem = allData.get(nowChoosePosition);
         mIsPicOut = templateItem.getIs_picout();
-        is_pic = templateItem.getIs_pic();
+        isPic = templateItem.getIs_pic();
         mIsWithPlay = templateItem.getIs_with_play();
         templateType = templateItem.getTemplate_type();
         String searchText = getIntent().getStringExtra("searchText");
@@ -239,7 +243,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
         }
 
-        adapter = new PreviewUpDownAdapter(R.layout.list_preview_up_down_item, allData, PreviewUpAndDownActivity.this, mOldFromTo);
+        adapter = new PreviewUpDownAdapter(R.layout.list_preview_up_down_item, allData, mOldFromTo);
 
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (view.getId() == R.id.iv_zan) {
@@ -363,7 +367,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         mBinding.ibBack.setOnClickListener(this::onViewClick);
     }
 
-
     private void intoUserHome(int position) {
         Intent intent = new Intent(PreviewUpAndDownActivity.this, UserHomepageActivity.class);
         intent.putExtra("toUserId", allData.get(position).getAdmin_id());
@@ -371,6 +374,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         startActivity(intent);
     }
 
+    private LoadingDialog buildLoadingDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(mContext)
+                .setHasAd(false)
+                .setTitle("生成中...")
+                .build();
+        return dialog;
+    }
 
     /**
      * description ：点击关注当前作者
@@ -384,25 +394,26 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         // 启动时间
         Observable ob = Api.getDefault().followUser(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
-            @Override
-            protected void onSubError(String message) {
-                ToastUtil.showToast(message);
-            }
+                    @Override
+                    protected void onSubError(String message) {
+                        ToastUtil.showToast(message);
+                    }
 
-            @Override
-            protected void onSubNext(Object data) {
-                LogUtil.d("follow", StringUtil.beanToJSONString(data));
-                if (mIsFollow) {
-                    ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("关注");
-                    mIsFollow = false;
-                } else {
-                    // ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("取消关注");
-                    mIsFollow = true;
-                }
-                LogUtil.d("OOM", "requestFollowThisUser");
-                mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+                    @Override
+                    protected void onSubNext(Object data) {
+                        LogUtil.d("follow", StringUtil.beanToJSONString(data));
+                        if (mIsFollow) {
+                            ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("关注");
+                            mIsFollow = false;
+                        } else {
+                            // ((AppCompatTextView) view.findViewById(R.id.tv_btn_follow)).setText("取消关注");
+                            mIsFollow = true;
+                        }
+                        LogUtil.d("OOM", "requestFollowThisUser");
+                        mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
+                    }
+                }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject,
+                false, true, true);
     }
 
 
@@ -505,8 +516,35 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (view == mBinding.relaParentShowAlert) {
             mBinding.relaParentShowAlert.setVisibility(View.GONE);
         } else if (view == mBinding.ibBack) {
-            this.finish();
+            showBackDialog();
         }
+    }
+
+    private void showBackDialog() {
+        CommonMessageDialog.getBuilder(mContext)
+                .setTitle("确定要退出吗？")
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_EXIT)
+                .setPositiveButton("确定")
+                .setNegativeButton("取消")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        finish();
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        showBackDialog();
     }
 
     /**
@@ -588,13 +626,44 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
         if (!TextUtils.isEmpty(templateItem.getType()) && "1".equals(templateItem.getType()) && BaseConstans.getIncentiveVideo()) {
-            Intent intent = new Intent(PreviewUpAndDownActivity.this, AdHintActivity.class);
-            intent.putExtra("from", "PreviewActivity");
-            intent.putExtra("templateTitle", templateItem.getTitle());
-            startActivity(intent);
+//            Intent intent = new Intent(PreviewUpAndDownActivity.this, AdHintActivity.class);
+//            intent.putExtra("from", "PreviewActivity");
+//            intent.putExtra("templateTitle", templateItem.getTitle());
+//            startActivity(intent);
+            showMessageDialog();
         } else {
             hasLoginToNext();
         }
+    }
+
+    private void showMessageDialog() {
+        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert", "");
+        CommonMessageDialog.getBuilder(mContext)
+                .setContentView(R.layout.dialog_common_message_ad_under)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_BOTTOM)
+                .setAdId(AdConfigs.AD_IMAGE_DIALOG_OPEN_VIDEO)
+                .setTitle("亲爱的友友")
+                .setMessage("这个模板需要观看几秒广告")
+                .setMessage2("「看完后就能制作飞闪视频」")
+                .setPositiveButton("观看广告并制作")
+                .setNegativeButton("取消")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "bj_ad_open", templateItem.getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_confirm");
+                        EventBus.getDefault().post(new showAdCallback("PreviewActivity"));
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "mb_ad_cancel", templateItem.getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_cancel");
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
     }
 
     @Override
@@ -634,13 +703,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             if (!ondestroy) {
                 if (integer >= 100) {
                     isDownIng = false;
-                    waitingDialog_progress.closePragressDialog();
+                    mLoadingDialog.dismiss();
                 } else {
                     if (!isDownIng) {
-                        waitingDialog_progress.openProgressDialog();
+                        mLoadingDialog.show();
                         isDownIng = true;
                     }
-                    waitingDialog_progress.setProgress(integer + "%");
+                    mLoadingDialog.setProgress(integer);
                 }
             }
         });
@@ -772,7 +841,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
         }
         LogUtil.d("OOM", "onResume");
-        WaitingDialog.closePragressDialog();
+        WaitingDialog.closeProgressDialog();
     }
 
 
@@ -789,7 +858,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             setIsZan(data.getIs_praise() == 1);
             nowPraise = data.getIs_praise();
             templateType = data.getTemplate_type();
-            is_pic = templateItem.getIs_pic();
+            isPic = templateItem.getIs_pic();
             //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
             if (!TextUtils.isEmpty(templateItem.getPre_url())) {
                 mOldFromTo = FromToTemplate.ISBJ;
@@ -810,7 +879,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private void toCloseProgressDialog() {
         if (!ondestroy) {
-            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(WaitingDialog::closePragressDialog, 200));
+            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(WaitingDialog::closeProgressDialog, 200));
         }
     }
 
@@ -849,7 +918,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
     @Override
-    public void GetDressUpPathResult(List<String> paths) {
+    public void getDressUpPathResult(List<String> paths) {
         if (paths != null) {
             for (int i = 0; i < paths.size(); i++) {
                 LogUtil.d("OOM3", "换装之后保存本地的地址" + paths.get(i));
@@ -907,7 +976,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             case FromToTemplate.DRESSUP:
 //                mMvpPresenter.toDressUp();
                 AlbumManager.chooseImageAlbum(this, 1, SELECTALBUMFROMDressUp, this, "");
-
                 break;
             default:
                 break;
@@ -971,7 +1039,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         intent.putExtra("duration", duration);
                         mediaInfo.release();
                     } else {
-                        //模板
                         intent.putExtra("musicPath", bjMp3);
                         intent.putExtra("duration", (long) (bjMp3Duration * 1000));
                     }
@@ -1033,7 +1100,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                     new Thread(() -> {
                                         originalImagePath = paths;
                                         //如果是视频，就不抠图了
-                                        if (is_pic == 0) {
+                                        if (isPic == 0) {
                                             LogUtil.d("OOM6", "is_pic==0");
                                             String path = paths.get(0);
                                             String pathType = GetPathTypeModel.getInstance().getMediaType(path);
@@ -1098,8 +1165,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
             new Handler().postDelayed(() -> adapter.pauseVideo(),500);
         }, this);
-
-
     }
 
 

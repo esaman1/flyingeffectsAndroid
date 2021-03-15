@@ -26,7 +26,7 @@ import androidx.annotation.Nullable;
 public class MineFocusAdapter extends BaseQuickAdapter<fansEnity, BaseViewHolder> {
 
     private Context context;
-    public final static String TAG = "main_recycler_adapter";
+    public final static String TAG = "MainRecyclerAdapter";
 
     public MineFocusAdapter(int layoutResId, @Nullable List<fansEnity> allData, Context context) {
         super(layoutResId, allData);

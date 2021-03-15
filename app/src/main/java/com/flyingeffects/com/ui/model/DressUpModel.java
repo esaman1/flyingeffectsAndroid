@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.HumanMerageResult;
@@ -190,7 +189,7 @@ public class DressUpModel {
 
             @Override
             public void isDone() {
-                progress.closePragressDialog();
+                progress.closeProgressDialog();
             }
         });
     }
@@ -222,7 +221,7 @@ public class DressUpModel {
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "message=" + message);
                 ToastUtil.showToast(message);
-                progress.closePragressDialog();
+                progress.closeProgressDialog();
                 if (calculagraph != null) {
                     calculagraph.destroyTimer();
                 }
@@ -330,7 +329,7 @@ public class DressUpModel {
                         if (callback != null) {
                             callback.isSuccess(listForKeepPath);
                             callback = null;
-                            progress.closePragressDialog();
+                            progress.closeProgressDialog();
                         }
                     } else {
                         LogUtil.d("OOM3", "list.size()=" + listForKeepPath.size() + "paths.size()=" + allSize);
@@ -357,7 +356,7 @@ public class DressUpModel {
                 if (callback != null) {
                     callback.isSuccess(listForKeepPath);
                     callback = null;
-                    progress.closePragressDialog();
+                    progress.closeProgressDialog();
                 }
             } else {
                 LogUtil.d("OOM3", "list.size()=" + listForKeepPath.size() + "paths.size()=" + allSize);

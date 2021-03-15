@@ -29,5 +29,5 @@ public interface PreviewUpAndDownMvpView {
 
     void onclickCollect();
 
-    void GetDressUpPathResult(List<String>paths);
+    void getDressUpPathResult(List<String>paths);
 }

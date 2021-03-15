@@ -10,13 +10,13 @@ public interface PreviewUpAndDownMvpCallback {
 
     void collectionResult(boolean hasCollect);
 
-    void ZanResult();
+    void zanResult();
 
     void hasLogin(boolean hasLogin);
 
     void onclickCollect();
 
-    void GetDressUpPathResult(List<String>paths);
+    void getDressUpPathResult(List<String>paths);
 
 
     void downVideoSuccess(String path,String imagePath);

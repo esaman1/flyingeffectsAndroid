@@ -553,7 +553,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             @Override
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "_onError=" + message);
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
                 ToastUtil.showToast(message);
             }
 
@@ -562,7 +562,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
 //                String str = StringUtil.beanToJSONString(data);
 //                LogUtil.d("OOM3", "requestLogin=" + str);
                 StatisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "13_video");
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
                 UploadMaterialActivity.this.finish();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);

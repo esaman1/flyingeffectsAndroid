@@ -305,7 +305,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @Override
     public void animIsComplate() {
 
-        WaitingDialog.closePragressDialog();
+        WaitingDialog.closeProgressDialog();
         if (!isOnDestroy) {
             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                 nowStateIsPlaying(true);

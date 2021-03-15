@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
@@ -26,6 +27,7 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.DressUpModel;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -78,6 +80,7 @@ public class DressUpPreviewActivity extends BaseActivity {
     private String templateTitle;
     /**换装切换次数*/
     int dressupSwitchNumber = 0;
+    private Context mContext;
 
     @Override
     protected int getLayoutId() {
@@ -86,13 +89,13 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        mContext = DressUpPreviewActivity.this;
         LogUtil.d("OOM3", "换装页面initView");
         String urlPath = getIntent().getStringExtra("url");
         template_id = getIntent().getStringExtra("template_id");
         localImage = getIntent().getStringExtra("localImage");
         templateTitle = getIntent().getStringExtra("templateTitle");
         tv_top_title.setText("上传清晰正脸照片最佳");
-        findViewById(R.id.iv_top_back).setOnClickListener(this);
         showAndSaveImage(urlPath);
         requestAllTemplateId();
     }
@@ -105,7 +108,7 @@ public class DressUpPreviewActivity extends BaseActivity {
 
 
     @Override
-    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album, R.id.share})
+    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album, R.id.share,R.id.iv_top_back})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.dress_up_next:
@@ -178,10 +181,12 @@ public class DressUpPreviewActivity extends BaseActivity {
             case R.id.share:
                 share(listForKeep.get(nowChooseIndex));
                 break;
+            case R.id.iv_top_back:
+                onBackPressed();
+                break;
             default:
                 break;
         }
-        super.onClick(v);
 
     }
 
@@ -196,6 +201,33 @@ public class DressUpPreviewActivity extends BaseActivity {
                 .setPlatform(SHARE_MEDIA.WEIXIN)
                 .setCallback(shareListener).share();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        showBackDialog();
+    }
+
+    private void showBackDialog() {
+        CommonMessageDialog.getBuilder(mContext)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_EXIT)
+                .setTitle("确定退出吗？")
+                .setPositiveButton("确定")
+                .setNegativeButton("取消")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
     }
 
     private UMShareListener shareListener = new UMShareListener() {

@@ -202,7 +202,7 @@ public class CreateViewForAddText {
                     downFileFrame(listFrame.get(i).getBorder_image(), 1, listFrame.get(i).getType(), listFrame.get(i).getColor(), listFrame.get(i).getTitle(), new downFameCallback() {
                         @Override
                         public void isSuccess(String path2, int type2) {
-                            WaitingDialog.closePragressDialog();
+                            WaitingDialog.closeProgressDialog();
                             if (callback != null) {
                                 if (type == 1) {
                                     callback.isSuccess(path1, path2,listFrame.get(i).getTitle());
@@ -453,7 +453,7 @@ public class CreateViewForAddText {
                 Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
                     DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> {
                         callback.isSuccess(name, type, title);
-                        WaitingDialog.closePragressDialog();
+                        WaitingDialog.closeProgressDialog();
                     });
                     manage.DownloadVideo(path, name);
                 });

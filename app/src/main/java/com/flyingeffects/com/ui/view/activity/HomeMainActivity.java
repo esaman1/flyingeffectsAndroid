@@ -52,6 +52,7 @@ import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.ui.view.fragment.BackgroundFragment;
 import com.flyingeffects.com.ui.view.fragment.DressUpFragment;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
@@ -319,8 +320,8 @@ public class HomeMainActivity extends FragmentActivity {
                         String uploadVersion = data.getNewversion();
                         String content = data.getContent();
                         int uVersion = Integer.parseInt(uploadVersion);
-                        int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
-                        if (uVersion > NowVersion) {
+                        int nowVersion = Integer.parseInt(BaseConstans.getVersionCode());
+                        if (uVersion > nowVersion) {
                             intoCheckUpdateAct(data.getDownloadfile(), data.getIs_forceupdate(), content);
                         }
                     }
@@ -403,12 +404,12 @@ public class HomeMainActivity extends FragmentActivity {
         findViewById(R.id.iv_main_add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(BaseConstans.hasLogin()){
+                if (BaseConstans.hasLogin()) {
                     Intent intent = new Intent(HomeMainActivity.this, FUBeautyActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    StatisticsEventAffair.getInstance().setFlag(mContext,"12_Shoot");
+                    StatisticsEventAffair.getInstance().setFlag(mContext, "12_Shoot");
                     startActivity(intent);
-                }else{
+                } else {
                     Intent intent = new Intent(HomeMainActivity.this, LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
@@ -545,13 +546,6 @@ public class HomeMainActivity extends FragmentActivity {
         EventBus.getDefault().post(new RequestMessage());
     }
 
-    @Override
-    public final boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            exitPressAgain();
-        }
-        return true;
-    }
 
     private long exitTime = 0;
 
@@ -571,9 +565,31 @@ public class HomeMainActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //exitPressAgain();
+        showBackMessage();
     }
 
+
+    private void showBackMessage() {
+        CommonMessageDialog.getBuilder(mContext)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_EXIT)
+                .setPositiveButton("狠心退出")
+                .setNegativeButton("关闭")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
+    }
 
     private void intoCreationActivity() {
 
@@ -677,7 +693,6 @@ public class HomeMainActivity extends FragmentActivity {
                         message_count.setText(intAllCount + "");
                     }
                 }
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
@@ -697,7 +712,6 @@ public class HomeMainActivity extends FragmentActivity {
             menu3F.onActivityResult(requestCode, resultCode, data);
         }
     }
-
 
     /**
      * description ：统计
@@ -729,6 +743,7 @@ public class HomeMainActivity extends FragmentActivity {
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(HomeMainActivity.this) {
             @Override
             protected void onSubError(String message) {
+
             }
 
             @Override
