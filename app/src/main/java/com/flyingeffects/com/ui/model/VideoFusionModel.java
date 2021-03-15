@@ -128,19 +128,19 @@ public class VideoFusionModel {
         mediaInfo.prepare();
         duration = mediaInfo.getDurationUs();
         mediaInfo.release();
-        LogUtil.d("OOM2","DRAWPADWIDTH="+DRAWPADWIDTH+"DRAWPADHEIGHT="+DRAWPADHEIGHT);
+        LogUtil.d("OOM2", "DRAWPADWIDTH=" + DRAWPADWIDTH + "DRAWPADHEIGHT=" + DRAWPADHEIGHT);
         try {
-            if(DRAWPADWIDTH%16!=0){
-                int needAddNum=DRAWPADWIDTH%16;
-                DRAWPADWIDTH=DRAWPADWIDTH-needAddNum;
+            if (DRAWPADWIDTH % 16 != 0) {
+                int needAddNum = DRAWPADWIDTH % 16;
+                DRAWPADWIDTH = DRAWPADWIDTH - needAddNum;
             }
 
-            if(DRAWPADHEIGHT%16!=0){
-                int needAddNum2=DRAWPADHEIGHT%16;
-                DRAWPADHEIGHT=DRAWPADHEIGHT-needAddNum2;
+            if (DRAWPADHEIGHT % 16 != 0) {
+                int needAddNum2 = DRAWPADHEIGHT % 16;
+                DRAWPADHEIGHT = DRAWPADHEIGHT - needAddNum2;
             }
 
-            LogUtil.d("OOM2","DRAWPADWIDTH="+DRAWPADWIDTH+"DRAWPADHEIGHT="+DRAWPADHEIGHT);
+            LogUtil.d("OOM2", "DRAWPADWIDTH=" + DRAWPADWIDTH + "DRAWPADHEIGHT=" + DRAWPADHEIGHT);
             DrawPadAllExecute2 execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, duration);
             execute.setFrameRate(FRAME_RATE);
 
@@ -167,20 +167,19 @@ public class VideoFusionModel {
             DrawWatermark(execute);
             execute.start();
         } catch (Exception e) {
-            LogUtil.d("OOM2",e.getMessage());
+            LogUtil.d("OOM2", e.getMessage());
             mLoadingDialog.dismiss();
             e.printStackTrace();
         }
     }
 
 
-
-    private void releaseBp(){
-        if(bpDrawWater!=null&&!bpDrawWater.isRecycled()){
+    private void releaseBp() {
+        if (bpDrawWater != null && !bpDrawWater.isRecycled()) {
             bpDrawWater.recycle();
         }
 
-        if(bpBj!=null&&!bpBj.isRecycled()){
+        if (bpBj != null && !bpBj.isRecycled()) {
             bpBj.recycle();
         }
         System.gc();
@@ -192,17 +191,19 @@ public class VideoFusionModel {
      * user : zhangtongju
      */
     Bitmap bpDrawWater;
+
     public void DrawWatermark(DrawPadAllExecute2 execute) {
         bpDrawWater = BitmapFactory.decodeResource(context.getResources(), R.mipmap.watermark);
         BitmapLayer bpLayer = execute.addBitmapLayer(bpDrawWater);
         float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
         bpLayer.setScale(layerScale * 0.3f);
-        bpLayer.setPosition(DRAWPADWIDTH *0.3f, DRAWPADHEIGHT *0.9f);
+        bpLayer.setPosition(DRAWPADWIDTH * 0.3f, DRAWPADHEIGHT * 0.9f);
     }
 
     Bitmap bpBj;
+
     private void addBitmapLayer(DrawPadAllExecute2 execute) {
-        bpBj= BitmapFactory.decodeFile(originalPath);
+        bpBj = BitmapFactory.decodeFile(originalPath);
         int size = bpBj.getWidth();
         float needScale = 256f / size;
         LogUtil.d("OOM3", "需要缩放比为" + needScale);
@@ -329,7 +330,6 @@ public class VideoFusionModel {
     }
 
 
-
     /**
      * description ：上传换装图片到华为云
      * creation date: 2020/12/4
@@ -374,7 +374,7 @@ public class VideoFusionModel {
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "请求结果=" + message);
                 destroyTimer();
-                progress.closePragressDialog();
+                mLoadingDialog.dismiss();
             }
 
             @Override

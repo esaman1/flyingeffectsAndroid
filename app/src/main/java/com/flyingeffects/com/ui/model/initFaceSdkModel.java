@@ -56,10 +56,8 @@ public class initFaceSdkModel {
     }
 
 
-    private static Context mcontext;
-
     public static void getHasLoadSdkOk(isAddSuccessCallback successCallback, Context context) {
-        mcontext = context;
+
         callback = successCallback;
         if (hasLoadSdkOk) {
             Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
@@ -77,7 +75,7 @@ public class initFaceSdkModel {
             Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                 @Override
                 public void call(Integer integer) {
-                    waitingDialog_progress = new WaitingDialog_progress(mcontext);
+                    waitingDialog_progress = new WaitingDialog_progress(context);
                     waitingDialog_progress.openProgressDialog("抠像速度升级中...");
                 }
             });
@@ -138,12 +136,8 @@ public class initFaceSdkModel {
         }
     }
 
-
     public interface isAddSuccessCallback {
-
         void isSuccess();
-
     }
-
 
 }

@@ -30,6 +30,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.market.android.sdk.AppMarketHelper;
+import com.nineton.ntadsdk.bean.FeedAdConfigBean;
 import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;

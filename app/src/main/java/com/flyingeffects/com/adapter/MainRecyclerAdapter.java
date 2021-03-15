@@ -96,7 +96,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
     private NativeUnifiedADData mAdBean;
 
 
-    public MainRecyclerAdapter(@Nullable List<new_fag_template_item> allData, Context context, int fromType, boolean isFromSearch, FeedAdManager mAdManager) {
+    public MainRecyclerAdapter(@Nullable List<new_fag_template_item> allData, int fromType, boolean isFromSearch, FeedAdManager mAdManager) {
         super(allData);
         this.fromType = fromType;
         this.isFromSearch = isFromSearch;
@@ -115,13 +115,13 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         int offset = helper.getLayoutPosition();
         LinearLayout ll_content_patents = helper.getView(R.id.ll_content_patents);
-        LogUtil.d("OOM3","getItemViewType="+helper.getItemViewType());
+        LogUtil.d("OOM3", "getItemViewType=" + helper.getItemViewType());
         switch (helper.getItemViewType()) {
             case 0: {
                 //默认样式，正常的模板
                 Glide.with(mContext)
                         .load(item.getImage())
-                        .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))
+                        .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(mContext, 5)))
                         .apply(RequestOptions.placeholderOf(R.mipmap.placeholder))
                         .into((ImageView) helper.getView(R.id.iv_cover));
                 ImageView iv_show_author = helper.getView(R.id.iv_show_author);
@@ -132,7 +132,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                 RelativeLayout ll_relative_0 = helper.getView(R.id.ll_relative_0);
                 TextView tv_name = helper.getView(R.id.tv_name);
                 tv_name.setText(item.getTitle());
-                if (fromType == 1) {
+                if (fromType == FROM_BACK_CODE) {
                     if (offset == 1) {
                         ll_relative_2.setVisibility(View.GONE);
                         ll_relative_1.setVisibility(View.VISIBLE);
@@ -167,7 +167,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                     tv_name.setVisibility(View.VISIBLE);
                     ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
                     iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
-                } else if (fromType == 3) {
+                } else if (fromType == FROM_DOWNLOAD_CODE) {
                     //背景下载
                     if (offset == 0 && !isFromSearch) {
                         ll_relative_2.setVisibility(View.VISIBLE);
@@ -212,7 +212,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                     ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
                     iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
                     iv_show_author.setVisibility(View.GONE);
-                } else if (fromType == 4) {
+                } else if (fromType == FROM_DRESS_CODE) {
                     //换装
                     if (offset == 1 && TextUtils.isEmpty(tabName)) {
                         add_image.setVisibility(View.VISIBLE);
@@ -250,7 +250,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                     iv_show_author.setVisibility(View.GONE);
                 } else {
                     //模板
-                    if (offset == 1 && fromType == 0) {
+                    if (offset == FROM_BACK_CODE && fromType == FROM_TEMPLATE_CODE) {
                         ll_relative_1.setVisibility(View.VISIBLE);
                         ll_relative_0.setVisibility(View.VISIBLE);
                         ll_relative_2.setVisibility(View.GONE);
@@ -428,6 +428,8 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                 ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).addView(item.getFeedAdResultBean().getAdView());
                 break;
             }
+            default:
+                break;
         }
 
         if (item.getFeedAdResultBean() != null) {
