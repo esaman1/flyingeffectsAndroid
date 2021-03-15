@@ -135,7 +135,6 @@ public class CommonMessageDialog extends Dialog {
             return this;
         }
 
-
         public Builder setNegativeButton(int cancelBtnStr) {
             mCancelBtnStr = (String) mContext
                     .getText(cancelBtnStr);
@@ -152,12 +151,10 @@ public class CommonMessageDialog extends Dialog {
             return this;
         }
 
-
         public Builder setDialogDismissListener(DialogDismissListener listener) {
             mDialogDismissListener = listener;
             return this;
         }
-
 
         public CommonMessageDialog build() {
             // instantiate the dialog with the custom Theme

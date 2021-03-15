@@ -262,7 +262,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     /**
      * 如果是仿抖音一样的去唱歌，那么ui 界面需要修改，变成只有下一步功能
      */
-    private boolean isToSing=false;
+    private boolean isToSing = false;
 
     @Override
     protected int getLayoutId() {
@@ -284,6 +284,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             needAssetsCount = bundle.getInt("isPicNum");
             templateId = bundle.getString("templateId");
             templateFilePath = bundle.getString("templateFilePath");
+            LogUtil.d(TAG, "templateFilePath = " + templateFilePath);
             imgPath = bundle.getStringArrayList("paths");
             videoTime = bundle.getString("videoTime");
             changeTemplatePosition = bundle.getInt("changeTemplatePosition");
@@ -786,9 +787,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             pickIndex = model.getNowIndex();
             pickGroupIndex = model.getNowGroup();
             LogUtil.d("OOM", "当前的点击位置为" + pickIndex + "pickGroupIndex=" + pickGroupIndex);
-            if(isToSing){
+            if (isToSing) {
                 AlbumManager.chooseWhichAlbum(TemplateActivity.this, 1, REQUEST_SINGLE_MEDIA, this, 1, "");
-            }else{
+            } else {
                 if (isCanChooseVideo || nowIsPhotographAlbum) {
                     // 只有是否选择视频的区别
                     float videoTimeF;
@@ -1064,7 +1065,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     @Override
-    @OnClick({R.id.tv_top_submit, R.id.iv_play, R.id.edit_view_container,R.id.iv_top_back})
+    @OnClick({R.id.tv_top_submit, R.id.iv_play, R.id.edit_view_container, R.id.iv_top_back})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_top_submit:

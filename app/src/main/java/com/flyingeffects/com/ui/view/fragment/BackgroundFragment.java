@@ -47,6 +47,7 @@ import java.util.List;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -62,6 +63,7 @@ import rx.functions.Action1;
  **/
 
 public class BackgroundFragment extends BaseFragment implements FagBjMvpView, AppBarLayout.OnOffsetChangedListener {
+    private static final String TAG = "BackgroundFragment";
 
     @BindView(R.id.viewpager)
     ViewPager viewPager;
@@ -83,7 +85,6 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
     @BindView(R.id.appbar)
     AppBarLayout appbar;
-
 
 
     private FagBjMvpPresenter presenter;
@@ -165,7 +166,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                             bundle.putInt("type", 1);
                             bundle.putSerializable("id", data.get(i).getId());
                             bundle.putInt("from", 1);
-                            bundle.putString("categoryTabName",data.get(i).getName());
+                            bundle.putString("categoryTabName", data.get(i).getName());
                             SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                             fragment.setArguments(bundle);
                             list.add(fragment);
@@ -279,6 +280,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                         @Override
                         public void isSuccess(String filePath) {
                             IntoTemplateActivity(filePath);
+                            LogUtil.d(TAG, "Background template filePath = " + filePath);
                         }
 
                         @Override
@@ -327,7 +329,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
     }
 
 
-    @OnClick({R.id.ll_crate_photograph_album,R.id.iv_add,R.id.ll_click_create_video_2,R.id.ll_crate_photograph_album_2, R.id.ll_click_create_video, R.id.iv_search})
+    @OnClick({R.id.ll_crate_photograph_album, R.id.iv_add, R.id.ll_click_create_video_2, R.id.ll_crate_photograph_album_2, R.id.ll_click_create_video, R.id.iv_search})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add:
@@ -353,11 +355,11 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
             case R.id.ll_crate_photograph_album:
             case R.id.ll_crate_photograph_album_2:
-                if(BaseConstans.hasLogin()){
+                if (BaseConstans.hasLogin()) {
                     StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_yj_click");
                     waitingDialog_progress.openProgressDialog();
                     presenter.requestPictureAlbumData();
-                }else{
+                } else {
                     Intent intentToLogin = new Intent(getActivity(), LoginActivity.class);
                     intentToLogin.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intentToLogin);
@@ -372,7 +374,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
     private void toAddSticker() {
         StatisticsEventAffair.getInstance().setFlag(getActivity(), "6_customize_bj");
-        AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
+        AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
             if (!isCancel) {
                 if (!TextUtils.isEmpty(paths.get(0))) {
                     MattingImage mattingImage = new MattingImage();
@@ -399,7 +401,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
     private void toPhotographAlbum(new_fag_template_item item, String templateFilePath) {
         waitingDialog_progress.closePragressDialog();
         if (getActivity() != null) {
-            AlbumManager.chooseAlbum(getActivity(), 20, SELECTALBUM, (tag, paths, isCancel,  isFromCamera,albumFileList) -> {
+            AlbumManager.chooseAlbum(getActivity(), 20, SELECTALBUM, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
                 if (!isCancel) {
                     Intent intent = new Intent(getActivity(), TemplateActivity.class);
                     Bundle bundle = new Bundle();
@@ -460,11 +462,11 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         int offset = Math.abs(verticalOffset);
         int total = appBarLayout.getTotalScrollRange();
         int alphaOut = (total - offset) < 0 ? 0 : total - offset;
-        float percentagef = alphaOut / (float) total ;
-        float percentage = percentagef* 100;
+        float percentagef = alphaOut / (float) total;
+        float percentage = percentagef * 100;
         int percent = (int) percentage;
         int topPercent = 100 - percent;
-        view_top.getBackground().setAlpha(topPercent+30);
+        view_top.getBackground().setAlpha(topPercent + 30);
         if (offset <= total * 2 / 3) {
             ll_expand.setScaleY(percentagef);
             ll_expand.setVisibility(View.VISIBLE);

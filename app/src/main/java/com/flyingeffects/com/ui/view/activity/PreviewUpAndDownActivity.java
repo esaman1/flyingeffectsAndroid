@@ -1025,7 +1025,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         intent.putExtra("duration", duration);
                         mediaInfo.release();
                     } else {
-                        //模板
                         intent.putExtra("musicPath", bjMp3);
                         intent.putExtra("duration", (long) (bjMp3Duration * 1000));
                     }
@@ -1153,8 +1152,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
             }
         }, this);
-
-
     }
 
 
