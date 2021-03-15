@@ -96,16 +96,11 @@ import static com.flyingeffects.com.constans.BaseConstans.getChannel;
  * @author zhang
  */
 public class HomeMainActivity extends FragmentActivity {
-    //    private ImageView[] mIvMenu = new ImageView[4];
     private final ImageView[] mIvMenuBack = new ImageView[4];
     private final TextView[] tv_main = new TextView[4];
-    //    private int[] img_Id = {R.id.iv_menu_0, R.id.iv_menu_1, R.id.iv_menu_2, R.id.iv_menu_3};
     private final int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
     public HomeMainActivity ThisMain;
     private final int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
-//    private int[] selectIconArr = {R.mipmap.home_bj, R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
-//    private int[] unSelectIconArr = {R.mipmap.home_bj_unselect, R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
-
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private Timer timer;
     private TimerTask task;
@@ -156,8 +151,6 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     private void initYouMeng() {
-//        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);  //页面采集模式
-//        MobclickAgent.setCatchUncaughtExceptions(true);
         UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件
         UMConfigure.setLogEnabled(!BaseConstans.PRODUCTION);
         UMConfigure.init(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this), UMConfigure.DEVICE_TYPE_PHONE, "");
@@ -406,7 +399,7 @@ public class HomeMainActivity extends FragmentActivity {
         fragments.add(menu3F);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(), fragments);
         viewpager_home.setAdapter(adapter);
-        viewpager_home.setOffscreenPageLimit(3);
+//        viewpager_home.setOffscreenPageLimit(3);
         whichMenuSelect(1);
         findViewById(R.id.iv_main_add).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -509,10 +502,8 @@ public class HomeMainActivity extends FragmentActivity {
      **/
     private void changeBottomTab() {
         for (int i = 0; i < mIvMenuBack.length; i++) {
-//            mIvMenu[i].setImageResource(unSelectIconArr[i]);
             tv_main[i].setTextColor(ContextCompat.getColor(this, R.color.white));
         }
-//        mIvMenu[LastWhichMenu].setImageResource(selectIconArr[LastWhichMenu]);
         tv_main[LastWhichMenu].setTextColor(ContextCompat.getColor(this, R.color.new_base_blue));
     }
 

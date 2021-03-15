@@ -30,6 +30,8 @@ public class BaseConstans {
      */
     public static final String DOUYINSHARE_CLIENTKEY = "awikd2g333hd0ien";
 
+
+
     /**
      * 是否开启华为渠道适配
      */
@@ -41,13 +43,17 @@ public class BaseConstans {
     public static final boolean UserFaceSdk = true;
     //    public static final boolean isTitokChannel=true;
     public static final int THREADCOUNT = 4;
+    /**
+     * 信息流广告插入的位置
+     */
+    public static final int NOWADSHOWPOSITION=5;
     public static boolean hasCreatingSegJni = true;
     public static String titok;
     public static String kuaishou;
     /**
      * 是否是正式环境
      */
-    public static final boolean PRODUCTION = false;
+    public static final boolean PRODUCTION =false ;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";
@@ -247,6 +253,25 @@ public class BaseConstans {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("AdvertisingNum", num);
     }
+
+
+    /**
+     * description ：设置入口
+     * creation date: 2021/3/12
+     * user : zhangtongju
+     */
+    public static void setHasAdEntrance(String json) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("AdEntrance", json);
+    }
+
+
+    public static String getHasAdEntrance() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+      return   spUtil.getString("AdEntrance","");
+    }
+
+
 
 
     /**

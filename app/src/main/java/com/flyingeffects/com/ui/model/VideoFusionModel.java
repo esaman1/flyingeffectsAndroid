@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Shader;
 import android.util.Log;
 
+import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.VideoFusiomBean;
@@ -29,6 +30,7 @@ import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.lansosdk.LanSongFilter.LanSongFilter;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.LSOScaleType;
@@ -111,6 +113,7 @@ public class VideoFusionModel {
         this.TranYPercent = TranY;
         this.ScaleTranXPercent = Scale;
 
+
     }
 
 
@@ -125,9 +128,19 @@ public class VideoFusionModel {
         mediaInfo.prepare();
         duration = mediaInfo.getDurationUs();
         mediaInfo.release();
-
-
+        LogUtil.d("OOM2","DRAWPADWIDTH="+DRAWPADWIDTH+"DRAWPADHEIGHT="+DRAWPADHEIGHT);
         try {
+            if(DRAWPADWIDTH%16!=0){
+                int needAddNum=DRAWPADWIDTH%16;
+                DRAWPADWIDTH=DRAWPADWIDTH-needAddNum;
+            }
+
+            if(DRAWPADHEIGHT%16!=0){
+                int needAddNum2=DRAWPADHEIGHT%16;
+                DRAWPADHEIGHT=DRAWPADHEIGHT-needAddNum2;
+            }
+
+            LogUtil.d("OOM2","DRAWPADWIDTH="+DRAWPADWIDTH+"DRAWPADHEIGHT="+DRAWPADHEIGHT);
             DrawPadAllExecute2 execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, duration);
             execute.setFrameRate(FRAME_RATE);
 
@@ -141,6 +154,7 @@ public class VideoFusionModel {
             });
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 mLoadingDialog.dismiss();
+                releaseBp();
                 LogUtil.d("OOM2", "exportPath=" + exportPath);
                 Intent intent = new Intent(context, TemplateAddStickerActivity.class);
                 intent.putExtra("videoPath", exportPath);
@@ -150,24 +164,53 @@ public class VideoFusionModel {
             });
             addBitmapLayer(execute);
             setVideoLayer(execute);
+            DrawWatermark(execute);
             execute.start();
         } catch (Exception e) {
+            LogUtil.d("OOM2",e.getMessage());
             mLoadingDialog.dismiss();
             e.printStackTrace();
         }
     }
 
 
+
+    private void releaseBp(){
+        if(bpDrawWater!=null&&!bpDrawWater.isRecycled()){
+            bpDrawWater.recycle();
+        }
+
+        if(bpBj!=null&&!bpBj.isRecycled()){
+            bpBj.recycle();
+        }
+        System.gc();
+    }
+
+    /**
+     * description ：绘制水印
+     * creation date: 2021/3/5
+     * user : zhangtongju
+     */
+    Bitmap bpDrawWater;
+    public void DrawWatermark(DrawPadAllExecute2 execute) {
+        bpDrawWater = BitmapFactory.decodeResource(context.getResources(), R.mipmap.watermark);
+        BitmapLayer bpLayer = execute.addBitmapLayer(bpDrawWater);
+        float layerScale = DRAWPADWIDTH / (float) bpLayer.getLayerWidth();
+        bpLayer.setScale(layerScale * 0.3f);
+        bpLayer.setPosition(DRAWPADWIDTH *0.3f, DRAWPADHEIGHT *0.9f);
+    }
+
+    Bitmap bpBj;
     private void addBitmapLayer(DrawPadAllExecute2 execute) {
-        Bitmap bp = BitmapFactory.decodeFile(originalPath);
-        int size = bp.getWidth();
-        float needScale = size / 256f;
+        bpBj= BitmapFactory.decodeFile(originalPath);
+        int size = bpBj.getWidth();
+        float needScale = 256f / size;
         LogUtil.d("OOM3", "需要缩放比为" + needScale);
         Matrix matrix = new Matrix();
         matrix.setScale(needScale, needScale);
-        bp = Bitmap.createBitmap(bp, 0, 0, bp.getWidth(),
-                bp.getHeight(), matrix, true);
-        BitmapLayer bpLayer = execute.addBitmapLayer(bp);
+        bpBj = Bitmap.createBitmap(bpBj, 0, 0, bpBj.getWidth(),
+                bpBj.getHeight(), matrix, true);
+        BitmapLayer bpLayer = execute.addBitmapLayer(bpBj);
         bpLayer.setScaleType(LSOScaleType.FILL_COMPOSITION);
     }
 
@@ -285,13 +328,6 @@ public class VideoFusionModel {
         return bm;
     }
 
-    private Bitmap createFilterBitmap(int w, int h, float percent) {
-        Bitmap bitmap = makeSrc(w, h, percent, MAKE_SRC_ORIENT_CODE_LEFT);
-        bitmap = makeSrc(bitmap, w, h, percent, MAKE_SRC_ORIENT_CODE_RIGHT);
-        bitmap = makeSrc(bitmap, w, h, percent, MAKE_SRC_ORIENT_CODE_TOP);
-        bitmap = makeSrc(bitmap, w, h, percent, MAKE_SRC_ORIENT_CODE_BOTTOM);
-        return bitmap;
-    }
 
 
     /**
@@ -337,16 +373,15 @@ public class VideoFusionModel {
             @Override
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "请求结果=" + message);
-                if (calculagraph != null) {
-                    calculagraph.destroyTimer();
-                }
+                destroyTimer();
+                progress.closePragressDialog();
             }
 
             @Override
             protected void onSubNext(VideoFusiomBean data) {
                 LogUtil.d("OOM3", StringUtil.beanToJSONString(data));
                 if (data.getStatus() == 2) {
-                    calculagraph.destroyTimer();
+                    destroyTimer();
                     Observable.just(data.getMp4()).observeOn(Schedulers.io()).subscribe(new Action1<String>() {
                         @Override
                         public void call(String s) {
@@ -358,6 +393,18 @@ public class VideoFusionModel {
                 }
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    private boolean isOndestroy = false;
+
+    private void destroyTimer() {
+        if (calculagraph != null && !isOndestroy) {
+            isOndestroy = true;
+            calculagraph.destroyTimer();
+            calculagraph = null;
+        }
+
     }
 
 
@@ -382,6 +429,7 @@ public class VideoFusionModel {
             @Override
             protected void onSubNext(String data) {
                 LogUtil.d("OOM3", "通知服务器成功" + StringUtil.beanToJSONString(data));
+                isOndestroy = false;
                 startTimer(data);
 
             }
@@ -420,7 +468,7 @@ public class VideoFusionModel {
 
     private void startTimer(String Id) {
         calculagraph = new Calculagraph();
-        calculagraph.startTimer(7f, 9, new Calculagraph.Callback() {
+        calculagraph.startTimer(5f, 15000, 9, new Calculagraph.Callback() {
             @Override
             public void isTimeUp() {
                 LogUtil.d("OOM3", "开始请求融合结果");
@@ -434,6 +482,8 @@ public class VideoFusionModel {
 
             @Override
             public void isDone() {
+//                ToastUtil.showToast("超时，已取消");
+                destroyTimer();
             }
         });
     }

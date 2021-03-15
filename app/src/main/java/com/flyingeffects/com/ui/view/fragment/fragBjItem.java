@@ -55,7 +55,7 @@ import rx.Observable;
 public class fragBjItem extends BaseFragment {
 
 
-    private int perPageCount = 10;
+    private int perPageCount = 9;
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
     private MainRecyclerAdapter adapter;
@@ -92,6 +92,7 @@ public class fragBjItem extends BaseFragment {
 
     @Override
     protected void initView() {
+        mAdManager = new FeedAdManager();
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             templateId = bundle.getString("id");
@@ -108,7 +109,6 @@ public class fragBjItem extends BaseFragment {
 
     @Override
     protected void initAction() {
-        mAdManager = new FeedAdManager();
         requestFagData(true, true);
     }
 
@@ -119,7 +119,7 @@ public class fragBjItem extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new MainRecyclerAdapter(R.layout.list_main_item, allData, fromType,false);
+        adapter = new MainRecyclerAdapter(allData, fromType,false,mAdManager);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.
                         VERTICAL);
@@ -182,11 +182,20 @@ public class fragBjItem extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+
+
+
         if(getActivity()!=null&& "12".equals(templateId)) {
             isRefresh = true;
             selectPage = 1;
             requestFagData(false, false);
         }
+
+
+        if(getActivity()!=null){
+            mAdManager.adResume();
+        }
+
     }
 
     public void initSmartRefreshLayout() {
@@ -268,6 +277,15 @@ public class fragBjItem extends BaseFragment {
                 } else {
                     showNoData(false);
                 }
+                if(BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()&&data.size()>BaseConstans.NOWADSHOWPOSITION){
+                    new_fag_template_item item=new new_fag_template_item();
+                    item.setHasShowAd(true);
+                    //设置当前是导流，进入抖音列表页就会自动过滤
+                    item.setIs_ad_recommend(1);
+                    data.add(BaseConstans.NOWADSHOWPOSITION,item);
+                }
+
+
 
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getResources().getString(R.string.no_more_data));
@@ -279,9 +297,42 @@ public class fragBjItem extends BaseFragment {
                 }
                 listData.addAll(data);
                 isShowData(listData);
+
+                if(BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
+                    requestFeedAd(mAdManager,new RequestFeedBack() {
+                        @Override
+                        public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
+                            getAdCallback(bean);
+                        }
+                    });;
+                }
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, isCanRefresh);
     }
+
+
+
+    private void getAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean){
+        LogUtil.d("OOM2", "GetAdCallback");
+        if (allData != null && allData.size() > 0) {
+            int allSize = allData.size() - 1;
+            LogUtil.d("OOM2", "allSize=" + allSize);
+            for (int i = allSize; i > 0; i--) {
+                boolean hasAd = allData.get(i).isHasShowAd();
+                LogUtil.d("OOM2", "hasAd=" + hasAd);
+                if (hasAd) {
+                    if (allData.get(i).getFeedAdResultBean() == null) {
+                        allData.get(i).setFeedAdResultBean(feedAdResultBean);
+                        adapter.notifyItemChanged(i);
+                        LogUtil.d("OOM2", "取消循环更新item" + i);
+                        return;
+                    }
+                }
+                LogUtil.d("OOM2", "还在循环" + i);
+            }
+        }
+    }
+
 
     private void finishData() {
         smartRefreshLayout.finishRefresh();
@@ -372,6 +423,9 @@ public class fragBjItem extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(getActivity()!=null){
+            mAdManager.adDestroy();
+        }
         EventBus.getDefault().unregister(this);
     }
 

@@ -146,24 +146,38 @@ public class WelcomeActivity extends BaseActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE && hasAllPermissionsGranted(grantResults)) {
             hasPermission = true;
-            if (!fromBackstage) {
-                requestConfig();
-            }
-            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                showSplashAd();
-            } else {
-                intoMain();
-            }
+            gotoNext();
         } else {
             hasPermission = false;
             // 如果用户没有授权，那么应该说明意图，引导用户去设置里面授权。
             ToastUtil.showToast(this.getString(R.string.Permissions_repulse));
             new Handler().postDelayed(() -> {
-                PermissionUtil.gotoPermission(WelcomeActivity.this);
-                finish();
+                gotoNext();
+//                PermissionUtil.gotoPermission(WelcomeActivity.this);
+//                finish();
             }, 3000);
         }
     }
+
+
+
+
+    /**
+     * description ：显示开屏广告还是进入主页 ,没有权限也能请求
+     * creation date: 2021/3/10
+     * user : zhangtongju
+     */
+    private void  gotoNext(){
+        if (!fromBackstage) {
+            requestConfig();
+        }
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            showSplashAd();
+        } else {
+            intoMain();
+        }
+    }
+
 
     private boolean hasAllPermissionsGranted(int[] grantResults) {
         for (int grantResult : grantResults) {
@@ -419,6 +433,9 @@ public class WelcomeActivity extends BaseActivity {
                             //换装制作页面切换模板按钮加载视频广告的间隔次数
                             int dressupIntervalsNumber = Integer.parseInt(config.getValue());
                             BaseConstans.setDressupIntervalsNumber(dressupIntervalsNumber);
+                        }else if(id == 72){
+                            String value = config.getValue();
+                            BaseConstans.setHasAdEntrance(value);
                         }
                     }
                 }

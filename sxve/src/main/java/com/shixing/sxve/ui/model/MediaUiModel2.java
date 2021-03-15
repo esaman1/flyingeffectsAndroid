@@ -12,6 +12,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -84,8 +85,8 @@ public class MediaUiModel2 extends MediaUiModel {
     private boolean isToSing;
 
 
-    private float firstTranX;
-    private float FirstTranY;
+//    private float firstTranX;
+//    private float FirstTranY;
     private float firstScale;
     private boolean isFirstMatrix = true;
 
@@ -186,34 +187,35 @@ public class MediaUiModel2 extends MediaUiModel {
             if (activeLayer > 0) {
                 mPaint = mTransparentPaint;
             }
+
+
+
             canvas.drawBitmap(f, 0, 0, mPaint);
         }
 
 
         if (isFirstMatrix && isToSing) {
-            float values[] = new float[9];
-            mMatrix.getValues(values);
-            firstTranX = values[2];
-            FirstTranY = values[5];
-            firstScale = values[0];
-            Log.d("OOM11", "tranx=" + firstTranX + "tranY=" + FirstTranY + "scanx=" + firstScale);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    float values[] = new float[9];
+                    mMatrix.getValues(values);
+//                    firstTranX = values[2];
+//                    FirstTranY = values[5];
+                    firstScale = values[0];
+                    Log.d("OOM22",  "scanx=" + firstScale);
+                }
+            },300);
             isFirstMatrix = false;
         }
 
 
-
-        float values[] = new float[9];
-        mMatrix.getValues(values);
-        float nowTranX = values[2];
-        float nowTranY = values[5];
-        float nowScale = values[0];
-        //float bitmapH = mBitmap.getHeight() * nowScale;
-        float reactLeftX = (0 - nowTranX) + 540f;
-        float reactLeftY = 420 - nowTranY + 540f;
-        float needX = reactLeftX / 1080f;
-        Log.d("OOM22", "needX=" + needX+"reactLeftX="+reactLeftX+"nowTranX="+nowTranX);
-
-
+//        float values[] = new float[9];
+//        mMatrix.getValues(values);
+//        float nowScale = values[0];
+//        float needScale = nowScale / firstScale;
+//        needScale = 1 / needScale;
+//        Log.d("OOM22", "needScale=" + needScale+"firstScale="+firstScale);
 
     }
 
@@ -425,6 +427,7 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     public void setImageAsset(String path) {
+        isFirstMatrix=true;
         this.path = path;
         isVideoSlide = true;
         isMaskSlide = true;

@@ -1066,7 +1066,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_top_submit:
-                if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(3000)) {
                     if (isToSing) {
                         MediaUiModel2 mediaUi2 = (MediaUiModel2) mTemplateModel.getAssets().get(lastChoosePosition).ui;
                         String path = mediaUi2.getSnapPath(Objects.requireNonNull(this.getExternalFilesDir("runCatch/")).getPath());
@@ -1075,7 +1075,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         mediaUi2.GetTransFormChangeData(new MediaUiModel2.TranChangeCallback() {
                             @Override
                             public void changeBack(float TranX, float TranY, float Scale) {
-                                VideoFusionModel videoFusionModel = new VideoFusionModel(TemplateActivity.this, path, originalPath.get(0), fromTo, templateName, mediaUi2.getOriginalBitmapWidth(), mediaUi2.getOriginalBitmapHeight(), TranX, TranY, Scale);
+                                String  bjPath=originalPath.get(0);
+                                if(nowIsChooseMatting){
+                                    bjPath=imgPath.get(0);
+                                }
+                                VideoFusionModel videoFusionModel = new VideoFusionModel(TemplateActivity.this, path, bjPath, fromTo, templateName, mediaUi2.getOriginalBitmapWidth(), mediaUi2.getOriginalBitmapHeight(), TranX, TranY, Scale);
                                 videoFusionModel.uploadFileToHuawei(path, templateId);
                             }
                         });
@@ -1535,7 +1539,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_edit),
                         getString(R.string.template_music)};
-            } else {
+            } else if(isToSing){
+                LogUtil.d("OOM3", "0000+");
+                titlesHasBj = new String[]{getString(R.string.template_edit)
+                      };
+            }else{
                 LogUtil.d("OOM3", "0000+");
                 titlesHasBj = new String[]{getString(R.string.template_edit),
                         getString(R.string.template_music)};

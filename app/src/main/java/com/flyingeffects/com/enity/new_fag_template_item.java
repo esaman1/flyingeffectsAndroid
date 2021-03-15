@@ -1,10 +1,18 @@
 package com.flyingeffects.com.enity;
 
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
+import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.nineton.ntadsdk.bean.FeedAdConfigBean;
 
 import java.io.Serializable;
 
-public class new_fag_template_item implements Serializable {
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.BAIDU_FEED_AD_EVENT;
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.GDT_FEED_AD_EVENT;
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED_AD_EVENT;
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_GDT_FEED_EXPRESS_AD;
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_TT_FEED_EXPRESS_AD;
+
+public class new_fag_template_item implements Serializable, MultiItemEntity {
 
 
     public int getId() {
@@ -502,6 +510,46 @@ public class new_fag_template_item implements Serializable {
     private int is_pic;
 
 
+    public FeedAdConfigBean.FeedAdResultBean getFeedAdResultBean() {
+        return feedAdResultBean;
+    }
+
+    public void setFeedAdResultBean(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
+        this.feedAdResultBean = feedAdResultBean;
+    }
+
+    /**
+     * description ： transient  设置可以不被序列化
+     * creation date: 2021/3/11
+     * user : zhangtongju
+     */
+    private  transient  FeedAdConfigBean.FeedAdResultBean feedAdResultBean;
 
 
+    @Override
+    public int getItemType() {
+        int type = 0;
+        if(getFeedAdResultBean()!=null){
+            switch (getFeedAdResultBean().getEventType()) {
+                case 0:
+                    type = 0;
+                    break;
+                case BAIDU_FEED_AD_EVENT:
+                case TT_FEED_AD_EVENT:
+                    type = 11;
+                    break;
+                case GDT_FEED_AD_EVENT: {
+                    type = 12;
+                    break;
+                }
+                case TYPE_TT_FEED_EXPRESS_AD:
+                case TYPE_GDT_FEED_EXPRESS_AD:
+                    type = 13;
+                    break;
+            }
+        }
+
+
+        return type;
+    }
 }

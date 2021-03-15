@@ -223,7 +223,7 @@ public class frag_user_collect extends BaseFragment {
         } else {
             fromType = 2;
         }
-        adapter = new MainRecyclerAdapter(R.layout.list_main_item, allData, fromType,false);
+        adapter = new MainRecyclerAdapter(allData, fromType,false,null);
         layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);

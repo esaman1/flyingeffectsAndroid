@@ -53,6 +53,7 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.github.penfeizhou.animation.apng.APNGDrawable;
 import com.github.penfeizhou.animation.loader.ResourceStreamLoader;
+import com.kwad.sdk.mvp.Presenter;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
@@ -494,6 +495,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     protected void onPause() {
         super.onPause();
         GSYVideoManager.onPause();
+        adapter.pauseVideo();
         isOnPause = true;
         LogUtil.d("OOM22", "onPause");
     }
@@ -1018,6 +1020,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
         initFaceSdkModel.getHasLoadSdkOk(() -> {
+
             LogUtil.d("OOM3", "模型也加载完成");
             if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
                 if (albumFileList.get(0).isClickToCamera()) {
@@ -1157,9 +1160,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     }
 
                 }
-
-
             }
+            new Handler().postDelayed(() -> adapter.pauseVideo(),500);
         }, this);
     }
 
@@ -1343,8 +1345,15 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     @Override
                     public void onVideoAdClose() {
                         LogUtil.d("OOM4", "onVideoAdClose");
-                        BaseConstans.TemplateHasWatchingAd = true;
+                        BaseConstans.TemplateHasWatchingAd = false;
                         ToastUtil.showToast("看完广告才可获取权益");
+//                        hasLoginToNext();
+                    }
+
+                    @Override
+                    public void onRewardVerify() {
+                        StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
+                        BaseConstans.TemplateHasWatchingAd = true;
                         hasLoginToNext();
                     }
 

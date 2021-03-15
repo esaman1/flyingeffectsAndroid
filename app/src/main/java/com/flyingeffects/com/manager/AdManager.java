@@ -3,6 +3,7 @@ package com.flyingeffects.com.manager;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
@@ -118,41 +119,64 @@ public class AdManager {
     }
 
 
+
+
+    public static View  AdBannerCacheView;
+
+
+
     /**
      * 加载banner广告
      */
-    public void showBannerAd(Activity activity, String id, LinearLayout llAdContainer) {
-        mBannerAdManager = new BannerAdManager();
-        llAdContainer.setVisibility(View.VISIBLE);
-        llAdContainer.post(() -> mBannerAdManager.showBannerAd(activity, id, llAdContainer, new BannerAdCallBack() {
-            @Override
-            public void onBannerAdShow(View adView) {
-                if (adView != null) {
-                    llAdContainer.removeAllViews();
-                    llAdContainer.addView(adView);
+    public void showBannerAd(Activity activity, String id, LinearLayout llAdContainer,boolean isNeedCache) {
+
+        if(isNeedCache){
+            if(AdBannerCacheView!=null){
+                llAdContainer.removeAllViews();
+                if(AdBannerCacheView.getParent()!=null){
+                    ViewGroup vp= (ViewGroup) AdBannerCacheView.getParent();
+                    vp.removeAllViews();
                 }
-            }
-
-            @Override
-            public void onBannerAdError(String error) {
-                com.nineton.ntadsdk.utils.LogUtil.e("banner错误：" + error);
-            }
-
-            @Override
-            public void onBannerAdClose() {
+                llAdContainer.addView(AdBannerCacheView);
+            }else{
                 llAdContainer.setVisibility(View.GONE);
             }
+        }else{
+            mBannerAdManager = new BannerAdManager();
+            llAdContainer.setVisibility(View.VISIBLE);
+            llAdContainer.post(() -> mBannerAdManager.showBannerAd(activity, id, llAdContainer, new BannerAdCallBack() {
+                @Override
+                public void onBannerAdShow(View adView) {
+                    if (adView != null) {
+                        AdBannerCacheView=adView;
+                        llAdContainer.removeAllViews();
+                        llAdContainer.addView(AdBannerCacheView);
+                    }
+                }
 
-            @Override
-            public boolean onBannerAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
-                return false;
-            }
-        }));
+                @Override
+                public void onBannerAdError(String error) {
+                    LogUtil.e("banner错误：" + error);
+                }
+
+                @Override
+                public void onBannerAdClose() {
+                    llAdContainer.setVisibility(View.GONE);
+                }
+
+                @Override
+                public boolean onBannerAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                    return false;
+                }
+            }));
+        }
+
+
     }
 
     public void releaseBannerManager() {
         if (mBannerAdManager != null) {
-            LogUtil.d(TAG,"releaseBannerManager");
+            LogUtil.d(TAG, "releaseBannerManager");
             mBannerAdManager.destory();
             mBannerAdManager = null;
         }

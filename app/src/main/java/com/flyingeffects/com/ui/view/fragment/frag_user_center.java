@@ -65,6 +65,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -132,8 +136,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     AppBarLayout appbar;
     @BindView(R.id.ll_ad_content)
     LinearLayout mLLADContent;
-
-
+    @BindView(R.id.iv_ad_entrance)
+    ImageView iv_ad_entrance;
 
     private UCrop.Options options;
     String systemMessageId ="";
@@ -147,6 +151,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @Override
     protected void initView() {
+
         EventBus.getDefault().register(this);
         options = UCropOption.getInstance().getUcropOption();
         iv_about.setOnClickListener(view -> {
@@ -163,6 +168,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 }
             });
         }
+        showAdEntrance();
     }
 
     @Override
@@ -245,7 +251,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
 
     @OnClick({R.id.ll_icon_zan, R.id.ll_comment,R.id.ll_private_message,R.id.ll_attention_count,
-            R.id.ll_video_count, R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data,R.id.tv_go_login})
+            R.id.ll_video_count, R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data,R.id.tv_go_login,R.id.iv_ad_entrance})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_icon_zan:
@@ -331,6 +337,13 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                 }
+
+            case R.id.iv_ad_entrance:
+                //互动广告入口
+//                Uri uri = Uri.parse(adv_web_url);
+                Uri uri = Uri.parse("www.baidu.com");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
                 break;
             default:
                 break;
@@ -583,6 +596,44 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 //            tv_top_name.setVisibility(View.VISIBLE);
 //        }
     }
+
+
+
+    /**
+     * description ：显示广告入口
+     * creation date: 2021/3/12
+     * user : zhangtongju
+     */
+    private  String adv_web_url;
+    private void showAdEntrance(){
+        if(getActivity()!=null){
+            String str=BaseConstans.getHasAdEntrance();
+            LogUtil.d("OOM2","得到的广告浏览器配置为"+str);
+            if(!TextUtils.isEmpty(str)){
+                try {
+                    JSONObject js=new JSONObject(str);
+                    String url=js.getString("adv_icon");
+                    adv_web_url=js.getString("adv_url");
+                    Glide.with(getActivity()).load(url).into(iv_ad_entrance);
+                    iv_ad_entrance.setVisibility(View.VISIBLE);
+
+
+                } catch (JSONException e) {
+                    iv_ad_entrance.setVisibility(View.GONE);
+                    e.printStackTrace();
+                }
+            }else{
+                iv_ad_entrance.setVisibility(View.GONE);
+            }
+
+        }
+
+
+
+    }
+
+
+
 }
 
 

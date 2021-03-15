@@ -612,6 +612,11 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 }
 
                 @Override
+                public void onRewardVerify() {
+
+                }
+
+                @Override
                 public void onVideoAdSkip() {
                     LogUtil.d("OOM", "onVideoAdSkip");
                 }

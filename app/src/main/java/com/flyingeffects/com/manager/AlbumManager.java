@@ -79,7 +79,9 @@ public class AlbumManager {
                 .onReturnView(
                         (result, isFromCamera) -> {
                             if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
-                                requestAlbumAd(context, result);
+                                requestAlbumAd(context, result,false);
+                            }else {
+                                requestAlbumAd(context, result,false);
                             }
 
                         }
@@ -160,7 +162,9 @@ public class AlbumManager {
                 )
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
-                        requestAlbumAd(context, result);
+                        requestAlbumAd(context, result,false);
+                    }else {
+                        requestAlbumAd(context, result,false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -239,7 +243,9 @@ public class AlbumManager {
                 )
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
-                        requestAlbumAd(context, result);
+                        requestAlbumAd(context, result,false);
+                    }else {
+                        requestAlbumAd(context, result,false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -309,7 +315,9 @@ public class AlbumManager {
                                 .build())
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
-                        requestAlbumAd(context, result);
+                        requestAlbumAd(context, result,false);
+                    }else {
+                        requestAlbumAd(context, result,false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -379,7 +387,9 @@ public class AlbumManager {
                                 .build())
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
-                        requestAlbumAd(act, result);
+                        requestAlbumAd(act, result,false);
+                    }else {
+                        requestAlbumAd(act, result,false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -441,10 +451,10 @@ public class AlbumManager {
         return false;
     }
 
-    private static void requestAlbumAd(Context activity, LinearLayout llAdContainer) {
+    private static void requestAlbumAd(Context activity, LinearLayout llAdContainer,boolean isNeedCache) {
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-            Log.d(TAG, "showAd :" + llAdContainer);
-            AdManager.getInstance().showBannerAd((Activity) activity, AdConfigs.AD_ALBUM, llAdContainer);
+            LogUtil.d("OOM2","开始请求相册广告");
+            AdManager.getInstance().showBannerAd((Activity) activity, AdConfigs.AD_ALBUM, llAdContainer,isNeedCache);
         }
     }
 

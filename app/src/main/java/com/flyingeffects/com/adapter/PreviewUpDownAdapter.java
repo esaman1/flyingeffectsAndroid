@@ -348,7 +348,9 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
 
     public void pauseVideo() {
         LogUtil.d("OOM", "pauseVideo");
-        videoPlayer.onVideoPause();
+        if(videoPlayer!=null){
+            videoPlayer.onVideoPause();
+        }
         GSYVideoManager.onPause();
     }
 

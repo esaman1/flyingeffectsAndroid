@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/item_news_sigle_image_ll"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_235"
+        android:background="@drawable/template_item_bj"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <RelativeLayout
+            android:id="@+id/rl_image_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/item_news_hot_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="0dp"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop" />
+
+            <FrameLayout
+                android:id="@+id/fl_ad_feed_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/btnPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/app_name"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingTop="2dp"
+                android:paddingRight="8dp"
+                android:paddingBottom="2dp"
+                android:textSize="10dp"
+                android:visibility="gone"
+                tools:ignore="SpUsage" />
+
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_below="@+id/item_news_sigle_image_ll"
+        android:id="@+id/baidu_ad_bottom_ll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/logo_iv"
+            android:layout_width="15dp"
+            android:layout_height="14dp"
+            android:contentDescription="@string/app_name" />
+
+        <ImageView
+            android:id="@+id/ad_text_iv"
+            android:layout_width="26dp"
+            android:layout_height="14dp"
+            android:contentDescription="@string/app_name" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btnDisLike"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
+        android:layout_gravity="right"
+        android:padding="10dp"
+        android:src="@drawable/nt_ad_fast_close"
+        android:visibility="gone" />
+</RelativeLayout>
