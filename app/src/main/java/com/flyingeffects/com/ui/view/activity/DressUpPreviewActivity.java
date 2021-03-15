@@ -211,6 +211,7 @@ public class DressUpPreviewActivity extends BaseActivity {
     private void showBackDialog() {
         CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_EXIT)
                 .setTitle("确定退出吗？")
                 .setPositiveButton("确定")
                 .setNegativeButton("取消")

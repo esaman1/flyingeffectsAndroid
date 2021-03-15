@@ -33,6 +33,7 @@ import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
@@ -1146,6 +1147,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private void showBackMessage() {
         CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_EXIT)
                 .setTitle("确定退出吗？")
                 .setPositiveButton("确定")
                 .setNegativeButton("取消")

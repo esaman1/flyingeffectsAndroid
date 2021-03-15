@@ -524,6 +524,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         CommonMessageDialog.getBuilder(mContext)
                 .setTitle("确定要退出吗？")
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_EXIT)
                 .setPositiveButton("确定")
                 .setNegativeButton("取消")
                 .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
@@ -640,6 +641,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         CommonMessageDialog.getBuilder(mContext)
                 .setContentView(R.layout.dialog_common_message_ad_under)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_BOTTOM)
+                .setAdId(AdConfigs.AD_IMAGE_DIALOG_OPEN_VIDEO)
                 .setTitle("亲爱的友友")
                 .setMessage("这个模板需要观看几秒广告")
                 .setMessage2("「看完后就能制作飞闪视频」")

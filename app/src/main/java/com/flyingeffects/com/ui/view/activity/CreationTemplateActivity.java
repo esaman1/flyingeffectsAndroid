@@ -29,6 +29,7 @@ import com.flyingeffects.com.enity.ChooseVideoAddSticker;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DataCleanManager;
@@ -1976,6 +1977,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void onBackPressed() {
         CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_EXIT)
                 .setTitle("确定退出吗？")
                 .setPositiveButton("确定")
                 .setNegativeButton("取消")

@@ -154,7 +154,7 @@ public class LoadingDialog extends Dialog {
         }
 
         private void loadAd(LinearLayout llAdContainer) {
-            AdManager.getInstance().showImageAd(mContext, AdConfigs.AD_IMAGE, llAdContainer, new AdManager.Callback() {
+            AdManager.getInstance().showImageAd(mContext, AdConfigs.AD_IMAGE_LOADING_DIALOG, llAdContainer, new AdManager.Callback() {
                 @Override
                 public void adClose() {
 

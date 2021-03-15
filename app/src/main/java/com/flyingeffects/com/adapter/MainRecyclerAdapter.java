@@ -34,6 +34,7 @@ import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.CommonNewsBean;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.GlideRoundTransform;
@@ -473,6 +474,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
         CommonMessageDialog.getBuilder(mContext)
                 .setContentView(R.layout.dialog_common_message)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_WX_DIALOG)
                 .setTitle(BaseConstans.configList.getTitle())
                 .setMessage(BaseConstans.configList.getContent())
                 .setMessage2(BaseConstans.configList.getCopydata())
