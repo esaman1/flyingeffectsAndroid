@@ -57,6 +57,7 @@ import com.yanzhenjie.album.AlbumFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -340,10 +341,9 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
             case R.id.iv_ad_entrance:
                 //互动广告入口
-//                Uri uri = Uri.parse(adv_web_url);
-                Uri uri = Uri.parse("www.baidu.com");
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
+                final Uri uri = Uri.parse(adv_web_url);
+                final Intent it = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(it);
                 break;
             default:
                 break;
