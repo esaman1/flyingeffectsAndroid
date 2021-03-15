@@ -100,7 +100,6 @@ public class LoadingDialog extends Dialog {
             return this;
         }
 
-
         public Builder setDialogDismissListener(DialogDismissListener listener) {
             mDialogDismissListener = listener;
             return this;
@@ -151,6 +150,8 @@ public class LoadingDialog extends Dialog {
                 }
             });
 
+            dialog.setCancelable(false);
+
             return dialog;
         }
 
@@ -173,19 +174,18 @@ public class LoadingDialog extends Dialog {
     }
 
     public void setTitleStr(String title) {
-        AppCompatTextView tvTitle= findViewById(R.id.tv_dialog_title);
+        AppCompatTextView tvTitle = findViewById(R.id.tv_dialog_title);
         if (tvTitle != null) {
             tvTitle.setText(title);
         }
     }
 
     public void setContentStr(String content) {
-        AppCompatTextView tvContent= findViewById(R.id.tv_content_1);
+        AppCompatTextView tvContent = findViewById(R.id.tv_content_1);
         if (tvContent != null) {
             tvContent.setText(content);
         }
     }
-
 
     public interface DialogDismissListener {
         void onDismiss();

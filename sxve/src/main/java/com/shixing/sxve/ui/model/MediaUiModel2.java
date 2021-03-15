@@ -207,7 +207,7 @@ public class MediaUiModel2 extends MediaUiModel {
         float nowTranX = values[2];
         float nowTranY = values[5];
         float nowScale = values[0];
-        float bitmapH = mBitmap.getHeight() * nowScale;
+        //float bitmapH = mBitmap.getHeight() * nowScale;
         float reactLeftX = (0 - nowTranX) + 540f;
         float reactLeftY = 420 - nowTranY + 540f;
         float needX = reactLeftX / 1080f;

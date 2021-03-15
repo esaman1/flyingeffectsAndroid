@@ -63,8 +63,6 @@
         tools:ignore="ProtectedPermissions" />
 
 
-
-
     <application
         android:name="com.flyingeffects.com.base.BaseApplication"
         android:allowBackup="true"
@@ -115,9 +113,6 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity"
             android:screenOrientation="portrait" />
-
-
-
 
 
         <activity
@@ -209,6 +204,7 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.HomeMainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <activity
@@ -230,6 +226,7 @@
             android:name="com.flyingeffects.com.ui.view.activity.TemplateSearchActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
+
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

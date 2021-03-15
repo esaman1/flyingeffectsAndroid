@@ -46,6 +46,7 @@ public class CommonMessageDialog extends Dialog {
         private String mCancelBtnStr;
         private View mView;
         private int mAdStatus;
+        private String mAdId;
         private DialogBtnClickListener mDialogBtnClickListener;
         private DialogDismissListener mDialogDismissListener;
 
@@ -65,6 +66,11 @@ public class CommonMessageDialog extends Dialog {
 
         public Builder setMessage2(String message) {
             mMessage2 = message;
+            return this;
+        }
+
+        public Builder setAdId(String adId) {
+            mAdId = adId;
             return this;
         }
 
@@ -170,7 +176,11 @@ public class CommonMessageDialog extends Dialog {
 
 
             if (mAdStatus != AD_STATUS_NONE) {
-                loadAd(llAdContainer);
+                if (TextUtils.isEmpty(mAdId)) {
+                    loadAd(llAdContainer, AdConfigs.AD_IMAGE);
+                } else {
+                    loadAd(llAdContainer, mAdId);
+                }
             }
 
             if (mAdStatus == AD_STATUS_BOTTOM) {
@@ -192,7 +202,7 @@ public class CommonMessageDialog extends Dialog {
             if (!TextUtils.isEmpty(mTitle)) {
                 ((TextView) mView.findViewById(R.id.tv_dialog_title)).setText(mTitle);
             } else {
-                ((TextView) mView.findViewById(R.id.tv_dialog_title)).setVisibility(View.GONE);
+                mView.findViewById(R.id.tv_dialog_title).setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(mPositiveBtnStr)) {
@@ -205,7 +215,6 @@ public class CommonMessageDialog extends Dialog {
                         .setText(mCancelBtnStr);
             }
 
-
             if (mDialogBtnClickListener != null) {
                 mView.findViewById(R.id.tv_positive_button)
                         .setOnClickListener(v -> mDialogBtnClickListener.onPositiveBtnClick(dialog));
@@ -216,21 +225,21 @@ public class CommonMessageDialog extends Dialog {
             if (!TextUtils.isEmpty(mMessage)) {
                 ((TextView) mView.findViewById(R.id.tv_content_1)).setText(mMessage);
             } else {
-                ((TextView) mView.findViewById(R.id.tv_content_1)).setVisibility(View.GONE);
+                mView.findViewById(R.id.tv_content_1).setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(mMessage2)) {
                 ((TextView) mView.findViewById(R.id.tv_content_2))
                         .setText(mMessage2);
             } else {
-                ((TextView) mView.findViewById(R.id.tv_content_2)).setVisibility(View.GONE);
+                mView.findViewById(R.id.tv_content_2).setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(mMessage3)) {
                 ((TextView) mView.findViewById(R.id.tv_content_3))
                         .setText(mMessage3);
             } else {
-                ((TextView) mView.findViewById(R.id.tv_content_3)).setVisibility(View.GONE);
+                mView.findViewById(R.id.tv_content_3).setVisibility(View.GONE);
             }
 
             dialog.setOnDismissListener(new OnDismissListener() {
@@ -245,16 +254,12 @@ public class CommonMessageDialog extends Dialog {
                 }
             });
 
-
             return dialog;
         }
 
-        private void loadAd(LinearLayout llAdContainer) {
-            AdManager.getInstance().showImageAd(mContext, AdConfigs.AD_IMAGE, llAdContainer, new AdManager.Callback() {
-                @Override
-                public void adClose() {
+        private void loadAd(LinearLayout llAdContainer, String id) {
+            AdManager.getInstance().showImageAd(mContext, id, llAdContainer, () -> {
 
-                }
             });
         }
 

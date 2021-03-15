@@ -71,8 +71,6 @@ public class WaitingDialog_progress {
         return loadingDialog;
     }
 
-
-
     private Dialog createLoadingDialog(Context context,String title) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View v = inflater.inflate(R.layout.waitdialog, null, false);// 得到加载view
