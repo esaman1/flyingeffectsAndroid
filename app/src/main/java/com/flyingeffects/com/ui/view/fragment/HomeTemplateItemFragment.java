@@ -178,6 +178,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
+            mAdManager.adResume();
             if (allData == null || allData.size() == 0 || "11".equals(category_id) || "12".equals(category_id)) {
                 LogUtil.d("OOM", "allData==null");
                 Presenter.requestData(category_id, tc_id, actTag);
@@ -207,6 +208,15 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     @Override
     public void isOnLoadMore() {
 
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(getActivity()!=null){
+            mAdManager.adDestroy();
+        }
     }
 
     private boolean isFirstData = true;

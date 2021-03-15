@@ -91,8 +91,11 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
         this.isFromSearch = isFromSearch;
         this.mAdManager = mAdManager;
         addItemType(0, R.layout.item_home_normal);
+        //      case BAIDU_FEED_AD_EVENT  case TT_FEED_AD_EVENT:
         addItemType(11, R.layout.item_news_right_image);
+        //广点通
         addItemType(12, R.layout.item_gdt_news_right_image);
+        //自渲染 TYPE_TT_FEED_EXPRESS_AD TYPE_GDT_FEED_EXPRESS_AD
         addItemType(13, R.layout.item_view_feed_express);
     }
 
@@ -101,6 +104,7 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         int offset = helper.getLayoutPosition();
         LinearLayout ll_content_patents = helper.getView(R.id.ll_content_patents);
+        LogUtil.d("OOM3","getItemViewType="+helper.getItemViewType());
         switch (helper.getItemViewType()) {
             case 0: {
                 //默认样式，正常的模板
@@ -286,29 +290,12 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                 break;
             }
             case 11: {
-                LinearLayout.LayoutParams rightLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                rightLp.width = (DeviceUtil.getScreenWidthInPX(mContext) - DeviceUtil.convertDpToPixel(mContext, 36)) / 3;
-                rightLp.height = (int) (rightLp.width * 9f / 16f);
-                helper.getView(R.id.rl_image_container).setLayoutParams(rightLp);
                 // 设置图片
                 String imageUrl = item.getFeedAdResultBean().getImageUrl();
                 if (!TextUtils.isEmpty(imageUrl)) {
                     // 视频
-//                    GlideUtil.loadImg(mContext, imageUrl, (ImageView) helper.getView(R.id.item_news_hot_image));
                     Glide.with(mContext).load(imageUrl).into((ImageView) helper.getView(R.id.item_news_hot_image));
-
                 }
-//                if (item.isVideo()) {
-//                    // 是否展示播放按钮
-//                    helper.setVisible(R.id.btnPlay, !TextUtils.isEmpty(imageUrl));
-//                    // 设置时间是否显示
-//                    helper.setVisible(R.id.tvTime, !TextUtils.isEmpty(item.getDuration()));
-//                } else {
-//                    // 是否展示播放按钮
-//                    helper.setVisible(R.id.btnPlay, false);
-//                    // 设置时间是否显示
-//                    helper.setVisible(R.id.tvTime, false);
-//                }
                 if (item.getFeedAdResultBean().isShowCloseButton()) {
                     helper.getView(R.id.btnDisLike).setVisibility(View.VISIBLE);
                     helper.getView(R.id.btnDisLike).setOnClickListener(new View.OnClickListener() {
@@ -333,8 +320,6 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                 } else if (item.getFeedAdResultBean().getEventType() == BAIDU_FEED_AD_EVENT) {
                     //设置百度logo文字和图标
                     if (!TextUtils.isEmpty(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getAdLogoUrl()) && !TextUtils.isEmpty(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getBaiduLogoUrl())) {
-//                        GlideUtil.loadImg(mContext, item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getAdLogoUrl(), (ImageView) helper.getView(R.id.ad_text_iv));
-//                        GlideUtil.loadImg(mContext, item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getBaiduLogoUrl(), (ImageView) helper.getView(R.id.logo_iv));
                         Glide.with(mContext).load(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getAdLogoUrl()).into((ImageView) helper.getView(R.id.ad_text_iv));
                         Glide.with(mContext).load(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getBaiduLogoUrl()).into((ImageView) helper.getView(R.id.logo_iv));
                         helper.getView(R.id.baidu_ad_bottom_ll).setVisibility(View.VISIBLE);
@@ -347,16 +332,14 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                 break;
             }
             case 12: {
-                LinearLayout.LayoutParams gdtRightLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                gdtRightLp.width = (DeviceUtil.getScreenWidthInPX(mContext) - DeviceUtil.convertDpToPixel(mContext, 36)) / 3;
-                gdtRightLp.height = (int) (gdtRightLp.width * 9f / 16f);
-                helper.getView(R.id.rl_image_container).setLayoutParams(gdtRightLp);
                 // 设置图片
                 String gdtImageUrl = item.getFeedAdResultBean().getImageUrl();
                 if (!TextUtils.isEmpty(gdtImageUrl)) {
                     try {
+                        helper.getView(R.id.item_news_hot_image).setVisibility(View.VISIBLE);
                         Glide.with(mContext).load(gdtImageUrl).into((ImageView) helper.getView(R.id.item_news_hot_image));
                     } catch (Exception e) {
+                        LogUtil.e(e.getMessage());
                     }
                 }
                 if (item.getFeedAdResultBean().isShowCloseButton()) {
@@ -374,10 +357,10 @@ public class main_recycler_adapter extends BaseMultiItemQuickAdapter<new_fag_tem
                 mAdBean = item.getFeedAdResultBean().getFeedResultBean().getGdtNativeUnifiedADData();
                 mAdBean.bindAdToView(mContext, rightImageContainer, null, rightImageViews);
                 if (mAdBean.getAdPatternType() == AdPatternType.NATIVE_VIDEO) {
+
+                    helper.getView(R.id.item_news_hot_image).setVisibility(View.GONE);
                     helper.getView(R.id.fl_ad_feed_video).setVisibility(View.VISIBLE);
                     MediaView mediaView = helper.getView(R.id.mv_ad_gdt);
-                    FrameLayout.LayoutParams mediaViewLayoutParams = new FrameLayout.LayoutParams(ScreenUtils.dp2px(mContext, 100), ViewGroup.LayoutParams.MATCH_PARENT);
-                    mediaView.setLayoutParams(mediaViewLayoutParams);
                     // 视频广告需对MediaView进行绑定，MediaView必须为容器mContainer的子View
                     // 视频素材加载完成，此时展示广告不会有进度条。
                     mAdBean.bindMediaView(mediaView, new VideoOption.Builder()

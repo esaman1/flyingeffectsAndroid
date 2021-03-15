@@ -191,11 +191,20 @@ public class fragBjItem extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+
+
+
         if(getActivity()!=null&& "12".equals(templateId)) {
             isRefresh = true;
             selectPage = 1;
             requestFagData(false, false);
         }
+
+
+        if(getActivity()!=null){
+            mAdManager.adResume();
+        }
+
     }
 
     public void initSmartRefreshLayout() {
@@ -423,6 +432,9 @@ public class fragBjItem extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(getActivity()!=null){
+            mAdManager.adDestroy();
+        }
         EventBus.getDefault().unregister(this);
     }
 

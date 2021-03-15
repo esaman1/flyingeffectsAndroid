@@ -340,7 +340,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
             case R.id.iv_ad_entrance:
                 //互动广告入口
-                Uri uri = Uri.parse(adv_web_url);
+//                Uri uri = Uri.parse(adv_web_url);
+                Uri uri = Uri.parse("www.baidu.com");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 break;
