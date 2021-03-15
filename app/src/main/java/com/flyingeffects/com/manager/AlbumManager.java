@@ -81,7 +81,7 @@ public class AlbumManager {
                             if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                                 requestAlbumAd(context, result,false);
                             }else {
-                                requestAlbumAd(context, result,true);
+                                requestAlbumAd(context, result,false);
                             }
 
                         }
@@ -164,7 +164,7 @@ public class AlbumManager {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(context, result,false);
                     }else {
-                        requestAlbumAd(context, result,true);
+                        requestAlbumAd(context, result,false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -245,7 +245,7 @@ public class AlbumManager {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(context, result,false);
                     }else {
-                        requestAlbumAd(context, result,true);
+                        requestAlbumAd(context, result,false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -317,7 +317,7 @@ public class AlbumManager {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(context, result,false);
                     }else {
-                        requestAlbumAd(context, result,true);
+                        requestAlbumAd(context, result,false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -389,7 +389,7 @@ public class AlbumManager {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(act, result,false);
                     }else {
-                        requestAlbumAd(act, result,true);
+                        requestAlbumAd(act, result,false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
