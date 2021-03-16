@@ -26,6 +26,7 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -206,15 +207,8 @@ public class frag_user_upload_bj extends BaseFragment {
     private void initRecycler() {
         adapter = new Upload_bj_list_adapter(R.layout.list_upload_bj_item, allData, getActivity(), (id) -> {
             StatisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj");
-            new AlertDialog.Builder(mContext)
-                    .setMessage("确定要删除这个背景吗？")
-                    .setNegativeButton("取消", (dialog, which) -> {
-                        dialog.dismiss();
-                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj3");
-                    })
-                    .setPositiveButton("确定", (dialog, which) -> {
-                        requestDelete(id);
-                    }).create().show();
+            showDeleteDialog(id);
+
         });
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -243,6 +237,26 @@ public class frag_user_upload_bj extends BaseFragment {
 
             }
         });
+    }
+
+    private void showDeleteDialog(String id) {
+        CommonMessageDialog.getBuilder(mContext)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_NONE)
+                .setPositiveButton("确定")
+                .setNegativeButton("取消")
+                .setTitle("确定要删除这个背景吗？")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        requestDelete(id);
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj3");
+                    }
+                }).build().show();
     }
 
     private void requestDelete(String id) {

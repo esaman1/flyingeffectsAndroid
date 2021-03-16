@@ -866,7 +866,7 @@ public class PreviewUpAndDownMvpModel {
                                 if (isFromAgainChooseBj) {
                                     mLoadingDialog.setTitleStr("正在生成中");
                                 } else {
-                                    mLoadingDialog.setTitleStr("下载进度为");
+                                    mLoadingDialog.setTitleStr("下载中");
                                 }
                                 mLoadingDialog.setProgress(progress);
                             }

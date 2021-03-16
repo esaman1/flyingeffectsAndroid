@@ -516,7 +516,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (view == mBinding.relaParentShowAlert) {
             mBinding.relaParentShowAlert.setVisibility(View.GONE);
         } else if (view == mBinding.ibBack) {
-            showBackDialog();
+            //showBackDialog();
+            finish();
         }
     }
 
@@ -544,7 +545,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void onBackPressed() {
-        showBackDialog();
+        super.onBackPressed();
+        //showBackDialog();
     }
 
     /**

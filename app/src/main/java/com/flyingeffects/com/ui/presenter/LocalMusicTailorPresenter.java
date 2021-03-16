@@ -153,7 +153,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             }
             if (downProgressDialog == null) {
                 downProgressDialog = new WaitingDialog_progress(context);
-                downProgressDialog.openProgressDialog();
+                //downProgressDialog.openProgressDialog();
             }
             Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
                 DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s1 -> {
@@ -165,7 +165,6 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                     } else {
                         requestSoundData(s1);
                         localMusicTailorMvpModel.setSoundPath(s1);
-
                     }
                 }));
                 LogUtil.d("OOM2", "path=" + path);
@@ -227,6 +226,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                     long now = getCurrentTime();
                     if (now - mLoadingLastUpdateTime > 100) {
                         mLoadingLastUpdateTime = now;
+                        localMusicTailorMvpView.setLoadProgress((int) (100 * fractionComplete));
                         LogUtil.d("OOM2", "导入进度为" + (int) (100 * fractionComplete));
                     }
                     return mLoadingKeepGoing;

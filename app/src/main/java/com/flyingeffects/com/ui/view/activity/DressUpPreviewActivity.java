@@ -78,7 +78,9 @@ public class DressUpPreviewActivity extends BaseActivity {
     private List<String> TemplateIdList = new ArrayList<>();
     private String localImage;
     private String templateTitle;
-    /**换装切换次数*/
+    /**
+     * 换装切换次数
+     */
     int dressupSwitchNumber = 0;
     private Context mContext;
 
@@ -108,7 +110,7 @@ public class DressUpPreviewActivity extends BaseActivity {
 
 
     @Override
-    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album, R.id.share,R.id.iv_top_back})
+    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album, R.id.share, R.id.iv_top_back})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.dress_up_next:
@@ -205,7 +207,8 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        showBackDialog();
+        super.onBackPressed();
+        //showBackDialog();
     }
 
     private void showBackDialog() {
@@ -341,9 +344,9 @@ public class DressUpPreviewActivity extends BaseActivity {
                 }
             }
         }, false);
-        if(!TextUtils.isEmpty(keepUploadPath)){
-            dressUpModel.RequestDressUp(keepUploadPath,templateId);
-        }else{
+        if (!TextUtils.isEmpty(keepUploadPath)) {
+            dressUpModel.RequestDressUp(keepUploadPath, templateId);
+        } else {
             dressUpModel.toDressUp(localImage, templateId, new DressUpModel.DressUpCatchCallback() {
                 @Override
                 public void isSuccess(String uploadPath) {
@@ -362,7 +365,7 @@ public class DressUpPreviewActivity extends BaseActivity {
     private void showAndSaveImage(String url) {
         Glide.with(this).load(url).into(iv_show_content);
         listForKeep.add(url);
-        LogUtil.d("OOM3","showAndSaveImage");
+        LogUtil.d("OOM3", "showAndSaveImage");
     }
 
 
