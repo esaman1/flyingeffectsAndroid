@@ -117,6 +117,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
         int offset = helper.getLayoutPosition();
         LinearLayout ll_content_patents = helper.getView(R.id.ll_content_patents);
         LogUtil.d("OOM3", "getItemViewType=" + helper.getItemViewType());
+
         switch (helper.getItemViewType()) {
             case 0: {
                 //默认样式，正常的模板
@@ -294,6 +295,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                 break;
             }
             case 11: {
+
                 // 设置图片
                 String imageUrl = item.getFeedAdResultBean().getImageUrl();
                 if (!TextUtils.isEmpty(imageUrl)) {
@@ -334,9 +336,11 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                     helper.getView(R.id.baidu_ad_bottom_ll).setVisibility(View.GONE);
                 }
                 break;
+
+
             }
             case 12: {
-                // 设置图片
+
                 String gdtImageUrl = item.getFeedAdResultBean().getImageUrl();
                 if (!TextUtils.isEmpty(gdtImageUrl)) {
                     try {
@@ -418,15 +422,16 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                             });
                 }
                 break;
+
+
             }
             case 13: {
-                LinearLayout.LayoutParams ttExpressLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                helper.getView(R.id.item_news_sigle_image_fl).setLayoutParams(ttExpressLp);
                 ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).removeAllViews();
                 if (null != item.getFeedAdResultBean().getAdView() && null != item.getFeedAdResultBean().getAdView().getParent()) {
                     ((ViewGroup) item.getFeedAdResultBean().getAdView().getParent()).removeAllViews();
+                    ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).addView(item.getFeedAdResultBean().getAdView());
                 }
-                ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).addView(item.getFeedAdResultBean().getAdView());
+
                 break;
             }
             default:

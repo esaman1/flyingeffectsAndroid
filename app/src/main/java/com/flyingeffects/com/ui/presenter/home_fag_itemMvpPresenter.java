@@ -38,9 +38,9 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
     }
 
 
-    public void requestAd() {
-        homeItemModel.requestAd();
-    }
+//    public void requestAd() {
+//        homeItemModel.requestAd();
+//    }
 
 
     @Override
@@ -63,9 +63,14 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
         mvp_view.showNoData(isShowData);
     }
 
+//    @Override
+//    public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
+//        mvp_view.GetAdCallback(feedAdResultBean);
+//    }
+
     @Override
-    public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
-        mvp_view.GetAdCallback(feedAdResultBean);
+    public void needRequestFeedAd() {
+        mvp_view.needRequestFeedAd();
     }
 
 }

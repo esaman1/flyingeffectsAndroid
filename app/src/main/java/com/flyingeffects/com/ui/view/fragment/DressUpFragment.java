@@ -122,11 +122,11 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                             fragment.setArguments(bundle);
                             list.add(fragment);
                         }
-
                     }
                 }
                 home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
                 viewpager.setAdapter(adapter);
+                viewpager.setOffscreenPageLimit(1);
                 viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int i, float v, int i1) {

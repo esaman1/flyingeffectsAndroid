@@ -1,26 +1,19 @@
 package com.flyingeffects.com.ui.model;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.CommonNewsBean;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.ui.interfaces.model.homeItemMvpCallback;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.screenUtil;
-import com.nineton.ntadsdk.bean.FeedAdConfigBean;
-import com.nineton.ntadsdk.itr.FeedAdCallBack;
 import com.nineton.ntadsdk.manager.FeedAdManager;
-import com.nineton.ntadsdk.utils.DeviceUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -29,12 +22,6 @@ import java.util.List;
 
 import rx.Observable;
 import rx.subjects.PublishSubject;
-
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.BAIDU_FEED_AD_EVENT;
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.GDT_FEED_AD_EVENT;
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED_AD_EVENT;
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_GDT_FEED_EXPRESS_AD;
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_TT_FEED_EXPRESS_AD;
 
 
 public class home_fag_itemMvpModel {
@@ -58,7 +45,6 @@ public class home_fag_itemMvpModel {
         this.callback = callback;
         this.fromType = fromType;
         template_type = template_type == 0 ? 1 : 2;
-        this.mAdManager=mAdManager;
 
     }
 
@@ -164,86 +150,11 @@ public class home_fag_itemMvpModel {
                 callback.showData(listData);
 
                 if(BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
-                    requestAd();
+                    callback.needRequestFeedAd();
                 }
             }
         }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, false);
     }
-
-
-
-
-    /**
-     * description ：请求信息流广告
-     * creation date: 2021/3/10
-     * user : zhangtongju
-     */
-
-    private FeedAdManager mAdManager;
-    public void requestAd(){
-        LogUtil.d("OOM2","requestAd");
-        float needScreenWidth=DeviceUtil.getScreenWidthInPX(context)/(float)2- screenUtil.dip2px(context,10);
-        mAdManager.setViewWidth((int) needScreenWidth);
-        mAdManager.getFeedAd((Activity) context, AdConfigs.AD_FEED, new FeedAdCallBack() {
-            @Override
-            public void onFeedAdShow(int typeId, FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
-                LogUtil.d("OOM2","onFeedAdShow");
-                CommonNewsBean bean =new CommonNewsBean();
-                bean.setTitle(feedAdResultBean.getTitle());
-                bean.setHide(false);
-                bean.setImageUrl(feedAdResultBean.getImageUrl());
-                bean.setEventType(feedAdResultBean.getEventType());
-                bean.setChannel(feedAdResultBean.getChannel());
-                bean.setReadCounts(feedAdResultBean.getAdReadCount());
-                bean.setShowCloseButton(feedAdResultBean.isShowCloseButton());
-                //根据类型设置对应的属性
-                switch (typeId) {
-                    case BAIDU_FEED_AD_EVENT:
-                    case GDT_FEED_AD_EVENT:
-                    case TT_FEED_AD_EVENT:
-                    case TYPE_TT_FEED_EXPRESS_AD:
-                        bean.setFeedResultBean(feedAdResultBean.getFeedResultBean());
-                        break;
-                    case TYPE_GDT_FEED_EXPRESS_AD:
-                        bean.setAdView(feedAdResultBean.getAdView());
-                        break;
-                }
-                callback.GetAdCallback(feedAdResultBean);
-            }
-
-            @Override
-            public void onFeedAdError(String error) {
-                LogUtil.d("OOM2","onFeedAdError="+error);
-            }
-
-            @Override
-            public void onFeedAdClose(int type, int adIndex) {
-//                com.nineton.ntadsdk.utils.LogUtil.e("close == " + adIndex);
-//                if (type != TYPE_GDT_FEED_EXPRESS_AD) {
-//                    mAdAdapter.remove(adIndex);
-//                }
-            }
-
-            @Override
-            public void onFeedAdExposed() {
-                LogUtil.e("onFeedAdExposed");
-            }
-
-            @Override
-            public boolean onFeedAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser, int adapterPosition) {
-                LogUtil.e("onFeedAdClicked" + adapterPosition);
-                return false;
-            }
-        });
-
-    }
-
-
-
-
-
-
-
 
 
 

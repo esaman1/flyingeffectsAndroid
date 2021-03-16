@@ -41,6 +41,7 @@ import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
@@ -83,7 +84,7 @@ public class fragBjItem extends BaseFragment {
     private FeedAdManager mAdManager;
 
     private int intoTiktokClickPosition;
-    String tc_id ="";
+    String tc_id = "";
 
 
     @Override
@@ -120,7 +121,7 @@ public class fragBjItem extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new MainRecyclerAdapter(allData, fromType,false,mAdManager);
+        adapter = new MainRecyclerAdapter(allData, fromType, false, mAdManager);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.
                         VERTICAL);
@@ -185,15 +186,14 @@ public class fragBjItem extends BaseFragment {
         super.onResume();
 
 
-
-        if(getActivity()!=null&& "12".equals(templateId)) {
+        if (getActivity() != null && "12".equals(templateId)) {
             isRefresh = true;
             selectPage = 1;
             requestFagData(false, false);
         }
 
 
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             mAdManager.adResume();
         }
 
@@ -248,7 +248,7 @@ public class fragBjItem extends BaseFragment {
 
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
 
-        LogUtil.d("OOM2","requestFagData背景模板请求的数据为"+StringUtil.beanToJSONString(params));
+        LogUtil.d("OOM2", "requestFagData背景模板请求的数据为" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
             @Override
             protected void onSubError(String message) {
@@ -264,7 +264,7 @@ public class fragBjItem extends BaseFragment {
                 if (isRefresh) {
                     listData.clear();
                     if (!TextUtils.isEmpty(cover)) {
-                        if(!("11".equals(templateId)|| "12".equals(templateId))){
+                        if (!("11".equals(templateId) || "12".equals(templateId))) {
                             //关注和收藏
                             new_fag_template_item item = new new_fag_template_item();
                             item.setImage(cover);
@@ -278,14 +278,13 @@ public class fragBjItem extends BaseFragment {
                 } else {
                     showNoData(false);
                 }
-                if(BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()&&data.size()>BaseConstans.NOWADSHOWPOSITION){
-                    new_fag_template_item item=new new_fag_template_item();
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && data.size() > BaseConstans.NOWADSHOWPOSITION) {
+                    new_fag_template_item item = new new_fag_template_item();
                     item.setHasShowAd(true);
                     //设置当前是导流，进入抖音列表页就会自动过滤
                     item.setIs_ad_recommend(1);
-                    data.add(BaseConstans.NOWADSHOWPOSITION,item);
+                    data.add(BaseConstans.NOWADSHOWPOSITION, item);
                 }
-
 
 
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
@@ -299,21 +298,25 @@ public class fragBjItem extends BaseFragment {
                 listData.addAll(data);
                 isShowData(listData);
 
-                if(BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
-                    requestFeedAd(mAdManager,new RequestFeedBack() {
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                    requestFeedAd(mAdManager, new RequestFeedBack() {
                         @Override
                         public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
                             getAdCallback(bean);
                         }
-                    });;
+
+                        @Override
+                        public void ChoseAdBack(int type, int adIndex) {
+                            adapter.remove(adIndex);
+                        }
+                    });
                 }
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, isCanRefresh);
     }
 
 
-
-    private void getAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean){
+    private void getAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
         LogUtil.d("OOM2", "GetAdCallback");
         if (allData != null && allData.size() > 0) {
             int allSize = allData.size() - 1;
@@ -424,7 +427,7 @@ public class fragBjItem extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(getActivity()!=null){
+        if (getActivity() != null) {
             mAdManager.adDestroy();
         }
         EventBus.getDefault().unregister(this);

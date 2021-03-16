@@ -299,8 +299,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
      * creation date: 2021/3/11
      * user : zhangtongju
      */
-    @Override
-    public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
+    public void FeedAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
         LogUtil.d("OOM2", "GetAdCallback");
         if (allData != null && allData.size() > 0) {
             int allSize = allData.size() - 1;
@@ -319,6 +318,21 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                 LogUtil.d("OOM2", "还在循环" + i);
             }
         }
+    }
+
+    @Override
+    public void needRequestFeedAd() {
+        requestFeedAd(mAdManager, new RequestFeedBack() {
+            @Override
+            public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
+                FeedAdCallback(bean);
+            }
+
+            @Override
+            public void ChoseAdBack(int type, int adIndex) {
+                adapter.remove(adIndex);
+            }
+        });
     }
 
 

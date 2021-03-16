@@ -616,8 +616,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     adv_web_url=js.getString("adv_url");
                     Glide.with(getActivity()).load(url).into(iv_ad_entrance);
                     iv_ad_entrance.setVisibility(View.VISIBLE);
-
-
                 } catch (JSONException e) {
                     iv_ad_entrance.setVisibility(View.GONE);
                     e.printStackTrace();
@@ -625,11 +623,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
             }else{
                 iv_ad_entrance.setVisibility(View.GONE);
             }
-
         }
-
-
-
     }
 
 

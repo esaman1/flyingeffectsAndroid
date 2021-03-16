@@ -399,7 +399,7 @@ public class HomeMainActivity extends FragmentActivity {
         fragments.add(menu3F);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(), fragments);
         viewpager_home.setAdapter(adapter);
-//        viewpager_home.setOffscreenPageLimit(3);
+        viewpager_home.setOffscreenPageLimit(1);
         whichMenuSelect(1);
         findViewById(R.id.iv_main_add).setOnClickListener(new View.OnClickListener() {
             @Override

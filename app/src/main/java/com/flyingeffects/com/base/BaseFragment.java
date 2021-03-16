@@ -293,6 +293,7 @@ public abstract class BaseFragment extends Fragment implements IActivity {
                 @Override
                 public void onFeedAdClose(int type, int adIndex) {
                     LogUtil.d("OOM2","onFeedAdClose=");
+                    callback.ChoseAdBack(type,adIndex);
                 }
 
                 @Override
@@ -315,7 +316,7 @@ public abstract class BaseFragment extends Fragment implements IActivity {
 
     public interface RequestFeedBack{
         void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean);
-
+        void ChoseAdBack(int type, int adIndex);
     }
 
 

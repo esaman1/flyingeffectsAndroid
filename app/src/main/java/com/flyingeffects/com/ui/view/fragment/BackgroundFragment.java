@@ -189,6 +189,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                 }
                 home_vp_frg_adapter2 adapter = new home_vp_frg_adapter2(getFragmentManager(), list);
                 viewPager.setAdapter(adapter);
+                viewPager.setOffscreenPageLimit(1);
                 viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int i, float v, int i1) {

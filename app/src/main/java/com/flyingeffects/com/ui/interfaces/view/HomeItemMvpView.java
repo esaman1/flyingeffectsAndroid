@@ -15,5 +15,7 @@ public interface HomeItemMvpView {
 
     void showNoData(boolean isShowData);
 
-     void GetAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) ;
+//     void GetAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) ;
+
+     void needRequestFeedAd();
 }

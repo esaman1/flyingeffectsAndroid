@@ -13,5 +13,6 @@ public interface homeItemMvpCallback {
     void isOnLoadMore();
     void showData(  ArrayList<new_fag_template_item>list);
     void showNoData(boolean isShowData);
-    void GetAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean);
+//    void GetAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean);
+    void needRequestFeedAd();
 }
