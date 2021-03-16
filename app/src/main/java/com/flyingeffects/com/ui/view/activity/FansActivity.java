@@ -199,11 +199,6 @@ public class FansActivity extends BaseActivity {
 
     @Subscribe
     public void onEventMainThread(AttentionChange event) {
-//        if (from == 1) {
-//            isRefresh = true;
-//            selectPage = 1;
-//            requestMessageCount();
-//        }
 
     }
 
