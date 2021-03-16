@@ -20,6 +20,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.SystemUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -145,23 +146,27 @@ public class AboutActivity extends BaseActivity {
 
 
     private void showDialog() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
-                //去除黑边
-                new ContextThemeWrapper(AboutActivity.this,R.style.Theme_Transparent));
-        builder.setTitle(getString(R.string.notification));
-        builder.setMessage(
-                 "确定退出账号登录吗？");
-        builder.setNegativeButton("取消", (dialog, which) -> {
-            dialog.dismiss();
-        });
-        builder.setPositiveButton("确定", (dialog, which) -> {
-            BaseConstans.SetUserToken("");
-            findViewById(R.id.tv_top_submit).setVisibility(View.GONE);
-        });
-        builder.setCancelable(true);
-        Dialog mDialog = builder.show();
-        mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();
+        CommonMessageDialog.getBuilder(mContext)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_NONE)
+                .setPositiveButton("确定")
+                .setNegativeButton("取消")
+                .setTitle("确定退出账号登录吗？")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        BaseConstans.SetUserToken("");
+                        findViewById(R.id.tv_top_submit).setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).build().show();
+    }
+
+    private void showDeleteDialog(String id) {
+
     }
 
 
