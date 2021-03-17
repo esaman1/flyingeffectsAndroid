@@ -156,6 +156,7 @@ public class AboutActivity extends BaseActivity {
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         BaseConstans.SetUserToken("");
                         findViewById(R.id.tv_top_submit).setVisibility(View.GONE);
+                        dialog.dismiss();
                     }
 
                     @Override

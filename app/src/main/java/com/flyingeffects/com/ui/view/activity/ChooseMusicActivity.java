@@ -85,31 +85,31 @@ public class ChooseMusicActivity extends BaseActivity {
         fragment.setArguments(bundle);
         list.add(fragment);
 
-        RecentUpdateMusicFragment fragment_1 = new RecentUpdateMusicFragment();
-        Bundle bundle_1 = new Bundle();
-        bundle_1.putSerializable("id", 1);
+        RecentUpdateMusicFragment fragment1 = new RecentUpdateMusicFragment();
+        Bundle bundle1 = new Bundle();
+        bundle1.putSerializable("id", 1);
         bundle.putBoolean("isFromShoot", isFromShoot);
         bundle.putInt(ChooseMusicActivity.IS_FROM, isFrom);
-        bundle_1.putSerializable("needDuration", needDuration);
-        fragment_1.setArguments(bundle_1);
-        list.add(fragment_1);
+        bundle1.putSerializable("needDuration", needDuration);
+        fragment1.setArguments(bundle1);
+        list.add(fragment1);
 
-        ExtractAudioChooseMusicFragment fragment_local_music = new ExtractAudioChooseMusicFragment();
-        Bundle bundle_local_music = new Bundle();
-        bundle_local_music.putSerializable("needDuration", needDuration);
-        fragment_local_music.setArguments(bundle_local_music);
+        ExtractAudioChooseMusicFragment fragmentLocalMusic = new ExtractAudioChooseMusicFragment();
+        Bundle bundleLocalMusic = new Bundle();
+        bundleLocalMusic.putSerializable("needDuration", needDuration);
+        fragmentLocalMusic.setArguments(bundleLocalMusic);
         bundle.putInt(ChooseMusicActivity.IS_FROM, isFrom);
         bundle.putBoolean("isFromShoot", isFromShoot);
-        list.add(fragment_local_music);
+        list.add(fragmentLocalMusic);
 
-        RecentUpdateMusicFragment fragment_2 = new RecentUpdateMusicFragment();
-        Bundle bundle_2 = new Bundle();
-        bundle_2.putSerializable("id", 2);
-        bundle_2.putSerializable("needDuration", needDuration);
+        RecentUpdateMusicFragment fragment2 = new RecentUpdateMusicFragment();
+        Bundle bundle2 = new Bundle();
+        bundle2.putSerializable("id", 2);
+        bundle2.putSerializable("needDuration", needDuration);
         bundle.putInt(ChooseMusicActivity.IS_FROM, isFrom);
         bundle.putBoolean("isFromShoot", isFromShoot);
-        fragment_2.setArguments(bundle_2);
-        list.add(fragment_2);
+        fragment2.setArguments(bundle2);
+        list.add(fragment2);
 
         relative_top.setOnClickListener(view -> {
             Intent intent = new Intent(ChooseMusicActivity.this, searchMusicActivity.class);
