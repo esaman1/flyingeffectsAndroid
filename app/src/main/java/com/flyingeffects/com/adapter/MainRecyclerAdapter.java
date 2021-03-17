@@ -47,6 +47,7 @@ import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.ui.view.activity.intoOtherAppActivity;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.LogUtil;
+import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.nineton.ntadsdk.utils.DeviceUtil;
 import com.nineton.ntadsdk.utils.ScreenUtils;
@@ -116,7 +117,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
     protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
         int offset = helper.getLayoutPosition();
         LinearLayout ll_content_patents = helper.getView(R.id.ll_content_patents);
-        LogUtil.d("OOM3", "getItemViewType=" + helper.getItemViewType());
+        LogUtil.d("OOM2", "getItemViewType=" + helper.getItemViewType());
 
         switch (helper.getItemViewType()) {
             case 0: {
@@ -342,6 +343,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
             case 12: {
 
                 String gdtImageUrl = item.getFeedAdResultBean().getImageUrl();
+                helper.setText(R.id.tv_name,item.getFeedAdResultBean().getTitle());
                 if (!TextUtils.isEmpty(gdtImageUrl)) {
                     try {
                         helper.getView(R.id.item_news_hot_image).setVisibility(View.VISIBLE);
@@ -359,11 +361,18 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                         }
                     });
                 }
+
+
+
+                //logo 位置
+                FrameLayout.LayoutParams lp01 = new FrameLayout.LayoutParams(ScreenUtils.dp2px(mContext, 28), ScreenUtils.dp2px(mContext, 10));
+                lp01.setMargins(0, ScreenUtils.dp2px(NTAdSDK.getAppContext(), 271), 0, 0);
+
                 NativeAdContainer rightImageContainer = helper.getView(R.id.item_news_sigle_image_ad);
                 List<View> rightImageViews = new ArrayList<>();
                 rightImageViews.add(helper.getView(R.id.item_news_sigle_image_ll));
                 mAdBean = item.getFeedAdResultBean().getFeedResultBean().getGdtNativeUnifiedADData();
-                mAdBean.bindAdToView(mContext, rightImageContainer, null, rightImageViews);
+                mAdBean.bindAdToView(mContext, rightImageContainer, lp01, rightImageViews);
                 if (mAdBean.getAdPatternType() == AdPatternType.NATIVE_VIDEO) {
 
                     helper.getView(R.id.item_news_hot_image).setVisibility(View.GONE);
@@ -429,9 +438,8 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                 ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).removeAllViews();
                 if (null != item.getFeedAdResultBean().getAdView() && null != item.getFeedAdResultBean().getAdView().getParent()) {
                     ((ViewGroup) item.getFeedAdResultBean().getAdView().getParent()).removeAllViews();
-                    ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).addView(item.getFeedAdResultBean().getAdView());
                 }
-
+                ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).addView(item.getFeedAdResultBean().getAdView());
                 break;
             }
             default:

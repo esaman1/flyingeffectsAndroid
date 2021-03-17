@@ -38,6 +38,8 @@ import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_GDT_FEED_EXPRESS_AD;
+
 
 /**
  * description ：模板列表页，广告逻辑（先放置null 的广告占位符，一页请求一次广告，更新广告占位符）
@@ -330,7 +332,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
             @Override
             public void ChoseAdBack(int type, int adIndex) {
-                adapter.remove(adIndex);
+                if (type != TYPE_GDT_FEED_EXPRESS_AD) {
+                    adapter.remove(adIndex);
+                }
             }
         });
     }

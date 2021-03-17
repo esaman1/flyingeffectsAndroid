@@ -80,8 +80,6 @@ public class AlbumManager {
                         (result, isFromCamera) -> {
                             if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                                 requestAlbumAd(context, result,false);
-                            }else {
-                                requestAlbumAd(context, result,false);
                             }
 
                         }
@@ -163,8 +161,6 @@ public class AlbumManager {
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(context, result,false);
-                    }else {
-                        requestAlbumAd(context, result,false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -244,8 +240,6 @@ public class AlbumManager {
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(context, result,false);
-                    }else {
-                        requestAlbumAd(context, result,false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -316,8 +310,6 @@ public class AlbumManager {
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         requestAlbumAd(context, result,false);
-                    }else {
-                        requestAlbumAd(context, result,false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -387,8 +379,6 @@ public class AlbumManager {
                                 .build())
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
-                        requestAlbumAd(act, result,false);
-                    }else {
                         requestAlbumAd(act, result,false);
                     }
                 })

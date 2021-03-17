@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.model;
 import android.content.Context;
 
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.utils.EquipmentUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.RomUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
@@ -31,7 +32,7 @@ public class initFaceSdkModel {
 //            long str = System.currentTimeMillis();
             LogUtil.d("OO3", "result=" + result);
             if (result == FaceppApi.MG_RETCODE_OK) {
-                if (RomUtil.isEmui()) {
+                if (RomUtil.isEmui()|| EquipmentUtil.getSystemModel().equals("M2006C3LC")) {
                     //如果是华为设备，则初始化华为推送
                     BodySegmentApi.getInstance().initBodySegment(1, BodySegmentApi.SEGMENT_MODE_FAST, BodySegmentApi.CPU_FORCED);//初始化人体抠像
                 } else {
