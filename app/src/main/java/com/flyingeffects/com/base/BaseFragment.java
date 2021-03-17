@@ -106,12 +106,14 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     @Override
     public void onResume() {
         super.onResume();
+        onActivityVisibilityChanged(true);
     }
 
     @Override
     public void onPause() {
         lifecycleSubject.onNext(ActivityLifeCycleEvent.PAUSE);
         super.onPause();
+        onActivityVisibilityChanged(false);
     }
 
     @Override
@@ -339,6 +341,43 @@ public abstract class BaseFragment extends Fragment implements IActivity {
 
         void ChoseAdBack(int type, int adIndex);
     }
+
+
+
+    /**
+     * Fragment当前状态是否可见
+     */
+    public boolean NowFragmentIsVisible=true;
+    public boolean HasShowAd=false;
+
+
+//    @Override
+//    public void onHiddenChanged(boolean hidden) {
+//        super.onHiddenChanged(hidden);
+//        LogUtil.d("OOM4","hidden="+hidden);
+//
+//    }
+//
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        LogUtil.d("OOM4","setUserVisibleHint="+isVisibleToUser);
+        if (isVisibleToUser) {
+            //相当于Fragment的onResume
+        } else {
+            //相当于Fragment的onPause
+        }
+    }
+
+
+
+    public void onActivityVisibilityChanged(boolean isTrue){
+        this.NowFragmentIsVisible=NowFragmentIsVisible;
+        LogUtil.d("OOM4","onActivityVisibilityChanged="+isTrue);
+
+    }
+
+
 
 
 }

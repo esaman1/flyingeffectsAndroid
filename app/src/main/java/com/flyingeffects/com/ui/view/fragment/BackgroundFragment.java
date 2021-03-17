@@ -246,9 +246,11 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     @Override
                     public void onTabUnselected(TabLayout.Tab tab) {
                         View view = tab.getCustomView();
-                        AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
-                        tvTabText.setTextSize(16);
-                        tvTabText.setTextColor(Color.parseColor("#797979"));
+                        if(view!=null){
+                            AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                            tvTabText.setTextSize(16);
+                            tvTabText.setTextColor(Color.parseColor("#797979"));
+                        }
                     }
 
                     @Override

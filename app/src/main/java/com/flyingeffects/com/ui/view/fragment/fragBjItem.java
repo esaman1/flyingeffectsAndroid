@@ -197,7 +197,16 @@ public class fragBjItem extends BaseFragment {
 
         if (getActivity() != null) {
             mAdManager.adResume();
+
+
+
         }
+
+
+
+
+
+
 
     }
 

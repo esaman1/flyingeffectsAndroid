@@ -21,6 +21,7 @@ import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
 import com.flyingeffects.com.ui.presenter.home_fagMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.google.android.material.tabs.TabLayout;
 
@@ -98,16 +99,21 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
         if (data == null || data.size() == 0) {
             Presenter.getFragmentList();
         }
+
+
+        LogUtil.d("OOM4","setUserVisibleHint="+getUserVisibleHint());
         listSearchKeyIndex = 0;
         if (!listSearchKey.isEmpty()) {
             if (mScheduledExecutorService != null) {
                 mScheduledExecutorService.shutdownNow();
                 mScheduledExecutorService = null;
+
             }
             pollingSetSearchText();
         } else {
             requestKeywordList();
         }
+
     }
 
 

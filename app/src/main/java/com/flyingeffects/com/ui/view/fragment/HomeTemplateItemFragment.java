@@ -184,9 +184,14 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
             if (allData == null || allData.size() == 0 || "11".equals(category_id) || "12".equals(category_id)) {
                 LogUtil.d("OOM", "allData==null");
                 Presenter.requestData(category_id, tc_id, actTag);
-            } else {
-                LogUtil.d("OOM", "allData!=null");
             }
+
+//            else {
+//                if(NowFragmentIsVisible&&!HasShowAd){
+//                    LogUtil.d("requestAd","onResume之模板请求广告");
+//                    needRequestFeedAd();
+//                }
+//            }
         }
     }
 
@@ -324,19 +329,22 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
     @Override
     public void needRequestFeedAd() {
-        requestFeedAd(mAdManager, new RequestFeedBack() {
-            @Override
-            public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
-                FeedAdCallback(bean);
-            }
-
-            @Override
-            public void ChoseAdBack(int type, int adIndex) {
-                if (type != TYPE_GDT_FEED_EXPRESS_AD) {
-                    adapter.remove(adIndex);
+        if(NowFragmentIsVisible&&getActivity()!=null){
+            LogUtil.d("requestAd","onResume之模板1请求广告");
+            requestFeedAd(mAdManager, new RequestFeedBack() {
+                @Override
+                public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
+                    FeedAdCallback(bean);
+                    HasShowAd=true;
                 }
-            }
-        });
+                @Override
+                public void ChoseAdBack(int type, int adIndex) {
+                    if (type != TYPE_GDT_FEED_EXPRESS_AD) {
+                        adapter.remove(adIndex);
+                    }
+                }
+            });
+        }
     }
 
 
