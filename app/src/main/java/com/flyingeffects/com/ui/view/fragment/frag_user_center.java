@@ -43,6 +43,7 @@ import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.MineFocusActivity;
 import com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
+import com.flyingeffects.com.ui.view.activity.webViewActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -339,10 +340,11 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 }
 
             case R.id.iv_ad_entrance:
-                //互动广告入口
-                final Uri uri = Uri.parse(adv_web_url);
-                final Intent it = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(it);
+
+                Intent intent =new Intent(getActivity(), webViewActivity.class);
+                intent.putExtra("webUrl",adv_web_url);
+                startActivity(intent);
+
                 break;
             default:
                 break;

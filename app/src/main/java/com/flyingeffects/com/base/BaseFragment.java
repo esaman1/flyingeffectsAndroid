@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +79,6 @@ public abstract class BaseFragment extends Fragment implements IActivity {
 
         return contentView;
     }
-
 
 
     /***
@@ -252,17 +253,16 @@ public abstract class BaseFragment extends Fragment implements IActivity {
      * creation date: 2021/3/12
      * user : zhangtongju
      */
-    public void requestFeedAd(FeedAdManager mAdManager,RequestFeedBack callback){
-        LogUtil.d("OOM2","requestAd");
-        if(getActivity()!=null&&mAdManager!=null){
-            float needScreenWidth= DeviceUtil.getScreenWidthInPX(getActivity())/(float)2- screenUtil.dip2px(getActivity(),10);
-            LogUtil.d("OOM2","needScreenWidth="+needScreenWidth);
+    public void requestFeedAd(FeedAdManager mAdManager, RequestFeedBack callback) {
+        LogUtil.d("OOM2", "requestAd");
+        if (getActivity() != null && mAdManager != null) {
+            float needScreenWidth = DeviceUtil.getScreenWidthInPX(getActivity()) / (float) 2 - screenUtil.dip2px(getActivity(), 10);
+            LogUtil.d("OOM2", "needScreenWidth=" + needScreenWidth);
             mAdManager.setViewWidth((int) needScreenWidth);
             mAdManager.getFeedAd(getActivity(), AdConfigs.AD_FEED, new FeedAdCallBack() {
                 @Override
                 public void onFeedAdShow(int typeId, FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
-                    LogUtil.d("OOM2","onFeedAdShow");
-                    CommonNewsBean bean =new CommonNewsBean();
+                    CommonNewsBean bean = new CommonNewsBean();
                     bean.setTitle(feedAdResultBean.getTitle());
                     bean.setHide(false);
                     bean.setImageUrl(feedAdResultBean.getImageUrl());
@@ -270,30 +270,50 @@ public abstract class BaseFragment extends Fragment implements IActivity {
                     bean.setChannel(feedAdResultBean.getChannel());
                     bean.setReadCounts(feedAdResultBean.getAdReadCount());
                     bean.setShowCloseButton(feedAdResultBean.isShowCloseButton());
+//                    bean.setAdapterPosition(tag);
+                    bean.setFeedResultBean(feedAdResultBean.getFeedResultBean());
                     //根据类型设置对应的属性
                     switch (typeId) {
-                        case BAIDU_FEED_AD_EVENT:
-                        case GDT_FEED_AD_EVENT:
-                        case TT_FEED_AD_EVENT:
                         case TYPE_TT_FEED_EXPRESS_AD:
-                            bean.setFeedResultBean(feedAdResultBean.getFeedResultBean());
-                            break;
                         case TYPE_GDT_FEED_EXPRESS_AD:
                             bean.setAdView(feedAdResultBean.getAdView());
                             break;
                     }
+//                    LogUtil.d("OOM2","onFeedAdShow");
+//                    CommonNewsBean bean =new CommonNewsBean();
+//                    bean.setTitle(feedAdResultBean.getTitle());
+//                    bean.setHide(false);
+//                    bean.setImageUrl(feedAdResultBean.getImageUrl());
+//                    bean.setEventType(feedAdResultBean.getEventType());
+//                    bean.setChannel(feedAdResultBean.getChannel());
+//                    bean.setReadCounts(feedAdResultBean.getAdReadCount());
+//                    bean.setShowCloseButton(feedAdResultBean.isShowCloseButton());
+//                    //根据类型设置对应的属性
+//                    switch (typeId) {
+//                        case BAIDU_FEED_AD_EVENT:
+//                        case GDT_FEED_AD_EVENT:
+//                        case TT_FEED_AD_EVENT:
+//                        case TYPE_TT_FEED_EXPRESS_AD:
+//                            bean.setFeedResultBean(feedAdResultBean.getFeedResultBean());
+//                            break;
+//                        case TYPE_GDT_FEED_EXPRESS_AD:
+//                            bean.setAdView(feedAdResultBean.getAdView());
+//                            break;
+//                    }
+
+
                     callback.GetAdCallback(feedAdResultBean);
                 }
 
                 @Override
                 public void onFeedAdError(String error) {
-                    LogUtil.d("OOM2","onFeedAdError="+error);
+                    LogUtil.d("OOM2", "onFeedAdError=" + error);
                 }
 
                 @Override
                 public void onFeedAdClose(int type, int adIndex) {
-                    LogUtil.d("OOM2","onFeedAdClose=");
-                    callback.ChoseAdBack(type,adIndex);
+                    LogUtil.d("OOM2", "onFeedAdClose=");
+                    callback.ChoseAdBack(type, adIndex);
                 }
 
                 @Override
@@ -307,15 +327,16 @@ public abstract class BaseFragment extends Fragment implements IActivity {
                     return false;
                 }
             });
-        }else{
-            LogUtil.d("OOM2","adManage为null");
+        } else {
+            LogUtil.d("OOM2", "adManage为null");
         }
 
     }
 
 
-    public interface RequestFeedBack{
+    public interface RequestFeedBack {
         void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean);
+
         void ChoseAdBack(int type, int adIndex);
     }
 

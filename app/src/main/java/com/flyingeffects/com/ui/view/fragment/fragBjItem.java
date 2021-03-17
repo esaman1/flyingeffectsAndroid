@@ -47,6 +47,8 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_GDT_FEED_EXPRESS_AD;
+
 
 /**
  * description ：背景页面，背景栏目下面模板列表，
@@ -307,7 +309,9 @@ public class fragBjItem extends BaseFragment {
 
                         @Override
                         public void ChoseAdBack(int type, int adIndex) {
-                            adapter.remove(adIndex);
+                            if (type != TYPE_GDT_FEED_EXPRESS_AD) {
+                                adapter.remove(adIndex);
+                            }
                         }
                     });
                 }
