@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -108,6 +107,7 @@ public class HomeMainActivity extends FragmentActivity {
     private NoSlidingViewPager viewpager_home;
 
     private Context mContext;
+    private boolean mCancelBtnPressed;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -571,6 +571,7 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     private void showBackMessage() {
+        mCancelBtnPressed = false;
         CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
                 .setAdId(AdConfigs.AD_IMAGE_EXIT)
@@ -580,12 +581,20 @@ public class HomeMainActivity extends FragmentActivity {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         dialog.dismiss();
-                        finish();
                     }
 
                     @Override
                     public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        mCancelBtnPressed = true;
                         dialog.dismiss();
+                    }
+                })
+                .setDialogDismissListener(new CommonMessageDialog.DialogDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        if (!mCancelBtnPressed) {
+                            finish();
+                        }
                     }
                 })
                 .build().show();

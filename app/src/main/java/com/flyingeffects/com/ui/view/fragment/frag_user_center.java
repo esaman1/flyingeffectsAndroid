@@ -240,7 +240,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         fag_like.setArguments(bundle1);
         list.add(fag_like);
 
-
         frag_user_collect fag_0 = new frag_user_collect();
         Bundle bundle2 = new Bundle();
         bundle2.putSerializable("template_type", "1");
@@ -349,7 +348,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 break;
             default:
                 break;
-
         }
     }
 
@@ -586,12 +584,11 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     }
 
 
-
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
         int offset = Math.abs(verticalOffset);
         int total = appBarLayout.getTotalScrollRange();
-        LogUtil.d("OOM2","offset="+offset+"total="+total);
+        LogUtil.d("OOM2", "offset=" + offset + "total=" + total);
 //        if (offset < total ) {
 //            tv_top_name.setVisibility(View.GONE);
 //        } else {
@@ -600,34 +597,33 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     }
 
 
-
     /**
      * description ：显示广告入口
      * creation date: 2021/3/12
      * user : zhangtongju
      */
-    private  String adv_web_url;
-    private void showAdEntrance(){
-        if(getActivity()!=null){
-            String str=BaseConstans.getHasAdEntrance();
-            LogUtil.d("OOM2","得到的广告浏览器配置为"+str);
-            if(!TextUtils.isEmpty(str)){
+    private String adv_web_url;
+
+    private void showAdEntrance() {
+        if (getActivity() != null) {
+            String str = BaseConstans.getHasAdEntrance();
+            LogUtil.d("OOM2", "得到的广告浏览器配置为" + str);
+            if (!TextUtils.isEmpty(str)) {
                 try {
-                    JSONObject js=new JSONObject(str);
-                    String url=js.getString("adv_icon");
-                    adv_web_url=js.getString("adv_url");
+                    JSONObject js = new JSONObject(str);
+                    String url = js.getString("adv_icon");
+                    adv_web_url = js.getString("adv_url");
                     Glide.with(getActivity()).load(url).into(iv_ad_entrance);
                     iv_ad_entrance.setVisibility(View.VISIBLE);
                 } catch (JSONException e) {
                     iv_ad_entrance.setVisibility(View.GONE);
                     e.printStackTrace();
                 }
-            }else{
+            } else {
                 iv_ad_entrance.setVisibility(View.GONE);
             }
         }
     }
-
 
 
 }

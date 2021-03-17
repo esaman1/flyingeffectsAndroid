@@ -167,6 +167,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private String templateType;
     private boolean mIsFollow;
+    private boolean mAdDialogIsShow;
+    private static boolean sHasReward;
 
     @Override
     protected int getLayoutId() {
@@ -639,6 +641,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
     private void showMessageDialog() {
+        mAdDialogIsShow = true;
         StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert", "");
         CommonMessageDialog.getBuilder(mContext)
                 .setContentView(R.layout.dialog_common_message_ad_under)
@@ -663,6 +666,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         StatisticsEventAffair.getInstance().setFlag(mContext, "mb_ad_cancel", templateItem.getTitle());
                         StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_cancel");
                         dialog.dismiss();
+                    }
+                })
+                .setDialogDismissListener(new CommonMessageDialog.DialogDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        mAdDialogIsShow = false;
                     }
                 })
                 .build().show();
@@ -834,14 +843,18 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         isOnPause = false;
         LogUtil.d("OOM22", "onResume");
         //出现bug 不能继续播放的问题
-        if (!nowItemIsAd) {
-            GSYVideoManager.onResume();
+        if (!mAdDialogIsShow) {
+            if (!nowItemIsAd) {
+                GSYVideoManager.onResume();
+            }
+            adapter.notifyDataSetChanged();
+            if (BaseConstans.hasLogin()) {
+                //主要用于刷新当前页面
+                mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
+            }
         }
-        adapter.notifyDataSetChanged();
-        if (BaseConstans.hasLogin()) {
-            //主要用于刷新当前页面
-            mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
-        }
+
+
         LogUtil.d("OOM", "onResume");
         WaitingDialog.closeProgressDialog();
     }
@@ -1350,15 +1363,20 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     public void onVideoAdClose() {
                         LogUtil.d("OOM4", "onVideoAdClose");
                         BaseConstans.TemplateHasWatchingAd = false;
-                        ToastUtil.showToast("看完广告才可获取权益");
-//                        hasLoginToNext();
+
+                        //ToastUtil.showToast("看完广告才可获取权益");
+                        if (sHasReward){
+                            hasLoginToNext();
+                            sHasReward = false;
+                        }
                     }
 
                     @Override
                     public void onRewardVerify() {
+                        sHasReward = true;
                         StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
                         BaseConstans.TemplateHasWatchingAd = true;
-                        hasLoginToNext();
+                        //hasLoginToNext();
                     }
 
                     @Override

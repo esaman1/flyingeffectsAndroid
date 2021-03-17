@@ -249,6 +249,7 @@ public class frag_user_upload_bj extends BaseFragment {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         requestDelete(id);
+                        dialog.dismiss();
                     }
 
                     @Override
