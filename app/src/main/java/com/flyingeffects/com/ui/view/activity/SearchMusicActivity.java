@@ -94,6 +94,8 @@ public class SearchMusicActivity extends BaseActivity {
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
     private int isFrom;
 
+    private boolean isFromShoot;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_search_music;
@@ -102,6 +104,7 @@ public class SearchMusicActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
+
         initSmartRefreshLayout();
         initRecycler();
         findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
@@ -155,7 +158,6 @@ public class SearchMusicActivity extends BaseActivity {
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject ob = array.getJSONObject(i);
                         SearchKeyWord key = new SearchKeyWord();
-//                        key.setColor(ob.getString("color"));
                         key.setName(ob.getString("name"));
                         key.setID(ob.getString("id"));
                         key.setWeigh(ob.getString("weigh"));
@@ -212,6 +214,7 @@ public class SearchMusicActivity extends BaseActivity {
     protected void initAction() {
         needDuration = getIntent().getLongExtra("needDuration", 10000);
         isFrom = getIntent().getIntExtra(ChooseMusicActivity.IS_FROM, ChooseMusicActivity.IS_FROM_OTHERS);
+        isFromShoot = getIntent().getBooleanExtra("isFromShoot", false);
     }
 
 
@@ -253,6 +256,8 @@ public class SearchMusicActivity extends BaseActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.putExtra("videoPath", listData.get(position).getAudio_url());
                         intent.putExtra("needDuration", needDuration);
+                        intent.putExtra("isFromShoot", isFromShoot);
+                        intent.putExtra("title", listData.get(position).getTitle());
                         intent.putExtra("isAudio", true);
                         startActivity(intent);
                         break;

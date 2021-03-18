@@ -115,6 +115,7 @@ public class ChooseMusicActivity extends BaseActivity {
             Intent intent = new Intent(ChooseMusicActivity.this, SearchMusicActivity.class);
             intent.putExtra("needDuration", needDuration);
             intent.putExtra(ChooseMusicActivity.IS_FROM, isFrom);
+            bundle.putBoolean("isFromShoot", isFromShoot);
             startActivity(intent);
         });
 

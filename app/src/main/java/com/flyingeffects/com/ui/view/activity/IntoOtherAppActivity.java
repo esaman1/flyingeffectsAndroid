@@ -26,7 +26,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class intoOtherAppActivity extends Activity {
+public class IntoOtherAppActivity extends Activity {
 
     //1是微信  ，2是快手和抖音
     private int pageType;
