@@ -3,6 +3,8 @@ package com.flyingeffects.com.ui.view.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -33,7 +35,9 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
+import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
@@ -49,6 +53,7 @@ import com.flyingeffects.com.ui.presenter.PreviewUpAndDownMvpPresenter;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
@@ -70,7 +75,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -78,6 +86,7 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -89,6 +98,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public final static int SELECTALBUM = 0;
     public final static int SELECTALBUMFROMBJ = 1;
     public final static int SELECTALBUMFROMDressUp = 2;
+
     private static final String TAG = "PreviewUpDownActivity";
     private Context mContext;
 
@@ -253,7 +263,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             if (view.getId() == R.id.iv_zan) {
                 onclickZan();
             } else if (view.getId() == R.id.tv_make) {
-                toClickMake();
+                ActivityCompat
+                        .requestPermissions(PreviewUpAndDownActivity.this
+                                , PERMISSION_STORAGE, 1);
+                //toClickMake();
             } else if (view.getId() == R.id.iv_writer ||
                     view.getId() == R.id.tv_describe ||
                     view.getId() == R.id.tv_writer_name) {
@@ -267,7 +280,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 intoUserHome(position);
             } else if (view.getId() == R.id.iv_download_bj) {
                 StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "10_bj_arrow");
-                mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem, mOldFromTo);
+                ActivityCompat.requestPermissions(PreviewUpAndDownActivity.this, PERMISSION_STORAGE, 2);
             } else if (view.getId() == R.id.ll_comment) {
                 BaseFullBottomSheetFragment fullSheetDialogFragment = new BaseFullBottomSheetFragment();
                 int height = (int) (ScreenUtil.getScreenHeight(this) * 0.3f);
@@ -952,6 +965,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         }
     }
 
+    @Override
+    public void shareSaveToAlbum() {
+
+    }
 
     /**
      * 这里逻辑优化下,背景页面是选择图片后在去下载背景
@@ -1373,11 +1390,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     public void onVideoAdClose() {
                         LogUtil.d("OOM4", "onVideoAdClose");
                         BaseConstans.TemplateHasWatchingAd = false;
-
-                        //ToastUtil.showToast("看完广告才可获取权益");
                         if (sHasReward) {
                             hasLoginToNext();
                             sHasReward = false;
+                        } else {
+                            ToastUtil.showToast("看完广告才可获取权益");
                         }
                     }
 
@@ -1430,4 +1447,38 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void onEventMainThread(AttentionChange event) {
 
     }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ArrayList<String> deniedPermission = new ArrayList<>();
+        deniedPermission.clear();
+        for (int i = 0; i < permissions.length; i++) {
+            String permission = permissions[i];
+            int result = grantResults[i];
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                deniedPermission.add(permission);
+            }
+        }
+        if (deniedPermission.isEmpty()) {
+            if (requestCode == 1) {
+                toClickMake();
+            } else {
+                mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem, mOldFromTo);
+            }
+        } else {
+            new AlertDialog.Builder(this)
+                    .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
+                    .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .setPositiveButton("去授权", (dialog, which) -> {
+                        PermissionUtil.gotoPermission(mContext);
+                        dialog.dismiss();
+                    }).create()
+                    .show();
+        }
+    }
+
 }

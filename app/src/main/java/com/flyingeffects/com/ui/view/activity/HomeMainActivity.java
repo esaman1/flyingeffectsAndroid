@@ -611,33 +611,17 @@ public class HomeMainActivity extends FragmentActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (grantResults.length > 0) {
-                //被用户拒绝的权限集合
-                List<String> deniedPermissions = new ArrayList<>();
-                //用户通过的权限集合
-                List<String> grantedPermissions = new ArrayList<>();
-                for (int i = 0; i < grantResults.length; i++) {
-                    //获取授权结果，这是一个int类型的值
-                    int grantResult = grantResults[i];
-                    if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                        //用户拒绝授权的权限
-                        String permission = permissions[i];
-                        deniedPermissions.add(permission);
-                    } else {  //用户同意的权限
-                        String permission = permissions[i];
-                        grantedPermissions.add(permission);
-                    }
-                }
-                if (deniedPermissions.isEmpty()) {
-                    //用户拒绝权限为空
-                    intoCreationActivity();
-                } else {  //不为空
-//                    ToastUtil.showToast(getResources().getString(R.string.permission_denied));
-                }
+        // 获取到Activity下的Fragment
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        if (fragments == null) {
+            return;
+        }
+        // 查找在Fragment中onRequestPermissionsResult方法并调用
+        for (Fragment fragment : fragments) {
+            if (fragment != null) {
+                // 这里就会调用我们Fragment中的onRequestPermissionsResult方法
+                fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
             }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

@@ -1320,7 +1320,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                                 imgPath.set(lastChoosePosition, path);
                             } else {
                                 imgPath.add(path);
-                            }
+                             }
                             nowClickMediaUi2.setImageAsset(path);
                             mTemplateViews.get(lastChoosePosition).invalidate();
                             modificationSingleThumbItem(path);

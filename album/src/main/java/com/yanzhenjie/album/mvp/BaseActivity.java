@@ -79,6 +79,7 @@ public class BaseActivity extends AppCompatActivity implements Bye {
     }
 
     protected void onPermissionDenied(int code) {
+
     }
 
     @Override

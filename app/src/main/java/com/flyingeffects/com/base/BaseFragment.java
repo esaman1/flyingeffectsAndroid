@@ -1,5 +1,6 @@
 package com.flyingeffects.com.base;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -42,6 +43,18 @@ import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_TT
  */
 
 public abstract class BaseFragment extends Fragment implements IActivity {
+    protected static final String[] PERMISSION_STORAGE = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    protected static final String[] PERMISSION_READ_STORAGE = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
+    protected static final int CODE_PERMISSION_STORAGE = 1;
+    protected static final int CODE_PERMISSION_READ_STORAGE = 4;
+    public final PublishSubject<ActivityLifeCycleEvent> mLifecycleSubject = PublishSubject.create();
+    protected static final String[] PERMISSION_READ_PHONE_STATE = new String[]{Manifest.permission.READ_PHONE_STATE};
+    protected static final int CODE_PERMISSION_READ_PHONE_STATE = 2;
+    protected static final String[] PERMISSION_LOCATION = new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+            ,Manifest.permission.ACCESS_COARSE_LOCATION};
+    protected static final int CODE_PERMISSION_LOCATION = 3;
+
     protected View contentView = null;
     protected Unbinder unbinder;
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
@@ -159,88 +172,6 @@ public abstract class BaseFragment extends Fragment implements IActivity {
             intent.putExtras(bundle);
         }
         startActivity(intent);
-    }
-
-
-    //---------------------权限申请-----------------------
-    /**
-     * 权限申请
-     *
-     * @param permissions 待申请的权限集合
-     * @param listener  申请结果监听事件
-     * describe:android  6.0及+ 需要手动申请权限，而6.0以前只需要在清单文件里面申请，
-     * 用户安装后就默认申请通过了权限，所以这里需要适配权限，主动让用户申请权限，
-     * 否则会崩溃
-     */
-    PermissionListener mlistener;
-
-    protected void requestRunTimePermission(String[] permissions, PermissionListener listener) {
-        this.mlistener = listener;
-
-        //用于存放为授权的权限
-        List<String> permissionList = new ArrayList<>();
-        //遍历传递过来的权限集合
-        for (String permission : permissions) {
-            //判断是否已经授权
-            if (ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
-                //未授权，则加入待授权的权限集合中
-                permissionList.add(permission);
-            }
-        }
-
-        //判断集合
-        if (!permissionList.isEmpty()) {  //如果集合不为空，则需要去授权
-            BaseFragment.this.requestPermissions(permissions, 1);
-        } else {  //为空，则已经全部授权
-            listener.onGranted();
-        }
-    }
-
-
-    /**
-     * 权限申请结果
-     *
-     * @param requestCode  请求码
-     * @param permissions  所有的权限集合
-     * @param grantResults 授权结果集合
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0) {
-                    //被用户拒绝的权限集合
-                    List<String> deniedPermissions = new ArrayList<>();
-                    //用户通过的权限集合
-                    List<String> grantedPermissions = new ArrayList<>();
-                    for (int i = 0; i < grantResults.length; i++) {
-                        //获取授权结果，这是一个int类型的值
-                        int grantResult = grantResults[i];
-
-                        if (grantResult != PackageManager.PERMISSION_GRANTED) { //用户拒绝授权的权限
-                            String permission = permissions[i];
-                            deniedPermissions.add(permission);
-                        } else {  //用户同意的权限
-                            String permission = permissions[i];
-                            grantedPermissions.add(permission);
-                        }
-                    }
-
-                    if (deniedPermissions.isEmpty()) {  //用户拒绝权限为空
-                        mlistener.onGranted();
-                    } else {  //不为空
-                        //回调授权成功的接口
-                        mlistener.onDenied(deniedPermissions);
-                        //回调授权失败的接口
-                        mlistener.onGranted(grantedPermissions);
-                    }
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-                break;
-        }
     }
 
 

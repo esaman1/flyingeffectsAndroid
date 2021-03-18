@@ -246,9 +246,9 @@ public class PreviewUpAndDownMvpModel {
                 }
             }
         });
-        LinearLayout iv_download = view.findViewById(R.id.ll_download);
-        iv_download.setOnClickListener(view12 -> {
 
+        LinearLayout ivDownload = view.findViewById(R.id.ll_download);
+        ivDownload.setOnClickListener(view12 -> {
             if (BaseConstans.hasLogin()) {
                 if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
                     StatisticsEventAffair.getInstance().setFlag(context, "11_yj_save1");
@@ -339,8 +339,6 @@ public class PreviewUpAndDownMvpModel {
                 } else {
                     StatisticsEventAffair.getInstance().setFlag(context, "10_bj_Report");
                 }
-
-
                 Intent intent = new Intent(context, ReportActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(intent);
@@ -351,8 +349,6 @@ public class PreviewUpAndDownMvpModel {
         TextView tvCancel = view.findViewById(R.id.tv_cancle);
         tvCancel.setOnClickListener(view1 -> {
             bottomSheetDialog.dismiss();
-
-
         });
         bottomSheetDialog.setCancelable(true);
         bottomSheetDialog.setCanceledOnTouchOutside(true);
@@ -367,6 +363,8 @@ public class PreviewUpAndDownMvpModel {
         parent.setLayoutParams(params);
         bottomSheetDialog.show();
     }
+
+
 
     /**
      * 模板操作行为统计

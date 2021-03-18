@@ -369,13 +369,13 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                         })
                         .setPositiveButton("去授权", (dialog, which) -> {
                             PermissionUtil.gotoPermission(mContext);
+                            dialog.dismiss();
+                            finish();
                         }).create()
                         .show();
             }
         }
     }
-
-
 
     /**
      * description ：开始录制
@@ -406,7 +406,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         }
         return true;
     }
-
 
     /**
      * description ：录屏和非录屏ui状态切换
@@ -501,7 +500,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * creation date: 2021/2/26
      * user : zhangtongju
      */
-    public void ChangeClicKState() {
+    public void changeClickState() {
         isCanClick = true;
     }
 

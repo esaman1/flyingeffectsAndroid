@@ -153,6 +153,10 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
         previewUpAndDownMvpView.returnSpliteMusic(path,videoPath);
     }
 
+    @Override
+    public void shareSaveToAlbum() {
+        previewUpAndDownMvpView.shareSaveToAlbum();
+    }
 
 
     public void requestUserInfo(){

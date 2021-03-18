@@ -35,4 +35,5 @@ public interface PreviewUpAndDownMvpCallback {
     void getSpliteMusic(String path);
     void returnSpliteMusic(String path,String videoPath);
 
+    void shareSaveToAlbum();
 }
