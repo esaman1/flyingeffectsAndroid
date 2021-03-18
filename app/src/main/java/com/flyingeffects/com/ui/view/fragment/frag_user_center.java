@@ -154,7 +154,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     @Override
     protected void initView() {
 
-        EventBus.getDefault().register(this);
         options = UCropOption.getInstance().getUcropOption();
         iv_about.setOnClickListener(view -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {

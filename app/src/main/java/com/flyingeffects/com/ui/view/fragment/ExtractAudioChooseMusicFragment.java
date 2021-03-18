@@ -83,7 +83,6 @@ public class ExtractAudioChooseMusicFragment extends BaseFragment {
 
     @Override
     protected void initView() {
-        EventBus.getDefault().register(this);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             isFromShoot = bundle.getBoolean("isFromShoot", false);

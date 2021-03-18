@@ -84,7 +84,6 @@ public class StickerFragment extends BaseFragment {
         formToType = getArguments().getInt("type");
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(getContext(), "gifFolder");
-        EventBus.getDefault().register(this);
     }
 
     @Override

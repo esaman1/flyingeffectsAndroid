@@ -43,6 +43,7 @@ public class SecondaryTypeFragment extends BaseFragment {
     int type, from;
     String category_id, categoryTabName;
     private new_fag_template_item templateItem;
+    private int homePageNum;
 
     @Override
     protected int getContentLayout() {
@@ -55,6 +56,7 @@ public class SecondaryTypeFragment extends BaseFragment {
         type = getArguments().getInt("type");
         category_id = getArguments().getString("id");
         from = getArguments().getInt("from");
+        homePageNum=getArguments().getInt("homePageNum");
         templateItem = (new_fag_template_item) getArguments().getSerializable("templateItem");
         categoryTabName = getArguments().getString("categoryTabName");
         if (mTypeEntities == null) {
@@ -122,6 +124,8 @@ public class SecondaryTypeFragment extends BaseFragment {
                 bundle.putString("tc_id", mTypeEntities.get(i).getId());
                 bundle.putSerializable("num", i);
                 bundle.putSerializable("from", 0);
+                bundle.putSerializable("homePageNum", homePageNum);
+
                 HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
                 fragment.setArguments(bundle);
                 fragments.add(fragment);
@@ -143,6 +147,7 @@ public class SecondaryTypeFragment extends BaseFragment {
                 bundle.putString("tc_id", mTypeEntities.get(i).getId());
                 bundle.putSerializable("num", i);
                 bundle.putSerializable("from", 4);
+                bundle.putSerializable("homePageNum", homePageNum);
                 HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
                 fragment.setArguments(bundle);
                 fragments.add(fragment);

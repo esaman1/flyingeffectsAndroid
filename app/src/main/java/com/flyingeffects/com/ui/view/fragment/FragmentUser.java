@@ -60,7 +60,6 @@ public class FragmentUser extends BaseFragment {
 
     @Override
     protected void initView() {
-        EventBus.getDefault().register(this);
         initSmartRefreshLayout();
     }
 

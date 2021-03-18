@@ -86,7 +86,6 @@ public class fragBjSearch extends BaseFragment {
 
     @Override
     protected void initView() {
-        EventBus.getDefault().register(this);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             isFrom = bundle.getInt("from");
