@@ -37,7 +37,7 @@ public class CommonMessageDialog extends Dialog {
     }
 
     public static class Builder {
-        private Context mContext;
+        private final Context mContext;
         private String mTitle;
         private String mMessage;
         private String mMessage2;

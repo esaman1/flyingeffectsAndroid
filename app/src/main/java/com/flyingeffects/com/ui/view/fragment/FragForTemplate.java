@@ -120,7 +120,6 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 if (manager == null) {
                     manager = getFragmentManager();
                 }
-                String[] titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
                     Bundle bundle = new Bundle();
                     if (data.get(i).getCategory() != null && !data.get(i).getCategory().isEmpty()) {
@@ -140,7 +139,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                         fragment.setArguments(bundle);
                         list.add(fragment);
                     }
-                    titles[i] = data.get(i).getName();
+
                 }
                 home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
                 viewpager.setAdapter(adapter);
@@ -155,7 +154,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     public void onPageSelected(int i) {
 
                         if (i <= data.size() - 1) {
-                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", data.get(i).getName());
                         }
                     }
 
@@ -169,7 +168,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     tabLayout.getTabAt(i).setCustomView(R.layout.item_home_tab);
                     View view = tabLayout.getTabAt(i).getCustomView();
                     AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
-                    tvTabText.setText(titles[i]);
+                    tvTabText.setText(data.get(i).getName());
                     tvTabText.setTextColor(Color.parseColor("#797979"));
                     if (i == 0) {
                         tvTabText.setTextSize(24);
@@ -180,18 +179,23 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     @Override
                     public void onTabSelected(TabLayout.Tab tab) {
                         View view = tab.getCustomView();
-                        AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
-                        tvTabText.setTextSize(24);
-                        tvTabText.setTextColor(Color.parseColor("#ffffff"));
-                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "13_template_tab_click", tvTabText.getText().toString());
+                        if (view != null) {
+                            AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                            tvTabText.setTextSize(24);
+                            tvTabText.setTextColor(Color.parseColor("#ffffff"));
+                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "13_template_tab_click", tvTabText.getText().toString());
+
+                        }
                     }
 
                     @Override
                     public void onTabUnselected(TabLayout.Tab tab) {
                         View view = tab.getCustomView();
-                        AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
-                        tvTabText.setTextSize(16);
-                        tvTabText.setTextColor(Color.parseColor("#797979"));
+                        if (view!=null){
+                            AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                            tvTabText.setTextSize(16);
+                            tvTabText.setTextColor(Color.parseColor("#797979"));
+                        }
                     }
 
                     @Override

@@ -96,6 +96,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     PreviewUpAndDownMvpPresenter mMvpPresenter;
 
     private PreviewUpDownAdapter adapter;
+
     /**
      * viewpager适配器
      */
