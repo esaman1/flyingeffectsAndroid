@@ -331,6 +331,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
     @Override
     public void needRequestFeedAd() {
+        LogUtil.d("pageChange", "请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+actTag);
         if (getActivity() != null && NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag) {
             HasShowAd = true;
             requestFeedAd(mAdManager, new RequestFeedBack() {

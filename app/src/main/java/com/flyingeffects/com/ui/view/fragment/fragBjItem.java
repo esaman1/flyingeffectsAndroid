@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -315,6 +316,7 @@ public class fragBjItem extends BaseFragment {
 
 
     private void requestFeedAd(){
+        LogUtil.d("pageChange", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+NowSecondChooseNum+"actTag"+nowPageNum);
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()&&  NowHomePageChooseNum==0 &&nowPageNum==NowSecondChooseNum) {
             HasShowAd=true;
             requestFeedAd(mAdManager, new RequestFeedBack() {

@@ -72,6 +72,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * 防点击，用来录屏完成后，程序处理中，防止持续点击
      */
     private boolean isCanClick = true;
+    private LinearLayout ll_bottom;
 
 
     @Override
@@ -98,6 +99,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         relative_choose_music.setOnClickListener(listener);
         iv_close.setOnClickListener(listener);
         tv_chooseMusic = findViewById(R.id.tv_chooseMusic);
+        ll_bottom=findViewById(R.id.ll_bottom);
         relative_click = findViewById(R.id.relative_click);
         tv_show_shoot_time = findViewById(R.id.tv_show_shoot_time);
         iv_count_down = findViewById(R.id.iv_count_down);
@@ -198,6 +200,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 isCanClick = false;
                 LogUtil.d("OOM", "直接录制结束");
                 presenter.stopRecord();
+                ShowRecordingBtn(true);
                 animation_view_progress.setProgress(0);
                 lottieAnimationView.setProgress(0);
                 isRecording = false;
@@ -225,6 +228,23 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 isRecordingState(true);
             }
         }
+    }
+
+
+    /**
+     * description ：显示底部按钮，为了解决录制时间过短，不显示的问题
+     * creation date: 2021/3/18
+     * user : zhangtongju
+     */
+    public void ShowRecordingBtn(boolean  isShow){
+        if(isShow){
+            ll_bottom.setVisibility(View.VISIBLE);
+            horizontalselectedView.setVisibility(View.VISIBLE);
+        }else{
+            ll_bottom.setVisibility(View.GONE);
+            horizontalselectedView.setVisibility(View.GONE);
+        }
+
     }
 
 
@@ -278,6 +298,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                         //录屏倒计时
                         animation_view_progress.setProgress(progress);
                     } else {
+                        ShowRecordingBtn(false);
                         isCanClick = false;
                         LogUtil.d("OOM22", "录屏完成，触发结束");
                         isRecording = false;
