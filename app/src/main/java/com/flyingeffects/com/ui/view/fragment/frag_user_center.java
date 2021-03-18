@@ -51,6 +51,9 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.UCropOption;
 import com.google.android.material.appbar.AppBarLayout;
 import com.lansosdk.videoeditor.LanSongFileUtil;
+import com.nineton.ntadsdk.bean.AdInfoBean;
+import com.nineton.ntadsdk.itr.ImageAdCallBack;
+import com.nineton.ntadsdk.manager.ImageAdManager;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.yalantis.ucrop.UCrop;
@@ -138,8 +141,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     AppBarLayout appbar;
     @BindView(R.id.ll_ad_content)
     LinearLayout mLLADContent;
-    @BindView(R.id.iv_ad_entrance)
-    ImageView iv_ad_entrance;
+    @BindView(R.id.ll_ad_entrance)
+    LinearLayout ll_ad_entrance;
 
     private UCrop.Options options;
     String systemMessageId ="";
@@ -153,7 +156,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @Override
     protected void initView() {
-
         options = UCropOption.getInstance().getUcropOption();
         iv_about.setOnClickListener(view -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
@@ -168,8 +170,9 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 public void adClose() {
                 }
             });
+            loadImageAd();
         }
-        showAdEntrance();
+
     }
 
     @Override
@@ -251,7 +254,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
 
     @OnClick({R.id.ll_icon_zan, R.id.ll_comment,R.id.ll_private_message,R.id.ll_attention_count,
-            R.id.ll_video_count, R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data,R.id.tv_go_login,R.id.iv_ad_entrance})
+            R.id.ll_video_count, R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data,R.id.tv_go_login})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_icon_zan:
@@ -338,11 +341,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     startActivity(intent);
                 }
 
-            case R.id.iv_ad_entrance:
-
-                Intent intent =new Intent(getActivity(), webViewActivity.class);
-                intent.putExtra("webUrl",adv_web_url);
-                startActivity(intent);
 
                 break;
             default:
@@ -588,40 +586,38 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         int offset = Math.abs(verticalOffset);
         int total = appBarLayout.getTotalScrollRange();
         LogUtil.d("OOM2", "offset=" + offset + "total=" + total);
-//        if (offset < total ) {
-//            tv_top_name.setVisibility(View.GONE);
-//        } else {
-//            tv_top_name.setVisibility(View.VISIBLE);
-//        }
     }
 
 
     /**
-     * description ：显示广告入口
-     * creation date: 2021/3/12
-     * user : zhangtongju
+     * 加载图片广告
      */
-    private String adv_web_url;
-
-    private void showAdEntrance() {
-        if (getActivity() != null) {
-            String str = BaseConstans.getHasAdEntrance();
-            LogUtil.d("OOM2", "得到的广告浏览器配置为" + str);
-            if (!TextUtils.isEmpty(str)) {
-                try {
-                    JSONObject js = new JSONObject(str);
-                    String url = js.getString("adv_icon");
-                    adv_web_url = js.getString("adv_url");
-                    Glide.with(getActivity()).load(url).into(iv_ad_entrance);
-                    iv_ad_entrance.setVisibility(View.VISIBLE);
-                } catch (JSONException e) {
-                    iv_ad_entrance.setVisibility(View.GONE);
-                    e.printStackTrace();
+    private void loadImageAd() {
+        ImageAdManager  imageAdManager = new ImageAdManager();
+        imageAdManager.showImageAd(getActivity(), AdConfigs.APP_FUDONG, ll_ad_entrance, null, new ImageAdCallBack() {
+            @Override
+            public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {
+                if (adView != null) {
+                    ll_ad_entrance.removeAllViews();
+                    ll_ad_entrance.addView(adView);
                 }
-            } else {
-                iv_ad_entrance.setVisibility(View.GONE);
             }
-        }
+
+            @Override
+            public void onImageAdError(String error) {
+                LogUtil.e("ImageAdError = " + error);
+            }
+
+            @Override
+            public void onImageAdClose() {
+
+            }
+
+            @Override
+            public boolean onImageAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                return false;
+            }
+        });
     }
 
 

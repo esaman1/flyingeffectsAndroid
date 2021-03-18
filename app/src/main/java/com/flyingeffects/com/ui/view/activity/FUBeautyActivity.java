@@ -56,12 +56,10 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private ImageView iv_count_down;
     private RelativeLayout relative_choose_music;
     private MarqueTextView tv_chooseMusic;
-
     private boolean isRecording = false;
     private LinearLayout ll_stage_property;
     private ConstraintLayout constraintLayout;
     private ImageView iv_close;
-
     private final ArrayList<String> deniedPermission = new ArrayList<>();
     /**
      * 来自哪个界面  0  默认为主页点击+号页面   1 默认为跟随相机拍摄页面
@@ -82,7 +80,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         fuBeautyActivity = this;
         iv_close = findViewById(R.id.iv_close);
         constraintLayout = findViewById(R.id.constraintLayout);
-
         isFrom = getIntent().getIntExtra("isFrom", 0);
         long duration = getIntent().getLongExtra("duration", 0);
         LogUtil.d("OOM2", "duration=" + duration);
@@ -93,11 +90,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         String TemplateFilePath = getIntent().getStringExtra("TemplateFilePath");
         String oldFromTo = getIntent().getStringExtra("OldfromTo");
         createDownVideoPath = getIntent().getStringExtra("createDownVideoPath");
-
         new_fag_template_item templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
         presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView, isFrom, duration, musicPath, templateItem, TemplateFilePath, oldFromTo, defaultnum, videoBjPath);
-
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         relative_choose_music = findViewById(R.id.relative_choose_music);
         relative_choose_music.setOnClickListener(listener);
@@ -301,16 +296,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
-    /**
-     * description ：当前是否选择的无限
-     * creation date: 2021/2/1
-     * user : zhangtongju
-     */
-    private boolean isInfinite;
 
     @Override
     public void nowChooseRecordIsInfinite(boolean isInfinite) {
-        this.isInfinite = isInfinite;
         LogUtil.d("OOM", "isInfinite=" + isInfinite);
     }
 
@@ -339,6 +327,11 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     public void ClearSticker() {
         Effect effectNone = new Effect("none", R.drawable.ic_delete_all, "", 1, Effect.EFFECT_TYPE_NONE, 0);
         mFURenderer.onEffectSelected(effectNone);
+    }
+
+    @Override
+    public void finishAct() {
+        this.finish();
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.flyingeffects.com.adapter;
 
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -9,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -21,18 +19,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
-import com.bytedance.sdk.openadsdk.TTAdConstant;
-import com.bytedance.sdk.openadsdk.TTFeedAd;
-import com.bytedance.sdk.openadsdk.TTImage;
-import com.bytedance.sdk.openadsdk.TTNativeAd;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
-import com.flyingeffects.com.enity.CommonNewsBean;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AdConfigs;
@@ -45,12 +37,10 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
-import com.flyingeffects.com.ui.view.activity.intoOtherAppActivity;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.manager.FeedAdManager;
-import com.nineton.ntadsdk.utils.DeviceUtil;
 import com.nineton.ntadsdk.utils.ScreenUtils;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.qq.e.ads.cfg.VideoOption;
@@ -67,8 +57,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
-
-import androidx.core.content.ContextCompat;
 
 import de.greenrobot.event.EventBus;
 

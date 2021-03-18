@@ -273,12 +273,12 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     /**
      * 当前主页选择的位数
      */
-    public int NowHomePageChooseNum = 1;
+    public static int NowHomePageChooseNum = 1;
 
     /**
      * 当前第二页选择位数
      */
-    public int NowSecondChooseNum = 0;
+    public static int NowSecondChooseNum = 0;
 
 
     public boolean HasShowAd = false;
@@ -288,6 +288,7 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     public void onEventMainThread(HomeChoosePageListener listener) {
         if (getActivity() != null) {
             NowHomePageChooseNum = listener.getPager();
+            LogUtil.d("pageChange","NowHomePageChooseNum="+NowHomePageChooseNum);
             if(callback!=null){
                 callback.isChange();
             }
@@ -300,6 +301,7 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     public void onEventMainThread(SecondChoosePageListener listener) {
         if (getActivity() != null) {
             NowSecondChooseNum = listener.getPager();
+            LogUtil.d("pageChange","NowSecondChooseNum="+NowSecondChooseNum);
             if(callback!=null){
                 callback.isChange();
             }

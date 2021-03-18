@@ -10,4 +10,6 @@ public interface FUBeautyMvpView {
 
     void ClearSticker();
 
+    void finishAct();
+
 }

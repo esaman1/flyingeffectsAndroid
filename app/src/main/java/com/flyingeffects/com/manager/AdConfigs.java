@@ -161,5 +161,8 @@ public class AdConfigs {
      */
     public static final String APP_kuaishou = "560";
 
-
+    /**
+     * 互动广告
+     */
+    public static final String APP_FUDONG = "861";
 }

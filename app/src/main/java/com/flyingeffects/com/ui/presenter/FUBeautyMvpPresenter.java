@@ -239,6 +239,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                 }
             }
         }
+        fUBeautyMvpView.finishAct();
     }
 
 //    private void intoTemplateActivity(List<String> paths, String templateFilePath) {

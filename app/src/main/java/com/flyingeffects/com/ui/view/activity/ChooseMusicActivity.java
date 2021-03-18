@@ -112,9 +112,10 @@ public class ChooseMusicActivity extends BaseActivity {
         list.add(fragment2);
 
         relative_top.setOnClickListener(view -> {
-            Intent intent = new Intent(ChooseMusicActivity.this, searchMusicActivity.class);
+            Intent intent = new Intent(ChooseMusicActivity.this, SearchMusicActivity.class);
             intent.putExtra("needDuration", needDuration);
             intent.putExtra(ChooseMusicActivity.IS_FROM, isFrom);
+            bundle.putBoolean("isFromShoot", isFromShoot);
             startActivity(intent);
         });
 
