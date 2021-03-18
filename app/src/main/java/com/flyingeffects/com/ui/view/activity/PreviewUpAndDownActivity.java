@@ -16,6 +16,7 @@ import com.flyingeffects.com.adapter.PreviewUpDownAdapter;
 import com.flyingeffects.com.adapter.PreviewUpDownPagerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.databinding.ActivityPreviewUpAndDownBinding;
@@ -635,6 +636,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 //            intent.putExtra("from", "PreviewActivity");
 //            intent.putExtra("templateTitle", templateItem.getTitle());
 //            startActivity(intent);
+
             showMessageDialog();
         } else {
             hasLoginToNext();
@@ -642,6 +644,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
     private void showMessageDialog() {
+        String tag;
+        if (TextUtils.equals(mOldFromTo, FromToTemplate.DRESSUP)) {
+            tag = "alert_video_ad_face";
+        } else {
+            tag = "alert_video_ad_mb";
+        }
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), tag);
         mAdDialogIsShow = true;
         StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert", "");
         CommonMessageDialog.getBuilder(mContext)
@@ -1179,7 +1188,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
                 }
             }
-            new Handler().postDelayed(() -> adapter.pauseVideo(),500);
+            new Handler().postDelayed(() -> adapter.pauseVideo(), 500);
         }, this);
     }
 
@@ -1366,7 +1375,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         BaseConstans.TemplateHasWatchingAd = false;
 
                         //ToastUtil.showToast("看完广告才可获取权益");
-                        if (sHasReward){
+                        if (sHasReward) {
                             hasLoginToNext();
                             sHasReward = false;
                         }

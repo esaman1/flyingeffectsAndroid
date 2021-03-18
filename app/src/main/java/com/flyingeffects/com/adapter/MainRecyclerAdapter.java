@@ -29,6 +29,7 @@ import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.CommonNewsBean;
@@ -483,6 +484,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
         //复制到剪贴板
         ClipboardManager tvCopy = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
         tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.getService_wxi()));
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_wechat");
         //弹出dialog
         CommonMessageDialog.getBuilder(mContext)
                 .setContentView(R.layout.dialog_common_message)

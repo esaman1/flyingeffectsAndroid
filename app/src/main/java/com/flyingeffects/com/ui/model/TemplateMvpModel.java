@@ -31,6 +31,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
@@ -318,6 +319,11 @@ public class TemplateMvpModel {
     }
 
     private LoadingDialog buildProgressDialog() {
+        if (FromToTemplate.PICTUREALBUM.equals(fromTo)) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_yj");
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_mb");
+        }
         LoadingDialog dialog = LoadingDialog.getBuilder(context)
                 .setHasAd(true)
                 .setTitle("生成中...")

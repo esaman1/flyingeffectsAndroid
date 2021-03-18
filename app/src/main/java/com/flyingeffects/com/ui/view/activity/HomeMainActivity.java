@@ -571,6 +571,7 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     private void showBackMessage() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_quit_app");
         mCancelBtnPressed = false;
         CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
