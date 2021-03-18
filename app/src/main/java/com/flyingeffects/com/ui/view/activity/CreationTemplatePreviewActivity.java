@@ -293,8 +293,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                 .setAdId(AdConfigs.AD_IMAGE_DIALOG_OPEN_VIDEO)
                 .setTitle("亲爱的友友")
                 .setMessage("这个模板需要观看几秒广告")
-                .setMessage2("「看完后就能制作飞闪视频」")
-                .setPositiveButton("观看广告并制作")
+                .setMessage2("「看完后就能一键保存视频」")
+                .setPositiveButton("观看广告并保存")
                 .setNegativeButton("取消")
                 .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
                     @Override

@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -9,7 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -34,11 +38,13 @@ import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.ContentAllianceActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
+import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.PermissionUtil;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.shixing.sxve.ui.albumType;
@@ -54,6 +60,8 @@ import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+
+import static com.yanzhenjie.album.mvp.BaseActivity.PERMISSION_STORAGE;
 
 
 /**
@@ -346,13 +354,10 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
             case R.id.iv_add:
             case R.id.ll_click_create_video:
             case R.id.ll_click_create_video_2:
-                if (BaseConstans.hasLogin()) {
-                    toAddSticker();
-                } else {
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
-                }
+                ActivityCompat
+                        .requestPermissions(getActivity()
+                                , PERMISSION_STORAGE, 2);
+                //toCreateVideo();
                 break;
             case R.id.iv_search:
                 //搜索栏目
@@ -366,19 +371,71 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
             case R.id.ll_crate_photograph_album:
             case R.id.ll_crate_photograph_album_2:
-                if (BaseConstans.hasLogin()) {
-                    StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_yj_click");
-                    mLoadingDialog.show();
-                    presenter.requestPictureAlbumData();
-                } else {
-                    Intent intentToLogin = new Intent(getActivity(), LoginActivity.class);
-                    intentToLogin.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intentToLogin);
-                }
-
+                ActivityCompat
+                        .requestPermissions(getActivity()
+                                , PERMISSION_STORAGE, 1);
+                //toMakeAlbum();
                 break;
             default:
                 break;
+        }
+    }
+
+    private void toCreateVideo() {
+        if (BaseConstans.hasLogin()) {
+            toAddSticker();
+        } else {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ArrayList<String> deniedPermission = new ArrayList<>();
+
+        deniedPermission.clear();
+        for (int i = 0; i < permissions.length; i++) {
+            String permission = permissions[i];
+            int result = grantResults[i];
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                deniedPermission.add(permission);
+            }
+        }
+        if (deniedPermission.isEmpty()) {
+            LogUtil.d(TAG, "requestCode = " + 1);
+            if (requestCode == 1) {
+                toMakeAlbum();
+            } else {
+                toCreateVideo();
+            }
+        } else {
+            new AlertDialog.Builder(getActivity())
+                    .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
+                    .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .setPositiveButton("去授权", (dialog, which) -> {
+                        PermissionUtil.gotoPermission(getActivity());
+                        dialog.dismiss();
+                    }).create()
+                    .show();
+        }
+
+
+    }
+
+    private void toMakeAlbum() {
+        if (BaseConstans.hasLogin()) {
+            StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_yj_click");
+            mLoadingDialog.show();
+            presenter.requestPictureAlbumData();
+        } else {
+            Intent intentToLogin = new Intent(getActivity(), LoginActivity.class);
+            intentToLogin.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intentToLogin);
         }
     }
 

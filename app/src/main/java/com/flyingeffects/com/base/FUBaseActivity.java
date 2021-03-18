@@ -555,7 +555,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                fuBeautyActivity.ChangeClicKState();
+                fuBeautyActivity.changeClickState();
             }
         }, 3000);
 

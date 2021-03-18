@@ -30,4 +30,6 @@ public interface PreviewUpAndDownMvpView {
     void onclickCollect();
 
     void getDressUpPathResult(List<String>paths);
+
+    void shareSaveToAlbum();
 }
