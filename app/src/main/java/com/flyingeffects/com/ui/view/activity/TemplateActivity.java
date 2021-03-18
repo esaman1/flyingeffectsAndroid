@@ -27,6 +27,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateThumbAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
@@ -1076,9 +1077,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         mediaUi2.GetTransFormChangeData(new MediaUiModel2.TranChangeCallback() {
                             @Override
                             public void changeBack(float TranX, float TranY, float Scale) {
-                                String  bjPath=originalPath.get(0);
-                                if(nowIsChooseMatting){
-                                    bjPath=imgPath.get(0);
+                                String bjPath = originalPath.get(0);
+                                if (nowIsChooseMatting) {
+                                    bjPath = imgPath.get(0);
                                 }
                                 VideoFusionModel videoFusionModel = new VideoFusionModel(TemplateActivity.this, path, bjPath, fromTo, templateName, mediaUi2.getOriginalBitmapWidth(), mediaUi2.getOriginalBitmapHeight(), TranX, TranY, Scale);
                                 videoFusionModel.uploadFileToHuawei(path, templateId);
@@ -1145,6 +1146,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
     private void showBackMessage() {
+        if (fromTo.equals(FromToTemplate.PICTUREALBUM)) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_edit_back_yj");
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_edit_back_mb");
+        }
         CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
                 .setAdId(AdConfigs.AD_IMAGE_EXIT)
@@ -1175,7 +1181,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         clearAllData();
         isOndestroy = true;
         EventBus.getDefault().unregister(this);
-
     }
 
 
@@ -1541,11 +1546,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_edit),
                         getString(R.string.template_music)};
-            } else if(isToSing){
+            } else if (isToSing) {
                 LogUtil.d("OOM3", "0000+");
                 titlesHasBj = new String[]{getString(R.string.template_edit)
-                      };
-            }else{
+                };
+            } else {
                 LogUtil.d("OOM3", "0000+");
                 titlesHasBj = new String[]{getString(R.string.template_edit),
                         getString(R.string.template_music)};

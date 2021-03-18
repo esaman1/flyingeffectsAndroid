@@ -759,6 +759,7 @@ public class VideoCropMVPModel {
     }
 
     private LoadingDialog buildLoadingDialog() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_cutout_mb");
         LoadingDialog dialog = LoadingDialog.getBuilder(mContext)
                 .setHasAd(true)
                 .setTitle("飞闪预览处理中")
@@ -767,6 +768,5 @@ public class VideoCropMVPModel {
         dialog.show();
         return dialog;
     }
-
 
 }

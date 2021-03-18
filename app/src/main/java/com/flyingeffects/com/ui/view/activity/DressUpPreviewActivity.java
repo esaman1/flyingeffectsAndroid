@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -207,11 +208,12 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        //showBackDialog();
+        //super.onBackPressed();
+        showBackDialog();
     }
 
     private void showBackDialog() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_edit_back_face");
         CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
                 .setAdId(AdConfigs.AD_IMAGE_EXIT)

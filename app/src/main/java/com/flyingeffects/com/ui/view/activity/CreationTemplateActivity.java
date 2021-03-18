@@ -1975,6 +1975,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void onBackPressed() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_edit_back_bj");
         CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
                 .setAdId(AdConfigs.AD_IMAGE_EXIT)

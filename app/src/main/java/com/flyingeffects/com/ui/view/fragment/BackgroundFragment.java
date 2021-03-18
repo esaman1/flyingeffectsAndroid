@@ -146,7 +146,6 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
     }
 
     private ArrayList<Fragment> list = new ArrayList<>();
-    String[] titles;
 
     @Override
     public void setFragmentList(List<FirstLevelTypeEntity> data) {
@@ -155,9 +154,9 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
             this.data = data;
             if (data != null && data.size() > 0) {
                 list.clear();
-                titles = new String[data.size()];
+                //titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
-                    titles[i] = data.get(i).getName();
+                    //titles[i] = data.get(i).getName();
                     Bundle bundle = new Bundle();
                     if (TextUtils.equals("关注", data.get(i).getName()) || TextUtils.equals("收藏", data.get(i).getName())) {
                         bundle.putSerializable("id", data.get(i).getId());
@@ -228,7 +227,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     tl_tabs_bj.getTabAt(i).setCustomView(R.layout.item_home_tab);
                     View view = tl_tabs_bj.getTabAt(i).getCustomView();
                     AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
-                    tvTabText.setText(titles[i]);
+                    tvTabText.setText(data.get(i).getName());
                     tvTabText.setTextColor(Color.parseColor("#797979"));
                     if (i == 0) {
                         tvTabText.setTextSize(24);
@@ -239,17 +238,21 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     @Override
                     public void onTabSelected(TabLayout.Tab tab) {
                         View view = tab.getCustomView();
-                        AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
-                        tvTabText.setTextSize(24);
-                        tvTabText.setTextColor(Color.parseColor("#ffffff"));
+                        if (view != null) {
+                            AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                            tvTabText.setTextSize(24);
+                            tvTabText.setTextColor(Color.parseColor("#ffffff"));
+                        }
                     }
 
                     @Override
                     public void onTabUnselected(TabLayout.Tab tab) {
                         View view = tab.getCustomView();
+                        if (view != null) {
                             AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
                             tvTabText.setTextSize(16);
                             tvTabText.setTextColor(Color.parseColor("#797979"));
+                        }
                     }
 
                     @Override
@@ -317,15 +320,15 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         if (lastViewPagerChoosePosition != i) {
             if (i <= data.size() - 1) {
                 showWitchBtn(i);
-                StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", data.get(i).getName());
             }
         }
 
     }
 
     private void showWitchBtn(int showWitch) {
-        if (titles != null) {
-            StatisticsEventAffair.getInstance().setFlag(getActivity(), "13_back_tab_click", titles[showWitch]);
+        if (data.size() != 0) {
+            StatisticsEventAffair.getInstance().setFlag(getActivity(), "13_back_tab_click", data.get(showWitch).getName());
         }
         viewPager.setCurrentItem(showWitch);
     }

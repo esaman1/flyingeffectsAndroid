@@ -30,6 +30,7 @@ import com.flyingeffects.com.adapter.TemplateGridViewAnimAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.commonlyModel.GetVideoCover;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
@@ -1591,6 +1592,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
     private void showLoadingDialog() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_bj");
         if (mLoadingDialog != null) {
             mLoadingDialog.show();
         } else {
