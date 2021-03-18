@@ -295,7 +295,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
         setContentView(R.layout.act_shoot);
         PermissionUtil.checkPermission(this);
         loadInternalConfigJson();
-        mGlSurfaceView = (GLSurfaceView) findViewById(R.id.fu_base_gl_surface);
+        mGlSurfaceView = findViewById(R.id.fu_base_gl_surface);
         mGlSurfaceView.setEGLContextClientVersion(GlUtil.getSupportGlVersion(this));
         mCameraRenderer = new Camera1Renderer(FUBaseActivity.this, mGlSurfaceView, new OnRendererStatusListener() {
             @Override
@@ -351,8 +351,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     }
 
 
-    public void SwitchCamera() {
-
+    public void switchCamera() {
         mCameraRenderer.switchCamera();
     }
 

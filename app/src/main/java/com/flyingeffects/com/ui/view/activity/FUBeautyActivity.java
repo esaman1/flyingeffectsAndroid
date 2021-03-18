@@ -1,5 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
@@ -8,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -26,7 +30,10 @@ import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.presenter.FUBeautyMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.view.MarqueTextView;
+
+import java.util.ArrayList;
 
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -40,7 +47,7 @@ import rx.functions.Action1;
  * user : zhangtongju
  */
 public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView {
-
+    private Context mContext;
     private FUBeautyMvpPresenter presenter;
     private HorizontalselectedView horizontalselectedView;
     private LottieAnimationView lottieAnimationView;
@@ -53,6 +60,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private LinearLayout ll_stage_property;
     private ConstraintLayout constraintLayout;
     private ImageView iv_close;
+
+    private final ArrayList<String> deniedPermission = new ArrayList<>();
     /**
      * 来自哪个界面  0  默认为主页点击+号页面   1 默认为跟随相机拍摄页面
      */
@@ -68,6 +77,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
 
     @Override
     protected void onCreate() {
+        mContext = FUBeautyActivity.this;
         fuBeautyActivity = this;
         iv_close = findViewById(R.id.iv_close);
         constraintLayout = findViewById(R.id.constraintLayout);
@@ -166,7 +176,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                     presenter.clickCountDown(iv_count_down, isFrom);
                     break;
                 case R.id.iv_rolling_over:
-                    SwitchCamera();
+                    switchCamera();
                     if (isFrom == 0) {
                         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_turn");
                     } else {
@@ -329,6 +339,41 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         Effect effectNone = new Effect("none", R.drawable.ic_delete_all, "", 1, Effect.EFFECT_TYPE_NONE, 0);
         mFURenderer.onEffectSelected(effectNone);
     }
+
+    /**
+     * 处理权限
+     *
+     * @param requestCode  请求码
+     * @param permissions  权限组
+     * @param grantResults 授权结果
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 0) {
+            deniedPermission.clear();
+            for (int i = 0; i < permissions.length; i++) {
+                String permission = permissions[i];
+                int result = grantResults[i];
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    deniedPermission.add(permission);
+                }
+            }
+            if (!deniedPermission.isEmpty()) {
+                new AlertDialog.Builder(this)
+                        .setMessage("应用为了录制视频，必须要获取摄像，存储和录音权限，否则会导致功能异常！")
+                        .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                            dialog.dismiss();
+                            finish();
+                        })
+                        .setPositiveButton("去授权", (dialog, which) -> {
+                            PermissionUtil.gotoPermission(mContext);
+                        }).create()
+                        .show();
+            }
+        }
+    }
+
 
 
     /**
