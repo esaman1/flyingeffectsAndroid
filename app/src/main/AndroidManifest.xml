@@ -212,7 +212,7 @@
             android:theme="@style/TransparentTheme" />
 
         <activity
-            android:name="com.flyingeffects.com.ui.view.activity.searchMusicActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.SearchMusicActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
@@ -263,7 +263,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.view.activity.privacyPolicyActivity"
+            android:name=".ui.view.activity.PrivacyPolicyActivity"
             android:exported="false"
             android:theme="@style/TransparentTheme" />
 

@@ -25,7 +25,6 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.NTAdSDK;
@@ -224,7 +223,7 @@ public class WelcomeActivity extends BaseActivity {
      */
     private void gotoPrivacyPolicyActivity() {
         if (BaseConstans.isFirstClickUseApp()) {
-            Intent intent = new Intent(this, privacyPolicyActivity.class);
+            Intent intent = new Intent(this, PrivacyPolicyActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivityForResult(intent, 1);
         } else {

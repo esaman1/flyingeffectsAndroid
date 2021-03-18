@@ -59,7 +59,7 @@ import rx.Observable;
  * creation date: 2020/9/2
  * user : zhangtongju
  */
-public class searchMusicActivity extends BaseActivity {
+public class SearchMusicActivity extends BaseActivity {
 
     @BindView(R.id.smart_refresh_layout)
     SmartRefreshLayout smartRefreshLayout;
@@ -141,7 +141,7 @@ public class searchMusicActivity extends BaseActivity {
         HashMap<String, String> params = new HashMap<>();
         // 启动时间
         Observable ob = Api.getDefault().musicKeyword(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(searchMusicActivity.this) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(SearchMusicActivity.this) {
             @Override
             protected void onSubError(String message) {
             }
@@ -176,7 +176,7 @@ public class searchMusicActivity extends BaseActivity {
         autoNewLineLayout.removeAllViews();
         for (int i = 0; i < listSearchKey.size(); i++) {
             String nowChooseColor = ColorCorrectionManager.getInstance().getChooseColor(i);
-            TextView tv = (TextView) LayoutInflater.from(searchMusicActivity.this).inflate(R.layout.textview_recommend, null);
+            TextView tv = (TextView) LayoutInflater.from(SearchMusicActivity.this).inflate(R.layout.textview_recommend, null);
             tv.setText(listSearchKey.get(i).getName());
             tv.setTextColor(Color.parseColor("#FFFFFF"));
             int finalI = i;

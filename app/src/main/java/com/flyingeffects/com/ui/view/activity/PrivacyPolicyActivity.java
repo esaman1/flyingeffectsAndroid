@@ -28,7 +28,7 @@ import butterknife.OnClick;
  * date: ：2019/11/12 14:38
  * author: 张同举 @邮箱 jutongzhang@sina.com
  */
-public class privacyPolicyActivity extends Activity {
+public class PrivacyPolicyActivity extends Activity {
 
     private static final int RESULT_CODE=3;
 
@@ -56,7 +56,7 @@ public class privacyPolicyActivity extends Activity {
         ClickableSpan clickableSpanOne = new ClickableSpan() {
             @Override
             public void onClick(@NotNull View view) {
-                Intent intent = new Intent(privacyPolicyActivity.this, webViewActivity.class);
+                Intent intent = new Intent(PrivacyPolicyActivity.this, webViewActivity.class);
                 intent.putExtra("webUrl", BaseConstans.PRIVACYPOLICY);
                 startActivity(intent);
             }
@@ -72,7 +72,7 @@ public class privacyPolicyActivity extends Activity {
         ClickableSpan clickableSpanTwo = new ClickableSpan() {
             @Override
             public void onClick(@NotNull View view) {
-                Intent intent = new Intent(privacyPolicyActivity.this, webViewActivity.class);
+                Intent intent = new Intent(PrivacyPolicyActivity.this, webViewActivity.class);
                 intent.putExtra("webUrl", BaseConstans.PROTOCOL);
                 startActivity(intent);
             }
