@@ -8,12 +8,11 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.flyco.tablayout.SlidingTabLayout;
-import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
+import com.flyingeffects.com.enity.SecondChoosePageListener;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.DressUpMvpView;
 import com.flyingeffects.com.ui.presenter.DressUpMvpPresenter;
@@ -30,6 +29,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 import butterknife.BindView;
+import de.greenrobot.event.EventBus;
 
 /**
  * description ：换装
@@ -109,6 +109,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                             bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
                             bundle.putSerializable("id", data.get(i).getId());
                             bundle.putInt("type", 2);
+                            bundle.putSerializable("homePageNum", 2);
                             bundle.putString("categoryTabName", data.get(i).getName());
                             SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                             fragment.setArguments(bundle);
@@ -116,6 +117,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                         } else {
                             bundle.putSerializable("id", data.get(i).getId());
                             bundle.putString("tc_id", "-1");
+                            bundle.putSerializable("homePageNum", 2);
                             bundle.putSerializable("num", i);
                             bundle.putSerializable("from", 4);
                             HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
@@ -135,6 +137,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
 
                     @Override
                     public void onPageSelected(int i) {
+                        EventBus.getDefault().post(new SecondChoosePageListener(i));
                         if (i <= data.size() - 1) {
                             StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                         }

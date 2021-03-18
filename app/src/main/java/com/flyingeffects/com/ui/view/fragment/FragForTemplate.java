@@ -6,14 +6,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.flyco.tablayout.SlidingTabLayout;
-import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
+import com.flyingeffects.com.enity.SecondChoosePageListener;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -44,6 +43,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 
@@ -133,6 +133,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                         bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
                         bundle.putInt("type", 0);
                         bundle.putSerializable("id", data.get(i).getId());
+                        bundle.putSerializable("homePageNum", 1);
                         bundle.putString("categoryTabName", data.get(i).getName());
                         SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                         fragment.setArguments(bundle);
@@ -141,6 +142,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                         bundle.putSerializable("id", data.get(i).getId());
                         bundle.putString("tc_id", "-1");
                         bundle.putSerializable("num", i);
+                        bundle.putSerializable("homePageNum", 1);
                         bundle.putSerializable("from", 0);
                         HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
                         fragment.setArguments(bundle);
@@ -159,7 +161,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
                     @Override
                     public void onPageSelected(int i) {
-
+                        EventBus.getDefault().post(new SecondChoosePageListener(i));
                         if (i <= data.size() - 1) {
                             StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                         }

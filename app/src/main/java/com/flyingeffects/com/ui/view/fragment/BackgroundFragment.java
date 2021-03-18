@@ -9,12 +9,17 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.TemplateDown;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
+import com.flyingeffects.com.enity.SecondChoosePageListener;
 import com.flyingeffects.com.enity.fromKuaishou;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
@@ -26,11 +31,11 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
-import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
 import com.flyingeffects.com.ui.view.activity.ContentAllianceActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;
@@ -41,10 +46,6 @@ import com.shixing.sxve.ui.albumType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -107,7 +108,6 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
         presenter = new FagBjMvpPresenter(getActivity(), this);
         presenter.requestData();
-        EventBus.getDefault().register(this);
         mLoadingDialog = buildLoadingDialog();
         appbar.addOnOffsetChangedListener(this);
     }
@@ -197,6 +197,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
                     @Override
                     public void onPageSelected(int i) {
+                        EventBus.getDefault().post(new SecondChoosePageListener(i));
                         if (lastViewPagerChoosePosition != i) {
                             try {
                                 String position = data.get(i).getId();
@@ -246,11 +247,9 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     @Override
                     public void onTabUnselected(TabLayout.Tab tab) {
                         View view = tab.getCustomView();
-                        if(view!=null){
                             AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
                             tvTabText.setTextSize(16);
                             tvTabText.setTextColor(Color.parseColor("#797979"));
-                        }
                     }
 
                     @Override
@@ -463,7 +462,6 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         if (getActivity() != null) {
             showWitchBtn(lastViewPagerChoosePosition);
         }
-
     }
 
     @Override

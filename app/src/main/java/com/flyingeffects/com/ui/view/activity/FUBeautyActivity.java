@@ -49,6 +49,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private ImageView iv_count_down;
     private RelativeLayout relative_choose_music;
     private MarqueTextView tv_chooseMusic;
+
     private boolean isRecording = false;
     private LinearLayout ll_stage_property;
     private ConstraintLayout constraintLayout;

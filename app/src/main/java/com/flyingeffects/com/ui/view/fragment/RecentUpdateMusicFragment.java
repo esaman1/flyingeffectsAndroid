@@ -105,7 +105,6 @@ public class RecentUpdateMusicFragment extends BaseFragment {
 
     @Override
     protected void initView() {
-        EventBus.getDefault().register(this);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             id = bundle.getInt("id", 0);

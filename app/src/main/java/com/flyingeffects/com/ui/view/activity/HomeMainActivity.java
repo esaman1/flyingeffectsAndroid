@@ -35,6 +35,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.enity.HomeChoosePageListener;
 import com.flyingeffects.com.enity.RequestMessage;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
@@ -544,6 +545,7 @@ public class HomeMainActivity extends FragmentActivity {
         setStatusBar();
         viewpager_home.setCurrentItem(which, false);
         EventBus.getDefault().post(new RequestMessage());
+        EventBus.getDefault().post(new HomeChoosePageListener(which));
     }
 
 

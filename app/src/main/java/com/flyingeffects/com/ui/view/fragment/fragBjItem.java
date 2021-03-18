@@ -65,6 +65,7 @@ public class fragBjItem extends BaseFragment {
     private MainRecyclerAdapter adapter;
     private List<new_fag_template_item> allData = new ArrayList<>();
     private String templateId = "";
+    private int nowPageNum;
     @BindView(R.id.smart_refresh_layout_bj)
     SmartRefreshLayout smartRefreshLayout;
     @BindView(R.id.lin_show_nodata_bj)
@@ -102,9 +103,9 @@ public class fragBjItem extends BaseFragment {
             templateId = bundle.getString("id");
             fromType = bundle.getInt("from");
             cover = bundle.getString("cover");
+            nowPageNum=bundle.getInt("num");
             tc_id = bundle.getString("tc_id");
         }
-        EventBus.getDefault().register(this);
         initRecycler();
         initSmartRefreshLayout();
         LogUtil.d("OOM", "fromType=" + fromType);
@@ -118,6 +119,14 @@ public class fragBjItem extends BaseFragment {
 
     @Override
     protected void initData() {
+        ChoosePageChange(() -> {
+            if (getActivity() != null) {
+                if (!HasShowAd&&listData!=null&&listData.size()>0) {
+                    LogUtil.d("requestAd", "onResume之模板请求广告");
+                    requestFeedAd();
+                }
+            }
+        });
 
     }
 
@@ -186,25 +195,12 @@ public class fragBjItem extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
-
+        mAdManager.adResume();
         if (getActivity() != null && "12".equals(templateId)) {
             isRefresh = true;
             selectPage = 1;
             requestFagData(false, false);
         }
-
-
-        if (getActivity() != null) {
-            mAdManager.adResume();
-
-
-
-        }
-
-
-
-
 
 
 
@@ -308,24 +304,33 @@ public class fragBjItem extends BaseFragment {
                 }
                 listData.addAll(data);
                 isShowData(listData);
+                requestFeedAd();
 
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                    requestFeedAd(mAdManager, new RequestFeedBack() {
-                        @Override
-                        public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
-                            getAdCallback(bean);
-                        }
-
-                        @Override
-                        public void ChoseAdBack(int type, int adIndex) {
-                            if (type != TYPE_GDT_FEED_EXPRESS_AD) {
-                                adapter.remove(adIndex);
-                            }
-                        }
-                    });
-                }
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, isCanRefresh);
+    }
+
+
+
+
+
+    private void requestFeedAd(){
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()&&  NowHomePageChooseNum==0 &&nowPageNum==NowSecondChooseNum) {
+            HasShowAd=true;
+            requestFeedAd(mAdManager, new RequestFeedBack() {
+                @Override
+                public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
+                    getAdCallback(bean);
+                }
+
+                @Override
+                public void ChoseAdBack(int type, int adIndex) {
+                    if (type != TYPE_GDT_FEED_EXPRESS_AD) {
+                        adapter.remove(adIndex);
+                    }
+                }
+            });
+        }
     }
 
 

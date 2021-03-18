@@ -83,7 +83,6 @@ public class frag_user_collect extends BaseFragment {
     protected void initView() {
         initSmartRefreshLayout();
         Bundle bundle = this.getArguments();
-        EventBus.getDefault().register(this);
         if (bundle != null) {
             template_type = bundle.getString("template_type");
             from = bundle.getInt("from", 0);

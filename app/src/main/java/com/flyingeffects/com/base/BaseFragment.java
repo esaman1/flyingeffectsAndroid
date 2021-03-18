@@ -1,21 +1,20 @@
 package com.flyingeffects.com.base;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.flyingeffects.com.enity.CommonNewsBean;
+import com.flyingeffects.com.enity.HomeChoosePageListener;
+import com.flyingeffects.com.enity.SecondChoosePageListener;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.ui.interfaces.PermissionListener;
 import com.flyingeffects.com.utils.LogUtil;
@@ -30,11 +29,10 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.subjects.PublishSubject;
 
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.BAIDU_FEED_AD_EVENT;
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.GDT_FEED_AD_EVENT;
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED_AD_EVENT;
 import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_GDT_FEED_EXPRESS_AD;
 import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_TT_FEED_EXPRESS_AD;
 
@@ -64,14 +62,12 @@ public abstract class BaseFragment extends Fragment implements IActivity {
         if (contentView == null) {
             contentView = inflater.inflate(getContentLayout(), null);
             unbinder = ButterKnife.bind(this, contentView);
-//            test();
             initView();
-
+            EventBus.getDefault().register(this);
         } else {
             ViewGroup vp = (ViewGroup) contentView.getParent();
             if (null != vp) {
                 vp.removeView(contentView);
-//                vp.removeAllViews();
             }
         }
         initAction();
@@ -106,14 +102,12 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     @Override
     public void onResume() {
         super.onResume();
-        onActivityVisibilityChanged(true);
     }
 
     @Override
     public void onPause() {
         lifecycleSubject.onNext(ActivityLifeCycleEvent.PAUSE);
         super.onPause();
-        onActivityVisibilityChanged(false);
     }
 
     @Override
@@ -125,7 +119,7 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     @Override
     public void onDestroy() {
         lifecycleSubject.onNext(ActivityLifeCycleEvent.DESTROY);
-//        unbinder.unbind();
+//        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -343,41 +337,54 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     }
 
 
+    //----------------------------------------仿懒加载，判断当前显示的页面是那个-----------------------------------------------
 
     /**
-     * Fragment当前状态是否可见
+     * 当前主页选择的位数
      */
-    public boolean NowFragmentIsVisible=true;
-    public boolean HasShowAd=false;
+    public int NowHomePageChooseNum = 1;
+
+    /**
+     * 当前第二页选择位数
+     */
+    public int NowSecondChooseNum = 0;
 
 
-//    @Override
-//    public void onHiddenChanged(boolean hidden) {
-//        super.onHiddenChanged(hidden);
-//        LogUtil.d("OOM4","hidden="+hidden);
-//
-//    }
-//
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        LogUtil.d("OOM4","setUserVisibleHint="+isVisibleToUser);
-        if (isVisibleToUser) {
-            //相当于Fragment的onResume
-        } else {
-            //相当于Fragment的onPause
+    public boolean HasShowAd = false;
+
+
+    @Subscribe
+    public void onEventMainThread(HomeChoosePageListener listener) {
+        if (getActivity() != null) {
+            NowHomePageChooseNum = listener.getPager();
+            if(callback!=null){
+                callback.isChange();
+            }
+        }
+
+    }
+
+
+    @Subscribe
+    public void onEventMainThread(SecondChoosePageListener listener) {
+        if (getActivity() != null) {
+            NowSecondChooseNum = listener.getPager();
+            if(callback!=null){
+                callback.isChange();
+            }
         }
     }
 
+    private PageChangeCallback callback;
 
-
-    public void onActivityVisibilityChanged(boolean isTrue){
-        this.NowFragmentIsVisible=NowFragmentIsVisible;
-        LogUtil.d("OOM4","onActivityVisibilityChanged="+isTrue);
-
+    public void ChoosePageChange(PageChangeCallback callback) {
+         this.callback = callback;
     }
 
 
+    public interface PageChangeCallback {
+            void  isChange();
+    }
 
 
 }
