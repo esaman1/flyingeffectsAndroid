@@ -329,6 +329,11 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         mFURenderer.onEffectSelected(effectNone);
     }
 
+    @Override
+    public void finishAct() {
+        this.finish();
+    }
+
     /**
      * 处理权限
      *
