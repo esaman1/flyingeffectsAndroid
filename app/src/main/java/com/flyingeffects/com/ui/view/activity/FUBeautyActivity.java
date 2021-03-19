@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -317,7 +318,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
-
     @Override
     public void nowChooseRecordIsInfinite(boolean isInfinite) {
         LogUtil.d("OOM", "isInfinite=" + isInfinite);
@@ -345,7 +345,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * user : zhangtongju
      */
     @Override
-    public void ClearSticker() {
+    public void clearSticker() {
         Effect effectNone = new Effect("none", R.drawable.ic_delete_all, "", 1, Effect.EFFECT_TYPE_NONE, 0);
         mFURenderer.onEffectSelected(effectNone);
     }
@@ -385,6 +385,13 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                             PermissionUtil.gotoPermission(mContext);
                             dialog.dismiss();
                             finish();
+                        })
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                dialog.dismiss();
+                                finish();
+                            }
                         }).create()
                         .show();
             }
@@ -453,7 +460,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             }
         });
 
-
     }
 
 
@@ -465,7 +471,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     public void toNextPage(String path) {
         presenter.toNextPage(path);
     }
-
 
     /**
      * description ：显示贴纸页面当前页面给的反馈

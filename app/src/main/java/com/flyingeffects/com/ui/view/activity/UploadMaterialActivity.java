@@ -197,8 +197,7 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
                     .into(add_head);
             imageHeadPath = BaseConstans.headUrl();
         }
-        switch_button.setOnCheckedChangeListener((view, isChecked) ->
-        {
+        switch_button.setOnCheckedChangeListener((view, isChecked) -> {
             if (!isFastDoubleClick()) {
                 if (isChecked) {
                     LogUtil.d("OOM", "is_with_play=" + 1);
@@ -437,7 +436,6 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
             }
         }, 500);
         new Thread(() -> toNext(videoPath)).start();
-
 
     }
 

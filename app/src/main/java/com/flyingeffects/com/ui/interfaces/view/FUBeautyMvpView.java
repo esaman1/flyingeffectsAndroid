@@ -8,7 +8,7 @@ public interface FUBeautyMvpView {
 
     void changeFUSticker(String bundle,String name);
 
-    void ClearSticker();
+    void clearSticker();
 
     void finishAct();
 

@@ -95,6 +95,7 @@ import rx.schedulers.Schedulers;
  * user : zhangtongju
  */
 public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpAndDownMvpView, AlbumChooseCallback {
+
     public final static int SELECTALBUM = 0;
     public final static int SELECTALBUMFROMBJ = 1;
     public final static int SELECTALBUMFROMDressUp = 2;
@@ -864,13 +865,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     protected void onResume() {
         super.onResume();
         isOnPause = false;
-        LogUtil.d("OOM22", "onResume");
+        LogUtil.d("OOM22", "onResume " + mAdDialogIsShow);
         //出现bug 不能继续播放的问题
         if (!mAdDialogIsShow) {
+            adapter.notifyDataSetChanged();
             if (!nowItemIsAd) {
                 GSYVideoManager.onResume();
             }
-            adapter.notifyDataSetChanged();
             if (BaseConstans.hasLogin()) {
                 //主要用于刷新当前页面
                 mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
