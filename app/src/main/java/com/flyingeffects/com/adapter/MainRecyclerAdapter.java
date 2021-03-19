@@ -312,259 +312,259 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
 
                     break;
                 }
-                case 11: {
+            }
+            case 11: {
 
-                    // 设置图片
-                    String imageUrl = item.getFeedAdResultBean().getImageUrl();
-                    if (!TextUtils.isEmpty(imageUrl)) {
-                        // 视频
-                        Glide.with(mContext).load(imageUrl).into((ImageView) helper.getView(R.id.item_news_hot_image));
-                    }
-                    if (item.getFeedAdResultBean().isShowCloseButton()) {
-                        helper.getView(R.id.btnDisLike).setVisibility(View.VISIBLE);
-                        helper.getView(R.id.btnDisLike).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mAdManager.registerCloseListener(item.getFeedAdResultBean().getEventType(), helper.getAdapterPosition());
-                            }
-                        });
-                    }
-                    if (item.getFeedAdResultBean().getEventType() == TT_FEED_AD_EVENT) {
-                        //设置头条logo
-                        Bitmap bitmap = item.getFeedAdResultBean().getFeedResultBean().getTtNativeExpressAd().getAdLogo();
-                        if (bitmap != null) {
-                            LinearLayout.LayoutParams adLogoLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                            helper.getView(R.id.logo_iv).setLayoutParams(adLogoLp);
-                            ((ImageView) helper.getView(R.id.logo_iv)).setImageBitmap(bitmap);
-                            helper.getView(R.id.baidu_ad_bottom_ll).setVisibility(View.VISIBLE);
-                            helper.getView(R.id.ad_text_iv).setVisibility(View.GONE);
-                        } else {
-                            helper.getView(R.id.baidu_ad_bottom_ll).setVisibility(View.GONE);
+                // 设置图片
+                String imageUrl = item.getFeedAdResultBean().getImageUrl();
+                if (!TextUtils.isEmpty(imageUrl)) {
+                    // 视频
+                    Glide.with(mContext).load(imageUrl).into((ImageView) helper.getView(R.id.item_news_hot_image));
+                }
+                if (item.getFeedAdResultBean().isShowCloseButton()) {
+                    helper.getView(R.id.btnDisLike).setVisibility(View.VISIBLE);
+                    helper.getView(R.id.btnDisLike).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mAdManager.registerCloseListener(item.getFeedAdResultBean().getEventType(), helper.getAdapterPosition());
                         }
-                    } else if (item.getFeedAdResultBean().getEventType() == BAIDU_FEED_AD_EVENT) {
-                        //设置百度logo文字和图标
-                        if (!TextUtils.isEmpty(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getAdLogoUrl()) && !TextUtils.isEmpty(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getBaiduLogoUrl())) {
-                            Glide.with(mContext).load(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getAdLogoUrl()).into((ImageView) helper.getView(R.id.ad_text_iv));
-                            Glide.with(mContext).load(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getBaiduLogoUrl()).into((ImageView) helper.getView(R.id.logo_iv));
-                            helper.getView(R.id.baidu_ad_bottom_ll).setVisibility(View.VISIBLE);
-                        } else {
-                            helper.getView(R.id.baidu_ad_bottom_ll).setVisibility(View.GONE);
-                        }
+                    });
+                }
+                if (item.getFeedAdResultBean().getEventType() == TT_FEED_AD_EVENT) {
+                    //设置头条logo
+                    Bitmap bitmap = item.getFeedAdResultBean().getFeedResultBean().getTtNativeExpressAd().getAdLogo();
+                    if (bitmap != null) {
+                        LinearLayout.LayoutParams adLogoLp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        helper.getView(R.id.logo_iv).setLayoutParams(adLogoLp);
+                        ((ImageView) helper.getView(R.id.logo_iv)).setImageBitmap(bitmap);
+                        helper.getView(R.id.baidu_ad_bottom_ll).setVisibility(View.VISIBLE);
+                        helper.getView(R.id.ad_text_iv).setVisibility(View.GONE);
                     } else {
                         helper.getView(R.id.baidu_ad_bottom_ll).setVisibility(View.GONE);
                     }
-                    break;
-
-
+                } else if (item.getFeedAdResultBean().getEventType() == BAIDU_FEED_AD_EVENT) {
+                    //设置百度logo文字和图标
+                    if (!TextUtils.isEmpty(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getAdLogoUrl()) && !TextUtils.isEmpty(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getBaiduLogoUrl())) {
+                        Glide.with(mContext).load(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getAdLogoUrl()).into((ImageView) helper.getView(R.id.ad_text_iv));
+                        Glide.with(mContext).load(item.getFeedAdResultBean().getFeedResultBean().getBaiduNativeResponse().getBaiduLogoUrl()).into((ImageView) helper.getView(R.id.logo_iv));
+                        helper.getView(R.id.baidu_ad_bottom_ll).setVisibility(View.VISIBLE);
+                    } else {
+                        helper.getView(R.id.baidu_ad_bottom_ll).setVisibility(View.GONE);
+                    }
+                } else {
+                    helper.getView(R.id.baidu_ad_bottom_ll).setVisibility(View.GONE);
                 }
-                case 12: {
+                break;
 
 
-                    String gdtImageUrl = item.getFeedAdResultBean().getImageUrl();
-                    helper.setText(R.id.tv_name, item.getFeedAdResultBean().getTitle());
-                    LogUtil.d("OOMaD", "item.getFeedAdResultBean().getTitle()" + item.getFeedAdResultBean().getTitle());
-                    LogUtil.d("OOMaD", "gdtImageUrl=" + gdtImageUrl);
-                    if (!TextUtils.isEmpty(gdtImageUrl)) {
-                        try {
-                            helper.getView(R.id.item_news_hot_image).setVisibility(View.VISIBLE);
-                            Glide.with(mContext).load(gdtImageUrl).into((ImageView) helper.getView(R.id.item_news_hot_image));
-                        } catch (Exception e) {
-                            LogUtil.e(e.getMessage());
+            }
+            case 12: {
+
+
+                String gdtImageUrl = item.getFeedAdResultBean().getImageUrl();
+                helper.setText(R.id.tv_name, item.getFeedAdResultBean().getTitle());
+                LogUtil.d("OOMaD", "item.getFeedAdResultBean().getTitle()" + item.getFeedAdResultBean().getTitle());
+                LogUtil.d("OOMaD", "gdtImageUrl=" + gdtImageUrl);
+                if (!TextUtils.isEmpty(gdtImageUrl)) {
+                    try {
+                        helper.getView(R.id.item_news_hot_image).setVisibility(View.VISIBLE);
+                        Glide.with(mContext).load(gdtImageUrl).into((ImageView) helper.getView(R.id.item_news_hot_image));
+                    } catch (Exception e) {
+                        LogUtil.e(e.getMessage());
+                    }
+                }
+                if (item.getFeedAdResultBean().isShowCloseButton()) {
+                    helper.getView(R.id.btnDisLike).setVisibility(View.VISIBLE);
+                    helper.getView(R.id.btnDisLike).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mAdManager.registerCloseListener(item.getFeedAdResultBean().getEventType(), helper.getAdapterPosition());
                         }
-                    }
-                    if (item.getFeedAdResultBean().isShowCloseButton()) {
-                        helper.getView(R.id.btnDisLike).setVisibility(View.VISIBLE);
-                        helper.getView(R.id.btnDisLike).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mAdManager.registerCloseListener(item.getFeedAdResultBean().getEventType(), helper.getAdapterPosition());
-                            }
-                        });
-                    }
-
-
-                    //logo 位置
-                    FrameLayout.LayoutParams lp01 = new FrameLayout.LayoutParams(ScreenUtils.dp2px(mContext, 28), ScreenUtils.dp2px(mContext, 10));
-                    lp01.setMargins(0, ScreenUtils.dp2px(NTAdSDK.getAppContext(), 271), 0, 0);
-
-                    NativeAdContainer rightImageContainer = helper.getView(R.id.item_news_sigle_image_ad);
-                    List<View> rightImageViews = new ArrayList<>();
-                    rightImageViews.add(helper.getView(R.id.item_news_sigle_image_ll));
-                    mAdBean = item.getFeedAdResultBean().getFeedResultBean().getGdtNativeUnifiedADData();
-                    mAdBean.bindAdToView(mContext, rightImageContainer, lp01, rightImageViews);
-                    if (mAdBean.getAdPatternType() == AdPatternType.NATIVE_VIDEO) {
-
-                        helper.getView(R.id.item_news_hot_image).setVisibility(View.GONE);
-                        helper.getView(R.id.fl_ad_feed_video).setVisibility(View.VISIBLE);
-                        MediaView mediaView = helper.getView(R.id.mv_ad_gdt);
-                        // 视频广告需对MediaView进行绑定，MediaView必须为容器mContainer的子View
-                        // 视频素材加载完成，此时展示广告不会有进度条。
-                        mAdBean.bindMediaView(mediaView, new VideoOption.Builder()
-                                        .setAutoPlayMuted(true).setAutoPlayPolicy(VideoOption.AutoPlayPolicy.WIFI).build(),
-                                // 视频相关回调
-                                new NativeADMediaListener() {
-                                    @Override
-                                    public void onVideoInit() {
-                                    }
-
-                                    @Override
-                                    public void onVideoLoading() {
-                                    }
-
-                                    @Override
-                                    public void onVideoReady() {
-                                    }
-
-                                    @Override
-                                    public void onVideoLoaded(int videoDuration) {
-                                    }
-
-                                    @Override
-                                    public void onVideoStart() {
-                                    }
-
-                                    @Override
-                                    public void onVideoPause() {
-
-                                    }
-
-                                    @Override
-                                    public void onVideoResume() {
-                                        mAdManager.adResume();
-                                    }
-
-                                    @Override
-                                    public void onVideoCompleted() {
-                                    }
-
-                                    @Override
-                                    public void onVideoError(AdError error) {
-                                    }
-
-                                    @Override
-                                    public void onVideoStop() {
-                                    }
-
-                                    @Override
-                                    public void onVideoClicked() {
-                                    }
-                                });
-                    }
-                    break;
-
-
+                    });
                 }
-                case 13: {
-                    ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).removeAllViews();
-                    if (null != item.getFeedAdResultBean().getAdView() && null != item.getFeedAdResultBean().getAdView().getParent()) {
-                        ((ViewGroup) item.getFeedAdResultBean().getAdView().getParent()).removeAllViews();
-                    }
-                    ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).addView(item.getFeedAdResultBean().getAdView());
-                    break;
+
+
+                //logo 位置
+                FrameLayout.LayoutParams lp01 = new FrameLayout.LayoutParams(ScreenUtils.dp2px(mContext, 28), ScreenUtils.dp2px(mContext, 10));
+                lp01.setMargins(0, ScreenUtils.dp2px(NTAdSDK.getAppContext(), 271), 0, 0);
+
+                NativeAdContainer rightImageContainer = helper.getView(R.id.item_news_sigle_image_ad);
+                List<View> rightImageViews = new ArrayList<>();
+                rightImageViews.add(helper.getView(R.id.item_news_sigle_image_ll));
+                mAdBean = item.getFeedAdResultBean().getFeedResultBean().getGdtNativeUnifiedADData();
+                mAdBean.bindAdToView(mContext, rightImageContainer, lp01, rightImageViews);
+                if (mAdBean.getAdPatternType() == AdPatternType.NATIVE_VIDEO) {
+
+                    helper.getView(R.id.item_news_hot_image).setVisibility(View.GONE);
+                    helper.getView(R.id.fl_ad_feed_video).setVisibility(View.VISIBLE);
+                    MediaView mediaView = helper.getView(R.id.mv_ad_gdt);
+                    // 视频广告需对MediaView进行绑定，MediaView必须为容器mContainer的子View
+                    // 视频素材加载完成，此时展示广告不会有进度条。
+                    mAdBean.bindMediaView(mediaView, new VideoOption.Builder()
+                                    .setAutoPlayMuted(true).setAutoPlayPolicy(VideoOption.AutoPlayPolicy.WIFI).build(),
+                            // 视频相关回调
+                            new NativeADMediaListener() {
+                                @Override
+                                public void onVideoInit() {
+                                }
+
+                                @Override
+                                public void onVideoLoading() {
+                                }
+
+                                @Override
+                                public void onVideoReady() {
+                                }
+
+                                @Override
+                                public void onVideoLoaded(int videoDuration) {
+                                }
+
+                                @Override
+                                public void onVideoStart() {
+                                }
+
+                                @Override
+                                public void onVideoPause() {
+
+                                }
+
+                                @Override
+                                public void onVideoResume() {
+                                    mAdManager.adResume();
+                                }
+
+                                @Override
+                                public void onVideoCompleted() {
+                                }
+
+                                @Override
+                                public void onVideoError(AdError error) {
+                                }
+
+                                @Override
+                                public void onVideoStop() {
+                                }
+
+                                @Override
+                                public void onVideoClicked() {
+                                }
+                            });
                 }
+                break;
+
+
+            }
+            case 13: {
+                ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).removeAllViews();
+                if (null != item.getFeedAdResultBean().getAdView() && null != item.getFeedAdResultBean().getAdView().getParent()) {
+                    ((ViewGroup) item.getFeedAdResultBean().getAdView().getParent()).removeAllViews();
+                }
+                ((FrameLayout) helper.getView(R.id.item_news_sigle_image_fl)).addView(item.getFeedAdResultBean().getAdView());
+                break;
+            }
+            default:
+                break;
+        }
+
+        if (item.getFeedAdResultBean() != null) {
+            //根据类型注册广告点击事件
+            switch (item.getFeedAdResultBean().getEventType()) {
+                case BAIDU_FEED_AD_EVENT:
+                    mAdManager.registerClickedListener(BAIDU_FEED_AD_EVENT, item.getFeedAdResultBean(), (ViewGroup) helper.getConvertView(), 0, null, null);
+                    break;
+                case GDT_FEED_AD_EVENT:
+                    mAdManager.registerClickedListener(GDT_FEED_AD_EVENT, item.getFeedAdResultBean(), (ViewGroup) helper.getConvertView(), 0, null, null);
+                    break;
+                case TT_FEED_AD_EVENT:
+                    List<View> clickViewList = new ArrayList<>();
+                    clickViewList.add(helper.itemView);
+                    ArrayList<View> images = new ArrayList<>();
+                    images.add(helper.getView(R.id.item_news_hot_image));
+                    mAdManager.registerClickedListener(TT_FEED_AD_EVENT, item.getFeedAdResultBean(), (ViewGroup) helper.getConvertView(), 0, images, clickViewList);
+                    break;
+                case TYPE_TT_FEED_EXPRESS_AD:
+                    mAdManager.registerClickedListener(TYPE_TT_FEED_EXPRESS_AD, item.getFeedAdResultBean(), (ViewGroup) helper.getConvertView(), helper.getAdapterPosition(), null, null);
+                    break;
+                case TYPE_GDT_FEED_EXPRESS_AD:
+                    mAdManager.registerClickedListener(TYPE_GDT_FEED_EXPRESS_AD, item.getFeedAdResultBean(), (ViewGroup) helper.getConvertView(), helper.getAdapterPosition(), null, null);
+                    break;
                 default:
                     break;
             }
-
-            if (item.getFeedAdResultBean() != null) {
-                //根据类型注册广告点击事件
-                switch (item.getFeedAdResultBean().getEventType()) {
-                    case BAIDU_FEED_AD_EVENT:
-                        mAdManager.registerClickedListener(BAIDU_FEED_AD_EVENT, item.getFeedAdResultBean(), (ViewGroup) helper.getConvertView(), 0, null, null);
-                        break;
-                    case GDT_FEED_AD_EVENT:
-                        mAdManager.registerClickedListener(GDT_FEED_AD_EVENT, item.getFeedAdResultBean(), (ViewGroup) helper.getConvertView(), 0, null, null);
-                        break;
-                    case TT_FEED_AD_EVENT:
-                        List<View> clickViewList = new ArrayList<>();
-                        clickViewList.add(helper.itemView);
-                        ArrayList<View> images = new ArrayList<>();
-                        images.add(helper.getView(R.id.item_news_hot_image));
-                        mAdManager.registerClickedListener(TT_FEED_AD_EVENT, item.getFeedAdResultBean(), (ViewGroup) helper.getConvertView(), 0, images, clickViewList);
-                        break;
-                    case TYPE_TT_FEED_EXPRESS_AD:
-                        mAdManager.registerClickedListener(TYPE_TT_FEED_EXPRESS_AD, item.getFeedAdResultBean(), (ViewGroup) helper.getConvertView(), helper.getAdapterPosition(), null, null);
-                        break;
-                    case TYPE_GDT_FEED_EXPRESS_AD:
-                        mAdManager.registerClickedListener(TYPE_GDT_FEED_EXPRESS_AD, item.getFeedAdResultBean(), (ViewGroup) helper.getConvertView(), helper.getAdapterPosition(), null, null);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-
         }
-
-        /**
-         * 弹出dialog
-         */
-        private void showMessageDialog () {
-            //复制到剪贴板
-            ClipboardManager tvCopy = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-            tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.getService_wxi()));
-            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_wechat");
-            //弹出dialog
-            CommonMessageDialog.getBuilder(mContext)
-                    .setContentView(R.layout.dialog_common_message)
-                    .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
-                    .setAdId(AdConfigs.AD_IMAGE_WX_DIALOG)
-                    .setTitle(BaseConstans.configList.getTitle())
-                    .setMessage(BaseConstans.configList.getContent())
-                    .setMessage2(BaseConstans.configList.getCopydata())
-                    .setMessage3(BaseConstans.configList.getDescription())
-                    .setPositiveButton("立即打开微信获取")
-                    .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
-                        @Override
-                        public void onPositiveBtnClick(CommonMessageDialog dialog) {
-                            openWx();
-                        }
-
-                        @Override
-                        public void onCancelBtnClick(CommonMessageDialog dialog) {
-                            dialog.dismiss();
-                        }
-                    }).build()
-                    .show();
-        }
-
-        private void openWx () {
-            try {
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");
-                intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setComponent(cmp);
-                mContext.startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                ToastUtil.showToast(mContext.getString(R.string.check_login_notification));
-            }
-        }
+    }
 
 
-        /**
-         * description ：跳转到上传页面
-         * creation date: 2020/12/7
-         * user : zhangtongju
-         */
-        private void intoUploadMaterialActivity (String path){
-            Intent intent = new Intent(mContext, UploadMaterialActivity.class);
-            intent.putExtra("isFrom", 2);
-            intent.putExtra("videoPath", path);
+    /**
+     * 弹出dialog
+     */
+    private void showMessageDialog() {
+        //复制到剪贴板
+        ClipboardManager tvCopy = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+        tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.getService_wxi()));
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_wechat");
+        //弹出dialog
+        CommonMessageDialog.getBuilder(mContext)
+                .setContentView(R.layout.dialog_common_message)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_WX_DIALOG)
+                .setTitle(BaseConstans.configList.getTitle())
+                .setMessage(BaseConstans.configList.getContent())
+                .setMessage2(BaseConstans.configList.getCopydata())
+                .setMessage3(BaseConstans.configList.getDescription())
+                .setPositiveButton("立即打开微信获取")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        openWx();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).build()
+                .show();
+    }
+
+    private void openWx() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setComponent(cmp);
             mContext.startActivity(intent);
-
+        } catch (ActivityNotFoundException e) {
+            ToastUtil.showToast(mContext.getString(R.string.check_login_notification));
         }
+    }
 
-        String tabName;
 
-        /**
-         * 设置换装收藏tab没有上传功能
-         */
-        public void setDressUPTabNameFavorites (String tabName){
-            this.tabName = tabName;
-        }
+    /**
+     * description ：跳转到上传页面
+     * creation date: 2020/12/7
+     * user : zhangtongju
+     */
+    private void intoUploadMaterialActivity(String path) {
+        Intent intent = new Intent(mContext, UploadMaterialActivity.class);
+        intent.putExtra("isFrom", 2);
+        intent.putExtra("videoPath", path);
+        mContext.startActivity(intent);
 
     }
+
+    String tabName;
+
+    /**
+     * 设置换装收藏tab没有上传功能
+     */
+    public void setDressUPTabNameFavorites(String tabName) {
+        this.tabName = tabName;
+    }
+
+
 }
 
 
