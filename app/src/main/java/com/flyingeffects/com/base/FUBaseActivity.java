@@ -478,8 +478,6 @@ public abstract class FUBaseActivity extends AppCompatActivity
                                         dcimFile.delete();
                                     }
                                     LogUtil.d("OOM3","删除的地址为"+dcimFile.getPath());
-
-//                                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(dcimFile)));
                                     if(TextUtils.isEmpty(nowChooseBjPath)){
                                         intoTemplate(mVideoOutFile.getPath());
                                     }else{
