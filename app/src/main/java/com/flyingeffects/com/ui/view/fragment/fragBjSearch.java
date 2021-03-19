@@ -1,6 +1,8 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -21,22 +24,27 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
+import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -72,9 +80,13 @@ public class fragBjSearch extends BaseFragment {
 
     private boolean isRefresh = true;
     private int selectPage = 1;
-    /**默认值肯定为""*/
+    /**
+     * 默认值肯定为""
+     */
     private String searchText;
-    /**0 表示搜索出来模板 1表示搜索内容为背景  3代表换装*/
+    /**
+     * 0 表示搜索出来模板 1表示搜索内容为背景  3代表换装
+     */
     private int isFrom;
     private boolean hasSearch = false;
 
@@ -106,7 +118,7 @@ public class fragBjSearch extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new MainRecyclerAdapter(allData, isFrom, true,null);
+        adapter = new MainRecyclerAdapter(allData, isFrom, true, null);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -323,35 +335,55 @@ public class fragBjSearch extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.relative_add:
-                if (BaseConstans.hasLogin()) {
-                    Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
-                    if (isFrom == 3) {
-                        AlbumManager.chooseImageAlbum(getContext(), 1, 0, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
-                            if (!isCancel) {
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.putExtra("videoPath", paths.get(0));
-                                intent.putExtra("isFrom", 2);
-                                startActivity(intent);
-                            }
-                        }, "");
+                if (getActivity() != null) {
+                    if (getActivity().getPackageManager().checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, BuildConfig.APPLICATION_ID)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        toUpLoad();
                     } else {
-                        AlbumManager.chooseVideo(getActivity(), 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
-                            if (!isCancel) {
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.putExtra("videoPath", paths.get(0));
-                                intent.putExtra("isFrom", 1);
-                                startActivity(intent);
-                            }
-                        }, "");
+                        new AlertDialog.Builder(getActivity())
+                                .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
+                                .setNegativeButton("取消", (dialog, which) -> {
+                                    dialog.dismiss();
+                                })
+                                .setPositiveButton("去授权", (dialog, which) -> {
+                                    PermissionUtil.gotoPermission(getActivity());
+                                    dialog.dismiss();
+                                }).create()
+                                .show();
                     }
-                } else {
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
                 }
                 break;
             default:
                 break;
+        }
+    }
+
+    private void toUpLoad() {
+        if (BaseConstans.hasLogin()) {
+            Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
+            if (isFrom == 3) {
+                AlbumManager.chooseImageAlbum(getContext(), 1, 0, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
+                    if (!isCancel) {
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("videoPath", paths.get(0));
+                        intent.putExtra("isFrom", 2);
+                        startActivity(intent);
+                    }
+                }, "");
+            } else {
+                AlbumManager.chooseVideo(getActivity(), 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
+                    if (!isCancel) {
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("videoPath", paths.get(0));
+                        intent.putExtra("isFrom", 1);
+                        startActivity(intent);
+                    }
+                }, "");
+            }
+        } else {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
     }
 }

@@ -494,9 +494,8 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                     break;
             }
         }
-
-
     }
+
 
     /**
      * 弹出dialog
@@ -565,6 +564,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
     public void setDressUPTabNameFavorites(String tabName) {
         this.tabName = tabName;
     }
+
 
 }
 
