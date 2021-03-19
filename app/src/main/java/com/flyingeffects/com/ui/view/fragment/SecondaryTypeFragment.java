@@ -44,6 +44,10 @@ public class SecondaryTypeFragment extends BaseFragment {
     String category_id, categoryTabName;
     private new_fag_template_item templateItem;
     private int homePageNum;
+    /**
+     * 上个页面是哪一个
+     */
+    private int num;
 
     @Override
     protected int getContentLayout() {
@@ -56,6 +60,7 @@ public class SecondaryTypeFragment extends BaseFragment {
         type = getArguments().getInt("type");
         category_id = getArguments().getString("id");
         from = getArguments().getInt("from");
+        num=getArguments().getInt("num");
         homePageNum=getArguments().getInt("homePageNum");
         templateItem = (new_fag_template_item) getArguments().getSerializable("templateItem");
         categoryTabName = getArguments().getString("categoryTabName");
@@ -122,7 +127,7 @@ public class SecondaryTypeFragment extends BaseFragment {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", category_id);
                 bundle.putString("tc_id", mTypeEntities.get(i).getId());
-                bundle.putSerializable("num", i);
+                bundle.putSerializable("num", num);
                 bundle.putSerializable("from", 0);
                 bundle.putSerializable("homePageNum", homePageNum);
 
@@ -134,7 +139,7 @@ public class SecondaryTypeFragment extends BaseFragment {
                 bundle.putSerializable("id", category_id);
                 bundle.putString("tc_id", mTypeEntities.get(i).getId());
                 bundle.putSerializable("from", from);
-                bundle.putSerializable("num", i);
+                bundle.putSerializable("num", num);
                 if (templateItem != null) {
                     bundle.putSerializable("cover", templateItem.getImage());
                 }
@@ -145,7 +150,7 @@ public class SecondaryTypeFragment extends BaseFragment {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", category_id);
                 bundle.putString("tc_id", mTypeEntities.get(i).getId());
-                bundle.putSerializable("num", i);
+                bundle.putSerializable("num", num);
                 bundle.putSerializable("from", 4);
                 bundle.putSerializable("homePageNum", homePageNum);
                 HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();

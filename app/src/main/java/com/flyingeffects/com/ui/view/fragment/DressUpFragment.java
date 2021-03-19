@@ -138,6 +138,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                     @Override
                     public void onPageSelected(int i) {
                         EventBus.getDefault().post(new SecondChoosePageListener(i));
+
                         if (i <= data.size() - 1) {
                             StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
                         }

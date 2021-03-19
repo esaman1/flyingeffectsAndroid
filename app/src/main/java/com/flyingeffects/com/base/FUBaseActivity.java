@@ -456,6 +456,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                          fuBeautyActivity.ShowRecordingBtn(true);
                             ToastUtil.showToast("录制时间太短");
                         }
                     });

@@ -6,6 +6,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -39,9 +42,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
 import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
@@ -73,6 +73,7 @@ public class fragBjItem extends BaseFragment {
     private boolean isRefresh = true;
     private ArrayList<new_fag_template_item> listData = new ArrayList<>();
     private int selectPage = 1;
+    private boolean HasShowAd;
 
     /**
      * 0 表示来做模板，1表示来自背景 3表示创作下载页面
@@ -110,19 +111,20 @@ public class fragBjItem extends BaseFragment {
         initSmartRefreshLayout();
         LogUtil.d("OOM", "fromType=" + fromType);
         LogUtil.d("OOM", "templateId=" + templateId);
-    }
-
-    @Override
-    protected void initAction() {
         requestFagData(true, true);
     }
 
     @Override
+    protected void initAction() {
+
+    }
+
+    @Override
     protected void initData() {
-        ChoosePageChange(() -> {
+        ChoosePageChange2(() -> {
             if (getActivity() != null) {
-                if (!HasShowAd&&listData!=null&&listData.size()>0) {
-                    LogUtil.d("requestAd", "onResume之模板请求广告");
+                if (listData!=null&&listData.size()>0) {
+                    LogUtil.d("requestAd", "onResume之背景请求广告");
                     requestFeedAd();
                 }
             }
@@ -140,7 +142,7 @@ public class fragBjItem extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            if (!DoubleClick.getInstance().isFastDoubleClick()&&!allData.get(position).isHasShowAd()) {
                 if (!TextUtils.isEmpty(cover) && position == 0) {
                     EventBus.getDefault().post(new DownVideoPath(""));
                 } else {
@@ -195,6 +197,7 @@ public class fragBjItem extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        LogUtil.d("OOM","onResume");
         mAdManager.adResume();
         if (getActivity() != null && "12".equals(templateId)) {
             isRefresh = true;
@@ -315,7 +318,9 @@ public class fragBjItem extends BaseFragment {
 
 
     private void requestFeedAd(){
+       LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+nowPageNum);
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()&&  NowHomePageChooseNum==0 &&nowPageNum==NowSecondChooseNum) {
+//            LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+nowPageNum);
             HasShowAd=true;
             requestFeedAd(mAdManager, new RequestFeedBack() {
                 @Override

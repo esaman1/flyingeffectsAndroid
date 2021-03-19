@@ -20,6 +20,9 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
+import com.flyingeffects.com.enity.LoginToAttentionUserEvent;
+import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -35,6 +38,7 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
+import com.orhanobut.hawk.Hawk;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -48,6 +52,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.nt.lib.analytics.NTAnalytics;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -179,6 +185,7 @@ public class DressUpPreviewActivity extends BaseActivity {
                 break;
             case R.id.keep_to_album:
                 alertAlbumUpdate(false);
+                StatisticsToSave(template_id);
                 StatisticsEventAffair.getInstance().setFlag(this, "21_face_save", templateTitle);
                 break;
             case R.id.share:
@@ -472,4 +479,26 @@ public class DressUpPreviewActivity extends BaseActivity {
             keepImageToAlbum(path);
         }
     }
+
+
+
+    public void StatisticsToSave(String templateId) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_id", templateId);
+        params.put("template_type",  "3");
+        // 启动时间
+        Observable ob = Api.getDefault().saveTemplate(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
+            @Override
+            protected void onSubError(String message) {
+            }
+
+            @Override
+            protected void onSubNext(Object data) {
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+    }
+
 }

@@ -127,7 +127,6 @@ dependencies {
 
     //加载控件
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
-    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0'
     //FlycoTabLayout
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
     //框架要求的
@@ -164,7 +163,7 @@ dependencies {
     implementation 'com.amitshekhar.android:glide-bitmap-pool:0.0.1'
 
     //中台
-    implementation files('libs/NTAnalytics1.1.0.jar')
+    implementation files('libs/NTAnalytics1.1.2.jar')
     implementation project(':sxve')
     implementation project(':album')
     implementation project(':LanSongSDK')
@@ -177,7 +176,7 @@ dependencies {
     //开屏广告
     implementation(name: 'GDTSDK.unionNormal.4.332.1202', ext: 'aar')
     // 广告sdk
-    implementation(name: 'NTADSDK-v2.5.9', ext: 'aar')
+    implementation(name: 'NTADSDK-v2.6.0', ext: 'aar')
     // 百度联盟
     implementation(name: 'Baidu_MobAds_SDK-release_v5.94', ext: 'aar')
     // 穿山甲

@@ -179,6 +179,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                             bundle.putInt("type", 1);
                             bundle.putSerializable("id", data.get(i).getId());
                             bundle.putInt("from", 1);
+                            bundle.putSerializable("num", i);
                             bundle.putString("categoryTabName", data.get(i).getName());
                             SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                             fragment.setArguments(bundle);

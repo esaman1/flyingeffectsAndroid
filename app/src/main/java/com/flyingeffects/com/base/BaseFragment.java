@@ -26,6 +26,7 @@ import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.nineton.ntadsdk.utils.DeviceUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -181,7 +182,6 @@ public abstract class BaseFragment extends Fragment implements IActivity {
      * user : zhangtongju
      */
     public void requestFeedAd(FeedAdManager mAdManager, RequestFeedBack callback) {
-        LogUtil.d("OOM2", "requestAd");
         if (getActivity() != null && mAdManager != null) {
             float needScreenWidth = DeviceUtil.getScreenWidthInPX(getActivity()) / (float) 2 - screenUtil.dip2px(getActivity(), 10);
             LogUtil.d("OOM2", "needScreenWidth=" + needScreenWidth);
@@ -276,47 +276,80 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     public static int NowHomePageChooseNum = 1;
 
     /**
-     * 当前第二页选择位数
+     * 当前第二页选择位数 ,每次切换后都需要用之前的那个
      */
     public static int NowSecondChooseNum = 0;
 
 
-    public boolean HasShowAd = false;
-
+    private int cacheBjSecondChooseNum;
+    private int cacheTmSecondChooseNum;
+    private int cacheDressUpSecondChooseNum;
 
     @Subscribe
     public void onEventMainThread(HomeChoosePageListener listener) {
         if (getActivity() != null) {
             NowHomePageChooseNum = listener.getPager();
-            LogUtil.d("pageChange","NowHomePageChooseNum="+NowHomePageChooseNum);
-            if(callback!=null){
+            if (NowHomePageChooseNum == 0) {
+                NowSecondChooseNum = cacheBjSecondChooseNum;
+            } else if (NowHomePageChooseNum == 1) {
+                NowSecondChooseNum = cacheTmSecondChooseNum;
+            } else {
+                NowSecondChooseNum = cacheDressUpSecondChooseNum;
+            }
+            LogUtil.d("page2Change", "NowHomePageChooseNum=" + NowHomePageChooseNum);
+            if (callback != null) {
                 callback.isChange();
             }
+            if (callback2 != null) {
+                callback2.isChange();
+            }
         }
-
     }
 
 
     @Subscribe
     public void onEventMainThread(SecondChoosePageListener listener) {
         if (getActivity() != null) {
-            NowSecondChooseNum = listener.getPager();
-            LogUtil.d("pageChange","NowSecondChooseNum="+NowSecondChooseNum);
-            if(callback!=null){
+            int secondChooseNum = listener.getPager();
+            if (NowHomePageChooseNum == 0) {
+                cacheBjSecondChooseNum = secondChooseNum;
+            } else if (NowHomePageChooseNum == 1) {
+                cacheTmSecondChooseNum = secondChooseNum;
+            } else {
+                cacheDressUpSecondChooseNum = secondChooseNum;
+            }
+            NowSecondChooseNum = secondChooseNum;
+            LogUtil.d("page2Change", "NowSecondChooseNum=" + NowSecondChooseNum);
+            if (callback != null) {
                 callback.isChange();
+            }
+
+            if (callback2 != null) {
+                callback2.isChange();
             }
         }
     }
 
+
     private PageChangeCallback callback;
 
     public void ChoosePageChange(PageChangeCallback callback) {
-         this.callback = callback;
+        this.callback = callback;
+    }
+
+    private PageChangeCallback2 callback2;
+
+    public void ChoosePageChange2(PageChangeCallback2 callback2) {
+        this.callback2 = callback2;
     }
 
 
     public interface PageChangeCallback {
-            void  isChange();
+        void isChange();
+    }
+
+    public interface PageChangeCallback2 {
+        void isChange();
     }
 
 

@@ -2,12 +2,11 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
-import android.view.View;
-import android.widget.LinearLayout;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.MainRecyclerAdapter;
@@ -35,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_GDT_FEED_EXPRESS_AD;
@@ -66,7 +64,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     private int fromType;
     private int intoTiktokClickPosition;
     private FeedAdManager mAdManager;
-
+    private boolean HasShowAd1=false;
     private int homePageNum;
 
     @Override
@@ -99,15 +97,11 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         }
 
         ChoosePageChange(() -> {
-            if (NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag && !HasShowAd&&allData!=null&&allData.size()>0) {
+            if (NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag && !HasShowAd1&&allData!=null&&allData.size()>0) {
                 LogUtil.d("requestAd", "onResume之模板请求广告");
                 needRequestFeedAd();
             }
         });
-
-
-
-
     }
 
 
@@ -119,7 +113,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            if (!DoubleClick.getInstance().isFastDoubleClick()&&!allData.get(position).isHasShowAd()) {
                 if (allData.get(position).getIs_ad_recommend() == 1) {
                     String url = allData.get(position).getRemark();
                     StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_dl_click", allData.get(position).getTitle());
@@ -331,8 +325,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
     @Override
     public void needRequestFeedAd() {
-        if (getActivity() != null && NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag) {
-            HasShowAd = true;
+         if (getActivity() != null && NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag) {
+             LogUtil.d("pageChange", "模板或者换装请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+actTag);
+             HasShowAd1 = true;
             requestFeedAd(mAdManager, new RequestFeedBack() {
 
                 @Override

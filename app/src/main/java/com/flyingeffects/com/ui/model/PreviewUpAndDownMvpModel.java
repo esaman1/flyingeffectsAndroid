@@ -1024,8 +1024,6 @@ public class PreviewUpAndDownMvpModel {
                         Observable.just(e).subscribeOn(AndroidSchedulers.mainThread()).subscribe(e1 -> new Handler().post(() -> ToastUtil.showToast("下载异常，请重试")));
                         LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
                         callback.showDownProgress(100);
-//                        ToastUtil.showToast(e.getMessage());
-//                        Toast.makeText(context,e.getMessage(),Toast.LENGTH_LONG).show();
                     }
                     super.run();
                 }
@@ -1042,27 +1040,24 @@ public class PreviewUpAndDownMvpModel {
      * user : zhangtongju
      */
     public void toDressUp(String path, String templateId, String templateTitle) {
-        Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer integer) {
-                LogUtil.d("OOM3", "toDressUp");
-                DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
-                    @Override
-                    public void isSuccess(List<String> paths) {
-                        LogUtil.d("OOM3", "跳转到换装页面");
-                        if (paths != null) {
-                            Intent intent = new Intent(context, DressUpPreviewActivity.class);
-                            intent.putExtra("url", paths.get(0));
-                            intent.putExtra("template_id", templateId);
-                            intent.putExtra("localImage", path);
-                            intent.putExtra("templateTitle", templateTitle);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                            context.startActivity(intent);
-                        }
+        Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            LogUtil.d("OOM3", "toDressUp");
+            DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
+                @Override
+                public void isSuccess(List<String> paths) {
+                    LogUtil.d("OOM3", "跳转到换装页面");
+                    if (paths != null) {
+                        Intent intent = new Intent(context, DressUpPreviewActivity.class);
+                        intent.putExtra("url", paths.get(0));
+                        intent.putExtra("template_id", templateId);
+                        intent.putExtra("localImage", path);
+                        intent.putExtra("templateTitle", templateTitle);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        context.startActivity(intent);
                     }
-                }, false);
-                dressUpModel.toDressUp(path, templateId);
-            }
+                }
+            }, false);
+            dressUpModel.toDressUp(path, templateId);
         });
     }
 
@@ -1077,13 +1072,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-    private ArrayList<String> getDressUpdate(List<HumanMerageResult> paths) {
-        ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < paths.size(); i++) {
-            list.add(paths.get(i).getResult_image());
-        }
-        return list;
-    }
 
 
     /**

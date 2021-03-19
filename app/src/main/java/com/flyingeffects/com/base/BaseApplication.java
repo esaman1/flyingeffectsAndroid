@@ -30,7 +30,7 @@ import com.lansosdk.videoeditor.LanSoEditor;
 import com.nineton.ntadsdk.NTAdConfig;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.orhanobut.hawk.Hawk;
-import com.scwang.smartrefresh.header.MaterialHeader;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxvideoengine.License;
 import com.shixing.sxvideoengine.SXLog;
@@ -252,10 +252,10 @@ public class BaseApplication extends MultiDexApplication {
         }
     }
 
+
     static {
         SmartRefreshLayout.setDefaultRefreshHeaderCreator((context, layout) -> {
-//            layout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.white);
-            return new MaterialHeader(context).setColorSchemeResources(R.color.theme_toast, R.color.blue_0b84d3);
+            return new ClassicsHeader(context).setPrimaryColorId(R.color.black);
         });
     }
 
