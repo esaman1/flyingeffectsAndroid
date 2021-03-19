@@ -113,7 +113,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            if (!DoubleClick.getInstance().isFastDoubleClick()&&!allData.get(position).isHasShowAd()) {
                 if (allData.get(position).getIs_ad_recommend() == 1) {
                     String url = allData.get(position).getRemark();
                     StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_dl_click", allData.get(position).getTitle());

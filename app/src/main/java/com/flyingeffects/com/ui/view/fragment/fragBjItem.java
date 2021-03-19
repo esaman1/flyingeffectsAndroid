@@ -142,7 +142,7 @@ public class fragBjItem extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            if (!DoubleClick.getInstance().isFastDoubleClick()&&!allData.get(position).isHasShowAd()) {
                 if (!TextUtils.isEmpty(cover) && position == 0) {
                     EventBus.getDefault().post(new DownVideoPath(""));
                 } else {
