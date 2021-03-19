@@ -2,12 +2,11 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
-import android.view.View;
-import android.widget.LinearLayout;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.MainRecyclerAdapter;
@@ -35,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
 import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_GDT_FEED_EXPRESS_AD;
@@ -103,16 +101,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                 LogUtil.d("requestAd", "onResume之模板请求广告");
                 needRequestFeedAd();
             }
-//            if (NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag) {
-//                if(mAdManager!=null){
-//                    mAdManager.adResume();
-//                }
-//            }
         });
-
-
-
-
     }
 
 

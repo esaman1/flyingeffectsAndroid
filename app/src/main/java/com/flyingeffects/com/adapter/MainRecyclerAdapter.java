@@ -110,178 +110,186 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
 
         switch (helper.getItemViewType()) {
             case 0: {
-                //默认样式，正常的模板
-                Glide.with(mContext)
-                        .load(item.getImage())
-                        .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(mContext, 5)))
-                        .apply(RequestOptions.placeholderOf(R.mipmap.placeholder))
-                        .into((ImageView) helper.getView(R.id.iv_cover));
-                ImageView iv_show_author = helper.getView(R.id.iv_show_author);
-                RelativeLayout constraintLayoutAddVideo = helper.getView(R.id.ConstraintLayout_addVideo);
-                RelativeLayout ll_relative_2 = helper.getView(R.id.ll_relative_2);
-                RelativeLayout add_image = helper.getView(R.id.add_image);
-                LinearLayout ll_relative_1 = helper.getView(R.id.ll_relative_1);
-                RelativeLayout ll_relative_0 = helper.getView(R.id.ll_relative_0);
-                TextView tv_name = helper.getView(R.id.tv_name);
-                tv_name.setText(item.getTitle());
-                if (fromType == FROM_BACK_CODE) {
-                    if (offset == 1) {
-                        ll_relative_2.setVisibility(View.GONE);
-                        ll_relative_1.setVisibility(View.VISIBLE);
-                        ll_relative_0.setVisibility(View.VISIBLE);
-                        constraintLayoutAddVideo.setVisibility(View.VISIBLE);
-                        if (!TextUtils.isEmpty(BaseConstans.configList.getFirstline())) {
-                            helper.setText(R.id.firstline, BaseConstans.configList.getFirstline());
-                        }
-
-                        if (!TextUtils.isEmpty(BaseConstans.configList.getSecondline())) {
-                            helper.setText(R.id.secondline, BaseConstans.configList.getSecondline());
-                        }
-
-                        if (!TextUtils.isEmpty(BaseConstans.configList.getThirdline())) {
-                            helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
-                        }
-
-                        constraintLayoutAddVideo.setOnClickListener(v -> {
-                            showMessageDialog();
-                        });
-                    } else {
-                        constraintLayoutAddVideo.setVisibility(View.GONE);
-                    }
-                    helper.setText(R.id.tv_name2, item.getAuth());
-                    ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
+                if(item.isHasShowAd()){
+                    ll_content_patents.setVisibility(View.GONE);
+                }else{
+                    ll_content_patents.setVisibility(View.VISIBLE);
+                    //默认样式，正常的模板
                     Glide.with(mContext)
-                            .load(item.getAuth_image())
-                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                            .into(iv_show_author_template);
-                    iv_show_author.setVisibility(View.GONE);
-                    helper.setText(R.id.tv_zan_count, item.getPraise());
-                    tv_name.setVisibility(View.VISIBLE);
-                    ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
-                    iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
-                } else if (fromType == FROM_DOWNLOAD_CODE) {
-                    //背景下载
-                    if (offset == 0 && !isFromSearch) {
-                        ll_relative_2.setVisibility(View.VISIBLE);
-                        ll_relative_1.setVisibility(View.GONE);
-                        ll_relative_0.setVisibility(View.GONE);
-                        constraintLayoutAddVideo.setVisibility(View.VISIBLE);
-                        constraintLayoutAddVideo.setOnClickListener(v -> {
-                            AlbumManager.chooseAlbum(mContext, 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
-                                if (!isCancel) {
-                                    if (UiStep.isFromDownBj) {
-                                        StatisticsEventAffair.getInstance().setFlag(mContext, "7_local");
-                                    } else {
-                                        StatisticsEventAffair.getInstance().setFlag(mContext, "8_local");
-                                    }
-                                    // EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
-                                    String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
-                                    if (albumType.isImage(pathType)) {
-                                        EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
-                                    } else {
-                                        //如果选择的视频
-                                        Intent intent = new Intent(mContext, VideoCropActivity.class);
-                                        intent.putExtra("videoPath", paths.get(0));
-                                        intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEOFORUSER);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        mContext.startActivity(intent);
-                                    }
-                                }
-                            }, "");
-                        });
-                    } else {
-                        constraintLayoutAddVideo.setVisibility(View.GONE);
-                    }
-                    helper.setText(R.id.tv_name2, item.getAuth());
-                    ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
-                    Glide.with(mContext)
-                            .load(item.getAuth_image())
-                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                            .into(iv_show_author_template);
-                    iv_show_author.setVisibility(View.GONE);
-                    helper.setText(R.id.tv_zan_count, item.getPraise());
-                    tv_name.setVisibility(View.VISIBLE);
-                    ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
-                    iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
-                    iv_show_author.setVisibility(View.GONE);
-                } else if (fromType == FROM_DRESS_CODE) {
-                    //换装
-                    if (offset == 1 && TextUtils.isEmpty(tabName)) {
-                        add_image.setVisibility(View.VISIBLE);
-                        constraintLayoutAddVideo.setVisibility(View.GONE);
-                    } else {
-                        add_image.setVisibility(View.GONE);
-                    }
-                    add_image.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                                StatisticsEventAffair.getInstance().setFlag(mContext, "21_face_up");
-                                AlbumManager.chooseImageAlbum(mContext, 1, 0, new AlbumChooseCallback() {
-                                    @Override
-                                    public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
-                                        if (!isCancel) {
-                                            intoUploadMaterialActivity(paths.get(0));
+                            .load(item.getImage())
+                            .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(mContext, 5)))
+                            .apply(RequestOptions.placeholderOf(R.mipmap.placeholder))
+                            .into((ImageView) helper.getView(R.id.iv_cover));
+                    ImageView iv_show_author = helper.getView(R.id.iv_show_author);
+                    RelativeLayout constraintLayoutAddVideo = helper.getView(R.id.ConstraintLayout_addVideo);
+                    RelativeLayout ll_relative_2 = helper.getView(R.id.ll_relative_2);
+                    RelativeLayout add_image = helper.getView(R.id.add_image);
+                    LinearLayout ll_relative_1 = helper.getView(R.id.ll_relative_1);
+                    RelativeLayout ll_relative_0 = helper.getView(R.id.ll_relative_0);
+                    TextView tv_name = helper.getView(R.id.tv_name);
+                    tv_name.setText(item.getTitle());
+                    if (fromType == FROM_BACK_CODE) {
+                        if (offset == 1) {
+                            ll_relative_2.setVisibility(View.GONE);
+                            ll_relative_1.setVisibility(View.VISIBLE);
+                            ll_relative_0.setVisibility(View.VISIBLE);
+                            constraintLayoutAddVideo.setVisibility(View.VISIBLE);
+                            if (!TextUtils.isEmpty(BaseConstans.configList.getFirstline())) {
+                                helper.setText(R.id.firstline, BaseConstans.configList.getFirstline());
+                            }
+
+                            if (!TextUtils.isEmpty(BaseConstans.configList.getSecondline())) {
+                                helper.setText(R.id.secondline, BaseConstans.configList.getSecondline());
+                            }
+
+                            if (!TextUtils.isEmpty(BaseConstans.configList.getThirdline())) {
+                                helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
+                            }
+
+                            constraintLayoutAddVideo.setOnClickListener(v -> {
+                                showMessageDialog();
+                            });
+                        } else {
+                            constraintLayoutAddVideo.setVisibility(View.GONE);
+                        }
+                        helper.setText(R.id.tv_name2, item.getAuth());
+                        ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
+                        Glide.with(mContext)
+                                .load(item.getAuth_image())
+                                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                .into(iv_show_author_template);
+                        iv_show_author.setVisibility(View.GONE);
+                        helper.setText(R.id.tv_zan_count, item.getPraise());
+                        tv_name.setVisibility(View.VISIBLE);
+                        ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
+                        iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
+                    } else if (fromType == FROM_DOWNLOAD_CODE) {
+                        //背景下载
+                        if (offset == 0 && !isFromSearch) {
+                            ll_relative_2.setVisibility(View.VISIBLE);
+                            ll_relative_1.setVisibility(View.GONE);
+                            ll_relative_0.setVisibility(View.GONE);
+                            constraintLayoutAddVideo.setVisibility(View.VISIBLE);
+                            constraintLayoutAddVideo.setOnClickListener(v -> {
+                                AlbumManager.chooseAlbum(mContext, 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
+                                    if (!isCancel) {
+                                        if (UiStep.isFromDownBj) {
+                                            StatisticsEventAffair.getInstance().setFlag(mContext, "7_local");
+                                        } else {
+                                            StatisticsEventAffair.getInstance().setFlag(mContext, "8_local");
+                                        }
+                                        // EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
+                                        String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
+                                        if (albumType.isImage(pathType)) {
+                                            EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
+                                        } else {
+                                            //如果选择的视频
+                                            Intent intent = new Intent(mContext, VideoCropActivity.class);
+                                            intent.putExtra("videoPath", paths.get(0));
+                                            intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEOFORUSER);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            mContext.startActivity(intent);
                                         }
                                     }
                                 }, "");
+                            });
+                        } else {
+                            constraintLayoutAddVideo.setVisibility(View.GONE);
+                        }
+                        helper.setText(R.id.tv_name2, item.getAuth());
+                        ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
+                        Glide.with(mContext)
+                                .load(item.getAuth_image())
+                                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                .into(iv_show_author_template);
+                        iv_show_author.setVisibility(View.GONE);
+                        helper.setText(R.id.tv_zan_count, item.getPraise());
+                        tv_name.setVisibility(View.VISIBLE);
+                        ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
+                        iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
+                        iv_show_author.setVisibility(View.GONE);
+                    } else if (fromType == FROM_DRESS_CODE) {
+                        //换装
+                        if (offset == 1 && TextUtils.isEmpty(tabName)) {
+                            add_image.setVisibility(View.VISIBLE);
+                            constraintLayoutAddVideo.setVisibility(View.GONE);
+                        } else {
+                            add_image.setVisibility(View.GONE);
+                        }
+                        add_image.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                                    StatisticsEventAffair.getInstance().setFlag(mContext, "21_face_up");
+                                    AlbumManager.chooseImageAlbum(mContext, 1, 0, new AlbumChooseCallback() {
+                                        @Override
+                                        public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
+                                            if (!isCancel) {
+                                                intoUploadMaterialActivity(paths.get(0));
+                                            }
+                                        }
+                                    }, "");
+                                }
                             }
-                        }
-                    });
-                    helper.setText(R.id.tv_name2, item.getAuth());
-                    ImageView ivShowAuthorTemplate = helper.getView(R.id.iv_show_author_template);
-                    Glide.with(mContext)
-                            .load(item.getAuth_image())
-                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                            .into(ivShowAuthorTemplate);
-                    iv_show_author.setVisibility(View.GONE);
-                    helper.setText(R.id.tv_zan_count, item.getPraise());
-                    tv_name.setVisibility(View.VISIBLE);
-                    ImageView ivZanState = helper.getView(R.id.iv_zan_state);
-                    ivZanState.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
-                    iv_show_author.setVisibility(View.GONE);
-                } else {
-                    //模板
-                    if (offset == FROM_BACK_CODE && fromType == FROM_TEMPLATE_CODE) {
-                        ll_relative_1.setVisibility(View.VISIBLE);
-                        ll_relative_0.setVisibility(View.VISIBLE);
-                        ll_relative_2.setVisibility(View.GONE);
-                        if (!TextUtils.isEmpty(BaseConstans.configList.getFirstline())) {
-                            helper.setText(R.id.firstline, BaseConstans.configList.getFirstline());
-                        }
-                        if (!TextUtils.isEmpty(BaseConstans.configList.getSecondline())) {
-                            helper.setText(R.id.secondline, BaseConstans.configList.getSecondline());
-                        }
-                        if (!TextUtils.isEmpty(BaseConstans.configList.getThirdline())) {
-                            helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
-                        }
-                        constraintLayoutAddVideo.setVisibility(View.VISIBLE);
-                        constraintLayoutAddVideo.setOnClickListener(v -> {
-                            showMessageDialog();
                         });
+                        helper.setText(R.id.tv_name2, item.getAuth());
+                        ImageView ivShowAuthorTemplate = helper.getView(R.id.iv_show_author_template);
+                        Glide.with(mContext)
+                                .load(item.getAuth_image())
+                                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                .into(ivShowAuthorTemplate);
+                        iv_show_author.setVisibility(View.GONE);
+                        helper.setText(R.id.tv_zan_count, item.getPraise());
+                        tv_name.setVisibility(View.VISIBLE);
+                        ImageView ivZanState = helper.getView(R.id.iv_zan_state);
+                        ivZanState.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
+                        iv_show_author.setVisibility(View.GONE);
                     } else {
-                        constraintLayoutAddVideo.setVisibility(View.GONE);
+                        //模板
+                        if (offset == FROM_BACK_CODE && fromType == FROM_TEMPLATE_CODE) {
+                            ll_relative_1.setVisibility(View.VISIBLE);
+                            ll_relative_0.setVisibility(View.VISIBLE);
+                            ll_relative_2.setVisibility(View.GONE);
+                            if (!TextUtils.isEmpty(BaseConstans.configList.getFirstline())) {
+                                helper.setText(R.id.firstline, BaseConstans.configList.getFirstline());
+                            }
+                            if (!TextUtils.isEmpty(BaseConstans.configList.getSecondline())) {
+                                helper.setText(R.id.secondline, BaseConstans.configList.getSecondline());
+                            }
+                            if (!TextUtils.isEmpty(BaseConstans.configList.getThirdline())) {
+                                helper.setText(R.id.thirdline, BaseConstans.configList.getThirdline());
+                            }
+                            constraintLayoutAddVideo.setVisibility(View.VISIBLE);
+                            constraintLayoutAddVideo.setOnClickListener(v -> {
+                                showMessageDialog();
+                            });
+                        } else {
+                            constraintLayoutAddVideo.setVisibility(View.GONE);
+                        }
+                        helper.setText(R.id.tv_name2, item.getAuth());
+                        ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
+                        Glide.with(mContext)
+                                .load(item.getAuth_image())
+                                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                .into(iv_show_author_template);
+                        iv_show_author.setVisibility(View.GONE);
+                        helper.setText(R.id.tv_zan_count, item.getPraise());
+                        tv_name.setVisibility(View.VISIBLE);
+                        ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
+                        iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
+                        ll_content_patents.setVisibility(View.VISIBLE);
                     }
-                    helper.setText(R.id.tv_name2, item.getAuth());
-                    ImageView iv_show_author_template = helper.getView(R.id.iv_show_author_template);
-                    Glide.with(mContext)
-                            .load(item.getAuth_image())
-                            .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                            .into(iv_show_author_template);
-                    iv_show_author.setVisibility(View.GONE);
-                    helper.setText(R.id.tv_zan_count, item.getPraise());
-                    tv_name.setVisibility(View.VISIBLE);
                     ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
-                    iv_zan_state.setImageResource(item.getIs_praise() != 0 ? R.mipmap.zan_clicked : R.mipmap.zan_unclicked);
-                    ll_content_patents.setVisibility(View.VISIBLE);
+                    if (item.getIs_ad_recommend() == 1) {
+                        iv_zan_state.setVisibility(View.GONE);
+                        helper.setText(R.id.tv_zan_count, "");
+                    } else {
+                        iv_zan_state.setVisibility(View.VISIBLE);
+                    }
                 }
-                ImageView iv_zan_state = helper.getView(R.id.iv_zan_state);
-                if (item.getIs_ad_recommend() == 1) {
-                    iv_zan_state.setVisibility(View.GONE);
-                    helper.setText(R.id.tv_zan_count, "");
-                } else {
-                    iv_zan_state.setVisibility(View.VISIBLE);
-                }
+
+
+
                 break;
             }
             case 11: {
@@ -330,6 +338,9 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
 
             }
             case 12: {
+
+
+
 
                 String gdtImageUrl = item.getFeedAdResultBean().getImageUrl();
                 helper.setText(R.id.tv_name,item.getFeedAdResultBean().getTitle());
@@ -400,6 +411,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
 
                                 @Override
                                 public void onVideoResume() {
+                                    mAdManager.adResume();
                                 }
 
                                 @Override

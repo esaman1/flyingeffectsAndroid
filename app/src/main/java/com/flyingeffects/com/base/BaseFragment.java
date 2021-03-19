@@ -296,7 +296,7 @@ public abstract class BaseFragment extends Fragment implements IActivity {
             } else {
                 NowSecondChooseNum = cacheDressUpSecondChooseNum;
             }
-            LogUtil.d("pageChange", "NowHomePageChooseNum=" + NowHomePageChooseNum);
+            LogUtil.d("page2Change", "NowHomePageChooseNum=" + NowHomePageChooseNum);
             if (callback != null) {
                 callback.isChange();
             }
@@ -319,11 +319,10 @@ public abstract class BaseFragment extends Fragment implements IActivity {
                 cacheDressUpSecondChooseNum = secondChooseNum;
             }
             NowSecondChooseNum = secondChooseNum;
-            LogUtil.d("pageChange", "NowSecondChooseNum=" + NowSecondChooseNum);
+            LogUtil.d("page2Change", "NowSecondChooseNum=" + NowSecondChooseNum);
             if (callback != null) {
                 callback.isChange();
             }
-
 
             if (callback2 != null) {
                 callback2.isChange();
@@ -332,15 +331,11 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     }
 
 
-
-
-
     private PageChangeCallback callback;
 
     public void ChoosePageChange(PageChangeCallback callback) {
         this.callback = callback;
     }
-
 
     private PageChangeCallback2 callback2;
 

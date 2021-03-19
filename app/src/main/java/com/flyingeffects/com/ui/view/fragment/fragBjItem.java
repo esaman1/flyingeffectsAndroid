@@ -127,15 +127,6 @@ public class fragBjItem extends BaseFragment {
                     LogUtil.d("requestAd", "onResume之背景请求广告");
                     requestFeedAd();
                 }
-
-//                if ( NowHomePageChooseNum==0 &&nowPageNum==NowSecondChooseNum) {
-//                    if(mAdManager!=null){
-//                        LogUtil.d("requestAd", "adResume");
-//                        mAdManager.adResume();
-//                    }
-//
-//                }
-
             }
         });
 
@@ -327,9 +318,9 @@ public class fragBjItem extends BaseFragment {
 
 
     private void requestFeedAd(){
-//        LogUtil.d("pageChange", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+nowPageNum);
+       LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+nowPageNum);
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()&&  NowHomePageChooseNum==0 &&nowPageNum==NowSecondChooseNum) {
-            LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+nowPageNum);
+//            LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+nowPageNum);
             HasShowAd=true;
             requestFeedAd(mAdManager, new RequestFeedBack() {
                 @Override
