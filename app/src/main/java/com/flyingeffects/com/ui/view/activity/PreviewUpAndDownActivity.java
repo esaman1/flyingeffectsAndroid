@@ -812,13 +812,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             adapter.notifyDataSetChanged();
             if (!nowItemIsAd) {
                 GSYVideoManager.onResume();
+                LogUtil.d("OOM22", "GSYVideoManager.onResume()");
             }
             if (BaseConstans.hasLogin()) {
                 //主要用于刷新当前页面
                 mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
             }
         }
-        LogUtil.d("OOM", "onResume");
         WaitingDialog.closeProgressDialog();
     }
 
@@ -1131,7 +1131,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
                 }
             }
-            new Handler().postDelayed(() -> adapter.pauseVideo(), 500);
+
         }, this);
     }
 
@@ -1149,8 +1149,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
         }
     }
-
-
 
 
     /***
@@ -1194,6 +1192,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         intent.putExtra("Message", bundle);
         intent.putExtra("person", templateItem);
         startActivity(intent);
+        new Handler().postDelayed(() -> adapter.pauseVideo(), 200);
     }
 
 
@@ -1268,6 +1267,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         intent.putExtra("Message", bundle);
         startActivity(intent);
         setResult(Activity.RESULT_OK, intent);
+        new Handler().postDelayed(() -> adapter.pauseVideo(), 200);
     }
 
 
@@ -1349,7 +1349,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
         }
     }
-
 
 
     @Override
