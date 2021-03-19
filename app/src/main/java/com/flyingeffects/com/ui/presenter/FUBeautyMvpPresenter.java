@@ -531,7 +531,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         view.findViewById(R.id.iv_delete_sticker).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fUBeautyMvpView.ClearSticker();
+                fUBeautyMvpView.clearSticker();
                 EventBus.getDefault().post(new ClearChooseStickerState());
             }
         });
