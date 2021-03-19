@@ -1,12 +1,15 @@
 package com.flyingeffects.com.adapter;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.constraintlayout.widget.Group;
 
@@ -18,12 +21,17 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.GlideRoundTransform;
+import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
+import com.flyingeffects.com.utils.PermissionUtil;
+import com.yanzhenjie.album.AlbumFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
@@ -77,7 +85,6 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
                     .apply(bitmapTransform(new GlideRoundTransform(context, 5)))
                     .into(ivCover);
 
-
 //            Glide.with(context)
 //                    .load(item.getImage())
 //                    .apply(bitmapTransform(new BlurTransformation(context 25, 4)))
@@ -106,7 +113,23 @@ public class Upload_bj_list_adapter extends BaseQuickAdapter<new_fag_template_it
             tvPlayNum.setVisibility(View.GONE);
 //            tv_name.setVisibility(View.GONE);
             ivUpload.setOnClickListener(v -> {
-                uploadVideo(item);
+                PackageManager pm = mContext.getPackageManager();
+                if (pm.checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, BuildConfig.APPLICATION_ID)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    uploadVideo(item);
+                }else {
+                    new AlertDialog.Builder(mContext)
+                            .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
+                            .setNegativeButton("取消", (dialog, which) -> {
+                                dialog.dismiss();
+                            })
+                            .setPositiveButton("去授权", (dialog, which) -> {
+                                PermissionUtil.gotoPermission(mContext);
+                                dialog.dismiss();
+                            }).create()
+                            .show();
+                }
+
             });
         } else {
             ivDelete.setVisibility(View.VISIBLE);

@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.view.View;
 
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
+import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.PreviewUpDownAdapter;
 import com.flyingeffects.com.adapter.PreviewUpDownPagerAdapter;
@@ -264,10 +266,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             if (view.getId() == R.id.iv_zan) {
                 onclickZan();
             } else if (view.getId() == R.id.tv_make) {
-                ActivityCompat
-                        .requestPermissions(PreviewUpAndDownActivity.this
-                                , PERMISSION_STORAGE, 1);
-                //toClickMake();
+                if (mContext.getPackageManager().checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
+                        BuildConfig.APPLICATION_ID) == PackageManager.PERMISSION_GRANTED) {
+                    toClickMake();
+                } else {
+                    ActivityCompat
+                            .requestPermissions(PreviewUpAndDownActivity.this
+                                    , PERMISSION_STORAGE, 1);
+                }
             } else if (view.getId() == R.id.iv_writer ||
                     view.getId() == R.id.tv_describe ||
                     view.getId() == R.id.tv_writer_name) {
