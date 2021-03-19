@@ -1,11 +1,14 @@
 package com.flyingeffects.com.adapter;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,6 +25,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -40,6 +44,7 @@ import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.PermissionUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.nineton.ntadsdk.utils.ScreenUtils;
@@ -58,6 +63,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import de.greenrobot.event.EventBus;
 
@@ -111,9 +117,9 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
 
         switch (helper.getItemViewType()) {
             case 0: {
-                if(item.isHasShowAd()){
+                if (item.isHasShowAd()) {
                     ll_content_patents.setVisibility(View.GONE);
-                }else{
+                } else {
                     ll_content_patents.setVisibility(View.VISIBLE);
                     //默认样式，正常的模板
                     Glide.with(mContext)
@@ -222,14 +228,30 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                             public void onClick(View view) {
                                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
                                     StatisticsEventAffair.getInstance().setFlag(mContext, "21_face_up");
-                                    AlbumManager.chooseImageAlbum(mContext, 1, 0, new AlbumChooseCallback() {
-                                        @Override
-                                        public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
-                                            if (!isCancel) {
-                                                intoUploadMaterialActivity(paths.get(0));
+                                    PackageManager pm = mContext.getPackageManager();
+                                    if (pm.checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, BuildConfig.APPLICATION_ID)
+                                            == PackageManager.PERMISSION_GRANTED) {
+                                        AlbumManager.chooseImageAlbum(mContext, 1, 0, new AlbumChooseCallback() {
+                                            @Override
+                                            public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
+                                                if (!isCancel) {
+                                                    intoUploadMaterialActivity(paths.get(0));
+                                                }
                                             }
-                                        }
-                                    }, "");
+                                        }, "");
+
+                                    } else {
+                                        new AlertDialog.Builder(mContext)
+                                                .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
+                                                .setNegativeButton("取消", (dialog, which) -> {
+                                                    dialog.dismiss();
+                                                })
+                                                .setPositiveButton("去授权", (dialog, which) -> {
+                                                    PermissionUtil.gotoPermission(mContext);
+                                                    dialog.dismiss();
+                                                }).create()
+                                                .show();
+                                    }
                                 }
                             }
                         });
@@ -287,11 +309,10 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                     } else {
                         iv_zan_state.setVisibility(View.VISIBLE);
                     }
+
+
+                    break;
                 }
-
-
-
-                break;
             }
             case 11: {
 
@@ -364,7 +385,6 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
                         }
                     });
                 }
-
 
 
                 //logo 位置
