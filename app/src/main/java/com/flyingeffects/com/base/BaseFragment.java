@@ -182,7 +182,6 @@ public abstract class BaseFragment extends Fragment implements IActivity {
      * user : zhangtongju
      */
     public void requestFeedAd(FeedAdManager mAdManager, RequestFeedBack callback) {
-        LogUtil.d("OOM2", "requestAd");
         if (getActivity() != null && mAdManager != null) {
             float needScreenWidth = DeviceUtil.getScreenWidthInPX(getActivity()) / (float) 2 - screenUtil.dip2px(getActivity(), 10);
             LogUtil.d("OOM2", "needScreenWidth=" + needScreenWidth);
@@ -282,7 +281,6 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     public static int NowSecondChooseNum = 0;
 
 
-    public boolean HasShowAd = false;
     private int cacheBjSecondChooseNum;
     private int cacheTmSecondChooseNum;
     private int cacheDressUpSecondChooseNum;
@@ -301,6 +299,9 @@ public abstract class BaseFragment extends Fragment implements IActivity {
             LogUtil.d("pageChange", "NowHomePageChooseNum=" + NowHomePageChooseNum);
             if (callback != null) {
                 callback.isChange();
+            }
+            if (callback2 != null) {
+                callback2.isChange();
             }
         }
     }
@@ -322,8 +323,17 @@ public abstract class BaseFragment extends Fragment implements IActivity {
             if (callback != null) {
                 callback.isChange();
             }
+
+
+            if (callback2 != null) {
+                callback2.isChange();
+            }
         }
     }
+
+
+
+
 
     private PageChangeCallback callback;
 
@@ -332,7 +342,18 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     }
 
 
+    private PageChangeCallback2 callback2;
+
+    public void ChoosePageChange2(PageChangeCallback2 callback2) {
+        this.callback2 = callback2;
+    }
+
+
     public interface PageChangeCallback {
+        void isChange();
+    }
+
+    public interface PageChangeCallback2 {
         void isChange();
     }
 

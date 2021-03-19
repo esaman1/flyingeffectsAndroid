@@ -66,7 +66,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     private int fromType;
     private int intoTiktokClickPosition;
     private FeedAdManager mAdManager;
-
+    private boolean HasShowAd1=false;
     private int homePageNum;
 
     @Override
@@ -99,10 +99,15 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         }
 
         ChoosePageChange(() -> {
-            if (NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag && !HasShowAd&&allData!=null&&allData.size()>0) {
+            if (NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag && !HasShowAd1&&allData!=null&&allData.size()>0) {
                 LogUtil.d("requestAd", "onResume之模板请求广告");
                 needRequestFeedAd();
             }
+//            if (NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag) {
+//                if(mAdManager!=null){
+//                    mAdManager.adResume();
+//                }
+//            }
         });
 
 
@@ -331,9 +336,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
     @Override
     public void needRequestFeedAd() {
-        LogUtil.d("pageChange", "请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+actTag);
-        if (getActivity() != null && NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag) {
-            HasShowAd = true;
+         if (getActivity() != null && NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag) {
+             LogUtil.d("pageChange", "模板或者换装请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+actTag);
+             HasShowAd1 = true;
             requestFeedAd(mAdManager, new RequestFeedBack() {
 
                 @Override
