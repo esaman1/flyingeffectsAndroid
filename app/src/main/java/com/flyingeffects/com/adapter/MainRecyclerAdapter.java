@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -344,6 +345,8 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
 
                 String gdtImageUrl = item.getFeedAdResultBean().getImageUrl();
                 helper.setText(R.id.tv_name,item.getFeedAdResultBean().getTitle());
+                LogUtil.d("OOMaD","item.getFeedAdResultBean().getTitle()"+item.getFeedAdResultBean().getTitle());
+                LogUtil.d("OOMaD","gdtImageUrl="+gdtImageUrl);
                 if (!TextUtils.isEmpty(gdtImageUrl)) {
                     try {
                         helper.getView(R.id.item_news_hot_image).setVisibility(View.VISIBLE);

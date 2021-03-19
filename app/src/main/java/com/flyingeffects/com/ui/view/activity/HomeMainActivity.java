@@ -417,6 +417,7 @@ public class HomeMainActivity extends FragmentActivity {
                 }
             }
         });
+        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "默认页面不纳入统计");
     }
 
 
