@@ -2,6 +2,7 @@ package com.flyingeffects.com.enity;
 
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.bean.FeedAdConfigBean;
 
 import java.io.Serializable;
@@ -530,6 +531,8 @@ public class new_fag_template_item implements Serializable, MultiItemEntity {
     public int getItemType() {
         int type = 0;
         if(getFeedAdResultBean()!=null){
+
+            LogUtil.d("OOM44","etFeedAdResultBean().getEventType()="+getFeedAdResultBean().getEventType());
             switch (getFeedAdResultBean().getEventType()) {
                 case 0:
                     type = 0;
@@ -549,7 +552,7 @@ public class new_fag_template_item implements Serializable, MultiItemEntity {
             }
         }
 
-
+        LogUtil.d("OOM44","type="+type);
         return type;
     }
 }

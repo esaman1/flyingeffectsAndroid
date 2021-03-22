@@ -80,6 +80,7 @@ import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /**
@@ -1192,7 +1193,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         intent.putExtra("Message", bundle);
         intent.putExtra("person", templateItem);
         startActivity(intent);
-        new Handler().postDelayed(() -> adapter.pauseVideo(), 200);
+        Observable.just(200).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                new Handler().postDelayed(() -> adapter.pauseVideo(), 200);
+            }
+        });
+
     }
 
 
@@ -1215,27 +1222,31 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     @Subscribe
     public void onEventMainThread(MattingVideoEnity event) {
+        LogUtil.d("OOM3","onEventMainThread="+event.getTag());
         if (event.getTag() == 0) {
             originalImagePath.clear();
             ArrayList<String> paths = new ArrayList<>();
             paths.add(event.getMattingPath());
+            LogUtil.d("OOM3", "111" );
             Intent intent = new Intent(this, TemplateActivity.class);
             Bundle bundle = new Bundle();
             //用户没选择抠图
             if (event.getOriginalPath() != null) {
                 originalImagePath.add(event.getOriginalPath());
                 bundle.putInt("picout", 1);
+                LogUtil.d("OOM3", "222" );
             } else {
                 originalImagePath = null;
                 bundle.putInt("picout", 0);
+                LogUtil.d("OOM3", "333" );
             }
             bundle.putStringArrayList("paths", paths);
             bundle.putInt("isPicNum", defaultnum);
             bundle.putString("fromTo", mOldFromTo);
             bundle.putString("primitivePath", event.getPrimitivePath());
             bundle.putInt("is_anime", templateItem.getIs_anime());
-            LogUtil.d("OOM55", "is_anime=" + templateItem.getIs_anime());
-            LogUtil.d("OOM55", "is_animeaLLdATA=" + StringUtil.beanToJSONString(templateItem));
+            LogUtil.d("OOM3", "is_anime=" + templateItem.getIs_anime());
+            LogUtil.d("OOM3", "is_animeaLLdATA=" + StringUtil.beanToJSONString(templateItem));
             bundle.putString("templateName", templateItem.getTitle());
             intent.putExtra("person", templateItem);//直接存入被序列化的对象实例
             bundle.putString("templateId", templateItem.getId() + "");
@@ -1244,6 +1255,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             bundle.putString("templateFilePath", TemplateFilePath);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("Message", bundle);
+            LogUtil.d("OOM3","startActivity=");
             startActivity(intent);
         }
     }
@@ -1267,7 +1279,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         intent.putExtra("Message", bundle);
         startActivity(intent);
         setResult(Activity.RESULT_OK, intent);
-        new Handler().postDelayed(() -> adapter.pauseVideo(), 200);
+
+        Observable.just(200).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                new Handler().postDelayed(() -> adapter.pauseVideo(), 200);
+            }
+        });
+
     }
 
 
