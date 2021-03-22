@@ -2,7 +2,6 @@ package com.flyingeffects.com.adapter;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
@@ -347,19 +346,19 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
     }
 
     public void pauseVideo() {
-        LogUtil.d("OOM", "pauseVideo");
+        LogUtil.d("OOM22", "pauseVideo");
         if(videoPlayer!=null){
             videoPlayer.onVideoPause();
         }
         GSYVideoManager.onPause();
     }
 
-    public void startVideo() {
-        if (videoPlayer != null && !videoPlayer.isInPlayingState()) {
-            LogUtil.d(TAG, "isInPlayingState!=null?" + videoPlayer.isInPlayingState());
-            videoPlayer.startPlayLogic();
-        }
-    }
+//    public void startVideo() {
+//        if (videoPlayer != null && !videoPlayer.isInPlayingState()) {
+//            LogUtil.d(TAG, "isInPlayingState!=null?" + videoPlayer.isInPlayingState());
+//            videoPlayer.startPlayLogic();
+//        }
+//    }
 
     public void onDestroy() {
         videoPlayer.release();

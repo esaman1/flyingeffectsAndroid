@@ -904,7 +904,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     }
                 }
             }
-            templateThumbAdapter.notifyDataSetChanged();
+           // templateThumbAdapter.notifyDataSetChanged();
             //这里是为了替换用户操作的页面
             List<String> listAssets = new ArrayList<>();
             for (int i = 0; i < needAssetsCount; i++) {  //填满数据，为了缩略图

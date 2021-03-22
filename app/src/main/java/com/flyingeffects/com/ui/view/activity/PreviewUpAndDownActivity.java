@@ -5,26 +5,29 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.PreviewUpDownAdapter;
-import com.flyingeffects.com.adapter.PreviewUpDownPagerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.databinding.ActivityPreviewUpAndDownBinding;
-import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
@@ -37,9 +40,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
-import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
-import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
@@ -61,13 +62,11 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.github.penfeizhou.animation.apng.APNGDrawable;
 import com.github.penfeizhou.animation.loader.ResourceStreamLoader;
-import com.kwad.sdk.mvp.Presenter;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.yanzhenjie.album.AlbumFile;
 
@@ -77,18 +76,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
-
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import rx.functions.Action1;
 
 
 /**
@@ -111,14 +103,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private PreviewUpDownAdapter adapter;
 
-    /**
-     * viewpager适配器
-     */
-    private PreviewUpDownPagerAdapter mViewPagerAdapter;
-    /**
-     * fragment容器
-     */
-    private List<Fragment> mFragmentList;
 
     /**
      * 所有数据
@@ -321,15 +305,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 if (position != -1) {
-                    //置空数据
-//                    fromTo=OldfromTo;
                     mOldFromTo = keepOldFrom;
                     LogUtil.d("OOM2", "当前位置为" + position);
                     adapter.nowPreviewChooseItem(position);
-                    //todo  解决播放卡顿问题 声音在跑，但是画面没动的情况
-//                    if(allData.get(position).getAd()!=null){
                     adapter.notifyItemChanged(position);
-//                    }
                     nowItemIsAd = allData.size() > 0 && allData.get(position).getAd() != null;
                     nowChoosePosition = position;
                     //判断当前滑动状态
@@ -468,7 +447,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             adapter.setIsZan(false);
         }
         allData.set(nowChoosePosition, item1);
-//        adapter.notifyItemChanged(nowChoosePosition);
     }
 
 
@@ -540,37 +518,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         if (view == mBinding.relaParentShowAlert) {
             mBinding.relaParentShowAlert.setVisibility(View.GONE);
         } else if (view == mBinding.ibBack) {
-            //showBackDialog();
             finish();
         }
     }
 
-    private void showBackDialog() {
-        CommonMessageDialog.getBuilder(mContext)
-                .setTitle("确定要退出吗？")
-                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
-                .setAdId(AdConfigs.AD_IMAGE_EXIT)
-                .setPositiveButton("确定")
-                .setNegativeButton("取消")
-                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
-                    @Override
-                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
-                        finish();
-                        dialog.dismiss();
-                    }
-
-                    @Override
-                    public void onCancelBtnClick(CommonMessageDialog dialog) {
-                        dialog.dismiss();
-                    }
-                })
-                .build().show();
-    }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        //showBackDialog();
     }
 
     /**
@@ -652,11 +607,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
         if (!TextUtils.isEmpty(templateItem.getType()) && "1".equals(templateItem.getType()) && BaseConstans.getIncentiveVideo()) {
-//            Intent intent = new Intent(PreviewUpAndDownActivity.this, AdHintActivity.class);
-//            intent.putExtra("from", "PreviewActivity");
-//            intent.putExtra("templateTitle", templateItem.getTitle());
-//            startActivity(intent);
-
             showMessageDialog();
         } else {
             hasLoginToNext();
@@ -698,12 +648,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         dialog.dismiss();
                     }
                 })
-                .setDialogDismissListener(new CommonMessageDialog.DialogDismissListener() {
-                    @Override
-                    public void onDismiss() {
-                        mAdDialogIsShow = false;
-                    }
-                })
+                .setDialogDismissListener(() -> mAdDialogIsShow = false)
                 .build().show();
     }
 
@@ -841,15 +786,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 //因为提前插入的，所以需要加1
                 mBinding.page2.setCurrentItem(nowChoosePosition + 1, false);
             }
-//            else {
-//                //否则永远都是第一个
-//                new_fag_template_item item = new new_fag_template_item();
-//                item.setAd(ad);
-//                allData.add(0, item);
-//                adapter.notifyDataSetChanged();
-//                viewPage2.setCurrentItem(nowChoosePosition + 1, false);
-//                LogUtil.d("OOM", "超过数据限制，第一个为广告");
-//            }
         } else {
             //下滑的情况
             randomPosition = insertMaxNum + randomPosition;
@@ -874,18 +810,16 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         LogUtil.d("OOM22", "onResume " + mAdDialogIsShow);
         //出现bug 不能继续播放的问题
         if (!mAdDialogIsShow) {
-            adapter.notifyDataSetChanged();
+          //  adapter.notifyDataSetChanged();
             if (!nowItemIsAd) {
                 GSYVideoManager.onResume();
+                LogUtil.d("OOM22", "GSYVideoManager.onResume()");
             }
             if (BaseConstans.hasLogin()) {
                 //主要用于刷新当前页面
                 mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
             }
         }
-
-
-        LogUtil.d("OOM", "onResume");
         WaitingDialog.closeProgressDialog();
     }
 
@@ -1023,13 +957,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 }
                 break;
             case FromToTemplate.DRESSUP:
-//                mMvpPresenter.toDressUp();
                 AlbumManager.chooseImageAlbum(this, 1, SELECTALBUMFROMDressUp, this, "");
                 break;
             default:
                 break;
         }
-
 
     }
 
@@ -1071,7 +1003,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
         initFaceSdkModel.getHasLoadSdkOk(() -> {
-
             LogUtil.d("OOM3", "模型也加载完成");
             if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
                 if (albumFileList.get(0).isClickToCamera()) {
@@ -1116,12 +1047,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         mMvpPresenter.toDressUp(paths.get(0), templateId, templateItem.getTitle());
                     } else if (templateItem.getIs_anime() == 1) {
                         //模板换装新逻辑
-                        DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
-                            @Override
-                            public void isSuccess(List<String> paths) {
-                                mMvpPresenter.GetDressUpPath(paths);
-                            }
-                        }, true);
+                        DressUpModel dressUpModel = new DressUpModel(this, paths1 -> mMvpPresenter.GetDressUpPath(paths1), true);
                         dressUpModel.toDressUp(paths.get(0), templateId);
 
                     } else {
@@ -1158,15 +1084,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                                 if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
                                                     StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
                                                 }
-//                                        if (templateItem.getIs_anime() != 1) {
                                                 compressImage(paths, templateItem.getId() + "");
-//                                        } else {
-//                                            //漫画需要去服务器请求
-//                                            compressImageForServers(paths, templateItem.getId() + "");
-//                                        }
                                             } else {
                                                 //选择的时视频
-//                                if (OldfromTo.equals(FromToTemplate.ISBJ) || OldfromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
                                                 if ("2".equals(templateType)) {
                                                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                                                         toCloseProgressDialog();
@@ -1212,7 +1132,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
                 }
             }
-            new Handler().postDelayed(() -> adapter.pauseVideo(), 500);
+
         }, this);
     }
 
@@ -1229,22 +1149,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 }
             }
         }
-    }
-
-
-    private void compressImageForServers(List<String> paths, String templateId) {
-        boolean hasCache = templateItem.getIs_anime() != 1;
-        CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
-            if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
-                mMvpPresenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId() + "", false);
-            } else if (mOldFromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
-                mMvpPresenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId() + "", false);
-            } else {
-                toCloseProgressDialog();
-                intoTemplateActivity(tailorPaths, TemplateFilePath);
-            }
-        });
-        manage.compressImgAndCache(paths);
     }
 
 
@@ -1289,6 +1193,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         intent.putExtra("Message", bundle);
         intent.putExtra("person", templateItem);
         startActivity(intent);
+        Observable.just(200).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                new Handler().postDelayed(() -> adapter.pauseVideo(), 200);
+            }
+        });
+
     }
 
 
@@ -1311,29 +1222,33 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     @Subscribe
     public void onEventMainThread(MattingVideoEnity event) {
+        LogUtil.d("OOM3","onEventMainThread="+event.getTag());
         if (event.getTag() == 0) {
             if (originalImagePath != null) {
                 originalImagePath.clear();
             }
             ArrayList<String> paths = new ArrayList<>();
             paths.add(event.getMattingPath());
+            LogUtil.d("OOM3", "111" );
             Intent intent = new Intent(this, TemplateActivity.class);
             Bundle bundle = new Bundle();
             //用户没选择抠图
             if (originalImagePath != null && event.getOriginalPath() != null) {
                 originalImagePath.add(event.getOriginalPath());
                 bundle.putInt("picout", 1);
+                LogUtil.d("OOM3", "222" );
             } else {
                 originalImagePath = null;
                 bundle.putInt("picout", 0);
+                LogUtil.d("OOM3", "333" );
             }
             bundle.putStringArrayList("paths", paths);
             bundle.putInt("isPicNum", defaultnum);
             bundle.putString("fromTo", mOldFromTo);
             bundle.putString("primitivePath", event.getPrimitivePath());
             bundle.putInt("is_anime", templateItem.getIs_anime());
-            LogUtil.d("OOM55", "is_anime=" + templateItem.getIs_anime());
-            LogUtil.d("OOM55", "is_animeaLLdATA=" + StringUtil.beanToJSONString(templateItem));
+            LogUtil.d("OOM3", "is_anime=" + templateItem.getIs_anime());
+            LogUtil.d("OOM3", "is_animeaLLdATA=" + StringUtil.beanToJSONString(templateItem));
             bundle.putString("templateName", templateItem.getTitle());
             intent.putExtra("person", templateItem);//直接存入被序列化的对象实例
             bundle.putString("templateId", templateItem.getId() + "");
@@ -1342,6 +1257,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             bundle.putString("templateFilePath", TemplateFilePath);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("Message", bundle);
+            LogUtil.d("OOM3","startActivity=");
             startActivity(intent);
         }
     }
@@ -1365,6 +1281,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         intent.putExtra("Message", bundle);
         startActivity(intent);
         setResult(Activity.RESULT_OK, intent);
+
+        Observable.just(200).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                new Handler().postDelayed(() -> adapter.pauseVideo(), 200);
+            }
+        });
+
     }
 
 
@@ -1445,16 +1369,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             isOnPause = true;
             mMvpPresenter.requestTemplateDetail(templateItem.getId() + "");
         }
-    }
-
-    /**
-     * description ：关注和取消关注回调
-     * creation date: 2020/10/27
-     * user : zhangtongju
-     */
-    @Subscribe
-    public void onEventMainThread(AttentionChange event) {
-
     }
 
 

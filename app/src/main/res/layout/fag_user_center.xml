@@ -550,7 +550,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="50dp"
-        android:src="@drawable/ic_launcher_round"
         android:visibility="visible" />
 
 </RelativeLayout>
