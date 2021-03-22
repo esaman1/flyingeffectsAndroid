@@ -1224,14 +1224,16 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void onEventMainThread(MattingVideoEnity event) {
         LogUtil.d("OOM3","onEventMainThread="+event.getTag());
         if (event.getTag() == 0) {
-            originalImagePath.clear();
+            if (originalImagePath != null) {
+                originalImagePath.clear();
+            }
             ArrayList<String> paths = new ArrayList<>();
             paths.add(event.getMattingPath());
             LogUtil.d("OOM3", "111" );
             Intent intent = new Intent(this, TemplateActivity.class);
             Bundle bundle = new Bundle();
             //用户没选择抠图
-            if (event.getOriginalPath() != null) {
+            if (originalImagePath != null && event.getOriginalPath() != null) {
                 originalImagePath.add(event.getOriginalPath());
                 bundle.putInt("picout", 1);
                 LogUtil.d("OOM3", "222" );
