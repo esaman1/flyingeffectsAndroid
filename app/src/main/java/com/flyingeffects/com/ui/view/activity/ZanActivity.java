@@ -202,7 +202,7 @@ public class ZanActivity extends BaseActivity {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
                 listData.addAll(data);
-                isShowData(listData);
+                adapter.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
     }
@@ -222,16 +222,6 @@ public class ZanActivity extends BaseActivity {
         });
     }
 
-    private boolean isFirstData = true;
-
-    public void isShowData(List<MineZanEnity> data) {
-        adapter.notifyDataSetChanged();
-        if (isFirstData) {
-            BackgroundExecutor.execute(() -> {
-                isFirstData = false;
-            });
-        }
-    }
 
     private void finishData() {
         smartRefreshLayout.finishRefresh();

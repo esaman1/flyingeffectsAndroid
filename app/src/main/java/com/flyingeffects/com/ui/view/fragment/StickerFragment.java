@@ -113,6 +113,7 @@ public class StickerFragment extends BaseFragment {
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
+            @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 EventBus.getDefault().post(new ClearChooseStickerState());
@@ -137,8 +138,6 @@ public class StickerFragment extends BaseFragment {
                         }
                     }
                 },200);
-
-
 
             }
         });
