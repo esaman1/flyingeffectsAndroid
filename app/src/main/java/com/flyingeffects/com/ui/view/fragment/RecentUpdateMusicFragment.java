@@ -209,28 +209,6 @@ public class RecentUpdateMusicFragment extends BaseFragment {
     }
 
 
-//    private void getLocalMusic() {
-//        listData.clear();
-//        LogUtil.d("OOM2", "当前选择的是本地音频");
-//        WaitingDialog.openPragressDialog(getActivity());
-//        Observable.just(0).map(integer -> {
-//            FileManager mInstance = FileManager.getInstance();
-//            for (Music music : mInstance.getMusics()
-//            ) {
-//                ChooseMusic chooseMusic = new ChooseMusic();
-//                chooseMusic.setAudio_url(music.getPath());
-//                chooseMusic.setImage(music.getAlbum());
-//                chooseMusic.setNickname(music.getArtist());
-//                chooseMusic.setTitle(music.getName());
-//                listData.add(chooseMusic);
-//            }
-//            return listData;
-//        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(chooseMusics -> {
-//            adapter.notifyDataSetChanged();
-//            finishData();
-//            WaitingDialog.closePragressDialog();
-//        });
-//    }
 
 
     private void initRecycler() {
