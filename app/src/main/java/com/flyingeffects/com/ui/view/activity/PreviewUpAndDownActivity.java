@@ -1312,13 +1312,15 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Subscribe
     public void onEventMainThread(MattingVideoEnity event) {
         if (event.getTag() == 0) {
-            originalImagePath.clear();
+            if (originalImagePath != null) {
+                originalImagePath.clear();
+            }
             ArrayList<String> paths = new ArrayList<>();
             paths.add(event.getMattingPath());
             Intent intent = new Intent(this, TemplateActivity.class);
             Bundle bundle = new Bundle();
             //用户没选择抠图
-            if (event.getOriginalPath() != null) {
+            if (originalImagePath != null && event.getOriginalPath() != null) {
                 originalImagePath.add(event.getOriginalPath());
                 bundle.putInt("picout", 1);
             } else {

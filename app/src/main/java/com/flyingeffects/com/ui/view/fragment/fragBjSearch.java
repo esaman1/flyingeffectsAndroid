@@ -277,7 +277,6 @@ public class fragBjSearch extends BaseFragment {
                     }
                     if (isRefresh && data.size() == 0) {
 
-
                         StatisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults", searchText);
                         showNoData(true);
                         if (isVisible) {
@@ -309,8 +308,6 @@ public class fragBjSearch extends BaseFragment {
                 }
             }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
         }
-
-
     }
 
 
