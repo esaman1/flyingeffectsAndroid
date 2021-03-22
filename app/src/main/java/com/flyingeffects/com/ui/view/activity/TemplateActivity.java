@@ -114,6 +114,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private SXTemplatePlayer mPlayer;
     @BindView(R.id.player_surface_view)
     SXPlayerSurfaceView mPlayerView;
+    @BindView(R.id.video_player)
+    EmptyControlVideo videoPlayer;
+
     private TemplatePresenter presenter;
     private List<String> imgPath = new ArrayList<>();
     private TemplateModel mTemplateModel;
@@ -124,8 +127,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private String mAudio1Path;
     private static final String MUSIC_PATH = "/bj.mp3";
     private TextAssetEditLayout mTextEditLayout;
-    @BindView(R.id.video_player)
-    EmptyControlVideo videoPlayer;
+
     private int nowSeekBarProgress;
 
     /**
@@ -265,13 +267,15 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_template_edit;
+        return R.layout.activity_template;
     }
 
     @Override
     protected void initView() {
         mContext = TemplateActivity.this;
         EventBus.getDefault().register(this);
+
+        setOnClickListener();
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tv_top_submit)).setText("下一步");
@@ -363,7 +367,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     } else {
                         StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutopen");
                         //修改图为裁剪后的素材
-                        presenter.ChangeMaterial(originalPath, bottomButtonCount, needAssetsCount);
+                        presenter.changeMaterial(originalPath, bottomButtonCount, needAssetsCount);
                     }
                 } else {
                     chooseChecked();
@@ -401,6 +405,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     }
 
+    private void setOnClickListener() {
+
+
+    }
+
 
     /**
      * description ：选择状态
@@ -416,7 +425,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         } else {
             StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "1_mb_bj_Cutoutoff");
             //修改为裁剪前的素材
-            presenter.ChangeMaterial(imgPath, bottomButtonCount, needAssetsCount);
+            presenter.changeMaterial(imgPath, bottomButtonCount, needAssetsCount);
         }
     }
 

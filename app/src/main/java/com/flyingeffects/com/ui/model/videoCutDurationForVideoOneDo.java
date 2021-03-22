@@ -87,11 +87,10 @@ public class videoCutDurationForVideoOneDo {
 
             videoOneDo.start();
         } catch (Exception e) {
-            LogUtil.d("OOM","e="+e.getMessage());
+            LogUtil.d("OOM", "e=" + e.getMessage());
             e.printStackTrace();
             callback.isSuccess(false, "");
         }
-
 
     }
 
@@ -112,13 +111,13 @@ public class videoCutDurationForVideoOneDo {
      */
     private DrawPadAllExecute2 execute;
 
-    public void CutVideoForDrawPadAllExecute2(Context context,boolean nowUiIsLandscape, long duration, String path, long startDurtion, isSuccess callback) {
+    public void CutVideoForDrawPadAllExecute2(Context context, boolean nowUiIsLandscape, long duration, String path, long startDurtion, isSuccess callback) {
         try {
 //            VideoInfo   videoInfo = getVideoInfo.getInstance().getRingDuring(path);
 //            long allDuration=videoInfo.getDuration();
-            if(nowUiIsLandscape){
+            if (nowUiIsLandscape) {
                 execute = new DrawPadAllExecute2(context, 1280, 720, (long) (duration * 1000));
-            }else{
+            } else {
                 execute = new DrawPadAllExecute2(context, 720, 1280, (long) (duration * 1000));
             }
             execute.setFrameRate(20);
@@ -139,7 +138,7 @@ public class videoCutDurationForVideoOneDo {
                     return;
                 }
                 File video = new File(exportPath);
-                LogUtil.d("OOM","exportPath="+exportPath);
+                LogUtil.d("OOM", "exportPath=" + exportPath);
                 if (video.exists()) {
                     try {
                         String savePath = cacheCutVideoPath + "/" + System.currentTimeMillis() + ".mp4";
@@ -147,7 +146,7 @@ public class videoCutDurationForVideoOneDo {
                         if (file.exists()) {
                             file.delete();
                         }
-                        LogUtil.d("OOM","OOM="+savePath);
+                        LogUtil.d("OOM", "OOM=" + savePath);
                         FileUtil.copyFile(video, savePath);
                         callback.isSuccess(true, savePath);
                     } catch (IOException e) {
@@ -165,7 +164,7 @@ public class videoCutDurationForVideoOneDo {
                         LSOVideoOption option = new LSOVideoOption(path);
                         long startDuration = startDurtion * 1000;
                         long durationUs = (long) (duration * 1000);
-                        long endDuration=durationUs + startDuration;
+                        long endDuration = durationUs + startDuration;
                         option.setCutDurationUs(startDuration, endDuration);
 //                        option.setLooping(true);
                         final VideoFrameLayer videoLayer = execute.addVideoLayer(option);
@@ -188,12 +187,6 @@ public class videoCutDurationForVideoOneDo {
                         e.printStackTrace();
                     }
 
-
-
-
-
-
-
                     if (execute.start()) {
                         subscriber.onNext(0);
                     } else {
@@ -214,18 +207,15 @@ public class videoCutDurationForVideoOneDo {
         }
     }
 
-
-
-
     /**
      * description ：裁剪音频
      * creation date: 2020/9/1
      * user : zhangtongju
      */
-    public void cuttingAudio(Context context, String path, long startTimer, long endTimer, cutAudioCallback callback){
+    public void cuttingAudio(Context context, String path, long startTimer, long endTimer, cutAudioCallback callback) {
         try {
-            AudioPadExecute audioPadExecute=new AudioPadExecute(context,(endTimer-startTimer)*1000);
-            AudioLayer audioLayer=   audioPadExecute.addAudioLayer(path,0,startTimer*1000,endTimer*1000);
+            AudioPadExecute audioPadExecute = new AudioPadExecute(context, (endTimer - startTimer) * 1000);
+            AudioLayer audioLayer = audioPadExecute.addAudioLayer(path, 0, startTimer * 1000, endTimer * 1000);
             audioLayer.setVolume(1f);
             audioPadExecute.setOnAudioPadCompletedListener(new OnAudioPadExecuteCompletedListener() {
                 @Override
@@ -246,13 +236,10 @@ public class videoCutDurationForVideoOneDo {
         }
     }
 
-
-
-
-    public interface  cutAudioCallback{
+    public interface cutAudioCallback {
         void isDone(String path);
+
         void isProgress(long i);
     }
-
 
 }

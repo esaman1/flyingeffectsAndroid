@@ -333,13 +333,6 @@ public class TemplateMvpModel {
     }
 
 
-    private int test() {
-        Random r = new Random();
-        int ran1 = r.nextInt(2000);
-        LogUtil.d("OOM", "ran1=" + ran1);
-        return ran1;
-    }
-
     public String[] getRealTimePreview() {
         return mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
     }
@@ -358,34 +351,9 @@ public class TemplateMvpModel {
                 intent.putExtra("title", templateName);
                 intent.putExtra("IsFrom", fromTo);
                 context.startActivity(intent);
-
-//                if(BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()&& !BaseConstans.getIsNewUser()&&BaseConstans.getSave_video_ad()&&!BaseConstans.TemplateHasWatchingAd){
-//                    Intent intent = new Intent(context, AdHintActivity.class);
-//                    intent.putExtra("from", "isFormPreviewVideo");
-//                    intent.putExtra("templateTitle", "");
-//                    context.startActivity(intent);
-//                }else{
-//                    albumBroadcast(outputPath);
-//                    showDialog(outputPath);
-//                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-//                        AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
-//                    }
-//                }
             }
         }
     }
-
-
-//    public void alertAlbumUpdate(boolean isSuccess){
-//        if(!isSuccess){
-//            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-//                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
-//            }
-//        }
-//        albumBroadcast(outputPathForVideoSaveToPhoto);
-//        showDialog(outputPathForVideoSaveToPhoto);
-//
-//    }
 
     /**
      * description ：通知相册更新
@@ -440,22 +408,22 @@ public class TemplateMvpModel {
      * @param list
      * @param maxChooseNum
      */
-    public void ChangeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
+    public void changeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
         ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
         for (int i = 0; i < maxChooseNum; i++) {
             listItem.add(new TemplateThumbItem("", 1, false));
         }
-        List<String> list_all = new ArrayList<>();
+        List<String> listAll = new ArrayList<>();
         for (int i = 0; i < maxChooseNum; i++) {  //填满数据，为了缩略图
             if (list.size() > i && !TextUtils.isEmpty(list.get(i))) {
-                list_all.add(list.get(i)); //前面的时path ，后面的为默认的path
+                listAll.add(list.get(i)); //前面的时path ，后面的为默认的path
             } else {
-                list_all.add(SxveConstans.default_bg_path);
+                listAll.add(SxveConstans.default_bg_path);
             }
         }
-        for (int i = 0; i < list_all.size(); i++) {  //合成底部缩略图
+        for (int i = 0; i < listAll.size(); i++) {  //合成底部缩略图
             TemplateThumbItem templateThumbItem = new TemplateThumbItem();
-            templateThumbItem.setPathUrl(list_all.get(i));
+            templateThumbItem.setPathUrl(listAll.get(i));
             if (i == 0) {
                 templateThumbItem.setIsCheck(0);
             } else {
@@ -476,7 +444,7 @@ public class TemplateMvpModel {
         }
 
 
-        callback.ChangeMaterialCallback(listItem, list_all, listAssets);
+        callback.ChangeMaterialCallback(listItem, listAll, listAssets);
 
 
     }

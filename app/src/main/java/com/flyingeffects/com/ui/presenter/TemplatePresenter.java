@@ -80,8 +80,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
-    public void ChangeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
-        home_model.ChangeMaterial(list, maxChooseNum, needAssetsCount);
+    public void changeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
+        home_model.changeMaterial(list, maxChooseNum, needAssetsCount);
     }
 
 
