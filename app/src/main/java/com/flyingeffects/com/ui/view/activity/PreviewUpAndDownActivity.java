@@ -810,7 +810,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         LogUtil.d("OOM22", "onResume " + mAdDialogIsShow);
         //出现bug 不能继续播放的问题
         if (!mAdDialogIsShow) {
-            adapter.notifyDataSetChanged();
+          //  adapter.notifyDataSetChanged();
             if (!nowItemIsAd) {
                 GSYVideoManager.onResume();
                 LogUtil.d("OOM22", "GSYVideoManager.onResume()");
