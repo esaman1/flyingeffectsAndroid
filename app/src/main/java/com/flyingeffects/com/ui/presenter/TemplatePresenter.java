@@ -24,7 +24,6 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_model = new TemplateMvpModel(context, this, fromTo, templateName);
     }
 
-
     public void intoMattingVideo(String path, String name) {
         home_model.intoMattingVideo(path, name);
     }

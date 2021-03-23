@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 public class CreationTemplateMvpPresenter extends BasePresenter implements CreationTemplateMvpCallback {
+
     private CreationTemplateMvpView creationTemplatemvpView;
     private CreationTemplateMvpModel creationTemplatemodel;
 
