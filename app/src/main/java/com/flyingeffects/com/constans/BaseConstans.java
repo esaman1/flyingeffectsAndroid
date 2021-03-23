@@ -4,7 +4,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
-import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.http.Url;
@@ -53,7 +52,7 @@ public class BaseConstans {
     /**
      * 是否是正式环境
      */
-    public static final boolean PRODUCTION = false;
+    public static final boolean PRODUCTION = true;
     //public static final boolean DEBUG = BuildConfig.DEBUG;
     private static String channel = "";
     private static String versionCode = "";
@@ -311,16 +310,12 @@ public class BaseConstans {
 
 
     public static boolean getIsNewUser() {
-//        if(isTitokChannel){
-//            return false;
-//        }else{
         if (!isNewUserForAdvertising) {
             SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
             isNewUserForAdvertising = spUtil.getBoolean("isNewUserForAdvertising", false);
             return isNewUserForAdvertising;
         }
         return true;
-//        }
 
     }
 

@@ -84,6 +84,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         constraintLayout = findViewById(R.id.constraintLayout);
         isFrom = getIntent().getIntExtra("isFrom", 0);
         long duration = getIntent().getLongExtra("duration", 0);
+        duration=duration+1000;
         LogUtil.d("OOM2", "duration=" + duration);
         String musicPath = getIntent().getStringExtra("musicPath");
         String title = getIntent().getStringExtra("title");

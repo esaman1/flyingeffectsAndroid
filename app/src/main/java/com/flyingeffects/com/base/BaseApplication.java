@@ -74,7 +74,7 @@ public class BaseApplication extends MultiDexApplication {
         //闪验SDK初始化（建议放在Application的onCreate方法中执行）
         initShanyanSDK(this);
         initByteDanceShare();
-        keepCrash();
+//        keepCrash();
         initNTAdSDK();
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         TTAdManagerHolder.init(this);
@@ -104,7 +104,7 @@ public class BaseApplication extends MultiDexApplication {
                         .KSAppKey("517200002")
                         .KaiJiaAppKey("68662a49")
                         .GDTAppKey(AdConfigs.APP_ID_GDT)
-                        .isDebug(true)
+                        .isDebug(false)
                         .build());
     }
 
@@ -145,7 +145,7 @@ public class BaseApplication extends MultiDexApplication {
      * 中台
      */
     private void initZt() {
-        NTAnalytics.setDebug(true);
+        NTAnalytics.setDebug(false);
         NTAnalytics.init(this, "87", "vQlTNPzHOzBYHzkg", ChannelUtil.getChannel(this));
     }
 
