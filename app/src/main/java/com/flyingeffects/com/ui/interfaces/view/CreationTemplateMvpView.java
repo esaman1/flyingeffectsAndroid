@@ -51,4 +51,10 @@ public interface CreationTemplateMvpView {
     void modifyTimeLineSickerPath(String id,String path,StickerView stickerView);
 
     void stickerFragmentClose();
+
+    void showLoadingDialog();
+
+    void dismissLoadingDialog();
+
+    void setDialogProgress(String title, int dialogProgress, String content);
 }

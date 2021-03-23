@@ -7,11 +7,13 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.manager.AdConfigs;
@@ -19,7 +21,7 @@ import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.view.LoadingDialogProgress;
 
 
-public class LoadingDialog extends Dialog {
+public class LoadingDialog extends Dialog implements LifecycleObserver {
 
     protected LoadingDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
@@ -132,10 +134,6 @@ public class LoadingDialog extends Dialog {
                 tvContent.setVisibility(View.GONE);
             }
 
-            if (mHasAd) {
-                loadAd(llContainer);
-            }
-
             dialog.setOnDismissListener(new OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
@@ -143,10 +141,21 @@ public class LoadingDialog extends Dialog {
                         mDialogDismissListener.onDismiss();
                     }
                     if (llContainer != null) {
-                        AdManager.getInstance().ImageAdClose(llContainer);
+                        AdManager.getInstance().imageAdClose(llContainer);
                     }
                 }
             });
+
+
+            dialog.setOnShowListener(new OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    if (mHasAd && llContainer != null) {
+                        loadAd(llContainer);
+                    }
+                }
+            });
+
 
             dialog.setCancelable(false);
 
@@ -190,6 +199,16 @@ public class LoadingDialog extends Dialog {
 
     public interface DialogDismissListener {
         void onDismiss();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public void onResume() {
+        AdManager.getInstance().imageAdResume();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    public void onPause() {
+        AdManager.getInstance().imageAdPause();
     }
 
 }

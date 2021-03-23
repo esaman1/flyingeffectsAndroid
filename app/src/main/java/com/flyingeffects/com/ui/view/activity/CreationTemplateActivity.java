@@ -42,6 +42,7 @@ import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.MyScrollView;
@@ -128,6 +129,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     PlayerView playerView;
     @BindView(R.id.tv_current_time)
     TextView mTvCurrentTime;
+
+    private LoadingDialog mLoadingDialog;
 
     private boolean isEndDestroy = false;
 
@@ -230,6 +233,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     protected void initView() {
         mContext = CreationTemplateActivity.this;
         EventBus.getDefault().register(this);
+        mLoadingDialog = buildLoadingDialog();
+        getLifecycle().addObserver(mLoadingDialog);
         LogUtil.d("OOM", "进入到创作页面");
         ((TextView) findViewById(R.id.tv_top_submit)).setText("下一步");
         Intent intent = getIntent();
@@ -369,6 +374,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             mRlSeekBar.setVisibility(View.GONE);
         }
         mLlProgress.setLayoutParams(layoutParams);
+    }
+
+    private LoadingDialog buildLoadingDialog() {
+        return LoadingDialog.getBuilder(mContext)
+                .setHasAd(true)
+                .setTitle("飞闪预览处理中")
+                .setMessage("请耐心等待，不要离开")
+                .build();
     }
 
     private MediaSource mediaSource;
@@ -1800,6 +1813,23 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             seekBarViewIsShow(true);
         }
         mSeekBarView.scrollToTheBottom();
+    }
+
+    @Override
+    public void showLoadingDialog() {
+        mLoadingDialog.show();
+    }
+
+    @Override
+    public void dismissLoadingDialog() {
+        mLoadingDialog.dismiss();
+    }
+
+    @Override
+    public void setDialogProgress(String title, int dialogProgress, String content) {
+        mLoadingDialog.setTitleStr(title);
+        mLoadingDialog.setProgress(dialogProgress);
+        mLoadingDialog.setContentStr(content);
     }
 
     @Override

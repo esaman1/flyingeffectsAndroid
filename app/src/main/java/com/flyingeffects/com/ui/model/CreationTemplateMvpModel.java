@@ -126,7 +126,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      */
     private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
     private backgroundDraw backgroundDraw;
-    private LoadingDialog mLoadingDialog;
+
     private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
     /**
      * 视频默认声音
@@ -163,7 +163,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         this.callback = callback;
         this.originalPath = originalPath;
         this.mVideoPath = mVideoPath;
-        mLoadingDialog = buildLoadingDialog();
+
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
         if (!TextUtils.isEmpty(mVideoPath)) {
@@ -177,13 +177,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         listAllAnima = animCollect.getAnimList();
     }
 
-    private LoadingDialog buildLoadingDialog() {
-        return LoadingDialog.getBuilder(context)
-                .setHasAd(true)
-                .setTitle("飞闪预览处理中")
-                .setMessage("请耐心等待，不要离开")
-                .build();
-    }
+
 
 
     /**
@@ -1593,17 +1587,12 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
     private void showLoadingDialog() {
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_bj");
-        if (mLoadingDialog != null) {
-            mLoadingDialog.show();
-        } else {
-            mLoadingDialog = buildLoadingDialog();
-            mLoadingDialog.show();
-        }
+        callback.showLoadingDialog();
+
     }
 
     private void dismissLoadingDialog() {
-        mLoadingDialog.dismiss();
-        mLoadingDialog = null;
+        callback.dismissLoadingDialog();
     }
 
 
@@ -1716,8 +1705,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
     private void modificationSingleAnimItemIsChecked(int position) {
-        for (StickerAnim item : listAllAnima
-        ) {
+        for (StickerAnim item : listAllAnima) {
             item.setChecked(false);
         }
         StickerAnim item1 = listAllAnima.get(position);
@@ -1842,9 +1830,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 title = "视频即将呈现啦";
                 content = "最后合成中，请稍后";
             }
-            mLoadingDialog.setTitleStr(title);
-            mLoadingDialog.setProgress(dialogProgress);
-            mLoadingDialog.setContentStr(content);
+            callback.setDialogProgress(title,dialogProgress,content);
         }
     };
 

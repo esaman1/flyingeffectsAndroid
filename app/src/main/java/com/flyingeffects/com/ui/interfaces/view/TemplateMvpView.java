@@ -28,4 +28,10 @@ public interface TemplateMvpView {
     void getSpliteMusic(String path);
 
     void GetChangeDressUpData(List<String> paths);
+
+    void setDialogProgress(int progress);
+
+    void setDialogDismiss();
+
+    void showProgressDialog();
 }

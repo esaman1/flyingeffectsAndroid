@@ -53,6 +53,7 @@ import static com.flyingeffects.com.manager.FileManager.saveBitmapToPath;
  * 贴纸fragment
  */
 public class StickerFragment extends BaseFragment {
+
     @BindView(R.id.smart_refresh_layout)
     SmartRefreshLayout mSmartRefreshLayout;
     @BindView(R.id.gridView)

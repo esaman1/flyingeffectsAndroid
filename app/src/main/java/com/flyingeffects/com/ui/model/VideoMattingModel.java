@@ -88,6 +88,7 @@ public class VideoMattingModel {
         faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         LogUtil.d("OOM", "faceMattingFolder=" + faceMattingFolder);
+
         if (!nowActivityIsOnDestroy && context != null) {
             mLoadingDialog = buildProgressDialog();
             mLoadingDialog.show();
@@ -159,8 +160,6 @@ public class VideoMattingModel {
 //            boolean isMainThread = ThreadJudgeManage.isMainThread();
 //            LogUtil.d("OOM", "当前线程运行在主线程吗？" + isMainThread);
             Observable.just(0).subscribeOn(Schedulers.io()).subscribe(integer -> addFrameCompoundVideoNoMatting());
-
-
         });
 
         //设置处理进度监听.
@@ -398,9 +397,7 @@ public class VideoMattingModel {
         }
     }
 
-
     private MattingImage mattingImage = new MattingImage();
-
 
     private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
         String fileName = faceMattingFolder + File.separator + frameCount + ".png";

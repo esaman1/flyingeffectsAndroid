@@ -50,6 +50,7 @@ import com.flyingeffects.com.ui.model.VideoFusionModel;
 import com.flyingeffects.com.ui.presenter.TemplatePresenter;
 import com.flyingeffects.com.ui.view.ViewChooseTemplate;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -264,6 +265,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      * 如果是仿抖音一样的去唱歌，那么ui 界面需要修改，变成只有下一步功能
      */
     private boolean isToSing = false;
+    private LoadingDialog mLoadingDialog;
 
     @Override
     protected int getLayoutId() {
@@ -274,6 +276,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     protected void initView() {
         mContext = TemplateActivity.this;
         EventBus.getDefault().register(this);
+
+        mLoadingDialog = buildProgressDialog();
+        getLifecycle().addObserver(mLoadingDialog);
 
         setOnClickListener();
         findViewById(R.id.iv_top_back).setOnClickListener(this);
@@ -722,6 +727,25 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     }
 
+    @Override
+    public void setDialogProgress(int progress) {
+        mLoadingDialog.setTitleStr("飞闪预览处理中");
+        mLoadingDialog.setProgress(progress);
+        mLoadingDialog.setContentStr("请勿离开页面");
+    }
+
+    @Override
+    public void setDialogDismiss() {
+        mLoadingDialog.setProgress(0);
+        mLoadingDialog.dismiss();
+    }
+
+    @Override
+    public void showProgressDialog() {
+        LogUtil.d(TAG,"renderVideo + showProgressDialog");
+        mLoadingDialog.show();
+    }
+
 
     /**
      * description ：图片替换全部mediaUiModel2
@@ -904,7 +928,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     }
                 }
             }
-           // templateThumbAdapter.notifyDataSetChanged();
+            // templateThumbAdapter.notifyDataSetChanged();
             //这里是为了替换用户操作的页面
             List<String> listAssets = new ArrayList<>();
             for (int i = 0; i < needAssetsCount; i++) {  //填满数据，为了缩略图
@@ -1071,6 +1095,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
     }
 
+    private LoadingDialog buildProgressDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(mContext)
+                .setHasAd(true)
+                .setTitle("生成中...")
+                .build();
+        return dialog;
+    }
+
 
     @Override
     @OnClick({R.id.tv_top_submit, R.id.iv_play, R.id.edit_view_container, R.id.iv_top_back})
@@ -1095,6 +1127,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             }
                         });
                     } else {
+                        LogUtil.d(TAG,"renderVideo");
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
                             StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "4_search_save", templateName);
                         }
@@ -1329,7 +1362,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                                 imgPath.set(lastChoosePosition, path);
                             } else {
                                 imgPath.add(path);
-                             }
+                            }
                             nowClickMediaUi2.setImageAsset(path);
                             mTemplateViews.get(lastChoosePosition).invalidate();
                             modificationSingleThumbItem(path);

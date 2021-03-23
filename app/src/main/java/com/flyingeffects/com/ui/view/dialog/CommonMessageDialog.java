@@ -12,13 +12,16 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.Group;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 
 
-public class CommonMessageDialog extends Dialog {
+public class CommonMessageDialog extends Dialog implements LifecycleObserver {
     public static final int AD_STATUS_MIDDLE = 1;
     public static final int AD_STATUS_BOTTOM = 2;
     public static final int AD_STATUS_NONE = 0;
@@ -175,14 +178,6 @@ public class CommonMessageDialog extends Dialog {
             LinearLayout llAdContainer = mView.findViewById(R.id.ll_ad_container);
 
 
-            if (mAdStatus != AD_STATUS_NONE) {
-                if (TextUtils.isEmpty(mAdId)) {
-                    loadAd(llAdContainer, AdConfigs.AD_IMAGE);
-                } else {
-                    loadAd(llAdContainer, mAdId);
-                }
-            }
-
             if (mAdStatus == AD_STATUS_BOTTOM) {
                 Group groupAdDialog = mView.findViewById(R.id.group_ad_dialog);
                 mView.findViewById(R.id.iv_dialog_ad_close).setOnClickListener(new View.OnClickListener() {
@@ -249,7 +244,20 @@ public class CommonMessageDialog extends Dialog {
                         mDialogDismissListener.onDismiss();
                     }
                     if (llAdContainer != null) {
-                        AdManager.getInstance().ImageAdClose(llAdContainer);
+                        AdManager.getInstance().imageAdClose(llAdContainer);
+                    }
+                }
+            });
+
+            dialog.setOnShowListener(new OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    if (mAdStatus != AD_STATUS_NONE) {
+                        if (TextUtils.isEmpty(mAdId)) {
+                            loadAd(llAdContainer, AdConfigs.AD_IMAGE);
+                        } else {
+                            loadAd(llAdContainer, mAdId);
+                        }
                     }
                 }
             });
@@ -275,6 +283,17 @@ public class CommonMessageDialog extends Dialog {
 
     public interface DialogDismissListener {
         void onDismiss();
+    }
+
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public void onResume() {
+        AdManager.getInstance().imageAdResume();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    public void onPause() {
+        AdManager.getInstance().imageAdPause();
     }
 
 }

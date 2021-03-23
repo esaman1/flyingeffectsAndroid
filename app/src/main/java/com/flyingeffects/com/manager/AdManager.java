@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.bean.AdInfoBean;
@@ -91,64 +92,63 @@ public class AdManager {
     ImageAdManager imageAdManager;
 
     public void showImageAd(Context context, String id, LinearLayout ll_ad_container, Callback callback) {
-        imageAdManager = new ImageAdManager();
-        imageAdManager.showImageAd(context, id, ll_ad_container, null, new ImageAdCallBack() {
-            @Override
-            public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {
-                if (adView != null) {
-                    ll_ad_container.removeAllViews();
-                    ll_ad_container.addView(adView);
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            imageAdManager = new ImageAdManager();
+            imageAdManager.showImageAd(context, id, ll_ad_container, null, new ImageAdCallBack() {
+                @Override
+                public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {
+                    if (adView != null) {
+                        ll_ad_container.removeAllViews();
+                        ll_ad_container.addView(adView);
+                    }
                 }
-            }
 
-            @Override
-            public void onImageAdError(String error) {
-                LogUtil.e("ImageAdError = " + error);
-            }
+                @Override
+                public void onImageAdError(String error) {
+                    LogUtil.e("ImageAdError = " + error);
+                }
 
-            @Override
-            public void onImageAdClose() {
+                @Override
+                public void onImageAdClose() {
 
-            }
+                }
 
-            @Override
-            public boolean onImageAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
-                return false;
-            }
-        });
+                @Override
+                public boolean onImageAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                    return false;
+                }
+            });
+        }
     }
 
 
-
-
-    public static View  AdBannerCacheView;
-
+    public static View AdBannerCacheView;
 
 
     /**
      * 加载banner广告
      */
-    public void showBannerAd(Activity activity, String id, LinearLayout llAdContainer,boolean isNeedCache) {
+    public void showBannerAd(Activity activity, String id, LinearLayout llAdContainer, boolean isNeedCache) {
 
-        if(isNeedCache){
-            if(AdBannerCacheView!=null){
+        if (isNeedCache) {
+            if (AdBannerCacheView != null) {
                 llAdContainer.removeAllViews();
-                if(AdBannerCacheView.getParent()!=null){
-                    ViewGroup vp= (ViewGroup) AdBannerCacheView.getParent();
+                if (AdBannerCacheView.getParent() != null) {
+                    ViewGroup vp = (ViewGroup) AdBannerCacheView.getParent();
                     vp.removeAllViews();
                 }
                 llAdContainer.addView(AdBannerCacheView);
-            }else{
+            } else {
                 llAdContainer.setVisibility(View.GONE);
             }
-        }else{
+        } else {
             mBannerAdManager = new BannerAdManager();
             llAdContainer.setVisibility(View.VISIBLE);
             llAdContainer.post(() -> mBannerAdManager.showBannerAd(activity, id, llAdContainer, new BannerAdCallBack() {
                 @Override
                 public void onBannerAdShow(View adView) {
                     if (adView != null) {
-                        AdBannerCacheView=adView;
+                        AdBannerCacheView = adView;
                         llAdContainer.removeAllViews();
                         llAdContainer.addView(AdBannerCacheView);
                     }
@@ -182,9 +182,25 @@ public class AdManager {
         }
     }
 
-    public void ImageAdClose(LinearLayout llAdContainer) {
+    public void imageAdClose(LinearLayout llAdContainer) {
         llAdContainer.removeAllViews();
+        if (imageAdManager != null) {
+            imageAdManager.adDestroy();
+        }
     }
+
+    public void imageAdResume() {
+        if (imageAdManager != null) {
+            imageAdManager.adResume();
+        }
+    }
+
+    public void imageAdPause() {
+        if (imageAdManager != null) {
+            imageAdManager.adPause();
+        }
+    }
+
 
     public interface Callback {
         void adClose();

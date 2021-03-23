@@ -628,6 +628,9 @@ public class VideoCropMVPModel {
         if (drawPadView != null && drawPadView.isRunning()) {
             drawPadView.pausePreview();
         }
+        if (mLoadingDialog != null) {
+            mLoadingDialog.onPause();
+        }
     }
 
     public void onResume() {
@@ -636,6 +639,9 @@ public class VideoCropMVPModel {
         }
         if (drawPadView != null) {
             drawPadView.resumePreview();
+        }
+        if (mLoadingDialog != null) {
+            mLoadingDialog.onResume();
         }
     }
 

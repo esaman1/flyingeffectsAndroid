@@ -251,7 +251,12 @@ public class TemplateMvpModel {
     private String savePath;
 
     public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview, int nowTemplateIsAnim, List<String> originalPath) {
-        LoadingDialog dialog = buildProgressDialog();
+        callback.showProgressDialog();
+        if (FromToTemplate.PICTUREALBUM.equals(fromTo)) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_yj");
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_mb");
+        }
         Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
             SXTemplate template = new SXTemplate(mTemplateFolder, SXTemplate.TemplateUsage.kForRender); //模板对象类，需要传入模板路径和使用方式
             String[] paths;
@@ -293,15 +298,15 @@ public class TemplateMvpModel {
 
                 @Override
                 public void onUpdate(int progress) {
-                    dialog.setTitleStr("飞闪预览处理中");
-                    dialog.setProgress(progress);
-                    dialog.setContentStr("请勿离开页面");
+                    callback.setDialogProgress(progress);
+
                     LogUtil.d("OOM", "progress=" + progress);
                 }
 
                 @Override
                 public void onFinish(boolean success, String msg) {
-                    dialog.dismiss();
+                    callback.setDialogDismiss();
+
                     LogUtil.d("OOM", "onFinish+" + msg);
                     subscriber.onNext(success);
                     subscriber.onCompleted();
@@ -318,19 +323,7 @@ public class TemplateMvpModel {
 
     }
 
-    private LoadingDialog buildProgressDialog() {
-        if (FromToTemplate.PICTUREALBUM.equals(fromTo)) {
-            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_yj");
-        } else {
-            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_mb");
-        }
-        LoadingDialog dialog = LoadingDialog.getBuilder(context)
-                .setHasAd(true)
-                .setTitle("生成中...")
-                .build();
-        dialog.show();
-        return dialog;
-    }
+
 
 
     public String[] getRealTimePreview() {
