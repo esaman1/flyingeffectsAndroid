@@ -20,7 +20,7 @@ public class LogUtil {
         return instance;
     }
 
-    public  enum LogLevel {
+    public enum LogLevel {
         DEBUG_LEVEL, // 调试级别 日志
         RELEASE_LEVEL; // 发布级别 日志
     }
@@ -112,20 +112,22 @@ public class LogUtil {
 
 
     // 日志级别
-   private static LogLevel logLevel = BaseConstans.PRODUCTION?LogLevel.RELEASE_LEVEL:LogLevel.DEBUG_LEVEL;
+    private static LogLevel logLevel = BaseConstans.PRODUCTION ? LogLevel.RELEASE_LEVEL : LogLevel.DEBUG_LEVEL;
 
+    //  private static LogLevel logLevel=LogLevel.DEBUG_LEVEL;
  //  private static LogLevel logLevel=LogLevel.DEBUG_LEVEL;
 
 
-     static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-     static void printLine(String tag, boolean isTop) {
+    static void printLine(String tag, boolean isTop) {
         if (isTop) {
             Log.d(tag, "╔═══════════════════════════════════════════════════════════════════════════════════════");
         } else {
             Log.d(tag, "╚═══════════════════════════════════════════════════════════════════════════════════════");
         }
     }
+
     public static void printJson(String tag, String msg, String headString) {
         String message;
         try {

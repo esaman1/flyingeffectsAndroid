@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface TemplateMvpCallback {
 
-
     void completeTemplate(TemplateModel templateModel);
 
     void toPreview(String path);
@@ -31,5 +30,9 @@ public interface TemplateMvpCallback {
 
     void GetChangeDressUpData(List<String> paths);
 
+    void setDialogProgress(int progress);
 
+    void setDialogDismiss();
+
+    void showProgressDialog();
 }

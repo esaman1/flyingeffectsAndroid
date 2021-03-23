@@ -42,8 +42,9 @@ public class ConUtil {
         String KEY_UUID = "key_uuid";
         SharedUtil sharedUtil = new SharedUtil(mContext);
         String uuid = sharedUtil.getStringValueByKey(KEY_UUID);
-        if (uuid != null && uuid.trim().length() != 0)
+        if (uuid != null && uuid.trim().length() != 0) {
             return uuid;
+        }
 
         uuid = UUID.randomUUID().toString();
         uuid = Base64.encodeToString(uuid.getBytes(),
@@ -70,14 +71,8 @@ public class ConUtil {
     public static void getAppDetailSettingIntent(Activity context) {
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (Build.VERSION.SDK_INT >= 9) {
-            intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
-            intent.setData(Uri.fromParts("package", context.getPackageName(), null));
-        } else if (Build.VERSION.SDK_INT <= 8) {
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setClassName("com.android.settings", "com.android.settings.InstalledAppDetails");
-            intent.putExtra("com.android.settings.ApplicationPkgName", context.getPackageName());
-        }
+        intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+        intent.setData(Uri.fromParts("package", context.getPackageName(), null));
         context.startActivity(intent);
     }
 
@@ -166,7 +161,6 @@ public class ConUtil {
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;
 
-
             // 计算inSampleSize值
             while ((halfHeight / inSampleSize) >= reqHeight
                     && (halfWidth / inSampleSize) >= reqWidth) {
@@ -185,8 +179,6 @@ public class ConUtil {
                 out.flush();
                 out.close();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -254,8 +246,7 @@ public class ConUtil {
                 default:
                     break;
             }
-            int hight = src.getHeight() > src.getWidth() ? src
-                    .getHeight() : src.getWidth();
+            int hight = Math.max(src.getHeight(), src.getWidth());
             float scale = 1080.0f / hight;
             if (scale < 1) {
                 matrix.postScale(scale, scale);
@@ -277,8 +268,7 @@ public class ConUtil {
         options.inScaled = false;
         Bitmap src = BitmapFactory.decodeResource(context.getResources(), mipmapId, options);
         Matrix matrix = new Matrix();
-        int hight = src.getHeight() > src.getWidth() ? src
-                .getHeight() : src.getWidth();
+        int hight = Math.max(src.getHeight(), src.getWidth());
         float scale = 1080.0f / hight;
         if (scale < 1) {
             matrix.postScale(scale, scale);
@@ -321,7 +311,7 @@ public class ConUtil {
     public static void acquireWakeLock(Context context) {
         if (wakeLock == null) {
             PowerManager powerManager = (PowerManager) (context.getSystemService(Context.POWER_SERVICE));
-            wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+            wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "flying:MY TAG");
             wakeLock.acquire();
         }
     }

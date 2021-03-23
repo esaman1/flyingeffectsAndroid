@@ -250,6 +250,21 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
+    public void showLoadingDialog() {
+        creationTemplatemvpView.showLoadingDialog();
+    }
+
+    @Override
+    public void dismissLoadingDialog() {
+        creationTemplatemvpView.dismissLoadingDialog();
+    }
+
+    @Override
+    public void setDialogProgress(String title, int dialogProgress, String content) {
+        creationTemplatemvpView.setDialogProgress(title,dialogProgress,content);
+    }
+
+    @Override
     public void modifyTimeLineSickerPath(String id,String path,StickerView stickerView) {
         creationTemplatemvpView.modifyTimeLineSickerPath(id,path,stickerView);
     }

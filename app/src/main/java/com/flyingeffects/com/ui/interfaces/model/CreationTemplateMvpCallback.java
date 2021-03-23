@@ -53,4 +53,9 @@ public interface CreationTemplateMvpCallback {
 
     void stickerFragmentClose();
 
+    void showLoadingDialog();
+
+    void dismissLoadingDialog();
+
+    void setDialogProgress(String title, int dialogProgress, String content);
 }

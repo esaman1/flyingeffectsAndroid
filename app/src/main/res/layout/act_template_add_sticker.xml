@@ -143,7 +143,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/viewPager"
-        android:background="@color/home_base_balk_color"
+        android:background="@color/home_base_black_color"
         android:orientation="vertical">
 
 
@@ -194,7 +194,7 @@
                     android:id="@+id/iv_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/home_base_balk_color" />
+                    android:background="@color/home_base_black_color" />
 
                 <ImageView
                     android:id="@+id/iv_add_sticker"

@@ -53,6 +53,7 @@ import static com.flyingeffects.com.manager.FileManager.saveBitmapToPath;
  * 贴纸fragment
  */
 public class StickerFragment extends BaseFragment {
+
     @BindView(R.id.smart_refresh_layout)
     SmartRefreshLayout mSmartRefreshLayout;
     @BindView(R.id.gridView)
@@ -113,6 +114,7 @@ public class StickerFragment extends BaseFragment {
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
+            @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 EventBus.getDefault().post(new ClearChooseStickerState());
@@ -137,8 +139,6 @@ public class StickerFragment extends BaseFragment {
                         }
                     }
                 },200);
-
-
 
             }
         });

@@ -623,9 +623,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), tag);
         mAdDialogIsShow = true;
         StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert", "");
+        int showAd = BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() ?
+                CommonMessageDialog.AD_STATUS_BOTTOM : CommonMessageDialog.AD_STATUS_NONE;
         CommonMessageDialog.getBuilder(mContext)
                 .setContentView(R.layout.dialog_common_message_ad_under)
-                .setAdStatus(CommonMessageDialog.AD_STATUS_BOTTOM)
+                .setAdStatus(showAd)
                 .setAdId(AdConfigs.AD_IMAGE_DIALOG_OPEN_VIDEO)
                 .setTitle("亲爱的友友")
                 .setMessage("这个模板需要观看几秒广告")
@@ -810,7 +812,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         LogUtil.d("OOM22", "onResume " + mAdDialogIsShow);
         //出现bug 不能继续播放的问题
         if (!mAdDialogIsShow) {
-          //  adapter.notifyDataSetChanged();
+            //  adapter.notifyDataSetChanged();
             if (!nowItemIsAd) {
                 GSYVideoManager.onResume();
                 LogUtil.d("OOM22", "GSYVideoManager.onResume()");
@@ -1222,25 +1224,25 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     @Subscribe
     public void onEventMainThread(MattingVideoEnity event) {
-        LogUtil.d("OOM3","onEventMainThread="+event.getTag());
+        LogUtil.d("OOM3", "onEventMainThread=" + event.getTag());
         if (event.getTag() == 0) {
             if (originalImagePath != null) {
                 originalImagePath.clear();
             }
             ArrayList<String> paths = new ArrayList<>();
             paths.add(event.getMattingPath());
-            LogUtil.d("OOM3", "111" );
+            LogUtil.d("OOM3", "111");
             Intent intent = new Intent(this, TemplateActivity.class);
             Bundle bundle = new Bundle();
             //用户没选择抠图
             if (originalImagePath != null && event.getOriginalPath() != null) {
                 originalImagePath.add(event.getOriginalPath());
                 bundle.putInt("picout", 1);
-                LogUtil.d("OOM3", "222" );
+                LogUtil.d("OOM3", "222");
             } else {
                 originalImagePath = null;
                 bundle.putInt("picout", 0);
-                LogUtil.d("OOM3", "333" );
+                LogUtil.d("OOM3", "333");
             }
             bundle.putStringArrayList("paths", paths);
             bundle.putInt("isPicNum", defaultnum);
@@ -1257,7 +1259,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             bundle.putString("templateFilePath", TemplateFilePath);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("Message", bundle);
-            LogUtil.d("OOM3","startActivity=");
+            LogUtil.d("OOM3", "startActivity=");
             startActivity(intent);
         }
     }

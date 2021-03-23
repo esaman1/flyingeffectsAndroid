@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/home_base_balk_color"
+    android:background="@color/home_base_black_color"
     android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:id="@+id/relative_top"
         android:layout_width="match_parent"
-        android:background="@color/home_base_balk_color"
+        android:background="@color/home_base_black_color"
         android:layout_height="50dp">
 
         <ImageView
@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
-            android:background="@color/home_base_balk_color"
+            android:background="@color/home_base_black_color"
             android:layout_centerVertical="true"
             app:tl_indicator_color="#5694FA"
             app:tl_indicator_corner_radius="@dimen/dp_5"

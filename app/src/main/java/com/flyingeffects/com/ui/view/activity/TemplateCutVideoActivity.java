@@ -78,7 +78,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     private boolean nowIsPhotographAlbum;
 
-
     @BindView(R.id.relative_select_duration)
     RelativeLayout relative_select_duration;
 
@@ -150,6 +149,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
         mContext = TemplateCutVideoActivity.this;
         isIntoOnpause = false;
         mLoadingDialog = buildLoadingDialog();
+        getLifecycle().addObserver(mLoadingDialog);
+
         DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
         videoPath = getIntent().getStringExtra("videoPath");
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
@@ -177,6 +178,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 .build();
         return dialog;
     }
+
     @Override
     protected void initAction() {
         initThumbList();
@@ -445,7 +447,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
         int thumbCount = (int) (listWidth * (duration / mTemplateDuration / thumbWidth));
 //        int thumbCount = (int) (listWidth * (duration / mTemplateDuration) / thumbWidth);
         thumbCount = thumbCount > 0 ? thumbCount : 0;
-        LogUtil.d("OOM2","thumbCount="+thumbCount);
+        LogUtil.d("OOM2", "thumbCount=" + thumbCount);
         //每帧所占的时间
         final int interval = (int) (duration / thumbCount * 1000);
         int[] mTimeUs = new int[thumbCount];

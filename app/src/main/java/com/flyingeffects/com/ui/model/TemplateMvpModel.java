@@ -251,7 +251,12 @@ public class TemplateMvpModel {
     private String savePath;
 
     public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview, int nowTemplateIsAnim, List<String> originalPath) {
-        LoadingDialog dialog = buildProgressDialog();
+        callback.showProgressDialog();
+        if (FromToTemplate.PICTUREALBUM.equals(fromTo)) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_yj");
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_mb");
+        }
         Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
             SXTemplate template = new SXTemplate(mTemplateFolder, SXTemplate.TemplateUsage.kForRender); //模板对象类，需要传入模板路径和使用方式
             String[] paths;
@@ -293,15 +298,15 @@ public class TemplateMvpModel {
 
                 @Override
                 public void onUpdate(int progress) {
-                    dialog.setTitleStr("飞闪预览处理中");
-                    dialog.setProgress(progress);
-                    dialog.setContentStr("请勿离开页面");
+                    callback.setDialogProgress(progress);
+
                     LogUtil.d("OOM", "progress=" + progress);
                 }
 
                 @Override
                 public void onFinish(boolean success, String msg) {
-                    dialog.dismiss();
+                    callback.setDialogDismiss();
+
                     LogUtil.d("OOM", "onFinish+" + msg);
                     subscriber.onNext(success);
                     subscriber.onCompleted();
@@ -318,27 +323,8 @@ public class TemplateMvpModel {
 
     }
 
-    private LoadingDialog buildProgressDialog() {
-        if (FromToTemplate.PICTUREALBUM.equals(fromTo)) {
-            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_yj");
-        } else {
-            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_mb");
-        }
-        LoadingDialog dialog = LoadingDialog.getBuilder(context)
-                .setHasAd(true)
-                .setTitle("生成中...")
-                .build();
-        dialog.show();
-        return dialog;
-    }
 
 
-    private int test() {
-        Random r = new Random();
-        int ran1 = r.nextInt(2000);
-        LogUtil.d("OOM", "ran1=" + ran1);
-        return ran1;
-    }
 
     public String[] getRealTimePreview() {
         return mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
@@ -358,34 +344,9 @@ public class TemplateMvpModel {
                 intent.putExtra("title", templateName);
                 intent.putExtra("IsFrom", fromTo);
                 context.startActivity(intent);
-
-//                if(BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()&& !BaseConstans.getIsNewUser()&&BaseConstans.getSave_video_ad()&&!BaseConstans.TemplateHasWatchingAd){
-//                    Intent intent = new Intent(context, AdHintActivity.class);
-//                    intent.putExtra("from", "isFormPreviewVideo");
-//                    intent.putExtra("templateTitle", "");
-//                    context.startActivity(intent);
-//                }else{
-//                    albumBroadcast(outputPath);
-//                    showDialog(outputPath);
-//                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-//                        AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
-//                    }
-//                }
             }
         }
     }
-
-
-//    public void alertAlbumUpdate(boolean isSuccess){
-//        if(!isSuccess){
-//            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-//                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
-//            }
-//        }
-//        albumBroadcast(outputPathForVideoSaveToPhoto);
-//        showDialog(outputPathForVideoSaveToPhoto);
-//
-//    }
 
     /**
      * description ：通知相册更新
@@ -440,22 +401,22 @@ public class TemplateMvpModel {
      * @param list
      * @param maxChooseNum
      */
-    public void ChangeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
+    public void changeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
         ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
         for (int i = 0; i < maxChooseNum; i++) {
             listItem.add(new TemplateThumbItem("", 1, false));
         }
-        List<String> list_all = new ArrayList<>();
+        List<String> listAll = new ArrayList<>();
         for (int i = 0; i < maxChooseNum; i++) {  //填满数据，为了缩略图
             if (list.size() > i && !TextUtils.isEmpty(list.get(i))) {
-                list_all.add(list.get(i)); //前面的时path ，后面的为默认的path
+                listAll.add(list.get(i)); //前面的时path ，后面的为默认的path
             } else {
-                list_all.add(SxveConstans.default_bg_path);
+                listAll.add(SxveConstans.default_bg_path);
             }
         }
-        for (int i = 0; i < list_all.size(); i++) {  //合成底部缩略图
+        for (int i = 0; i < listAll.size(); i++) {  //合成底部缩略图
             TemplateThumbItem templateThumbItem = new TemplateThumbItem();
-            templateThumbItem.setPathUrl(list_all.get(i));
+            templateThumbItem.setPathUrl(listAll.get(i));
             if (i == 0) {
                 templateThumbItem.setIsCheck(0);
             } else {
@@ -476,7 +437,7 @@ public class TemplateMvpModel {
         }
 
 
-        callback.ChangeMaterialCallback(listItem, list_all, listAssets);
+        callback.ChangeMaterialCallback(listItem, listAll, listAssets);
 
 
     }

@@ -4,6 +4,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
+import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.http.Url;
@@ -31,7 +32,6 @@ public class BaseConstans {
     public static final String DOUYINSHARE_CLIENTKEY = "awikd2g333hd0ien";
 
 
-
     /**
      * 是否开启华为渠道适配
      */
@@ -46,14 +46,15 @@ public class BaseConstans {
     /**
      * 信息流广告插入的位置
      */
-    public static final int NOWADSHOWPOSITION=5;
+    public static final int NOWADSHOWPOSITION = 5;
     public static boolean hasCreatingSegJni = true;
     public static String titok;
     public static String kuaishou;
     /**
      * 是否是正式环境
      */
-    public static final boolean PRODUCTION =true ;
+    public static final boolean PRODUCTION = false;
+    //public static final boolean DEBUG = BuildConfig.DEBUG;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";
@@ -268,10 +269,8 @@ public class BaseConstans {
 
     public static String getHasAdEntrance() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-      return   spUtil.getString("AdEntrance","");
+        return spUtil.getString("AdEntrance", "");
     }
-
-
 
 
     /**

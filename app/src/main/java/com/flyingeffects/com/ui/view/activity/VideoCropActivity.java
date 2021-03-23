@@ -315,6 +315,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
             // 启动时间
             Observable ob = Api.getDefault().userDefine(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(VideoCropActivity.this) {
+
                 @Override
                 protected void onSubError(String message) {
 
@@ -324,6 +325,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
                 protected void onSubNext(UserInfo data) {
 
                 }
+
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
         }
     }

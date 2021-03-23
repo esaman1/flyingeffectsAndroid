@@ -80,8 +80,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
-    public void ChangeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
-        home_model.ChangeMaterial(list, maxChooseNum, needAssetsCount);
+    public void changeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
+        home_model.changeMaterial(list, maxChooseNum, needAssetsCount);
     }
 
 
@@ -135,16 +135,28 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_mvpView.GetChangeDressUpData(paths);
     }
 
+    @Override
+    public void setDialogProgress(int progress) {
+        home_mvpView.setDialogProgress(progress);
+    }
+
+    @Override
+    public void setDialogDismiss() {
+        home_mvpView.setDialogDismiss();
+    }
+
+    @Override
+    public void showProgressDialog() {
+        home_mvpView.showProgressDialog();
+    }
 
     public void StatisticsToSave(String templateId) {
         home_model.StatisticsToSave(templateId);
 
     }
 
-
     public void toDressUp(String path, String templateId) {
         home_model.toDressUp(path, templateId);
     }
-
 
 }
