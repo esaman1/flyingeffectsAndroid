@@ -13,7 +13,7 @@ import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED
 import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_GDT_FEED_EXPRESS_AD;
 import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_TT_FEED_EXPRESS_AD;
 
-public class new_fag_template_item implements Serializable, MultiItemEntity {
+public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
 
 
     public int getId() {

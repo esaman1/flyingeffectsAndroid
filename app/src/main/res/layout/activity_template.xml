@@ -21,7 +21,6 @@
             android:src="@mipmap/back"
             android:visibility="visible" />
 
-
         <LinearLayout
             android:id="@+id/ll_Matting"
             android:layout_width="match_parent"
@@ -34,7 +33,6 @@
                 android:layout_height="wrap_content"
                 android:text="智能抠像"
                 android:textColor="@color/white" />
-
 
             <com.suke.widget.SwitchButton
                 android:id="@+id/switch_button"
@@ -49,7 +47,6 @@
                 app:sb_show_indicator="false"
                 app:sb_uncheckcircle_radius="@dimen/dp_0"
                 app:sb_uncheckcircle_width="0dp" />
-
 
         </LinearLayout>
 
@@ -187,8 +184,7 @@
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:background="#000000"
-            android:orientation="vertical"
-           >
+            android:orientation="vertical">
 
             <com.flyingeffects.com.view.NoSlidingViewPager
                 android:id="@+id/template_viewPager"

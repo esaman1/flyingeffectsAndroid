@@ -15,8 +15,6 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.fansEnity;
-import com.flyingeffects.com.enity.new_fag_template_item;
-import com.flyingeffects.com.enity.templateDataCollectRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;

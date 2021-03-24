@@ -18,13 +18,12 @@ import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.SendSearchText;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
-import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
@@ -35,7 +34,6 @@ import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,7 +74,7 @@ public class fragBjSearch extends BaseFragment {
 
     private int perPageCount = 10;
     private MainRecyclerAdapter adapter;
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
 
     private boolean isRefresh = true;
     private int selectPage = 1;
@@ -222,7 +220,7 @@ public class fragBjSearch extends BaseFragment {
         EventBus.getDefault().unregister(this);
     }
 
-    public void isShowData(ArrayList<new_fag_template_item> listData) {
+    public void isShowData(ArrayList<NewFragmentTemplateItem> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);
@@ -260,7 +258,7 @@ public class fragBjSearch extends BaseFragment {
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
             }
             LogUtil.d("oom3", "搜索" + StringUtil.beanToJSONString(params));
-            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(getActivity()) {
                 @Override
                 protected void onSubError(String message) {
                     finishData();
@@ -268,7 +266,7 @@ public class fragBjSearch extends BaseFragment {
                 }
 
                 @Override
-                protected void onSubNext(List<new_fag_template_item> data) {
+                protected void onSubNext(List<NewFragmentTemplateItem> data) {
                     LogUtil.d("oom3", "搜索结果" + StringUtil.beanToJSONString(data));
 
                     finishData();

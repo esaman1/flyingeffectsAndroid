@@ -10,20 +10,18 @@ import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MineCommentEnity;
 import com.flyingeffects.com.enity.MineZanEnity;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
 import com.flyingeffects.com.enity.SearchUserEntity;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.SystemMessageCountAllEntiy;
 import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
-import com.flyingeffects.com.enity.SystemMessageDetailEnity;
-import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoFusiomBean;
 import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.enity.fansEnity;
 import com.flyingeffects.com.enity.messageCount;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.systemessagelist;
 
 import java.util.List;
@@ -69,7 +67,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/template/collectionList")
-    Observable<HttpResult<List<new_fag_template_item>>> collectionList(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> collectionList(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST("/api/message/systemessagelist")
@@ -97,7 +95,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/message/getMyProduction")
-    Observable<HttpResult<List<new_fag_template_item>>> uploadList(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> uploadList(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded
@@ -142,7 +140,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/template/templateLInfo")
-    Observable<HttpResult<new_fag_template_item>> templateLInfo(@FieldMap Map<String, String> params);
+    Observable<HttpResult<NewFragmentTemplateItem>> templateLInfo(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded
@@ -227,18 +225,18 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/template/templateListNew")
-    Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> getTemplate(@FieldMap Map<String, String> params);
 
 
 
     @FormUrlEncoded
     @POST("/api/mearge/templateList")
-    Observable<HttpResult<List<new_fag_template_item>>> getMeargeTemplate(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> getMeargeTemplate(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded
     @POST("/api/photo/photoList")
-    Observable<HttpResult<List<new_fag_template_item>>> photoList(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> photoList(@FieldMap Map<String, String> params);
 
 
 //
@@ -251,7 +249,7 @@ public interface ApiService {
     //我发布的作品和我喜欢的作品
     @FormUrlEncoded
     @POST("/api/message/getMyProduction")
-    Observable<HttpResult<List<new_fag_template_item>>> getMyProduction(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> getMyProduction(@FieldMap Map<String, String> params);
 
 
     //请求我的评论列表

@@ -14,9 +14,9 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ListForUpAndDown;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
 import com.flyingeffects.com.enity.SystemMessageDetailEnity;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -100,7 +100,7 @@ public class SystemMessageDetailActivity extends BaseActivity {
     }
 
 
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
     public void requestTemplateDetail(String templateId) {
         if (!TextUtils.isEmpty(templateId)) {
             HashMap<String, String> params = new HashMap<>();
@@ -108,14 +108,14 @@ public class SystemMessageDetailActivity extends BaseActivity {
 
             // 启动时间
             Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
-            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(this) {
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<NewFragmentTemplateItem>(this) {
                 @Override
                 protected void onSubError(String message) {
                     LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
                 }
 
                 @Override
-                protected void onSubNext(new_fag_template_item data) {
+                protected void onSubNext(NewFragmentTemplateItem data) {
                     allData.clear();
                     Intent intent =new Intent(SystemMessageDetailActivity.this,PreviewUpAndDownActivity.class);
                     String type = data.getTemplate_type();

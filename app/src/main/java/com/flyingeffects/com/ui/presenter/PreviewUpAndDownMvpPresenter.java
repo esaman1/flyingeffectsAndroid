@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewUpAndDownMvpView;
 import com.flyingeffects.com.ui.model.PreviewUpAndDownMvpModel;
@@ -16,7 +16,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     private PreviewUpAndDownMvpView previewUpAndDownMvpView;
     private PreviewUpAndDownMvpModel previewUpAndDownMvpModel;
 
-    public PreviewUpAndDownMvpPresenter(Context context, PreviewUpAndDownMvpView mvp_view, List<new_fag_template_item> allData,int nowSelectPage,String fromTo,String templateId,String toUserID,String searchText,boolean isCanLoadMore,String tc_id) {
+    public PreviewUpAndDownMvpPresenter(Context context, PreviewUpAndDownMvpView mvp_view, List<NewFragmentTemplateItem> allData, int nowSelectPage, String fromTo, String templateId, String toUserID, String searchText, boolean isCanLoadMore, String tc_id) {
         this.previewUpAndDownMvpView = mvp_view;
         previewUpAndDownMvpModel = new PreviewUpAndDownMvpModel(context, this,allData,nowSelectPage,fromTo,templateId,toUserID,searchText,isCanLoadMore,tc_id);
     }
@@ -36,7 +36,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
 
-    public void showBottomSheetDialog(String path,String imagePath,String id,new_fag_template_item templateItem,String fromTo){
+    public void showBottomSheetDialog(String path, String imagePath, String id, NewFragmentTemplateItem templateItem, String fromTo){
         previewUpAndDownMvpModel.showBottomSheetDialog(path,imagePath,id,templateItem,fromTo);
     }
 
@@ -129,7 +129,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
     @Override
-    public void showNewData(List<new_fag_template_item> allData,boolean isRefresh) {
+    public void showNewData(List<NewFragmentTemplateItem> allData, boolean isRefresh) {
         previewUpAndDownMvpView.showNewData(allData,isRefresh);
     }
 
@@ -139,7 +139,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
     }
 
     @Override
-    public void getTemplateLInfo(new_fag_template_item data) {
+    public void getTemplateLInfo(NewFragmentTemplateItem data) {
         previewUpAndDownMvpView.getTemplateLInfo(data);
     }
 

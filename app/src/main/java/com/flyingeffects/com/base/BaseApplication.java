@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
@@ -51,6 +52,7 @@ import rx.subjects.PublishSubject;
  */
 
 public class BaseApplication extends MultiDexApplication {
+    private static final String TAG = "BaseApplication";
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private static BaseApplication baseApp;
     private boolean isActive = true;
@@ -62,6 +64,7 @@ public class BaseApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG,"Application start");
         baseApp = this;
         //分包支持
         MultiDex.install(this);

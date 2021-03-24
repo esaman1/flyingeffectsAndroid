@@ -4,8 +4,7 @@ import android.content.Context;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.enity.TemplateType;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.ui.interfaces.model.FagBjMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
 import com.flyingeffects.com.ui.model.FagBjMvpModel;
@@ -37,7 +36,7 @@ public class FagBjMvpPresenter extends BasePresenter implements FagBjMvpCallback
     }
 
     @Override
-    public void PictureAlbum(List<new_fag_template_item> data) {
+    public void PictureAlbum(List<NewFragmentTemplateItem> data) {
         FagBjmvpView.PictureAlbum(data);
     }
 

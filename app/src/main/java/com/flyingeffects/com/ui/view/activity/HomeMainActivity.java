@@ -96,6 +96,7 @@ import static com.flyingeffects.com.constans.BaseConstans.getChannel;
  * @author zhang
  */
 public class HomeMainActivity extends FragmentActivity {
+    private static final String TAG = "HomeMainActivity";
     private final ImageView[] mIvMenuBack = new ImageView[4];
     private final TextView[] tv_main = new TextView[4];
     private final int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
@@ -113,6 +114,7 @@ public class HomeMainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
+        Log.d(TAG,"Application start finished");
         mContext = HomeMainActivity.this;
         setTheme(R.style.AppTheme);
         //禁止休眠

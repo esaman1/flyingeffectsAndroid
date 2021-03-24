@@ -31,8 +31,8 @@ import com.flyingeffects.com.databinding.ActivityPreviewUpAndDownBinding;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.ReplayMessageEvent;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.enity.templateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
@@ -107,9 +107,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     /**
      * 所有数据
      */
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
 
-    private new_fag_template_item templateItem;
+    private NewFragmentTemplateItem templateItem;
 
     //当前选中的页码
     private int nowChoosePosition;
@@ -438,7 +438,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     private void setIsZan(boolean isCollect) {
-        new_fag_template_item item1 = allData.get(nowChoosePosition);
+        NewFragmentTemplateItem item1 = allData.get(nowChoosePosition);
         if (isCollect) {
             item1.setIs_praise(1);
             adapter.setIsZan(true);
@@ -474,7 +474,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
             iZanNum--;
         }
-        new_fag_template_item item1 = allData.get(nowChoosePosition);
+        NewFragmentTemplateItem item1 = allData.get(nowChoosePosition);
         item1.setPraise(iZanNum + "");
         allData.set(nowChoosePosition, item1);
         adapter.setIsZanCount(iZanNum);
@@ -551,7 +551,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void collectionResult(boolean collectionResult) {
 
-        new_fag_template_item item = allData.get(nowChoosePosition);
+        NewFragmentTemplateItem item = allData.get(nowChoosePosition);
         if (collectionResult) {
             item.setIs_collection(1);
         } else {
@@ -736,7 +736,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * user : zhangtongju
      */
     @Override
-    public void showNewData(List<new_fag_template_item> newAllData, boolean isRefresh) {
+    public void showNewData(List<NewFragmentTemplateItem> newAllData, boolean isRefresh) {
         allData = newAllData;
         if (isRefresh) {
             templateItem = newAllData.get(0);
@@ -750,7 +750,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             //如果当前页面需要广告，则插入广告
             if (isNeedAddaD && allData.size() > randomPosition) {
                 isNeedAddaD = false;
-                new_fag_template_item item = new new_fag_template_item();
+                NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                 item.setAd(ad);
                 allData.add(randomPosition, item);
             }
@@ -780,7 +780,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             LogUtil.d("OOM", "上滑的情况=" + randomPosition);
             LogUtil.d("OOM", "需要去的位置=" + randomPosition + "insertMinNum=" + insertMinNum + "当前随机数=" + randomPosition);
             if (randomPosition > 1) {
-                new_fag_template_item item = new new_fag_template_item();
+                NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                 item.setAd(ad);
                 allData.add(randomPosition, item);
                 adapter.notifyDataSetChanged();
@@ -795,7 +795,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             LogUtil.d("OOM", "广告插入的位置=" + randomPosition);
             if (allData != null && allData.size() > randomPosition) {
                 isNeedAddaD = false;
-                new_fag_template_item item = new new_fag_template_item();
+                NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                 item.setAd(ad);
                 allData.add(randomPosition, item);
             } else {
@@ -833,7 +833,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
 
     @Override
-    public void getTemplateLInfo(new_fag_template_item data) {
+    public void getTemplateLInfo(NewFragmentTemplateItem data) {
         if (data != null) {
             templateItem = data;
             setIsZan(data.getIs_praise() == 1);

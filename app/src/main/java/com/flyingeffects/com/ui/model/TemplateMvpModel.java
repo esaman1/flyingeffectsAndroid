@@ -23,8 +23,8 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.TemplateThumbItem;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -36,7 +36,6 @@ import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
-import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
@@ -48,7 +47,6 @@ import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.model.MediaUiModel2;
 import com.shixing.sxve.ui.model.TemplateModel;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import com.shixing.sxvideoengine.SXRenderListener;
 import com.shixing.sxvideoengine.SXTemplate;
 import com.shixing.sxvideoengine.SXTemplateRender;
@@ -59,7 +57,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.UUID;
 
 import de.greenrobot.event.EventBus;
@@ -467,7 +464,7 @@ public class TemplateMvpModel {
      * creation date: 2020/5/9
      * user : zhangtongju
      */
-    public void chooseBj(new_fag_template_item templateItem) {
+    public void chooseBj(NewFragmentTemplateItem templateItem) {
         Intent intent = new Intent(context, ChooseBackgroundTemplateActivity.class);
         intent.putExtra("templateItem", templateItem);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

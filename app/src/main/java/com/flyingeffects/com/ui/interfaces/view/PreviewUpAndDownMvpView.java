@@ -1,8 +1,7 @@
 package com.flyingeffects.com.ui.interfaces.view;
 
-import com.bytedance.sdk.openadsdk.TTFeedAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 
 import java.util.List;
 
@@ -19,11 +18,11 @@ public interface PreviewUpAndDownMvpView {
 
     void getTemplateFileSuccess(String filePath);
 
-    void showNewData(List<new_fag_template_item> allData,boolean isRefresh);
+    void showNewData(List<NewFragmentTemplateItem> allData, boolean isRefresh);
 
     void resultAd(List<TTNativeExpressAd> ads);
 
-    void getTemplateLInfo(new_fag_template_item data);
+    void getTemplateLInfo(NewFragmentTemplateItem data);
 
     void  returnSpliteMusic(String path,String videoPath);
 

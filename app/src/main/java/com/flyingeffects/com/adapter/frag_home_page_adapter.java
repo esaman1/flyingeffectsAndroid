@@ -10,8 +10,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.MyProduction;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 
 import java.util.List;
@@ -22,20 +21,20 @@ import java.util.List;
  * time：2019/1/25
  * describe:首页适配
  **/
-public class frag_home_page_adapter extends BaseQuickAdapter<new_fag_template_item, BaseViewHolder> {
+public class frag_home_page_adapter extends BaseQuickAdapter<NewFragmentTemplateItem, BaseViewHolder> {
 
     private Context context;
     public final static String TAG = "frag_home_page_adapter";
 
 
-    public frag_home_page_adapter(int layoutResId, @Nullable List<new_fag_template_item> allData, Context context) {
+    public frag_home_page_adapter(int layoutResId, @Nullable List<NewFragmentTemplateItem> allData, Context context) {
         super(layoutResId, allData);
         this.context = context;
     }
 
 
     @Override
-    protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
+    protected void convert(final BaseViewHolder helper, final NewFragmentTemplateItem item) {
         Glide.with(context)
                 .load(item.getImage())
                 .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 5)))

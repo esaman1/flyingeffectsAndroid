@@ -15,7 +15,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -47,7 +47,7 @@ public class fragHomePage extends BaseFragment {
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
     private frag_home_page_adapter adapter;
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
     private String toUserId = "";
     //类型:1=作者的作品,2=作者喜欢的作品,3=作者收藏的模板
     private int isFrom;
@@ -57,7 +57,7 @@ public class fragHomePage extends BaseFragment {
     @BindView(R.id.lin_show_nodata_bj)
     LinearLayout lin_show_nodata;
     private boolean isRefresh = true;
-    private ArrayList<new_fag_template_item> listData = new ArrayList<>();
+    private ArrayList<NewFragmentTemplateItem> listData = new ArrayList<>();
     private int selectPage = 1;
 
 
@@ -179,7 +179,7 @@ public class fragHomePage extends BaseFragment {
         params.put("pageSize", perPageCount + "");
         LogUtil.d("OOM", "请求喜欢数据参数" + StringUtil.beanToJSONString(params));
         Observable ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(getActivity()) {
             @Override
             protected void onSubError(String message) {
                 finishData();
@@ -187,7 +187,7 @@ public class fragHomePage extends BaseFragment {
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -248,7 +248,7 @@ public class fragHomePage extends BaseFragment {
         }
     }
 
-    public void isShowData(ArrayList<new_fag_template_item> listData) {
+    public void isShowData(ArrayList<NewFragmentTemplateItem> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);

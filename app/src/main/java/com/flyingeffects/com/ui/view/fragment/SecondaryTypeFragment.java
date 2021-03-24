@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseFragment;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.SecondaryTypeEntity;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
 
@@ -42,7 +42,7 @@ public class SecondaryTypeFragment extends BaseFragment {
      */
     int type, from;
     String category_id, categoryTabName;
-    private new_fag_template_item templateItem;
+    private NewFragmentTemplateItem templateItem;
     private int homePageNum;
     /**
      * 上个页面是哪一个
@@ -62,7 +62,7 @@ public class SecondaryTypeFragment extends BaseFragment {
         from = getArguments().getInt("from");
         num=getArguments().getInt("num");
         homePageNum=getArguments().getInt("homePageNum");
-        templateItem = (new_fag_template_item) getArguments().getSerializable("templateItem");
+        templateItem = (NewFragmentTemplateItem) getArguments().getSerializable("templateItem");
         categoryTabName = getArguments().getString("categoryTabName");
         if (mTypeEntities == null) {
             mTypeEntities = new ArrayList<>();

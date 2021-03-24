@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.enity.TemplateThumbItem;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.TemplateMvpModel;
@@ -32,7 +32,7 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_model.StopBgmMusic();
     }
 
-    public void chooseBj(new_fag_template_item templateItem) {
+    public void chooseBj(NewFragmentTemplateItem templateItem) {
         home_model.chooseBj(templateItem);
     }
 

@@ -3,16 +3,14 @@ package com.flyingeffects.com.ui.presenter;
 import android.content.Context;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.ui.interfaces.model.homeItemMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
 import com.flyingeffects.com.ui.model.home_fag_itemMvpModel;
-import com.nineton.ntadsdk.bean.FeedAdConfigBean;
 import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class home_fag_itemMvpPresenter extends BasePresenter implements homeItemMvpCallback {
     private HomeItemMvpView mvp_view;
@@ -54,7 +52,7 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
     }
 
     @Override
-    public void showData(ArrayList<new_fag_template_item> list) {
+    public void showData(ArrayList<NewFragmentTemplateItem> list) {
         mvp_view.isShowData(list);
     }
 
