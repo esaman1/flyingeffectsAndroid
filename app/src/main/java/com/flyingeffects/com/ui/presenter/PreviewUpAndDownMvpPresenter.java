@@ -13,6 +13,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import java.util.List;
 
 public class PreviewUpAndDownMvpPresenter extends BasePresenter implements PreviewUpAndDownMvpCallback {
+
     private PreviewUpAndDownMvpView previewUpAndDownMvpView;
     private PreviewUpAndDownMvpModel previewUpAndDownMvpModel;
 
@@ -35,11 +36,9 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
         previewUpAndDownMvpModel.prepareDownZip(url,zipPid);
     }
 
-
     public void showBottomSheetDialog(String path, String imagePath, String id, NewFragmentTemplateItem templateItem, String fromTo){
         previewUpAndDownMvpModel.showBottomSheetDialog(path,imagePath,id,templateItem,fromTo);
     }
-
 
     public void GetDressUpPath(List<String> paths){
         previewUpAndDownMvpModel.GetDressUpPath(paths);
@@ -140,7 +139,7 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
 
     @Override
     public void getTemplateLInfo(NewFragmentTemplateItem data) {
-        previewUpAndDownMvpView.getTemplateLInfo(data);
+        previewUpAndDownMvpView.getTemplateInfo(data);
     }
 
     @Override

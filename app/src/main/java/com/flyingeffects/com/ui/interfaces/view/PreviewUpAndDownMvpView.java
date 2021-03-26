@@ -6,6 +6,7 @@ import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import java.util.List;
 
 public interface PreviewUpAndDownMvpView {
+
     void collectionResult(boolean collectionResult);
 
     void zanResult();
@@ -22,7 +23,7 @@ public interface PreviewUpAndDownMvpView {
 
     void resultAd(List<TTNativeExpressAd> ads);
 
-    void getTemplateLInfo(NewFragmentTemplateItem data);
+    void getTemplateInfo(NewFragmentTemplateItem data);
 
     void  returnSpliteMusic(String path,String videoPath);
 

@@ -320,8 +320,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         presenter = new TemplatePresenter(this, this, fromTo, templateName);
         LogUtil.d("OOM3", "initView");
 
-        templateItem = (NewFragmentTemplateItem) getIntent().getSerializableExtra("person");
-
         if (mOriginalPathList != null && mOriginalPathList.size() > 0) {
             int totalMaterial = needAssetsCount;
             if (mOriginalPathList.size() < totalMaterial) {
@@ -422,6 +420,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private void initData() {
         Bundle bundle = getIntent().getBundleExtra(TEMPLATE_BUNDLE_NAME);
+        templateItem = (NewFragmentTemplateItem) getIntent().getSerializableExtra(TEMPLATE_ITEM_NAME);
         if (bundle != null) {
             fromTo = bundle.getString(INTENT_FROM_TO);
             needAssetsCount = bundle.getInt(INTENT_IS_PIC_NUM);
@@ -1968,22 +1967,25 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
 
-    public static Intent buildIntent(Context context){
+    public static Intent buildIntent(Context context,List<String> paths,List<String> originalImagePath,
+                                     int isPicNum,String fromTo,int isPicOut,NewFragmentTemplateItem templateItem,
+                                     String templateFilePath){
         Intent intent = new Intent(context, TemplateActivity.class);
         Bundle bundle = new Bundle();
-//        bundle.putStringArrayList(INTENT_IMAGE_PATH, (ArrayList<String>) paths);
-//        bundle.putInt(INTENT_IS_PIC_NUM, defaultnum);
-//        bundle.putString(INTENT_FROM_TO, mOldFromTo);
-//        bundle.putInt(INTENT_PIC_OUT, templateItem.getIs_picout());
-//        bundle.putInt(INTENT_IS_ANIME, templateItem.getIs_anime());
-//        bundle.putString(INTENT_TEMPLATE_NAME, templateItem.getTitle());
-//        bundle.putString(INTENT_TEMPLATE_ID, templateItem.getId() + "");
-//        bundle.putString(INTENT_VIDEO_TIME, templateItem.getVideotime());
-//        bundle.putStringArrayList(INTENT_ORIGINAL_PATH, (ArrayList<String>) originalImagePath);
-//        bundle.putString(INTENT_TEMPLATE_FILE_PATH, templateFilePath);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        intent.putExtra(TEMPLATE_BUNDLE_NAME, bundle);
-//        intent.putExtra(TEMPLATE_ITEM_NAME, templateItem);
+        bundle.putStringArrayList(INTENT_IMAGE_PATH, (ArrayList<String>) paths);
+        bundle.putStringArrayList(INTENT_ORIGINAL_PATH, (ArrayList<String>) originalImagePath);
+        bundle.putInt(INTENT_IS_PIC_NUM, isPicNum);
+        bundle.putString(INTENT_FROM_TO, fromTo);
+        bundle.putInt(INTENT_PIC_OUT, isPicOut);
+        bundle.putInt(INTENT_IS_ANIME, templateItem.getIs_anime());
+        bundle.putString(INTENT_TEMPLATE_NAME, templateItem.getTitle());
+        bundle.putString(INTENT_TEMPLATE_ID, templateItem.getId() + "");
+        bundle.putString(INTENT_VIDEO_TIME, templateItem.getVideotime());
+        bundle.putString(INTENT_TEMPLATE_FILE_PATH, templateFilePath);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        intent.putExtra(TEMPLATE_BUNDLE_NAME, bundle);
+        intent.putExtra(TEMPLATE_ITEM_NAME, templateItem);
 
         return intent;
     }
