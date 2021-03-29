@@ -30,7 +30,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.DownVideoPath;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -77,7 +77,7 @@ import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_TT
  * time：2019/1/25
  * describe:首页适配
  **/
-public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_template_item, BaseViewHolder> {
+public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTemplateItem, BaseViewHolder> {
     public static final int FROM_TEMPLATE_CODE = 0;
     public static final int FROM_BACK_CODE = 1;
     public static final int FROM_SEARCH_CODE = 2;
@@ -92,7 +92,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
     private NativeUnifiedADData mAdBean;
 
 
-    public MainRecyclerAdapter(@Nullable List<new_fag_template_item> allData, int fromType, boolean isFromSearch, FeedAdManager mAdManager) {
+    public MainRecyclerAdapter(@Nullable List<NewFragmentTemplateItem> allData, int fromType, boolean isFromSearch, FeedAdManager mAdManager) {
         super(allData);
         this.fromType = fromType;
         this.isFromSearch = isFromSearch;
@@ -108,7 +108,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<new_fag_templ
 
 
     @Override
-    protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
+    protected void convert(final BaseViewHolder helper, final NewFragmentTemplateItem item) {
         int offset = helper.getLayoutPosition();
         LinearLayout ll_content_patents = helper.getView(R.id.ll_content_patents);
         LogUtil.d("OOM2", "getItemViewType=" + helper.getItemViewType());

@@ -5,7 +5,7 @@ import android.content.Context;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -30,7 +30,7 @@ public class home_fag_itemMvpModel {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private SmartRefreshLayout smartRefreshLayout;
     private boolean isRefresh = true;
-    private ArrayList<new_fag_template_item> listData = new ArrayList<>();
+    private ArrayList<NewFragmentTemplateItem> listData = new ArrayList<>();
     private int selectPage = 1;
     private String templateId, tc_id;
     private int perPageCount = 9;
@@ -112,7 +112,7 @@ public class home_fag_itemMvpModel {
             ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
         }
         LogUtil.d("OOM", StringUtil.beanToJSONString(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(context) {
             @Override
             protected void onSubError(String message) {
                 finishData();
@@ -120,7 +120,7 @@ public class home_fag_itemMvpModel {
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.dLong("OOM", "_onNext=" + str);
                 finishData();
@@ -140,7 +140,7 @@ public class home_fag_itemMvpModel {
                 }
 
                 if(BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()&&data.size()>BaseConstans.NOWADSHOWPOSITION){
-                    new_fag_template_item item=new new_fag_template_item();
+                    NewFragmentTemplateItem item=new NewFragmentTemplateItem();
                     item.setHasShowAd(true);
                     //设置当前是导流，进入抖音列表页就会自动过滤
                     item.setIs_ad_recommend(1);

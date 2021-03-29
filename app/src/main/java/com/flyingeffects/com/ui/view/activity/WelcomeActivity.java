@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -44,7 +45,7 @@ import androidx.annotation.NonNull;
 import rx.Observable;
 
 public class WelcomeActivity extends BaseActivity {
-
+    private static final String TAG = "WelcomeActivity";
     private final int BUILD_VERSION = 23;
     private final int PERMISSION_REQUEST_CODE = 1024;
     private static final int RESULT_CODE = 3;
@@ -251,6 +252,7 @@ public class WelcomeActivity extends BaseActivity {
      * 展示开屏广告
      */
     private void showSplashAd() {
+        Log.d(TAG,"Application start finished");
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
             NTAdSDK.getInstance().showSplashAd(this, mBinding.rlAdContainer, mBinding.tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {

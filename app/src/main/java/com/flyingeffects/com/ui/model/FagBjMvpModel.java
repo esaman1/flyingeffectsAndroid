@@ -1,45 +1,27 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
-import android.os.Handler;
-import android.text.TextUtils;
 
-import com.flyingeffects.com.R;
-import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.enity.new_fag_template_item;
-import com.flyingeffects.com.manager.AdConfigs;
-import com.flyingeffects.com.manager.AdManager;
-import com.flyingeffects.com.manager.DownloadVideoManage;
-import com.flyingeffects.com.manager.DownloadZipManager;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.FileManager;
-import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.NetworkUtils;
 import com.flyingeffects.com.utils.StringUtil;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.interfaces.model.FagBjMvpCallback;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 
@@ -99,14 +81,14 @@ public class FagBjMvpModel {
         params.put("page",   "1");
         params.put("pageSize",  "10");
         Observable ob = Api.getDefault().photoList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(context) {
             @Override
             protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
                 LogUtil.d("OOM",StringUtil.beanToJSONString(data));
                 callback.PictureAlbum(data);
 

@@ -28,11 +28,10 @@ import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
-import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -62,7 +61,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -101,7 +99,7 @@ public class PreviewUpAndDownMvpModel {
     private String mRunCatchFolder;
     private int perPageCount = 10;
     private SmartRefreshLayout smartRefreshLayout;
-    private List<new_fag_template_item> allData;
+    private List<NewFragmentTemplateItem> allData;
     private String fromTo;
     private String category_id, tc_id;
     private TTAdNative mTTAdNative;
@@ -110,7 +108,7 @@ public class PreviewUpAndDownMvpModel {
     private String searchText = "";
     private boolean isCanLoadMore;
 
-    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String category_id, String toUserID, String searchText, boolean isCanLoadMore, String tc_id) {
+    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<NewFragmentTemplateItem> allData, int nowSelectPage, String fromTo, String category_id, String toUserID, String searchText, boolean isCanLoadMore, String tc_id) {
         this.context = context;
         this.isCanLoadMore = isCanLoadMore;
         this.selectPage = nowSelectPage;
@@ -187,7 +185,7 @@ public class PreviewUpAndDownMvpModel {
             // 启动时间
             Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
             LogUtil.d("OOM", StringUtil.beanToJSONString(params));
-            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(context) {
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<NewFragmentTemplateItem>(context) {
                         @Override
                         protected void onSubError(String message) {
 //                ToastUtil.showToast(message);
@@ -195,7 +193,7 @@ public class PreviewUpAndDownMvpModel {
                         }
 
                         @Override
-                        protected void onSubNext(new_fag_template_item data) {
+                        protected void onSubNext(NewFragmentTemplateItem data) {
                             callback.getTemplateLInfo(data);
                         }
                     }, "cacheKey", ActivityLifeCycleEvent.DESTROY,
@@ -221,7 +219,7 @@ public class PreviewUpAndDownMvpModel {
         return dialog;
     }
 
-    public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item, String fromTo) {
+    public void showBottomSheetDialog(String path, String imagePath, String id, NewFragmentTemplateItem fag_template_item, String fromTo) {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
@@ -400,7 +398,7 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/7/1
      * user : zhangtongju
      */
-    private void shareToApplet(new_fag_template_item fag_template_item) {
+    private void shareToApplet(NewFragmentTemplateItem fag_template_item) {
         UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
         String url = "pages/background/background?path=detail&from_path=app&id=" + fag_template_item.getId();
         LogUtil.d("OOM", "小程序的地址为" + url);
@@ -678,7 +676,7 @@ public class PreviewUpAndDownMvpModel {
 
         String str = StringUtil.beanToJSONString(params);
         LogUtil.d("OOM3", "总请求的参数为------" + str);
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(context) {
             @Override
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "下一页数据请求" + message);
@@ -687,7 +685,7 @@ public class PreviewUpAndDownMvpModel {
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM3", "下一页数据请求" + str);
                 finishData();
@@ -702,17 +700,17 @@ public class PreviewUpAndDownMvpModel {
                 if (data.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
-                List<new_fag_template_item> needData = getFiltration(data);
+                List<NewFragmentTemplateItem> needData = getFiltration(data);
                 allData.addAll(needData);
                 callback.showNewData(allData, isRefresh);
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
-    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData) {
-        List<new_fag_template_item> needData = new ArrayList<>();
+    public List<NewFragmentTemplateItem> getFiltration(List<NewFragmentTemplateItem> allData) {
+        List<NewFragmentTemplateItem> needData = new ArrayList<>();
         for (int i = 0; i < allData.size(); i++) {
-            new_fag_template_item item = allData.get(i);
+            NewFragmentTemplateItem item = allData.get(i);
             if (item.getIs_ad_recommend() == 0) {
                 needData.add(item);
             }

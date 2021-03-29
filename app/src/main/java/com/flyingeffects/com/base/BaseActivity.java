@@ -57,10 +57,6 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     protected ActionBar mActionBar;
 
     /**
-     * TAG = Class.class.getSimpleName();
-     */
-    protected String TAG;
-    /**
      * 页面上部显示的title
      */
     protected TextView pageTitle;

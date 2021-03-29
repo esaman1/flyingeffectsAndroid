@@ -31,8 +31,8 @@ import com.flyingeffects.com.databinding.ActivityPreviewUpAndDownBinding;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.ReplayMessageEvent;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.enity.templateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
@@ -107,9 +107,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     /**
      * 所有数据
      */
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
 
-    private new_fag_template_item templateItem;
+    private NewFragmentTemplateItem templateItem;
 
     //当前选中的页码
     private int nowChoosePosition;
@@ -237,6 +237,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         int nowSelectPage = getIntent().getIntExtra("nowSelectPage", 1);
         nowPraise = templateItem.getIs_praise();
         mMvpPresenter = new PreviewUpAndDownMvpPresenter(this, this, allData, nowSelectPage, keepOldFrom, categoryId, toUserId, searchText, isCanLoadMore, tcId);
+
         mMvpPresenter.initSmartRefreshLayout(mBinding.refresh);
         if (isCanLoadMore) {
             if (nowChoosePosition >= allData.size() - 2) {
@@ -438,7 +439,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     private void setIsZan(boolean isCollect) {
-        new_fag_template_item item1 = allData.get(nowChoosePosition);
+        NewFragmentTemplateItem item1 = allData.get(nowChoosePosition);
         if (isCollect) {
             item1.setIs_praise(1);
             adapter.setIsZan(true);
@@ -474,7 +475,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             }
             iZanNum--;
         }
-        new_fag_template_item item1 = allData.get(nowChoosePosition);
+        NewFragmentTemplateItem item1 = allData.get(nowChoosePosition);
         item1.setPraise(iZanNum + "");
         allData.set(nowChoosePosition, item1);
         adapter.setIsZanCount(iZanNum);
@@ -551,7 +552,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void collectionResult(boolean collectionResult) {
 
-        new_fag_template_item item = allData.get(nowChoosePosition);
+        NewFragmentTemplateItem item = allData.get(nowChoosePosition);
         if (collectionResult) {
             item.setIs_collection(1);
         } else {
@@ -736,7 +737,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * user : zhangtongju
      */
     @Override
-    public void showNewData(List<new_fag_template_item> newAllData, boolean isRefresh) {
+    public void showNewData(List<NewFragmentTemplateItem> newAllData, boolean isRefresh) {
         allData = newAllData;
         if (isRefresh) {
             templateItem = newAllData.get(0);
@@ -750,7 +751,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             //如果当前页面需要广告，则插入广告
             if (isNeedAddaD && allData.size() > randomPosition) {
                 isNeedAddaD = false;
-                new_fag_template_item item = new new_fag_template_item();
+                NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                 item.setAd(ad);
                 allData.add(randomPosition, item);
             }
@@ -780,7 +781,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             LogUtil.d("OOM", "上滑的情况=" + randomPosition);
             LogUtil.d("OOM", "需要去的位置=" + randomPosition + "insertMinNum=" + insertMinNum + "当前随机数=" + randomPosition);
             if (randomPosition > 1) {
-                new_fag_template_item item = new new_fag_template_item();
+                NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                 item.setAd(ad);
                 allData.add(randomPosition, item);
                 adapter.notifyDataSetChanged();
@@ -795,7 +796,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             LogUtil.d("OOM", "广告插入的位置=" + randomPosition);
             if (allData != null && allData.size() > randomPosition) {
                 isNeedAddaD = false;
-                new_fag_template_item item = new new_fag_template_item();
+                NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                 item.setAd(ad);
                 allData.add(randomPosition, item);
             } else {
@@ -833,7 +834,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
 
     @Override
-    public void getTemplateLInfo(new_fag_template_item data) {
+    public void getTemplateInfo(NewFragmentTemplateItem data) {
         if (data != null) {
             templateItem = data;
             setIsZan(data.getIs_praise() == 1);
@@ -1179,21 +1180,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     private void intoTemplateActivity(List<String> paths, String templateFilePath) {
         toCloseProgressDialog();
-        Intent intent = new Intent(this, TemplateActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putStringArrayList("paths", (ArrayList<String>) paths);
-        bundle.putInt("isPicNum", defaultnum);
-        bundle.putString("fromTo", mOldFromTo);
-        bundle.putInt("picout", templateItem.getIs_picout());
-        bundle.putInt("is_anime", templateItem.getIs_anime());
-        bundle.putString("templateName", templateItem.getTitle());
-        bundle.putString("templateId", templateItem.getId() + "");
-        bundle.putString("videoTime", templateItem.getVideotime());
-        bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
-        bundle.putString("templateFilePath", templateFilePath);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("Message", bundle);
-        intent.putExtra("person", templateItem);
+        Intent intent = TemplateActivity
+                .buildIntent(mContext,paths,originalImagePath,defaultnum,
+                        mOldFromTo,templateItem.getIs_picout(),templateItem,templateFilePath);
         startActivity(intent);
         Observable.just(200).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
@@ -1213,8 +1202,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Subscribe
     public void onEventMainThread(CreateCutCallback event) {
         LogUtil.d("OOM", "event.getCoverPath()=" + event.getCoverPath() + "createDownVideoPath=" + createDownVideoPath + "createDownVideoPath=" + createDownVideoPath + "event.isNeedCut()=" + event.isNeedCut());
-        intoCreationTemplateActivity(event.getCoverPath(), createDownVideoPath, event.getOriginalPath(), event.isNeedCut());
-
+        intoCreationTemplateActivity(event.getCoverPath(),
+                createDownVideoPath, event.getOriginalPath(), event.isNeedCut());
     }
 
     /**
@@ -1234,6 +1223,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             LogUtil.d("OOM3", "111");
             Intent intent = new Intent(this, TemplateActivity.class);
             Bundle bundle = new Bundle();
+
+            bundle.putStringArrayList("paths", paths);
+            bundle.putInt("isPicNum", defaultnum);
+            bundle.putString("fromTo", mOldFromTo);
             //用户没选择抠图
             if (originalImagePath != null && event.getOriginalPath() != null) {
                 originalImagePath.add(event.getOriginalPath());
@@ -1244,13 +1237,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 bundle.putInt("picout", 0);
                 LogUtil.d("OOM3", "333");
             }
-            bundle.putStringArrayList("paths", paths);
-            bundle.putInt("isPicNum", defaultnum);
-            bundle.putString("fromTo", mOldFromTo);
             bundle.putString("primitivePath", event.getPrimitivePath());
             bundle.putInt("is_anime", templateItem.getIs_anime());
-            LogUtil.d("OOM3", "is_anime=" + templateItem.getIs_anime());
-            LogUtil.d("OOM3", "is_animeaLLdATA=" + StringUtil.beanToJSONString(templateItem));
+
             bundle.putString("templateName", templateItem.getTitle());
             intent.putExtra("person", templateItem);//直接存入被序列化的对象实例
             bundle.putString("templateId", templateItem.getId() + "");
@@ -1260,6 +1249,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("Message", bundle);
             LogUtil.d("OOM3", "startActivity=");
+            LogUtil.d("OOM3", "is_anime=" + templateItem.getIs_anime());
+            LogUtil.d("OOM3", "is_animeaLLdATA=" + StringUtil.beanToJSONString(templateItem));
             startActivity(intent);
         }
     }

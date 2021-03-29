@@ -25,7 +25,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.SecondChoosePageListener;
 import com.flyingeffects.com.enity.fromKuaishou;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -38,7 +38,6 @@ import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.ContentAllianceActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
-import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
@@ -60,8 +59,6 @@ import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-
-import static com.yanzhenjie.album.mvp.BaseActivity.PERMISSION_STORAGE;
 
 
 /**
@@ -103,7 +100,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
     private int lastViewPagerChoosePosition;
 
-    private new_fag_template_item template_item;
+    private NewFragmentTemplateItem template_item;
     private LoadingDialog mLoadingDialog;
 
     @Override
@@ -291,7 +288,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
      * user : zhangtongju
      */
     @Override
-    public void PictureAlbum(List<new_fag_template_item> data) {
+    public void PictureAlbum(List<NewFragmentTemplateItem> data) {
         if (getActivity() != null) {
             if (data != null && data.size() > 0) {
                 template_item = data.get(0);
@@ -467,7 +464,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
     }
 
 
-    private void toPhotographAlbum(new_fag_template_item item, String templateFilePath) {
+    private void toPhotographAlbum(NewFragmentTemplateItem item, String templateFilePath) {
         mLoadingDialog.dismiss();
         if (getActivity() != null) {
             AlbumManager.chooseAlbum(getActivity(), 20, SELECTALBUM, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
@@ -486,6 +483,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("Message", bundle);
                     intent.putExtra("person", item);
+
                     startActivity(intent);
                 }
             }, "pictureAlbum");

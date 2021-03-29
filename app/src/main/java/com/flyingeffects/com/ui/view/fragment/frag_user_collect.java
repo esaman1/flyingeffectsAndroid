@@ -17,7 +17,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
-import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
@@ -49,7 +48,7 @@ public class frag_user_collect extends BaseFragment {
 
     private BaseQuickAdapter adapter;
 
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
     @BindView(R.id.smart_refresh_layout_collect)
     SmartRefreshLayout smartRefreshLayout;
     private int perPageCount = 10;
@@ -65,7 +64,7 @@ public class frag_user_collect extends BaseFragment {
     @BindView(R.id.tv_hint_collect)
     TextView tv_hint;
 
-    ArrayList<new_fag_template_item> listData = new ArrayList<>();
+    ArrayList<NewFragmentTemplateItem> listData = new ArrayList<>();
 
     private int selectPage = 1;
 
@@ -113,14 +112,14 @@ public class frag_user_collect extends BaseFragment {
         LogUtil.d("OOM", "请求的参数为------" + str);
 
         Observable ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(getActivity()) {
             @Override
             protected void onSubError(String message) {
                 finishData();
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
                 finishData();
                 if (isRefresh) {
                     listData.clear();
@@ -143,7 +142,7 @@ public class frag_user_collect extends BaseFragment {
     }
 
 
-    private void showData(ArrayList<new_fag_template_item> listData) {
+    private void showData(ArrayList<NewFragmentTemplateItem> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);
@@ -292,7 +291,7 @@ public class frag_user_collect extends BaseFragment {
                         needId = allData.get(i).getId();
                     }
                     if(needId==changeId){
-                        new_fag_template_item item = allData.get(i);
+                        NewFragmentTemplateItem item = allData.get(i);
                         item.setPraise(event.getZanCount() + "");
                         if (isPraise) {
                             item.setIs_praise(1);

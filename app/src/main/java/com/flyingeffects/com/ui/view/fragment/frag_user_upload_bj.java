@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -18,7 +17,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -50,7 +49,7 @@ public class frag_user_upload_bj extends BaseFragment {
 
     private Upload_bj_list_adapter adapter;
 
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
     @BindView(R.id.smart_refresh_layout_collect)
     SmartRefreshLayout smartRefreshLayout;
     private int perPageCount = 10;
@@ -68,7 +67,7 @@ public class frag_user_upload_bj extends BaseFragment {
     @BindView(R.id.tv_hint_collect)
     TextView tv_hint;
 
-    ArrayList<new_fag_template_item> listData = new ArrayList<>();
+    ArrayList<NewFragmentTemplateItem> listData = new ArrayList<>();
 
     private int selectPage = 1;
 
@@ -107,7 +106,7 @@ public class frag_user_upload_bj extends BaseFragment {
         String str = StringUtil.beanToJSONString(params);
         LogUtil.d("OOM", "请求的参数为" + str);
         Observable ob = Api.getDefault().uploadList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(getActivity()) {
             @Override
             protected void onSubError(String message) {
                 finishData();
@@ -115,12 +114,12 @@ public class frag_user_upload_bj extends BaseFragment {
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
                 LogUtil.d("OOM", StringUtil.beanToJSONString(data));
                 finishData();
                 if (isRefresh) {
                     listData.clear();
-                    new_fag_template_item item = new new_fag_template_item();
+                    NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                     item.setTitle("test");
                     listData.add(item);
                 }
@@ -137,7 +136,7 @@ public class frag_user_upload_bj extends BaseFragment {
     }
 
 
-    private void showData(ArrayList<new_fag_template_item> listData) {
+    private void showData(ArrayList<NewFragmentTemplateItem> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);
@@ -282,7 +281,7 @@ public class frag_user_upload_bj extends BaseFragment {
             }
 
 //            @Override
-//            protected void _onNext(List<new_fag_template_item> data) {
+//            protected void _onNext(List<NewFragmentTemplateItem> data) {
 //
 //                isRefresh = true;
 //                selectPage = 1;
@@ -295,7 +294,7 @@ public class frag_user_upload_bj extends BaseFragment {
 //    @Subscribe
 //    public void onEventMainThread(uploadMaterialEvent event) {
 //        uploadPathList
-//        new_fag_template_item item = new new_fag_template_item();
+//        NewFragmentTemplateItem item = new NewFragmentTemplateItem();
 //        item.setTitle("test");
 //        item.setImage(event.getUploadPathList().get(3));
 //        item.setTitle(event.getNickName());

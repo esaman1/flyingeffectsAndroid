@@ -18,7 +18,7 @@ import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.templateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
@@ -63,7 +63,7 @@ public class fragBjItem extends BaseFragment {
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
     private MainRecyclerAdapter adapter;
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
     private String templateId = "";
     private int nowPageNum;
     @BindView(R.id.smart_refresh_layout_bj)
@@ -71,7 +71,7 @@ public class fragBjItem extends BaseFragment {
     @BindView(R.id.lin_show_nodata_bj)
     LinearLayout lin_show_nodata;
     private boolean isRefresh = true;
-    private ArrayList<new_fag_template_item> listData = new ArrayList<>();
+    private ArrayList<NewFragmentTemplateItem> listData = new ArrayList<>();
     private int selectPage = 1;
     private boolean HasShowAd;
 
@@ -156,7 +156,7 @@ public class fragBjItem extends BaseFragment {
                         }
                     } else {
                         Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
-                        List<new_fag_template_item> data = getFiltration(allData, position);
+                        List<NewFragmentTemplateItem> data = getFiltration(allData, position);
                         ListForUpAndDown listForUpAndDown = new ListForUpAndDown(data);
                         intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
                         intent.putExtra("position", intoTiktokClickPosition);
@@ -177,11 +177,11 @@ public class fragBjItem extends BaseFragment {
     }
 
 
-    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData, int position) {
+    public List<NewFragmentTemplateItem> getFiltration(List<NewFragmentTemplateItem> allData, int position) {
         intoTiktokClickPosition = position;
-        List<new_fag_template_item> needData = new ArrayList<>();
+        List<NewFragmentTemplateItem> needData = new ArrayList<>();
         for (int i = 0; i < allData.size(); i++) {
-            new_fag_template_item item = allData.get(i);
+            NewFragmentTemplateItem item = allData.get(i);
             if (item.getIs_ad_recommend() == 0) {
                 needData.add(item);
             } else {
@@ -228,7 +228,7 @@ public class fragBjItem extends BaseFragment {
 
     //得到banner缓存数据
     public void requestData() {
-        List<new_fag_template_item> data = Hawk.get("fagBjItem", new ArrayList<>());
+        List<NewFragmentTemplateItem> data = Hawk.get("fagBjItem", new ArrayList<>());
         if (data != null) {
             listData.clear();
             listData.addAll(data);
@@ -259,7 +259,7 @@ public class fragBjItem extends BaseFragment {
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
 
         LogUtil.d("OOM2", "requestFagData背景模板请求的数据为" + StringUtil.beanToJSONString(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(getActivity()) {
             @Override
             protected void onSubError(String message) {
                 finishData();
@@ -267,7 +267,7 @@ public class fragBjItem extends BaseFragment {
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "str=" + str);
                 finishData();
@@ -276,7 +276,7 @@ public class fragBjItem extends BaseFragment {
                     if (!TextUtils.isEmpty(cover)) {
                         if (!("11".equals(templateId) || "12".equals(templateId))) {
                             //关注和收藏
-                            new_fag_template_item item = new new_fag_template_item();
+                            NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                             item.setImage(cover);
                             item.setTitle("默认背景");
                             listData.add(item);
@@ -289,7 +289,7 @@ public class fragBjItem extends BaseFragment {
                     showNoData(false);
                 }
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && data.size() > BaseConstans.NOWADSHOWPOSITION) {
-                    new_fag_template_item item = new new_fag_template_item();
+                    NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                     item.setHasShowAd(true);
                     //设置当前是导流，进入抖音列表页就会自动过滤
                     item.setIs_ad_recommend(1);
@@ -381,7 +381,7 @@ public class fragBjItem extends BaseFragment {
         }
     }
 
-    public void isShowData(ArrayList<new_fag_template_item> listData) {
+    public void isShowData(ArrayList<NewFragmentTemplateItem> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);
@@ -414,7 +414,7 @@ public class fragBjItem extends BaseFragment {
                     }
                     LogUtil.d("OOM", "needID=" + needId);
                     if (needId == changeId) {
-                        new_fag_template_item item = allData.get(i);
+                        NewFragmentTemplateItem item = allData.get(i);
                         item.setPraise(event.getZanCount() + "");
                         if (isPraise) {
                             item.setIs_praise(1);
@@ -438,7 +438,7 @@ public class fragBjItem extends BaseFragment {
         if (event.getFrom() == 4) {
             int position = event.getPosition();
             if (allData != null && allData.size() > position) {
-                new_fag_template_item item = allData.get(position);
+                NewFragmentTemplateItem item = allData.get(position);
                 item.setIs_collection(event.isSeleted() ? 1 : 0);
                 allData.set(position, item);
                 adapter.notifyItemChanged(position);

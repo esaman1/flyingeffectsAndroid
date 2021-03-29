@@ -25,7 +25,7 @@ import com.flyingeffects.com.base.FUBaseActivity;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.isIntoBackground;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
@@ -93,7 +93,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         String TemplateFilePath = getIntent().getStringExtra("TemplateFilePath");
         String oldFromTo = getIntent().getStringExtra("OldfromTo");
         createDownVideoPath = getIntent().getStringExtra("createDownVideoPath");
-        new_fag_template_item templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
+        NewFragmentTemplateItem templateItem = (NewFragmentTemplateItem) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
         presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView, isFrom, duration, musicPath, templateItem, TemplateFilePath, oldFromTo, defaultnum, videoBjPath);
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);

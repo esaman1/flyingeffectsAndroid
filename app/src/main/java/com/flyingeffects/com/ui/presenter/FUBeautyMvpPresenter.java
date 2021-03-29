@@ -33,10 +33,10 @@ import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ClearChooseStickerState;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -93,7 +93,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      * 来自于哪个页面 0表示首页的拍摄页面 1 表示来自于跟随音乐拍摄页面
      */
     private int isFrom;
-    private new_fag_template_item templateItem;
+    private NewFragmentTemplateItem templateItem;
     private String TemplateFilePath;
     private String OldfromTo;
     private int defaultnum;
@@ -106,7 +106,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      */
     private long duration;
 
-    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView, int isFrom, long duration, String musicPath, new_fag_template_item templateItem, String TemplateFilePath, String OldfromTo, int defaultnum, String videoBjPath) {
+    public FUBeautyMvpPresenter(Context context, FUBeautyMvpView fUBeautyMvpView, HorizontalselectedView horizontalselectedView, int isFrom, long duration, String musicPath, NewFragmentTemplateItem templateItem, String TemplateFilePath, String OldfromTo, int defaultnum, String videoBjPath) {
         this.fUBeautyMvpView = fUBeautyMvpView;
         this.horizontalselectedView = horizontalselectedView;
         this.context = context;

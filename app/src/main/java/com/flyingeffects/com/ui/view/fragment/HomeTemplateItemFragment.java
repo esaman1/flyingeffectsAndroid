@@ -12,7 +12,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.templateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -50,7 +50,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
     private MainRecyclerAdapter adapter;
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
     private String category_id = "", tc_id = "", tabName = "";
     private StaggeredGridLayoutManager layoutManager;
     private int actTag;
@@ -131,7 +131,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                         StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_mb_click", allData.get(position).getTitle());
                     }
                     Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
-                    List<new_fag_template_item> data = getFiltration(allData, position);
+                    List<NewFragmentTemplateItem> data = getFiltration(allData, position);
                     ListForUpAndDown listForUpAndDown = new ListForUpAndDown(data);
                     intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
                     intent.putExtra("category_id", category_id);//直接存入被序列化的对象实例
@@ -151,11 +151,11 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     }
 
 
-    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData, int position) {
+    public List<NewFragmentTemplateItem> getFiltration(List<NewFragmentTemplateItem> allData, int position) {
         intoTiktokClickPosition = position;
-        List<new_fag_template_item> needData = new ArrayList<>();
+        List<NewFragmentTemplateItem> needData = new ArrayList<>();
         for (int i = 0; i < allData.size(); i++) {
-            new_fag_template_item item = allData.get(i);
+            NewFragmentTemplateItem item = allData.get(i);
             if (item.getIs_ad_recommend() == 0) {
                 needData.add(item);
             } else {
@@ -225,7 +225,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     private boolean isFirstData = true;
 
     @Override
-    public void isShowData(ArrayList<new_fag_template_item> listData) {
+    public void isShowData(ArrayList<NewFragmentTemplateItem> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);
@@ -371,7 +371,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                     }
 
                     if (needId == changeId) {
-                        new_fag_template_item item = allData.get(i);
+                        NewFragmentTemplateItem item = allData.get(i);
                         item.setPraise(event.getZanCount() + "");
                         if (isPraise) {
                             item.setIs_praise(1);
@@ -394,7 +394,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
             int position = event.getPosition();
             boolean isPraise = event.isSeleted();
             if (allData != null && allData.size() > position) {
-                new_fag_template_item item = allData.get(position);
+                NewFragmentTemplateItem item = allData.get(position);
                 item.setIs_collection(event.isSeleted() ? 1 : 0);
                 allData.set(position, item);
                 adapter.notifyItemChanged(position);

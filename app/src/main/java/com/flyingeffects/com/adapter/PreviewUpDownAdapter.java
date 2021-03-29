@@ -19,7 +19,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.utils.ButtonJitterAnimatorUtil;
@@ -40,7 +40,7 @@ import androidx.annotation.Nullable;
  * time：2019/1/25
  * describe:首页适配
  **/
-public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item, BaseViewHolder> {
+public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateItem, BaseViewHolder> {
     private static final String TAG = "Preview_up_and_down_ada";
 
 
@@ -56,13 +56,13 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
     private int nowPreviewPosition;
     public TTNativeExpressAd ad;
 
-    public PreviewUpDownAdapter(int layoutResId, @Nullable List<new_fag_template_item> allData, String OldFromTo) {
+    public PreviewUpDownAdapter(int layoutResId, @Nullable List<NewFragmentTemplateItem> allData, String OldFromTo) {
         super(layoutResId, allData);
         this.OldFromTo = OldFromTo;
     }
 
     @Override
-    protected void convert(final BaseViewHolder helper, final new_fag_template_item item) {
+    protected void convert(final BaseViewHolder helper, final NewFragmentTemplateItem item) {
         ad = item.getAd();
         int offset = helper.getLayoutPosition();
         FrameLayout video_layout = helper.getView(R.id.video_layout);
@@ -293,7 +293,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<new_fag_template_item
      * creation date: 2020/7/2
      * user : zhangtongju
      */
-    private void initVideoPlayer(new_fag_template_item item, int offset) {
+    private void initVideoPlayer(NewFragmentTemplateItem item, int offset) {
         if (!TextUtils.isEmpty(item.getOriginfile())) {
             videoPlayer.loadCoverImage(item.getOriginfile(), R.mipmap.black_lucency);
         } else {
