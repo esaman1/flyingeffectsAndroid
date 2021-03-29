@@ -1363,7 +1363,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
         if ((titleStyle != null && titleStyle.size() > 0) || (titleEffect != null && titleEffect.size() > 0)) {
             StatisticsEventAffair.getInstance().setFlag(context, "20_mb_text_save_save");
-
         }
 
 
@@ -1376,7 +1375,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 .setAdStatus(CommonMessageDialog.AD_STATUS_BOTTOM)
                 .setAdId(AdConfigs.AD_IMAGE_DIALOG_OPEN_VIDEO)
                 .setTitle("亲爱的友友")
-                .setMessage("这个模板需要观看几秒广告")
+                .setMessage("模板需要观看几秒广告")
                 .setMessage2("「看完后就能一件保存视频」")
                 .setPositiveButton("观看广告并保存")
                 .setNegativeButton("取消")
