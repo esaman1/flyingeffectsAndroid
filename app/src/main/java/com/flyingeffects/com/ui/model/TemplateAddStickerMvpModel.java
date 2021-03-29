@@ -1408,10 +1408,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         StimulateControlManage.getInstance().InitRefreshStimulate();
         outputPathForVideoSaveToPhoto = path;
         if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
-//            Intent intent = new Intent(context, AdHintActivity.class);
-//            intent.putExtra("from", "isFormPreviewVideo");
-//            intent.putExtra("templateTitle", "");
-//            context.startActivity(intent);
             showMessageDialog();
         } else {
             try {

@@ -217,7 +217,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (getActivity() != null) {
+        if (getActivity() != null&&mAdManager!=null) {
             mAdManager.adDestroy();
         }
     }
