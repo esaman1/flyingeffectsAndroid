@@ -28,6 +28,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.bytedance.applog.AppLog;
 import com.bytedance.applog.InitConfig;
 import com.bytedance.applog.util.UriConfig;
+import com.bytedance.hume.readapk.HumeSDK;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
@@ -114,7 +115,7 @@ public class HomeMainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
-        Log.d(TAG,"Application start finished");
+        Log.d(TAG, "Application start finished");
         mContext = HomeMainActivity.this;
         setTheme(R.style.AppTheme);
         //禁止休眠
