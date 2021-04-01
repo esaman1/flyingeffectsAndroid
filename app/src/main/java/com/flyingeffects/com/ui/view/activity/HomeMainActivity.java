@@ -97,6 +97,11 @@ import static com.flyingeffects.com.constans.BaseConstans.getChannel;
  */
 public class HomeMainActivity extends FragmentActivity {
     private static final String TAG = "HomeMainActivity";
+
+    private static final String[] CATCH_DIRECTORY = {"dynamic", "runCatch", "def", "imageCopy", "faceFolder", "faceMattingFolder",
+            "soundFolder", "cacheMattingFolder", "ExtractFrame", "DownVideo", "TextFolder", "toHawei", "downVideoForMusic",
+            "downSoundForMusic", "downCutSoundForMusic", "fontStyle", "DressUpFolder"};
+
     private final ImageView[] mIvMenuBack = new ImageView[4];
     private final TextView[] tv_main = new TextView[4];
     private final int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
@@ -114,7 +119,7 @@ public class HomeMainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
-        Log.d(TAG,"Application start finished");
+        Log.d(TAG, "Application start finished");
         mContext = HomeMainActivity.this;
         setTheme(R.style.AppTheme);
         //禁止休眠
@@ -441,26 +446,14 @@ public class HomeMainActivity extends FragmentActivity {
         LanSongFileUtil.deleteDefaultDir();
         //清理外部sdk
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("dynamic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("runCatch"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("def"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("imageCopy"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("faceFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("faceMattingFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("soundFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("DownVideo"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("TextFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("toHawei"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downVideoForMusic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downSoundForMusic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downCutSoundForMusic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("fontStyle"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("DressUpFolder"));
+            for (String s : CATCH_DIRECTORY) {
+                DataCleanManager.deleteFilesByDirectory(getExternalFilesDir(s));
+            }
         }
 
     }
+
+
 
     private final NoDoubleClickListener listener = new NoDoubleClickListener() {
         @Override
@@ -613,7 +606,6 @@ public class HomeMainActivity extends FragmentActivity {
 
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -678,25 +670,26 @@ public class HomeMainActivity extends FragmentActivity {
         params.put("user_id", BaseConstans.GetUserId());
         Observable ob = Api.getDefault().getAllMessageNum(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<messageCount>(this) {
-            @Override
-            protected void onSubError(String message) {
-                ToastUtil.showToast(message);
-            }
-
-            @Override
-            protected void onSubNext(messageCount data) {
-                if (message_count != null) {
-                    String allCount = data.getAll_num();
-                    int intAllCount = Integer.parseInt(allCount);
-                    if (intAllCount == 0) {
-                        message_count.setVisibility(View.GONE);
-                    } else {
-                        message_count.setVisibility(View.VISIBLE);
-                        message_count.setText(intAllCount + "");
+                    @Override
+                    protected void onSubError(String message) {
+                        ToastUtil.showToast(message);
                     }
-                }
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+                    @Override
+                    protected void onSubNext(messageCount data) {
+                        if (message_count != null) {
+                            String allCount = data.getAll_num();
+                            int intAllCount = Integer.parseInt(allCount);
+                            if (intAllCount == 0) {
+                                message_count.setVisibility(View.GONE);
+                            } else {
+                                message_count.setVisibility(View.VISIBLE);
+                                message_count.setText(intAllCount + "");
+                            }
+                        }
+                    }
+                }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject,
+                false, true, false);
     }
 
 
