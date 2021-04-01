@@ -30,7 +30,6 @@ import com.flyingeffects.com.utils.FilterUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.lansosdk.LanSongFilter.LanSongFilter;
-import com.flyingeffects.com.utils.ToastUtil;
 import com.lansosdk.LanSongFilter.LanSongMaskBlendFilter;
 import com.lansosdk.box.BitmapLayer;
 import com.lansosdk.box.LSOScaleType;
@@ -38,7 +37,6 @@ import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -453,7 +451,7 @@ public class VideoFusionModel {
                     compoundVideo();
                 }
             });
-            manage.DownloadVideo(serverPath, path);
+            manage.downloadVideo(serverPath, path);
         });
 
     }

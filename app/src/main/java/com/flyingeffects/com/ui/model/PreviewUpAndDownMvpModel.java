@@ -887,7 +887,7 @@ public class PreviewUpAndDownMvpModel {
                     });
                 }
             }));
-            manage.DownloadVideo(path, videoName);
+            manage.downloadVideo(path, videoName);
         });
     }
 

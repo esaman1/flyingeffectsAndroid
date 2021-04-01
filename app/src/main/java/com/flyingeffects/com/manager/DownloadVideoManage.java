@@ -21,13 +21,11 @@ public class DownloadVideoManage {
     private final String TAG = "DownloadVideoManage";
     private downloadSuccess callback;
 
-
     public DownloadVideoManage(downloadSuccess callback) {
         this.callback = callback;
     }
 
-
-    public void DownloadVideo(String path, String fileName) {
+    public void downloadVideo(String path, String fileName) {
         try {
             URL url = new URL(path);
             // 打开连接
@@ -55,12 +53,10 @@ public class DownloadVideoManage {
         }
     }
 
-
     public interface downloadSuccess {
 
         void isSuccess(boolean isSuccess);
 
     }
-
 
 }

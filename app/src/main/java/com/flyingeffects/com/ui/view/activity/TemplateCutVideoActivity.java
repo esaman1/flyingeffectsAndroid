@@ -188,6 +188,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
     private void startVideo() {
+
     }
 
 
@@ -212,7 +213,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
                         if (!isIntoOnpause) {
                             videoPlay();
                         }
-
                         break;
                     case Player.STATE_ENDED:
                         LogUtil.d("OOM2", "STATE_ENDED");
@@ -327,7 +327,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
                     mLoadingDialog.setTitleStr("正在裁剪中");
                     mLoadingDialog.setProgress(progress);
                 }
-
             }
 
             @Override

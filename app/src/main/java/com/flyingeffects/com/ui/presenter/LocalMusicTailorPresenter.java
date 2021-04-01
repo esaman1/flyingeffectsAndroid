@@ -74,7 +74,6 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
 
     public void SeekToPositionMusic(int position) {
 
-
         if (mPlayer != null) {
             mPlayer.start();
             mPlayer.seekTo(position);
@@ -168,7 +167,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                     }
                 }));
                 LogUtil.d("OOM2", "path=" + path);
-                manage.DownloadVideo(path, videoName);
+                manage.downloadVideo(path, videoName);
             });
         }
     }

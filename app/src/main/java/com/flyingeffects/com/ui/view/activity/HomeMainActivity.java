@@ -557,10 +557,11 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void exitPressAgain() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Toast.makeText(ThisMain, "再点一次退出程序" +
-                    "" +
-                    "" +
-                    "", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(ThisMain, "再点一次退出程序" +
+//                    "" +
+//                    "" +
+//                    "", Toast.LENGTH_SHORT).show();
+            showBackMessage();
             exitTime = System.currentTimeMillis();
         } else {
             finish();
@@ -578,7 +579,7 @@ public class HomeMainActivity extends FragmentActivity {
     private void showBackMessage() {
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_quit_app");
         mCancelBtnPressed = false;
-        CommonMessageDialog.getBuilder(mContext)
+        CommonMessageDialog dialog = CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
                 .setAdId(AdConfigs.AD_IMAGE_EXIT)
                 .setPositiveButton("狠心退出")
@@ -603,7 +604,9 @@ public class HomeMainActivity extends FragmentActivity {
                         }
                     }
                 })
-                .build().show();
+                .build();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
     private void intoCreationActivity() {
