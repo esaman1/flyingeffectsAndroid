@@ -117,11 +117,13 @@
                                 android:layout_toRightOf="@+id/iv_head"
                                 android:orientation="vertical">
 
-                                <TextView
+                                <com.flyingeffects.com.view.MarqueTextView
                                     android:id="@+id/tv_name"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:maxLines="2"
+                                  android:singleLine="true"
+                                    android:ellipsize="marquee"
+                                    android:focusableInTouchMode="true"
                                     android:textColor="@color/white"
                                     android:textSize="20sp"
                                     android:textStyle="bold" />
@@ -141,11 +143,13 @@
                                         android:layout_marginRight="6dp"
                                         android:src="@mipmap/icon_edit" />
 
-                                    <TextView
+                                    <com.flyingeffects.com.view.MarqueTextView
                                         android:id="@+id/tv_Introduction"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:maxLines="2"
+                                        android:singleLine="true"
+                                        android:ellipsize="marquee"
+                                        android:focusableInTouchMode="true"
                                         android:paddingRight="3dp"
                                         android:textColor="@color/white"
                                         android:textSize="12sp" />

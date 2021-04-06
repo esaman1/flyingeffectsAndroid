@@ -52,7 +52,7 @@ public class BaseConstans {
     /**
      * 是否是正式环境
      */
-    public static final boolean PRODUCTION = false;
+    public static final boolean PRODUCTION = true;
     //public static final boolean DEBUG = BuildConfig.DEBUG;
     private static String channel = "";
     private static String versionCode = "";
