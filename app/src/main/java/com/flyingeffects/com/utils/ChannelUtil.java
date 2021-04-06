@@ -24,7 +24,7 @@ public class ChannelUtil {
         }
 
         String humeChannel= HumeSDK.getChannel(context);
-        if(!TextUtils.isEmpty(humeChannel)&&humeChannel.contains("DOUYIN")){
+        if(!TextUtils.isEmpty(humeChannel)&&humeChannel.toLowerCase().contains("douyin")){
             channel=humeChannel;
             return channel;
         }

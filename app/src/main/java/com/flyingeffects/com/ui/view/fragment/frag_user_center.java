@@ -52,6 +52,7 @@ import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.UCropOption;
+import com.flyingeffects.com.view.MarqueTextView;
 import com.google.android.material.appbar.AppBarLayout;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.nineton.ntadsdk.bean.AdInfoBean;
@@ -111,7 +112,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     @BindView(R.id.tv_id)
     TextView tv_id;
     @BindView(R.id.tv_name)
-    TextView tv_name;
+    MarqueTextView tv_name;
     @BindView(R.id.fans_count)
     TextView fans_count;
     @BindView(R.id.attention_count)
@@ -121,7 +122,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     @BindView(R.id.im_user_skin)
     ImageView imSkin;
     @BindView(R.id.tv_Introduction)
-    TextView tvIntroduction;
+    MarqueTextView tvIntroduction;
     @BindView(R.id.im_edit)
     ImageView imEdit;
     @BindView(R.id.tv_edit_information)

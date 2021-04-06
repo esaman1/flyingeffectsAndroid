@@ -3,6 +3,8 @@ package com.flyingeffects.com.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -84,6 +86,21 @@ public class BaseApplication extends MultiDexApplication {
         EmojiManager.init(this);
         initAlbum();
         FURenderer.initFURenderer(this);
+//        setSystemFont();
+    }
+
+
+
+    /**
+     * description ：设置系统字体不跟随用户的改变而改变
+     * creation date: 2021/4/2
+     * user : zhangtongju
+     */
+    private void setSystemFont(){
+        Resources res = super.getResources();
+        Configuration config = new Configuration();
+        config.setToDefaults();
+        res.updateConfiguration(config, res.getDisplayMetrics());
     }
 
 
