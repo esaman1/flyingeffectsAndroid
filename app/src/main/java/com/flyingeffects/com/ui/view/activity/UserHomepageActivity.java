@@ -22,6 +22,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.fragHomePage;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.view.MarqueTextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public class UserHomepageActivity extends BaseActivity {
 
 
     @BindView(R.id.tv_name)
-    TextView tv_name;
+    MarqueTextView tv_name;
 
     @BindView(R.id.fans_count)
     TextView fans_count;
@@ -95,7 +96,7 @@ public class UserHomepageActivity extends BaseActivity {
     @BindView(R.id.im_user_skin_other)
     ImageView imSkin;
     @BindView(R.id.tv_Introduction)
-    TextView tvIntroduction;
+    MarqueTextView tvIntroduction;
 
 
 
