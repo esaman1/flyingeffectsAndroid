@@ -219,6 +219,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     private SamplePlayer mPlayer;
 
     private void loadFromFile(String mFilename) {
+
         LogUtil.d("OOM2", "loadFromFile" + "mFilename=" + mFilename);
         mFile = new File(mFilename);
         final SoundFile.ProgressListener listener =
