@@ -190,6 +190,9 @@ dependencies {
     //闪验
     api files('libs/shanyan_sdk_v2.3.1.5.aar')
 
+    //广告要求的分包工具
+    implementation(name: 'humesdk-1.0.0', ext: 'aar')
+
     //仿抖音sdk 需要的
     implementation 'androidx.viewpager2:viewpager2:1.0.0-beta02'
 

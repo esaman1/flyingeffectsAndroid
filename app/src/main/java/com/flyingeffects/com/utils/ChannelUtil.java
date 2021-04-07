@@ -2,6 +2,9 @@ package com.flyingeffects.com.utils;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.text.TextUtils;
+
+import com.bytedance.hume.readapk.HumeSDK;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -17,6 +20,12 @@ public class ChannelUtil {
 
     public static String getChannel(Context context) {
         if (channel != null) {
+            return channel;
+        }
+
+        String humeChannel= HumeSDK.getChannel(context);
+        if(!TextUtils.isEmpty(humeChannel)&&humeChannel.toLowerCase().contains("douyin")){
+            channel=humeChannel;
             return channel;
         }
 

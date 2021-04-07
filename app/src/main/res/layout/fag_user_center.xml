@@ -89,19 +89,22 @@
                                 android:orientation="vertical"
                                 android:visibility="gone">
 
-                                <TextView
+                                <com.flyingeffects.com.view.MarqueTextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:maxLines="2"
+                                    android:ellipsize="marquee"
+                                    android:singleLine="true"
                                     android:text="Hi~欢迎来到飞闪"
                                     android:textColor="@color/white"
                                     android:textSize="20sp"
                                     android:textStyle="bold" />
 
-                                <TextView
+                                <com.flyingeffects.com.view.MarqueTextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="7dp"
+                                    android:ellipsize="marquee"
+                                    android:singleLine="true"
                                     android:text="点击登录 和友友们一起嗨吧"
                                     android:textColor="#FEFEFE"
                                     android:textSize="14sp" />
@@ -117,11 +120,13 @@
                                 android:layout_toRightOf="@+id/iv_head"
                                 android:orientation="vertical">
 
-                                <TextView
+                                <com.flyingeffects.com.view.MarqueTextView
                                     android:id="@+id/tv_name"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:maxLines="2"
+                                    android:ellipsize="marquee"
+                                    android:focusableInTouchMode="true"
+                                    android:singleLine="true"
                                     android:textColor="@color/white"
                                     android:textSize="20sp"
                                     android:textStyle="bold" />
@@ -141,12 +146,14 @@
                                         android:layout_marginRight="6dp"
                                         android:src="@mipmap/icon_edit" />
 
-                                    <TextView
+                                    <com.flyingeffects.com.view.MarqueTextView
                                         android:id="@+id/tv_Introduction"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:maxLines="2"
+                                        android:ellipsize="marquee"
+                                        android:focusableInTouchMode="true"
                                         android:paddingRight="3dp"
+                                        android:singleLine="true"
                                         android:textColor="@color/white"
                                         android:textSize="12sp" />
                                 </LinearLayout>
@@ -542,7 +549,6 @@
 
 
     <LinearLayout
-        android:orientation="vertical"
         android:id="@+id/ll_ad_entrance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -550,6 +556,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="50dp"
+        android:orientation="vertical"
         android:visibility="visible" />
 
 </RelativeLayout>

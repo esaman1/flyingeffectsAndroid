@@ -119,7 +119,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/iv_add"
                                 android:layout_marginTop="9dp"
+                                android:ellipsize="end"
                                 android:gravity="center"
+                                android:singleLine="true"
                                 android:text="创作影集"
                                 android:textColor="#FFFFFF"
                                 android:textSize="17sp"
@@ -214,6 +216,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
                             android:text="创作影集"
+                            android:singleLine="true"
+                            android:ellipsize="end"
                             android:textColor="#FFFFFF"
                             android:textSize="14sp" />
 

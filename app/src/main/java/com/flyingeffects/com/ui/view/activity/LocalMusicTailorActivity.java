@@ -31,6 +31,9 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /**
@@ -245,7 +248,13 @@ public class LocalMusicTailorActivity extends BaseActivity implements LocalMusic
 
     @Override
     public void setLoadProgress(int progress) {
-        mLoadingDialog.setProgress(progress);
+        Observable.just(progress).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                mLoadingDialog.setProgress(integer);
+            }
+        });
+
     }
 
     private LoadingDialog buildProgressDialog() {

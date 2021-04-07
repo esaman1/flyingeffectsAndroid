@@ -3,6 +3,8 @@ package com.flyingeffects.com.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -64,7 +66,7 @@ public class BaseApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG,"Application start");
+        Log.d(TAG, "Application start");
         baseApp = this;
         //分包支持
         MultiDex.install(this);
@@ -84,6 +86,21 @@ public class BaseApplication extends MultiDexApplication {
         EmojiManager.init(this);
         initAlbum();
         FURenderer.initFURenderer(this);
+//        setSystemFont();
+    }
+
+
+
+    /**
+     * description ：设置系统字体不跟随用户的改变而改变
+     * creation date: 2021/4/2
+     * user : zhangtongju
+     */
+    private void setSystemFont(){
+        Resources res = super.getResources();
+        Configuration config = new Configuration();
+        config.setToDefaults();
+        res.updateConfiguration(config, res.getDisplayMetrics());
     }
 
 
@@ -178,9 +195,8 @@ public class BaseApplication extends MultiDexApplication {
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     public void initLicense() {
-        String licenseID = "nnogIjD3C8du/T2PWYvFbMkJxM2Vw8FpkCs9RqiwjjrEgeMlo2PBMaoHwffFV7bS6O48q0I/8qI4epo2acEbZyiXD1Im4oUNERrPhVtu2nNSnXyjUGr9dLmrYazM4YmNE/A9T6ir5gt3XEs7IjfWfsFAdP+uvPvoKEzu8/pZLRQacEoaYzl1w04Wkn0t0aXWu3l92WacTnKG2JFyCSzPwUgZiqh2Z8xbQdpRYL22HYqMAkhHeNO5Vix3sYRWtKfm59U3wgWtXoU+1gmAICjM1WDRlgyg80Os1BRSzkp9TG7sb7QJUzFdLvo2cpfhnFyBfRBvoykvllQZaPmbC73J+FB8X4zyN1ZESuYOdfoKvYZ3i0S68Rk0izoqbarUpUnkTUUNViGopPKKUXSaufSd+ZxWOxnqjIdyx4a2OhE4vbY=";
+        String licenseID = "UJ03ctDfZ1ZTWzTF2uC2dmWnOeyD0dk/UhyEu+npLrXEgeMlo2PBMaoHwffFV7bS6O48q0I/8qI4epo2acEbZyiXD1Im4oUNERrPhVtu2nNSnXyjUGr9dLmrYazM4YmNE/A9T6ir5gt3XEs7IjfWftmuZrzgoiAdnGqYyVx8g8ESwumuw/+R8EoMVJ+nfFGI5U4d+RCQqnL58sngu6/6rxxKBh93PYsreRVUfMMndJQGSV0uh0EZrupM9xLlPNMFkZkP9oaTUYeIZLZnu5mNWWDRlgyg80Os1BRSzkp9TG7sb7QJUzFdLvo2cpfhnFyBfRBvoykvllQZaPmbC73J+G+UG2BAZqXtuZB9IGjV3Yga13djLjcvViMCKyu+bftun0lgUaI3Fh2LVRZTvADbVmuMJ/blzjYVVGDT7RNuE55Lo8+uwrTZ/6jkdwh+sKHvMpzHLsIpV55SsyU/XABQ8/36srJP1Ar7GBYSjh7e87KSy4/5Lm5VEiaoL+u9/2bzpw/fOwEoUF1r+18Fy9c3CA2icOcpicntjds0+xd2/fDiJ7YSbs6Iys9slxgT5ukh25B53++VJ60nwD20IKlEtg==";
         License l = License.init(licenseID);
-
         boolean isValid = l.isValid();
         SXLog.showInLogcat();
         LogUtil.d("OOM", "isValid=" + isValid);

@@ -28,6 +28,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.bytedance.applog.AppLog;
 import com.bytedance.applog.InitConfig;
 import com.bytedance.applog.util.UriConfig;
+import com.bytedance.hume.readapk.HumeSDK;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
@@ -550,11 +551,10 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void exitPressAgain() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-//            Toast.makeText(ThisMain, "再点一次退出程序" +
-//                    "" +
-//                    "" +
-//                    "", Toast.LENGTH_SHORT).show();
-            showBackMessage();
+            Toast.makeText(ThisMain, "再点一次退出程序" +
+                    "" +
+                    "" +
+                    "", Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
         } else {
             finish();
@@ -602,9 +602,6 @@ public class HomeMainActivity extends FragmentActivity {
         dialog.show();
     }
 
-    private void intoCreationActivity() {
-
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

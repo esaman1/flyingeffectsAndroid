@@ -43,10 +43,12 @@
                 android:layout_toRightOf="@+id/iv_head"
                 android:orientation="vertical">
 
-                <TextView
+                <com.flyingeffects.com.view.MarqueTextView
                     android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
                     android:maxLines="2"
                     android:textColor="@color/white"
                     android:textSize="20sp"
@@ -56,16 +58,18 @@
                     android:id="@+id/tv_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
                     android:layout_marginTop="4dp"
                     android:textColor="#858A8D"
                     android:textSize="12sp" />
 
-                <TextView
+                <com.flyingeffects.com.view.MarqueTextView
                     android:id="@+id/tv_Introduction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:maxLines="2"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
                     android:textColor="#858A8D"
                     android:textSize="12sp" />
             </LinearLayout>
