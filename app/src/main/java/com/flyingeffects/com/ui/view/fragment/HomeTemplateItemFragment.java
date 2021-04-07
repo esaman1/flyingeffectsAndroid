@@ -184,7 +184,12 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         super.onResume();
         if (getActivity() != null) {
             mAdManager.adResume();
-            if (allData == null || allData.size() == 0 || "11".equals(category_id) || "12".equals(category_id)) {
+//            if (allData == null || allData.size() == 0 || "11".equals(category_id) || "12".equals(category_id)) {
+//                LogUtil.d("OOM", "allData==null");
+//                Presenter.requestData(category_id, tc_id, actTag);
+//            }
+
+            if (allData == null || allData.size() == 0 ) {
                 LogUtil.d("OOM", "allData==null");
                 Presenter.requestData(category_id, tc_id, actTag);
             }
