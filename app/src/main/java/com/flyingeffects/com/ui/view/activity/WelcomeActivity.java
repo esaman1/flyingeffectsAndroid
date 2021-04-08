@@ -74,7 +74,7 @@ public class WelcomeActivity extends BaseActivity {
         View rootView = mBinding.getRoot();
         setContentView(rootView);
 
-        LogUtil.d("OOM", "WelcomeActivity");
+        LogUtil.d(TAG, "Application WelcomeActivity show");
         BaseConstans.setOddNum();
         //解决广告bug ,点击图标后广告爆款广告不弹出来
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
@@ -158,9 +158,6 @@ public class WelcomeActivity extends BaseActivity {
             }, 3000);
         }
     }
-
-
-
 
     /**
      * description ：显示开屏广告还是进入主页 ,没有权限也能请求
@@ -256,10 +253,12 @@ public class WelcomeActivity extends BaseActivity {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
             NTAdSDK.getInstance().showSplashAd(this, mBinding.rlAdContainer, mBinding.tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
+
                 @Override
                 public void onAdSuccess() {
                     isShow = true;
                     StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
+                    Log.d(TAG,"Application start onAdSuccess");
                 }
 
                 @Override
@@ -286,7 +285,6 @@ public class WelcomeActivity extends BaseActivity {
             });
 
         }
-
 
     }
 
@@ -456,6 +454,7 @@ public class WelcomeActivity extends BaseActivity {
         // 启动时间
         Observable ob = Api.getDefault().configListForTemplateList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ConfigForTemplateList>(WelcomeActivity.this) {
+
             @Override
             protected void onSubError(String message) {
             }
@@ -465,7 +464,6 @@ public class WelcomeActivity extends BaseActivity {
                 if (data != null) {
                     BaseConstans.configList = data;
                 }
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
@@ -487,9 +485,9 @@ public class WelcomeActivity extends BaseActivity {
                         isVideoadvertisingId = obArray.getInt("id");
                     }
                     if (Channel.equals(BaseConstans.getChannel())) { //最新版的审核模式
-                        boolean audit_on = obArray.getBoolean("audit_on");
+                        boolean auditOn = obArray.getBoolean("audit_on");
                         int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
-                        if (audit_on || NowVersion != isVideoadvertisingId) {
+                        if (auditOn || NowVersion != isVideoadvertisingId) {
                             BaseConstans.setHasAdvertising(1);
                         } else {
                             BaseConstans.setHasAdvertising(0);

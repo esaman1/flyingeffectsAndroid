@@ -16,6 +16,8 @@ import com.bytedance.sdk.open.douyin.DouYinOpenConfig;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.faceunity.FURenderer;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.base.anchortask.AnchorTaskCreator;
+import com.flyingeffects.com.base.anchortask.TaskNameConstants;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.isIntoBackground;
 import com.flyingeffects.com.manager.AdConfigs;
@@ -38,10 +40,18 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxvideoengine.License;
 import com.shixing.sxvideoengine.SXLog;
 import com.umeng.commonsdk.UMConfigure;
+import com.xj.anchortask.library.AnchorProject;
+import com.xj.anchortask.library.OnProjectExecuteListener;
+import com.xj.anchortask.library.log.LogUtils;
+import com.xj.anchortask.library.monitor.OnGetMonitorRecordCallback;
 import com.yanzhenjie.album.Album;
 import com.yanzhenjie.album.AlbumConfig;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Locale;
+import java.util.Map;
 
 import cn.jpush.android.api.JPushInterface;
 import cn.nt.lib.analytics.NTAnalytics;
@@ -68,27 +78,59 @@ public class BaseApplication extends MultiDexApplication {
         super.onCreate();
         Log.d(TAG, "Application start");
         baseApp = this;
-        //分包支持
-        MultiDex.install(this);
-        initLansong();
-        Hawk.init(this).build();
-        initLicense();
-        initYouMeng();
-        initJPush();
-        initZt();
-        //闪验SDK初始化（建议放在Application的onCreate方法中执行）
-        initShanyanSDK(this);
-        initByteDanceShare();
-//        keepCrash();
-        initNTAdSDK();
+        @NotNull AnchorProject project = new AnchorProject.Builder().setContext(this)
+                .setLogLevel(LogUtils.LogLevel.DEBUG)
+                .setAnchorTaskCreator(new AnchorTaskCreator())
+                .addTask(TaskNameConstants.INIT_YOU_MENG)
+                .addTask(TaskNameConstants.MULTI_DEX)
+                .addTask(TaskNameConstants.INIT_LAN_SONG)
+                .addTask(TaskNameConstants.INIT_HAWK)
+                .addTask(TaskNameConstants.INIT_VE)
+                .addTask(TaskNameConstants.INIT_JPUSH)
+                .addTask(TaskNameConstants.INIT_ZT)
+                .addTask(TaskNameConstants.INIT_SHAN_YAN)
+                .addTask(TaskNameConstants.INIT_BYTE_DANCE_SHARE)
+                .addTask(TaskNameConstants.INIT_AD_SDK)
+                .addTask(TaskNameConstants.INIT_TTAD)
+                .addTask(TaskNameConstants.INIT_EMOJI)
+                .addTask(TaskNameConstants.INIT_ALBUM)
+                .addTask(TaskNameConstants.INIT_FU)
+                .build();
+        project.start().await(3000);
+
+        project.addListener(new OnProjectExecuteListener() {
+            @Override
+            public void onProjectStart() {
+                Log.d(TAG, "Application project start");
+            }
+
+            @Override
+            public void onTaskFinish(@NotNull String s) {
+                Log.d(TAG, "Application project task finish : " + s);
+            }
+
+            @Override
+            public void onProjectFinish() {
+                Log.d(TAG, "Application project finish");
+            }
+        });
+
+        project.setOnGetMonitorRecordCallback(new OnGetMonitorRecordCallback() {
+            @Override
+            public void onGetTaskExecuteRecord(@Nullable Map<String, Long> map) {
+
+            }
+
+            @Override
+            public void onGetProjectExecuteTime(long l) {
+
+            }
+        });
+
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
-        TTAdManagerHolder.init(this);
-        EmojiManager.init(this);
-        initAlbum();
-        FURenderer.initFURenderer(this);
+        Log.d(TAG, "Application onCreate end");
 //        setSystemFont();
     }
-
 
 
     /**
@@ -96,59 +138,11 @@ public class BaseApplication extends MultiDexApplication {
      * creation date: 2021/4/2
      * user : zhangtongju
      */
-    private void setSystemFont(){
+    private void setSystemFont() {
         Resources res = super.getResources();
         Configuration config = new Configuration();
         config.setToDefaults();
         res.updateConfiguration(config, res.getDisplayMetrics());
-    }
-
-
-    private void initAlbum() {
-        Album.initialize(AlbumConfig.newBuilder(this)
-                .setAlbumLoader(new MediaLoader())
-                .setLocale(Locale.getDefault())
-                .build()
-        );
-    }
-
-
-    private void initNTAdSDK() {
-        NTAdSDK.init(this
-                , new NTAdConfig.Builder()
-                        .appName("飞闪")
-                        .appVersion(SystemUtil.getVersionName(this))
-                        .appId("61074cddf23c0a8dd2b7e00996057e78")
-                        .appChannel(ChannelUtil.getChannel(this))
-                        .TTAppKey(AdConfigs.APP_ID_CSJ)
-                        .KSAppKey("517200002")
-                        .KaiJiaAppKey("68662a49")
-                        .GDTAppKey(AdConfigs.APP_ID_GDT)
-                        .isDebug(false)
-                        .build());
-    }
-
-
-    /**
-     * description ：闪验
-     * creation date: 2020/4/7
-     * user : zhangtongju
-     */
-    private void initShanyanSDK(Context context) {
-        OneKeyLoginManager.getInstance().init(context, "SSjHAvIf", (code, result) -> {
-            //闪验SDK初始化结果回调
-            LogUtil.d("OOM", "初始化： code==" + code + "   result==" + result);
-        });
-    }
-
-    private void initLansong() {
-        LanSoEditor.initSDK(getApplicationContext(), "jiu_LanSongSDK_android5.key");
-        LanSoEditor.setSDKLogOutListener(new OnLanSongLogOutListener() {
-            @Override
-            public void onLogOut(int i, String s) {
-                LogUtil.d("lansong", "蓝松具体错误信息为" + s);
-            }
-        });
     }
 
 
@@ -161,49 +155,10 @@ public class BaseApplication extends MultiDexApplication {
         }
     }
 
-    /**
-     * 中台
-     */
-    private void initZt() {
-        NTAnalytics.setDebug(false);
-        NTAnalytics.init(this, "87", "vQlTNPzHOzBYHzkg", ChannelUtil.getChannel(this));
-    }
-
-
-    public void initJPush() {
-        JPushInterface.setDebugMode(true);    // 设置开启日志,发布时请关闭日志
-        JPushInterface.init(this);
-    }
-
-    private void initYouMeng() {
-
-        UMConfigure.preInit(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this));
-
-    }
-
-    /**
-     * 初始化抖音分享
-     */
-    private void initByteDanceShare() {
-        //抖音分享
-        DouYinOpenApiFactory.init(new DouYinOpenConfig(BaseConstans.DOUYINSHARE_CLIENTKEY));
-    }
-
-    /**
-     * description ：註冊VE
-     * date: ：2019/5/8 16:51
-     * author: 张同举 @邮箱 jutongzhang@sina.com
-     */
-    public void initLicense() {
-        String licenseID = "UJ03ctDfZ1ZTWzTF2uC2dmWnOeyD0dk/UhyEu+npLrXEgeMlo2PBMaoHwffFV7bS6O48q0I/8qI4epo2acEbZyiXD1Im4oUNERrPhVtu2nNSnXyjUGr9dLmrYazM4YmNE/A9T6ir5gt3XEs7IjfWftmuZrzgoiAdnGqYyVx8g8ESwumuw/+R8EoMVJ+nfFGI5U4d+RCQqnL58sngu6/6rxxKBh93PYsreRVUfMMndJQGSV0uh0EZrupM9xLlPNMFkZkP9oaTUYeIZLZnu5mNWWDRlgyg80Os1BRSzkp9TG7sb7QJUzFdLvo2cpfhnFyBfRBvoykvllQZaPmbC73J+G+UG2BAZqXtuZB9IGjV3Yga13djLjcvViMCKyu+bftun0lgUaI3Fh2LVRZTvADbVmuMJ/blzjYVVGDT7RNuE55Lo8+uwrTZ/6jkdwh+sKHvMpzHLsIpV55SsyU/XABQ8/36srJP1Ar7GBYSjh7e87KSy4/5Lm5VEiaoL+u9/2bzpw/fOwEoUF1r+18Fy9c3CA2icOcpicntjds0+xd2/fDiJ7YSbs6Iys9slxgT5ukh25B53++VJ60nwD20IKlEtg==";
-        License l = License.init(licenseID);
-        boolean isValid = l.isValid();
-        SXLog.showInLogcat();
-        LogUtil.d("OOM", "isValid=" + isValid);
-    }
 
     private long onStopTime;
     private int activityAount = 0;
+
     ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {

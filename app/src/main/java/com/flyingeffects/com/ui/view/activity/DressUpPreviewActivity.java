@@ -62,7 +62,7 @@ import rx.functions.Action1;
 /**
  * description ：换装预览界面
  * creation date: 2020/12/7
- * user : zhangtongju
+ * @author : zhangtongju
  */
 public class DressUpPreviewActivity extends BaseActivity {
 
@@ -442,15 +442,15 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     public String getKeepOutput() {
         String product = android.os.Build.MANUFACTURER; //获得手机厂商
-        if (product != null && "vivo".equals(product)) {
-            File file_camera = new File(Environment.getExternalStorageDirectory() + "/相机");
-            if (file_camera.exists()) {
-                return file_camera.getPath() + File.separator + System.currentTimeMillis() + "synthetic.png";
+        if ("vivo".equals(product)) {
+            File fileCamera = new File(Environment.getExternalStorageDirectory() + "/相机");
+            if (fileCamera.exists()) {
+                return fileCamera.getPath() + File.separator + System.currentTimeMillis() + "synthetic.png";
             }
         }
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
-        File path_Camera = new File(path + "/Camera");
-        if (path_Camera.exists()) {
+        File pathCamera = new File(path + "/Camera");
+        if (pathCamera.exists()) {
             return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + "Camera" + File.separator + System.currentTimeMillis() + "synthetic.png";
         }
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + System.currentTimeMillis() + "synthetic.png";
@@ -481,11 +481,10 @@ public class DressUpPreviewActivity extends BaseActivity {
     }
 
 
-
     public void StatisticsToSave(String templateId) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
-        params.put("template_type",  "3");
+        params.put("template_type", "3");
         // 启动时间
         Observable ob = Api.getDefault().saveTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
@@ -497,7 +496,8 @@ public class DressUpPreviewActivity extends BaseActivity {
             protected void onSubNext(Object data) {
 
             }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject,
+                false, true, false);
 
     }
 
