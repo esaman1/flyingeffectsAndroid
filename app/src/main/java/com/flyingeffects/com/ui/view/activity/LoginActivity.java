@@ -174,6 +174,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 //                    relative_normal.setVisibility(View.VISIBLE);
                 LoginActivity.this.finish();
             }
+
         });
     }
 
