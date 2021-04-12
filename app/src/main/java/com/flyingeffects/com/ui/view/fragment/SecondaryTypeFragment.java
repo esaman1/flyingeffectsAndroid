@@ -15,6 +15,7 @@ import com.flyingeffects.com.enity.SecondaryTypeEntity;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,21 @@ import butterknife.BindView;
  * 二级分类容器的fragment
  */
 public class SecondaryTypeFragment extends BaseFragment {
+    private static final String TAG = "SecondaryTypeFragment";
+    public static final String BUNDLE_KEY_SECONDARY_TYPE = "secondaryType";
+    public static final String BUNDLE_KEY_CATEGORY_ID = "id";
+    public static final String BUNDLE_KEY_TYPE = "type";
+    public static final String BUNDLE_KEY_FROM = "from";
+    public static final String BUNDLE_KEY_NUM = "num";
+    public static final String BUNDLE_KEY_HOME_PAGE_NUM = "homePageNum";
+    public static final String BUNDLE_KEY_TEMPLATE_ITEM = "templateItem";
+    public static final String BUNDLE_KEY_CATEGORY_TYPE_NAME = "categoryTabName";
+
+    public static final int BUNDLE_VALUE_TYPE_TEMPLATE = 0;
+    public static final int BUNDLE_VALUE_TYPE_BACKGROUND = 1;
+    public static final int BUNDLE_VALUE_TYPE_FACE = 2;
+
+
     @BindView(R.id.ll_type)
     LinearLayout mLLType;
 
@@ -41,6 +57,7 @@ public class SecondaryTypeFragment extends BaseFragment {
      * 0是模板 1是背景  2是换脸
      */
     int type, from;
+
     String category_id, categoryTabName;
     private NewFragmentTemplateItem templateItem;
     private int homePageNum;
@@ -56,14 +73,15 @@ public class SecondaryTypeFragment extends BaseFragment {
 
     @Override
     protected void initView() {
-        mTypeEntities = (List<SecondaryTypeEntity>) getArguments().getSerializable("secondaryType");
-        type = getArguments().getInt("type");
-        category_id = getArguments().getString("id");
-        from = getArguments().getInt("from");
-        num=getArguments().getInt("num");
-        homePageNum=getArguments().getInt("homePageNum");
-        templateItem = (NewFragmentTemplateItem) getArguments().getSerializable("templateItem");
-        categoryTabName = getArguments().getString("categoryTabName");
+        mTypeEntities = (List<SecondaryTypeEntity>) getArguments().getSerializable(BUNDLE_KEY_SECONDARY_TYPE);
+        type = getArguments().getInt(BUNDLE_KEY_TYPE);
+        category_id = getArguments().getString(BUNDLE_KEY_CATEGORY_ID);
+        from = getArguments().getInt(BUNDLE_KEY_FROM);
+        num = getArguments().getInt(BUNDLE_KEY_NUM);
+        homePageNum = getArguments().getInt(BUNDLE_KEY_HOME_PAGE_NUM);
+        templateItem = (NewFragmentTemplateItem) getArguments().getSerializable(BUNDLE_KEY_TEMPLATE_ITEM);
+        categoryTabName = getArguments().getString(BUNDLE_KEY_CATEGORY_TYPE_NAME);
+
         if (mTypeEntities == null) {
             mTypeEntities = new ArrayList<>();
         }
@@ -163,5 +181,19 @@ public class SecondaryTypeFragment extends BaseFragment {
             transaction.commitAllowingStateLoss();
             mTextViews.get(0).setSelected(true);
         }
+    }
+
+    public static Bundle buildArgument(List<SecondaryTypeEntity> typeEntities, int type, String categoryId, int from,
+                                       int num, int homePageNum, NewFragmentTemplateItem templateItem, String categoryTabName) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(BUNDLE_KEY_SECONDARY_TYPE, (Serializable) typeEntities);
+        bundle.putInt(BUNDLE_KEY_TYPE, type);
+        bundle.putString(BUNDLE_KEY_CATEGORY_ID, categoryId);
+        bundle.putInt(BUNDLE_KEY_FROM, from);
+        bundle.putInt(BUNDLE_KEY_NUM, num);
+        bundle.putInt(BUNDLE_KEY_HOME_PAGE_NUM, homePageNum);
+        bundle.putSerializable(BUNDLE_KEY_TEMPLATE_ITEM, templateItem);
+        bundle.putString(BUNDLE_KEY_CATEGORY_TYPE_NAME, categoryTabName);
+        return bundle;
     }
 }

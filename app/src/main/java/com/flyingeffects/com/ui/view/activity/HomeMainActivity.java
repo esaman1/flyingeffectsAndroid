@@ -551,10 +551,7 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void exitPressAgain() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Toast.makeText(ThisMain, "再点一次退出程序" +
-                    "" +
-                    "" +
-                    "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ThisMain, "再点一次退出程序", Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
         } else {
             finish();
@@ -608,9 +605,6 @@ public class HomeMainActivity extends FragmentActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         // 获取到Activity下的Fragment
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        if (fragments == null) {
-            return;
-        }
         // 查找在Fragment中onRequestPermissionsResult方法并调用
         for (Fragment fragment : fragments) {
             if (fragment != null) {
@@ -720,7 +714,6 @@ public class HomeMainActivity extends FragmentActivity {
         }
     }
 
-
     /**
      * description ：统计手机信息
      * creation date: 2020/12/10
@@ -733,6 +726,7 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().add_active(BaseConstans.getRequestHead(params));
         LogUtil.d("OOM", "用户ip=" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(HomeMainActivity.this) {
+
             @Override
             protected void onSubError(String message) {
 

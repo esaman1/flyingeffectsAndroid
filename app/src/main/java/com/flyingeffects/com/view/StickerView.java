@@ -588,7 +588,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return guideLineShow;
     }
 
-
     public void setNowMaterialIsVideo(boolean isVideo) {
         NowMaterialIsVideo = isVideo;
     }

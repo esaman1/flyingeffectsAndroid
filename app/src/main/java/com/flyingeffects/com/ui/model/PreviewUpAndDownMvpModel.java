@@ -363,7 +363,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
     /**
      * 模板操作行为统计
      *
@@ -1068,8 +1067,6 @@ public class PreviewUpAndDownMvpModel {
     public void GetDressUpPath(List<String> paths) {
         callback.getDressUpPathResult(paths);
     }
-
-
 
 
     /**

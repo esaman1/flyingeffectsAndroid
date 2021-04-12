@@ -73,12 +73,12 @@ public class WelcomeActivity extends BaseActivity {
         mBinding = ActWelcomeBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         setContentView(rootView);
-
         LogUtil.d(TAG, "Application WelcomeActivity show");
         BaseConstans.setOddNum();
         //解决广告bug ,点击图标后广告爆款广告不弹出来
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         fromBackstage = getIntent().getBooleanExtra("fromBackstage", false);
         if (!isTaskRoot() && !fromBackstage) {
             finish();
@@ -164,7 +164,7 @@ public class WelcomeActivity extends BaseActivity {
      * creation date: 2021/3/10
      * user : zhangtongju
      */
-    private void  gotoNext(){
+    private void gotoNext() {
         if (!fromBackstage) {
             requestConfig();
         }
@@ -244,12 +244,16 @@ public class WelcomeActivity extends BaseActivity {
         }
     }
 
+    private void initSplashAd() {
+
+    }
+
 
     /**
      * 展示开屏广告
      */
     private void showSplashAd() {
-        Log.d(TAG,"Application start finished");
+        Log.d(TAG, "Application start finished");
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
             NTAdSDK.getInstance().showSplashAd(this, mBinding.rlAdContainer, mBinding.tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
@@ -258,7 +262,7 @@ public class WelcomeActivity extends BaseActivity {
                 public void onAdSuccess() {
                     isShow = true;
                     StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
-                    Log.d(TAG,"Application start onAdSuccess");
+                    Log.d(TAG, "Application start onAdSuccess");
                 }
 
                 @Override
@@ -285,9 +289,7 @@ public class WelcomeActivity extends BaseActivity {
             });
 
         }
-
     }
-
 
     /**
      * 设置一个变量来控制当前开屏页面是否可以跳转，当开屏广告为普链类广告时，点击会打开一个广告落地页，此时开发者还不能打开自己的App主页。当从广告落地页返回以后，
@@ -432,7 +434,7 @@ public class WelcomeActivity extends BaseActivity {
                             //换装制作页面切换模板按钮加载视频广告的间隔次数
                             int dressupIntervalsNumber = Integer.parseInt(config.getValue());
                             BaseConstans.setDressupIntervalsNumber(dressupIntervalsNumber);
-                        }else if(id == 72){
+                        } else if (id == 72) {
                             String value = config.getValue();
                             BaseConstans.setHasAdEntrance(value);
                         }
@@ -468,7 +470,6 @@ public class WelcomeActivity extends BaseActivity {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
-
     int isVideoadvertisingId;
 
     private void auditModeConfig(String str) {
@@ -480,14 +481,14 @@ public class WelcomeActivity extends BaseActivity {
             if (jsonArray.length() > 0) {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject obArray = jsonArray.getJSONObject(i);
-                    String Channel = obArray.getString("channel");
-                    if ("isVideoadvertising".equals(Channel)) { //控制了版本号
+                    String channel = obArray.getString("channel");
+                    if ("isVideoadvertising".equals(channel)) { //控制了版本号
                         isVideoadvertisingId = obArray.getInt("id");
                     }
-                    if (Channel.equals(BaseConstans.getChannel())) { //最新版的审核模式
+                    if (channel.equals(BaseConstans.getChannel())) { //最新版的审核模式
                         boolean auditOn = obArray.getBoolean("audit_on");
-                        int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
-                        if (auditOn || NowVersion != isVideoadvertisingId) {
+                        int nowVersion = Integer.parseInt(BaseConstans.getVersionCode());
+                        if (auditOn || nowVersion != isVideoadvertisingId) {
                             BaseConstans.setHasAdvertising(1);
                         } else {
                             BaseConstans.setHasAdvertising(0);
@@ -495,7 +496,6 @@ public class WelcomeActivity extends BaseActivity {
 
                         boolean video_ad_open = obArray.getBoolean("video_ad_open");
                         BaseConstans.setIncentiveVideo(video_ad_open);
-
 
                         boolean save_video_ad = obArray.getBoolean("save_video_ad");
                         BaseConstans.setSave_video_ad(save_video_ad);

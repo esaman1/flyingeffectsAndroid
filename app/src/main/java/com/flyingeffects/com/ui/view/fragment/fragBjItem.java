@@ -19,7 +19,7 @@ import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.templateDataCollectRefresh;
+import com.flyingeffects.com.enity.TemplateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -324,12 +324,12 @@ public class fragBjItem extends BaseFragment {
             HasShowAd=true;
             requestFeedAd(mAdManager, new RequestFeedBack() {
                 @Override
-                public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
+                public void getAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
                     getAdCallback(bean);
                 }
 
                 @Override
-                public void ChoseAdBack(int type, int adIndex) {
+                public void choseAdBack(int type, int adIndex) {
                     if (type != TYPE_GDT_FEED_EXPRESS_AD) {
                         adapter.remove(adIndex);
                     }
@@ -434,7 +434,7 @@ public class fragBjItem extends BaseFragment {
 
 
     @Subscribe
-    public void onEventMainThread(templateDataCollectRefresh event) {
+    public void onEventMainThread(TemplateDataCollectRefresh event) {
         if (event.getFrom() == 4) {
             int position = event.getPosition();
             if (allData != null && allData.size() > position) {

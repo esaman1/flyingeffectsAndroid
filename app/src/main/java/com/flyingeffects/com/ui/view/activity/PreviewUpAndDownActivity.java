@@ -34,7 +34,7 @@ import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.ReplayMessageEvent;
 import com.flyingeffects.com.enity.showAdCallback;
-import com.flyingeffects.com.enity.templateDataCollectRefresh;
+import com.flyingeffects.com.enity.TemplateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -562,25 +562,25 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
         switch (mOldFromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
-                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 1));
+                EventBus.getDefault().post(new TemplateDataCollectRefresh(nowChoosePosition, collectionResult, 1));
                 break;
             case FromToTemplate.ISHOMEMYLIKE:
                 break;
             case FromToTemplate.ISHOMEMYTEMPLATECOLLECT:
-                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 0));
+                EventBus.getDefault().post(new TemplateDataCollectRefresh(nowChoosePosition, collectionResult, 0));
                 break;
             case FromToTemplate.ISMESSAGEMYPRODUCTION:
                 break;
             case FromToTemplate.ISMESSAGEMYLIKE:
                 break;
             case FromToTemplate.ISTEMPLATE:
-                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 3));
+                EventBus.getDefault().post(new TemplateDataCollectRefresh(nowChoosePosition, collectionResult, 3));
                 break;
             case FromToTemplate.ISBJ:
-                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 4));
+                EventBus.getDefault().post(new TemplateDataCollectRefresh(nowChoosePosition, collectionResult, 4));
                 break;
             case FromToTemplate.ISBJCOLLECT:
-                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 2));
+                EventBus.getDefault().post(new TemplateDataCollectRefresh(nowChoosePosition, collectionResult, 2));
                 break;
             case FromToTemplate.ISCHOOSEBJ:
                 break;
@@ -688,9 +688,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void showDownProgress(int progress) {
-        Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+        Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(progress1 -> {
             if (!ondestroy) {
-                if (integer >= 100) {
+                if (progress1 >= 100) {
                     isDownIng = false;
                     mLoadingDialog.dismiss();
                 } else {
@@ -698,7 +698,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         mLoadingDialog.show();
                         isDownIng = true;
                     }
-                    mLoadingDialog.setProgress(integer);
+                    mLoadingDialog.setProgress(progress1);
                 }
             }
         });

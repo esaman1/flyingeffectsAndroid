@@ -343,7 +343,7 @@ public class DressUpModel {
     private MattingImage mattingImage;
 
     private void toKeepFace(Bitmap path, int allSize) {
-        mattingImage.mattingImageForMultiple2(path,  (isSuccess, bp) -> {
+        mattingImage.mattingImageForMultiple2(path, (isSuccess, bp) -> {
             downSuccessNum++;
             LogUtil.d("OOM", "正在抠图" + downSuccessNum);
             String fileName = mCatchFolder + File.separator + UUID.randomUUID() + ".png";

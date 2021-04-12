@@ -13,7 +13,7 @@ import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.templateDataCollectRefresh;
+import com.flyingeffects.com.enity.TemplateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
@@ -46,7 +46,7 @@ import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_GD
  */
 public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMvpView, View.OnClickListener {
 
-    private home_fag_itemMvpPresenter Presenter;
+    private home_fag_itemMvpPresenter mPresenter;
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
     private MainRecyclerAdapter adapter;
@@ -56,6 +56,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     private int actTag;
     @BindView(R.id.smart_refresh_layout)
     SmartRefreshLayout smartRefreshLayout;
+
     @BindView(R.id.lin_show_nodata)
     LinearLayout lin_show_nodata;
     /**
@@ -64,7 +65,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     private int fromType;
     private int intoTiktokClickPosition;
     private FeedAdManager mAdManager;
-    private boolean HasShowAd1=false;
+    private boolean HasShowAd1 = false;
     private int homePageNum;
 
     @Override
@@ -86,18 +87,18 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
             tabName = bundle.getString("tabName");
         }
         LogUtil.d("OOM", "2222fromType=" + fromType);
-        Presenter = new home_fag_itemMvpPresenter(getActivity(), this, fromType, mAdManager);
+        mPresenter = new home_fag_itemMvpPresenter(getActivity(), this, fromType, mAdManager);
         initRecycler();
-        Presenter.initSmartRefreshLayout(smartRefreshLayout);
+        mPresenter.initSmartRefreshLayout(smartRefreshLayout);
 
         if (getActivity() != null) {
             if (NetworkUtils.isNetworkAvailable(getActivity())) {
-                Presenter.requestData(category_id, tc_id, actTag);
+                mPresenter.requestData(category_id, tc_id, actTag);
             }
         }
 
         ChoosePageChange(() -> {
-            if (NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag && !HasShowAd1&&allData!=null&&allData.size()>0) {
+            if (NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag && !HasShowAd1 && allData != null && allData.size() > 0) {
                 LogUtil.d("requestAd", "onResume之模板请求广告");
                 needRequestFeedAd();
             }
@@ -113,7 +114,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!DoubleClick.getInstance().isFastDoubleClick()&&!allData.get(position).isHasShowAd()) {
+            if (!DoubleClick.getInstance().isFastDoubleClick() && !allData.get(position).isHasShowAd()) {
                 if (allData.get(position).getIs_ad_recommend() == 1) {
                     String url = allData.get(position).getRemark();
                     StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_dl_click", allData.get(position).getTitle());
@@ -137,7 +138,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                     intent.putExtra("category_id", category_id);//直接存入被序列化的对象实例
                     intent.putExtra("tc_id", tc_id);
                     intent.putExtra("position", intoTiktokClickPosition);
-                    int selectPage = Presenter.getselectPage();
+                    int selectPage = mPresenter.getselectPage();
                     intent.putExtra("nowSelectPage", selectPage);
                     if (fromType == 4) {
                         intent.putExtra("fromTo", FromToTemplate.DRESSUP);
@@ -186,7 +187,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
             mAdManager.adResume();
             if (allData == null || allData.size() == 0 || "11".equals(category_id) || "12".equals(category_id)) {
                 LogUtil.d("OOM", "allData==null");
-                Presenter.requestData(category_id, tc_id, actTag);
+                mPresenter.requestData(category_id, tc_id, actTag);
             }
         }
     }
@@ -217,7 +218,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (getActivity() != null&&mAdManager!=null) {
+        if (getActivity() != null && mAdManager != null) {
             mAdManager.adDestroy();
         }
     }
@@ -302,7 +303,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
      * creation date: 2021/3/11
      * user : zhangtongju
      */
-    public void FeedAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
+    public void feedAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
         LogUtil.d("OOM2", "GetAdCallback");
         if (allData != null && allData.size() > 0) {
             int allSize = allData.size() - 1;
@@ -325,18 +326,18 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
     @Override
     public void needRequestFeedAd() {
-         if (getActivity() != null && NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag) {
-             LogUtil.d("pageChange", "模板或者换装请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+actTag);
-             HasShowAd1 = true;
+        if (getActivity() != null && NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag) {
+            LogUtil.d("pageChange", "模板或者换装请求广告NowHomePageChooseNum=" + NowHomePageChooseNum + "NowSecondChooseNum=" + NowSecondChooseNum + "actTag" + actTag);
+            HasShowAd1 = true;
             requestFeedAd(mAdManager, new RequestFeedBack() {
 
                 @Override
-                public void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
-                    FeedAdCallback(bean);
+                public void getAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
+                    feedAdCallback(bean);
                 }
 
                 @Override
-                public void ChoseAdBack(int type, int adIndex) {
+                public void choseAdBack(int type, int adIndex) {
                     if (type != TYPE_GDT_FEED_EXPRESS_AD) {
                         adapter.remove(adIndex);
                     }
@@ -389,7 +390,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     }
 
     @Subscribe
-    public void onEventMainThread(templateDataCollectRefresh event) {
+    public void onEventMainThread(TemplateDataCollectRefresh event) {
         if (event.getFrom() == 3) {
             int position = event.getPosition();
             boolean isPraise = event.isSeleted();

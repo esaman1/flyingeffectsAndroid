@@ -20,9 +20,6 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
-import com.flyingeffects.com.enity.LoginToAttentionUserEvent;
-import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -38,7 +35,6 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
-import com.orhanobut.hawk.Hawk;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -52,8 +48,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.nt.lib.analytics.NTAnalytics;
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -62,6 +56,7 @@ import rx.functions.Action1;
 /**
  * description ：换装预览界面
  * creation date: 2020/12/7
+ *
  * @author : zhangtongju
  */
 public class DressUpPreviewActivity extends BaseActivity {
@@ -323,7 +318,7 @@ public class DressUpPreviewActivity extends BaseActivity {
             //没有缓存
             if (TemplateIdList.size() > needChooseIndex) {
                 String id = TemplateIdList.get(needChooseIndex);
-                ToNextDressUp(id);
+                toNextDressUp(id);
                 dressupSwitchNumber++;
             } else {
                 ToastUtil.showToast("没有更多换装了");
@@ -340,8 +335,9 @@ public class DressUpPreviewActivity extends BaseActivity {
      * creation date: 2020/12/8
      * user : zhangtongju
      */
-    private void ToNextDressUp(String templateId) {
+    private void toNextDressUp(String templateId) {
         DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
+
             @Override
             public void isSuccess(List<String> paths) {
                 if (paths != null && paths.size() > 0) {
@@ -419,6 +415,7 @@ public class DressUpPreviewActivity extends BaseActivity {
                     albumBroadcast(path2);
                 }
             });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -480,7 +477,6 @@ public class DressUpPreviewActivity extends BaseActivity {
         }
     }
 
-
     public void StatisticsToSave(String templateId) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
@@ -488,15 +484,15 @@ public class DressUpPreviewActivity extends BaseActivity {
         // 启动时间
         Observable ob = Api.getDefault().saveTemplate(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
-            @Override
-            protected void onSubError(String message) {
-            }
+                    @Override
+                    protected void onSubError(String message) {
+                    }
 
-            @Override
-            protected void onSubNext(Object data) {
+                    @Override
+                    protected void onSubNext(Object data) {
 
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject,
+                    }
+                }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject,
                 false, true, false);
 
     }
