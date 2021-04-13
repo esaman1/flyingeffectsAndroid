@@ -1294,6 +1294,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void onEventMainThread(showAdCallback event) {
         if (event != null && "PreviewActivity".equals(event.getIsFrom())) {
             //需要激励视频
+            BaseConstans.TemplateHasWatchingAd = false;
             if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                 VideoAdManager videoAdManager = new VideoAdManager();
                 videoAdManager.showVideoAd(this, TextUtils.equals(mOldFromTo, FromToTemplate.DRESSUP) ?
@@ -1308,14 +1309,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     public void onVideoAdError(String s) {
                         StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
                         LogUtil.d("OOM4", "onVideoAdError" + s);
-                        BaseConstans.TemplateHasWatchingAd = true;
+//                        BaseConstans.TemplateHasWatchingAd = true;
                         hasLoginToNext();
                     }
 
                     @Override
                     public void onVideoAdClose() {
                         LogUtil.d("OOM4", "onVideoAdClose");
-                        BaseConstans.TemplateHasWatchingAd = false;
+//                        BaseConstans.TemplateHasWatchingAd = false;
                         if (sHasReward) {
                             hasLoginToNext();
                             sHasReward = false;

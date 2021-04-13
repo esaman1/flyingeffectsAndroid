@@ -163,6 +163,11 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
     }
 
     @Override
+    public void showAdCallback() {
+        TemplateAddStickermvpView.showAdCallback();
+    }
+
+    @Override
     public void stickerOnclickCallback(String title) {
         TemplateAddStickermvpView.stickerOnclickCallback(title);
     }

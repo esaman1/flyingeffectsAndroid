@@ -35,6 +35,7 @@ import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
+import com.flyingeffects.com.ui.view.activity.MemeKeepActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -246,8 +247,9 @@ public class TemplateMvpModel {
 
     //    private String outputPathForVideoSaveToPhoto;
     private String savePath;
-
-    public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview, int nowTemplateIsAnim, List<String> originalPath) {
+    private boolean nowIsGifTemplate;
+    public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview, int nowTemplateIsAnim, List<String> originalPath,boolean nowIsGifTemplate) {
+        this.nowIsGifTemplate=nowIsGifTemplate;
         callback.showProgressDialog();
         if (FromToTemplate.PICTUREALBUM.equals(fromTo)) {
             StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_yj");
@@ -336,11 +338,21 @@ public class TemplateMvpModel {
             callback.toPreview(outputPath);
         } else {
             if (isSucceed && !isOnDestroy) {
-                Intent intent = new Intent(context, TemplateAddStickerActivity.class);
-                intent.putExtra("videoPath", outputPath);
-                intent.putExtra("title", templateName);
-                intent.putExtra("IsFrom", fromTo);
-                context.startActivity(intent);
+                if(nowIsGifTemplate){
+                    Intent intent = new Intent(context, MemeKeepActivity.class);
+                    intent.putExtra("videoPath", outputPath);
+                    intent.putExtra("title", templateName);
+                    intent.putExtra("IsFrom", fromTo);
+                    context.startActivity(intent);
+                }else{
+                    Intent intent = new Intent(context, TemplateAddStickerActivity.class);
+                    intent.putExtra("videoPath", outputPath);
+                    intent.putExtra("title", templateName);
+                    intent.putExtra("IsFrom", fromTo);
+                    context.startActivity(intent);
+                }
+
+
             }
         }
     }

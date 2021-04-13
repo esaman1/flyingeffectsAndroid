@@ -1383,8 +1383,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         StatisticsEventAffair.getInstance().setFlag(context, "bj_ad_open", "");
                         StatisticsEventAffair.getInstance().setFlag(context, "video_ad_alert_click_confirm");
-                        EventBus.getDefault().post(new showAdCallback("PreviewActivity"));
+//                        EventBus.getDefault().post(new showAdCallback("PreviewActivity"));
                         dialog.dismiss();
+                        callback.showAdCallback();
                     }
 
                     @Override

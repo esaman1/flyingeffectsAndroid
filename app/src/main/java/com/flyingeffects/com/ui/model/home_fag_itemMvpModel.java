@@ -107,11 +107,11 @@ public class home_fag_itemMvpModel {
         params.put("pageSize", perPageCount + "");
         Observable ob;
         if(fromType == 4){
-            ob = Api.getDefault().getMeargeTemplate(BaseConstans.getRequestHead(params));
+            ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
         }else{
             ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
         }
-        LogUtil.d("OOM", StringUtil.beanToJSONString(params));
+        LogUtil.d("requestFagData", StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(context) {
             @Override
             protected void onSubError(String message) {

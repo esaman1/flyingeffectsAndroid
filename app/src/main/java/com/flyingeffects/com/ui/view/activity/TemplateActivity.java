@@ -96,7 +96,8 @@ import rx.schedulers.Schedulers;
 
 /**
  * 模板页面
- * 漫画和抠图比较特殊,
+ * 漫画和抠图gif比较特殊,
+ *
  */
 public class TemplateActivity extends BaseActivity implements TemplateMvpView, AssetDelegate, AlbumChooseCallback {
     private static final String TAG = "TemplateActivity";
@@ -281,6 +282,11 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private NewFragmentTemplateItem templateItem;
 
     /**
+     * 当前是否是gif模板
+     */
+    private boolean nowIsGifTemplate=false;
+
+    /**
      * 如果是仿抖音一样的去唱歌，那么ui 界面需要修改，变成只有下一步功能
      */
     private boolean isToSing = false;
@@ -421,6 +427,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private void initData() {
         Bundle bundle = getIntent().getBundleExtra(TEMPLATE_BUNDLE_NAME);
         templateItem = (NewFragmentTemplateItem) getIntent().getSerializableExtra(TEMPLATE_ITEM_NAME);
+        String templateType=templateItem.getTemplate_type();
+        if(!TextUtils.isEmpty(templateType)&&templateType.equals("5")){
+            nowIsGifTemplate=true;
+        }
         if (bundle != null) {
             fromTo = bundle.getString(INTENT_FROM_TO);
             needAssetsCount = bundle.getInt(INTENT_IS_PIC_NUM);
@@ -1173,12 +1183,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         }
                         if (nowChooseMusic != 0) {
                             if (nowChooseMusic == 3) {
-                                presenter.renderVideo(mFolder.getPath(), downMusicPath, false, nowTemplateIsAnim, imgPath);
+                                presenter.renderVideo(mFolder.getPath(), downMusicPath, false, nowTemplateIsAnim, imgPath,nowIsGifTemplate);
                             } else {
-                                presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false, nowTemplateIsAnim, imgPath);
+                                presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false, nowTemplateIsAnim, imgPath,nowIsGifTemplate);
                             }
                         } else {
-                            presenter.renderVideo(mFolder.getPath(), mAudio1Path, false, nowTemplateIsAnim, imgPath);
+                            presenter.renderVideo(mFolder.getPath(), mAudio1Path, false, nowTemplateIsAnim, imgPath,nowIsGifTemplate);
                         }
 
                         presenter.StatisticsToSave(templateId);

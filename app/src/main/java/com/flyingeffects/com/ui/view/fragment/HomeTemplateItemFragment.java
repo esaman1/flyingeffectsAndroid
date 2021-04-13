@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -140,11 +141,22 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                     intent.putExtra("position", intoTiktokClickPosition);
                     int selectPage = mPresenter.getselectPage();
                     intent.putExtra("nowSelectPage", selectPage);
-                    if (fromType == 4) {
-                        intent.putExtra("fromTo", FromToTemplate.DRESSUP);
-                    } else {
+                    String templateType=allData.get(position).getTemplate_type();
+                    //templateType 类型:1=模板,2=背景,3=换脸,4=换背景,5=表情包
+                    if(!TextUtils.isEmpty(templateType)){
+                        if(templateType.equals("3")||templateType.equals("4")){
+                            intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                        }else{
+                            intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                        }
+                    }else{
                         intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                     }
+//                    if (fromType == 4) {
+//                        intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+//                    } else {
+//                        intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+//                    }
                     startActivity(intent);
                 }
             }
@@ -185,7 +197,12 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         super.onResume();
         if (getActivity() != null) {
             mAdManager.adResume();
-            if (allData == null || allData.size() == 0 || "11".equals(category_id) || "12".equals(category_id)) {
+//            if (allData == null || allData.size() == 0 || "11".equals(category_id) || "12".equals(category_id)) {
+//                LogUtil.d("OOM", "allData==null");
+//                Presenter.requestData(category_id, tc_id, actTag);
+//            }
+
+            if (allData == null || allData.size() == 0 ) {
                 LogUtil.d("OOM", "allData==null");
                 mPresenter.requestData(category_id, tc_id, actTag);
             }

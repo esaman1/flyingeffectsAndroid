@@ -1006,7 +1006,7 @@ public class StringUtil {
 
 
     /**
-     * 把onject 转成json
+     * 把object 转成json
      *
      * @param bean
      * @return
