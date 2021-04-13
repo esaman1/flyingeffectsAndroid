@@ -69,7 +69,6 @@ import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import java.io.File;
 import java.io.IOException;
@@ -120,7 +119,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
     private TemplateGridViewAdapter gridAdapter;
     private ViewPager viewPager;
-    private backgroundDraw backgroundDraw;
+    private BackgroundDraw backgroundDraw;
     /**
      * 默认视频时长,如果没选择背景的时候会用到
      */
@@ -1251,7 +1250,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, "", 0, 0, 0, new backgroundDraw.saveCallback() {
+                    backgroundDraw = new BackgroundDraw(context, mVideoPath, videoVoicePath, "", 0, 0, 0, new BackgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {
                             if (!isDestroy) {

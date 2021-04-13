@@ -50,7 +50,7 @@ import rx.schedulers.Schedulers;
 /**
  * 蓝松后台绘制方法
  */
-public class backgroundDraw {
+public class BackgroundDraw {
 
     private static int DRAWPADWIDTH = 720;
     private static int DRAWPADHEIGHT = 1280;
@@ -94,7 +94,7 @@ public class backgroundDraw {
      * creation date: 2020/4/23
      * user : zhangtongju
      */
-    public backgroundDraw(Context context, String videoPath, String videoVoice, String imagePath, long musicStartTime, long musicEndTime, long needKeepDuration, saveCallback callback, AnimCollect animCollect, boolean isBackgroundTemplate) {
+    public BackgroundDraw(Context context, String videoPath, String videoVoice, String imagePath, long musicStartTime, long musicEndTime, long needKeepDuration, saveCallback callback, AnimCollect animCollect, boolean isBackgroundTemplate) {
         this.context = context;
         this.videoPath = videoPath;
         this.videoVoice = videoVoice;
@@ -436,7 +436,13 @@ public class backgroundDraw {
 
 
         LogUtil.d("OOM", "addBitmapLayer");
-        Bitmap bp = BitmapFactory.decodeFile(stickerItem.getPath());
+        Bitmap bp;
+        if (stickerItem.getMirrorBitmap() != null) {
+            bp = stickerItem.getMirrorBitmap();
+        } else {
+            bp = BitmapFactory.decodeFile(stickerItem.getPath());
+        }
+
         LogUtil.d("OOM", "Path" + stickerItem.getPath());
 
         long endTime = stickerItem.getShowStickerEndTime();
@@ -744,7 +750,7 @@ public class backgroundDraw {
                         LogUtil.d("oom", "firstBitmap1!=null");
                     }
                     if (!(BaseConstans.IsOpenChannelAdaptive && "huawei".equals(BaseConstans.getChannel()))) {
-                        firstBitmap1= MattingImage.mattingSingleImg(firstBitmap1,imageCoverWidth,imageCoverHeight);
+                        firstBitmap1 = MattingImage.mattingSingleImg(firstBitmap1, imageCoverWidth, imageCoverHeight);
                     }
                     LogUtil.d("oom", "zhunbeiKKKKKOver");
                     bpLayer.switchBitmap(firstBitmap1);

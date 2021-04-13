@@ -987,7 +987,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         } else if (currentDrawable != null) {
             if (mMirrorBitmap != null) {
                 currentDrawable = (D) new BitmapDrawable(getResources(), mMirrorBitmap);
-                mMirrorBitmap = null;
             }
             RectF rectF = new RectF(0, 0, currentDrawable.getIntrinsicWidth(), currentDrawable.getIntrinsicHeight());
             rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
@@ -1195,6 +1194,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         callback.stickerOnclick(RIGHT_TOP_MODE);
                         return true;
                     } else if (mCurrentMode == LEFT_BOTTOM_MODE) {
+                        //todo 添加来源判断
                         //callback.stickerOnclick(LEFT_BOTTOM_MODE);
                         mMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
                         return true;
@@ -1684,6 +1684,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public Bitmap getMaskBitmap() {
         return mMaskBitmap;
+    }
+
+    public Bitmap getMirrorBitmap(){
+        return mMirrorBitmap;
     }
 
     public StickerTarger getTarger() {

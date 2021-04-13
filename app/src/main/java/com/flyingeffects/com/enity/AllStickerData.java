@@ -18,7 +18,7 @@ public class AllStickerData implements Serializable {
     }
 
     //true 表示素材 false 表示贴纸
-    private boolean isMaterial=true;
+    private boolean isMaterial = true;
 
 
     private float rotation;
@@ -32,6 +32,16 @@ public class AllStickerData implements Serializable {
     }
 
     private Bitmap mMaskBitmap;
+
+    private Bitmap mMirrorBitmap;
+
+    public Bitmap getMirrorBitmap() {
+        return mMirrorBitmap;
+    }
+
+    public void setMirrorBitmap(Bitmap mirrorBitmap) {
+        mMirrorBitmap = mirrorBitmap;
+    }
 
     public float getRotation() {
         return rotation;
@@ -58,7 +68,7 @@ public class AllStickerData implements Serializable {
         isText = text;
     }
 
-    private boolean isText=false;
+    private boolean isText = false;
 
 
     private float scale;
@@ -197,10 +207,6 @@ public class AllStickerData implements Serializable {
      * 贴纸显示结束时间
      */
     public long showStickerEndTime;
-
-
-
-
 
 
 }

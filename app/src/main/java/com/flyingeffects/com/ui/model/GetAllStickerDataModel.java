@@ -18,12 +18,12 @@ public class GetAllStickerDataModel {
     private static GetAllStickerDataModel thisModel;
 
     //字体
-    private ArrayList<String>titleStyle=new ArrayList<>();
+    private ArrayList<String> titleStyle = new ArrayList<>();
     //效果
-    private ArrayList<String>titleEffect=new ArrayList<>();
+    private ArrayList<String> titleEffect = new ArrayList<>();
 
     //边框
-    private ArrayList<String>titleFrame=new ArrayList<>();
+    private ArrayList<String> titleFrame = new ArrayList<>();
 
     public static GetAllStickerDataModel getInstance() {
         if (thisModel == null) {
@@ -47,21 +47,23 @@ public class GetAllStickerDataModel {
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
             stickerData.setScale(stickerView.getScale());
             stickerData.setMaskBitmap(stickerView.getMaskBitmap());
+            stickerData.setMirrorBitmap(stickerView.getMirrorBitmap());
             stickerData.setMaterial(stickerView.getIsmaterial());
             stickerData.setTranslationX(stickerView.getTranslationX());
             stickerData.setText(true);
             stickerData.setTranslationy(stickerView.getTranslationY());
-            String textImagePath=screenCaptureUtil.getFilePath(stickerView);
+            String textImagePath = screenCaptureUtil.getFilePath(stickerView);
             stickerData.setOriginalPath(textImagePath);
             stickerData.setPath(textImagePath);
 
-        }else{
+        } else {
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());
             stickerData.setText(false);
             stickerData.setRotation(stickerView.getRotateAngle());
             stickerData.setScale(stickerView.getScale());
             stickerData.setMaskBitmap(stickerView.getMaskBitmap());
+            stickerData.setMirrorBitmap(stickerView.getMirrorBitmap());
             stickerData.setMaterial(stickerView.getIsmaterial());
             stickerData.setTranslationX(stickerView.getTranslationX());
             stickerData.setTranslationy(stickerView.getTranslationY());
@@ -106,21 +108,18 @@ public class GetAllStickerDataModel {
     }
 
 
-
-    public ArrayList<String>GetTitleStyle(){
-        return  titleStyle;
+    public ArrayList<String> GetTitleStyle() {
+        return titleStyle;
     }
 
-    public ArrayList<String>GetTitleFrame(){
-        return  titleFrame;
+    public ArrayList<String> GetTitleFrame() {
+        return titleFrame;
     }
 
 
-
-    public ArrayList<String>GettitleEffect(){
-        return  titleEffect;
+    public ArrayList<String> GettitleEffect() {
+        return titleEffect;
     }
-
 
 
 }

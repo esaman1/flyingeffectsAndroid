@@ -56,7 +56,6 @@ import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
-import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -71,7 +70,6 @@ import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import java.io.File;
 import java.io.IOException;
@@ -125,7 +123,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      * 需要裁剪视频的集合
      */
     private ArrayList<videoType> cutVideoPathList = new ArrayList<>();
-    private backgroundDraw backgroundDraw;
+    private BackgroundDraw backgroundDraw;
 
     private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
     /**
@@ -1500,7 +1498,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, musicStartTime, musicEndTime, cutEndTime - cutStartTime, new backgroundDraw.saveCallback() {
+                    backgroundDraw = new BackgroundDraw(context, mVideoPath, videoVoicePath, imageBjPath, musicStartTime, musicEndTime, cutEndTime - cutStartTime, new BackgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {
                             if (!isDestroy) {
