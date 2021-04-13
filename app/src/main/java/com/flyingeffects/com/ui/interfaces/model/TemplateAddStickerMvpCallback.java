@@ -13,6 +13,7 @@ public interface TemplateAddStickerMvpCallback {
 
     void hideTextDialog();
 
+    void showAdCallback();
 
     void stickerOnclickCallback(String title);
 

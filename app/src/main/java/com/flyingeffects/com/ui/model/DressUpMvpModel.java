@@ -9,7 +9,6 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.interfaces.model.DressUpMvpCallback;
-import com.flyingeffects.com.ui.interfaces.model.home_fagMvpCallback;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.HashMap;
@@ -41,8 +40,8 @@ public class DressUpMvpModel {
 
     private void requestMainData(boolean isShowDialog) {
         HashMap<String, String> params = new HashMap<>();
-        //类型 1模板 2背景 3换脸
-        params.put("type","3");
+        //类型 1模板 2背景 3换脸  4 加上了最新的闪图
+        params.put("type","4");
         Observable ob = Api.getDefault().getCategoryList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FirstLevelTypeEntity>>(context) {
             @Override

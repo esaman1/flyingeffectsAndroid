@@ -73,7 +73,6 @@ public class WelcomeActivity extends BaseActivity {
         mBinding = ActWelcomeBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         setContentView(rootView);
-
         LogUtil.d("OOM", "WelcomeActivity");
         BaseConstans.setOddNum();
         //解决广告bug ,点击图标后广告爆款广告不弹出来
@@ -84,8 +83,6 @@ public class WelcomeActivity extends BaseActivity {
             finish();
             return;
         }
-//        if (!fromBackstage) {
-        //记录是不是新用户
         if (BaseConstans.isFirstOpenApp()) {
             BaseConstans.setFirstOpenApp(System.currentTimeMillis()); //记录第一次打开app的时间
             BaseConstans.setOpenAppNum(1); //打开app的次数为1
@@ -95,8 +92,6 @@ public class WelcomeActivity extends BaseActivity {
             BaseConstans.setOpenAppNum(openAppNum); //打开app的次数为1
             LogUtil.d("OOM", "openAppNum=" + openAppNum);
         }
-//        }
-
         gotoPrivacyPolicyActivity();
     }
 
@@ -126,7 +121,7 @@ public class WelcomeActivity extends BaseActivity {
             }
             hasPermission = true;
 
-            LogUtil.d("oom", "BaseConstans.getNextIsNewUser()=" + BaseConstans.getNextIsNewUser());
+            LogUtil.d("oom2222", "BaseConstans.getNextIsNewUser()=" + BaseConstans.getNextIsNewUser()+"BaseConstans.getHasAdvertising() ="+BaseConstans.getHasAdvertising() );
 
             if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
                 showSplashAd();
@@ -153,9 +148,7 @@ public class WelcomeActivity extends BaseActivity {
             ToastUtil.showToast(this.getString(R.string.Permissions_repulse));
             new Handler().postDelayed(() -> {
                 gotoNext();
-//                PermissionUtil.gotoPermission(WelcomeActivity.this);
-//                finish();
-            }, 3000);
+            }, 0);
         }
     }
 
@@ -198,8 +191,9 @@ public class WelcomeActivity extends BaseActivity {
                 if (!fromBackstage || BaseConstans.getNextIsNewUser()) {
                     requestConfig();
                 }
-                LogUtil.d("oom", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
+                LogUtil.d("oom2222", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
+                    LogUtil.d("oom2222", "请求开屏广告" );
                     showSplashAd();
                 }
             }
@@ -252,18 +246,21 @@ public class WelcomeActivity extends BaseActivity {
      * 展示开屏广告
      */
     private void showSplashAd() {
-        Log.d(TAG,"Application start finished");
+        LogUtil.d("oom2222", "showSplashAd"  );
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
             NTAdSDK.getInstance().showSplashAd(this, mBinding.rlAdContainer, mBinding.tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
                 @Override
                 public void onAdSuccess() {
+                    LogUtil.d("oom2222", "onAdSuccess"  );
+
                     isShow = true;
                     StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
                 }
 
                 @Override
                 public void onAdError(String errorMsg) {
+                    LogUtil.d("oom2222", "errorMsg="+errorMsg  );
                     isShow = false;
                     intoMain();
                     finish();
@@ -271,16 +268,19 @@ public class WelcomeActivity extends BaseActivity {
 
                 @Override
                 public boolean onAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                    LogUtil.d("oom2222", "onAdClicked" );
                     return false;
                 }
 
                 @Override
                 public void onAdTick(long millisUntilFinished) {
+                    LogUtil.d("oom2222", "onAdTick" );
                     mBinding.tvSkip.setText(String.format("跳过 %d", Math.round(millisUntilFinished / 1000f)));
                 }
 
                 @Override
                 public void onAdDismissed() {
+                    LogUtil.d("oom2222", "onAdDismissed" );
                     next();
                 }
             });
@@ -393,6 +393,7 @@ public class WelcomeActivity extends BaseActivity {
                         } else if (id == 24) {
                             //首次安装前几次无广告
                             int newUserIsVip = Integer.parseInt(config.getValue());
+                            LogUtil.d("OOM2","newUserIsVip="+newUserIsVip);
                             if (BaseConstans.getOpenAppNum() < newUserIsVip - 1) {
                                 BaseConstans.setNextNewUser(true);
                             } else {

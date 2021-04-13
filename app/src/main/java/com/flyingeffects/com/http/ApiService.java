@@ -234,6 +234,14 @@ public interface ApiService {
     Observable<HttpResult<List<NewFragmentTemplateItem>>> getMeargeTemplate(@FieldMap Map<String, String> params);
 
 
+
+    @FormUrlEncoded
+    @POST("/api/mearge/materialList")
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> materialList(@FieldMap Map<String, String> params);
+
+
+
+
     @FormUrlEncoded
     @POST("/api/photo/photoList")
     Observable<HttpResult<List<NewFragmentTemplateItem>>> photoList(@FieldMap Map<String, String> params);

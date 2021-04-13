@@ -467,6 +467,59 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
     @Override
+    public void showAdCallback() {
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            VideoAdManager videoAdManager = new VideoAdManager();
+            String adId;
+            if (BaseConstans.getOddNum()) {
+                adId = AdConfigs.AD_save_video;
+            } else {
+                adId = AdConfigs.AD_save_video2;
+            }
+            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
+                @Override
+                public void onVideoAdSuccess() {
+                    StatisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_sucess");
+                    LogUtil.d("OOM", "onVideoAdSuccess");
+                }
+
+                @Override
+                public void onVideoAdError(String s) {
+                    StatisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_fail");
+                    LogUtil.d("OOM", "onVideoAdError" + s);
+                    presenter.alertAlbumUpdate(false);
+                }
+
+                @Override
+                public void onVideoAdClose() {
+
+                }
+
+                @Override
+                public void onRewardVerify() {
+                    presenter.alertAlbumUpdate(true);
+                }
+
+                @Override
+                public void onVideoAdSkip() {
+                    LogUtil.d("OOM", "onVideoAdSkip");
+                }
+
+                @Override
+                public void onVideoAdComplete() {
+                }
+
+                @Override
+                public void onVideoAdClicked() {
+                    LogUtil.d("OOM", "onVideoAdClicked");
+                }
+            });
+        } else {
+            presenter.alertAlbumUpdate(true);
+        }
+    }
+
+    @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back, R.id.tv_add_text, R.id.iv_delete_all_text})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -584,55 +637,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @Subscribe
     public void onEventMainThread(showAdCallback event) {
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-            VideoAdManager videoAdManager = new VideoAdManager();
-            String adId;
-            if (BaseConstans.getOddNum()) {
-                adId = AdConfigs.AD_save_video;
-            } else {
-                adId = AdConfigs.AD_save_video2;
-            }
-            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
-                @Override
-                public void onVideoAdSuccess() {
-                    StatisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_sucess");
-                    LogUtil.d("OOM", "onVideoAdSuccess");
-                }
 
-                @Override
-                public void onVideoAdError(String s) {
-                    StatisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_fail");
-                    LogUtil.d("OOM", "onVideoAdError" + s);
-                    presenter.alertAlbumUpdate(false);
-                }
-
-                @Override
-                public void onVideoAdClose() {
-                    presenter.alertAlbumUpdate(true);
-                }
-
-                @Override
-                public void onRewardVerify() {
-
-                }
-
-                @Override
-                public void onVideoAdSkip() {
-                    LogUtil.d("OOM", "onVideoAdSkip");
-                }
-
-                @Override
-                public void onVideoAdComplete() {
-                }
-
-                @Override
-                public void onVideoAdClicked() {
-                    LogUtil.d("OOM", "onVideoAdClicked");
-                }
-            });
-        } else {
-            presenter.alertAlbumUpdate(true);
-        }
     }
 
 

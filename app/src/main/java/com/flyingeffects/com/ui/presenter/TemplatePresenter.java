@@ -69,8 +69,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
-    public void renderVideo(String mTemplateFolder, String mAudio1Path, boolean isPreview, int nowTemplateIsAnim, List<String> originalPath) {
-        home_model.renderVideo(mTemplateFolder, mAudio1Path, isPreview, nowTemplateIsAnim, originalPath);
+    public void renderVideo(String mTemplateFolder, String mAudio1Path, boolean isPreview, int nowTemplateIsAnim, List<String> originalPath,boolean nowIsGifTemplate) {
+        home_model.renderVideo(mTemplateFolder, mAudio1Path, isPreview, nowTemplateIsAnim, originalPath,nowIsGifTemplate);
     }
 
 
