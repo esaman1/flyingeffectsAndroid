@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.flyingeffects.com.R;
 import com.glidebitmappool.GlideBitmapPool;
 
 import java.io.ByteArrayInputStream;
@@ -32,8 +33,9 @@ import java.io.IOException;
 
 
 public class BitmapUtils {
+    private static final String TAG = "BitmapUtils";
 
-    public static final Bitmap drawableToBitmap(Drawable drawable) {
+    public static Bitmap drawableToBitmap(Drawable drawable) {
         Bitmap bitmap;
         if (drawable instanceof BitmapDrawable) {
             bitmap = GlideBitmapPool.getBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
@@ -237,7 +239,7 @@ public class BitmapUtils {
         return bitmap;
     }
 
-    public Bitmap toHorizontalMirror(Bitmap bitmap) {
+    public static Bitmap toHorizontalMirror(Bitmap bitmap) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         Matrix matrix = new Matrix();
@@ -246,7 +248,22 @@ public class BitmapUtils {
         return Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
     }
 
-    public Bitmap toVerticalMirror(Bitmap bitmap) {
+    public static Bitmap toHorizontalMirror(Drawable drawable) {
+        int w = (int) (drawable.getIntrinsicWidth() + 0.5);
+        int h = (int) (drawable.getIntrinsicHeight() + 0.5);
+        Bitmap bitmap = Bitmap.createBitmap(w, h,
+                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        Matrix matrix = new Matrix();
+        LogUtil.d(TAG, "w = " + w + " h = " + h);
+        // 水平镜像翻转
+        matrix.postScale(-1f, 1f);
+        return Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
+    }
+
+    public static Bitmap toVerticalMirror(Bitmap bitmap) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         Matrix matrix = new Matrix();

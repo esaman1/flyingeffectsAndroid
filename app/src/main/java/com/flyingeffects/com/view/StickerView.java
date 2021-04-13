@@ -22,6 +22,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
@@ -53,6 +54,7 @@ import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.TickerAnimated;
 import com.flyingeffects.com.utils.BitmapUtil;
+import com.flyingeffects.com.utils.BitmapUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.MeasureTextUtils;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -86,52 +88,83 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private boolean isFromStickerAnim = false;
     private boolean mIsText = false;
-    private int mPaddingTop;
-    private int mPaddingStart;
-    private int mPaddingBottom;
-    private int mPaddingEnd;
     private float mMeasureWidth = 300;
     private float mMeasureHeight = 300;
     private String stickerText = "输入文本";
-    /**选择字体的名字*/
+    /**
+     * 选择字体的名字
+     */
     private String textStyleTitle;
-    /**选择边框的的名字*/
+    /**
+     * 选择边框的的名字
+     */
     private String textFrameTitle;
-    /**选择字体效果名字*/
+    /**
+     * 选择字体效果名字
+     */
     private String textEffectTitle;
-    /**定义对象依次存放每一个字符*/
+    /**
+     * 定义对象依次存放每一个字符
+     */
     private List<String> listFontList = new ArrayList<>();
-    /**文字格式地址*/
+    /**
+     * 文字格式地址
+     */
     private String TypefacePath;
-    /**文字图片地址*/
+    /**
+     * 文字图片地址
+     */
     private String getTypefaceBitmapPath;
-    /**文字图片*/
+    /**
+     * 文字图片
+     */
     private Bitmap bpForTextBj;
-    /**是否设置花纹*/
+    /**
+     * 是否设置花纹
+     */
     public boolean OpenThePattern = false;
-    /**测试的文字边纹*/
+    /**
+     * 测试的文字边纹
+     */
     private Bitmap bpTestTextBj;
-    /**测试的文字花纹边纹地址*/
+    /**
+     * 测试的文字花纹边纹地址
+     */
     private String textFramePath;
 
-    /**有花纹情况下文字的间距*/
+    /**
+     * 有花纹情况下文字的间距
+     */
     private int letterSpacingSize = 1;
 
-    /**选择的时背景效果*/
+    /**
+     * 选择的时背景效果
+     */
     private boolean isChooseTextBjEffect = false;
-    /**文字背景矩形变阵*/
+    /**
+     * 文字背景矩形变阵
+     */
     Matrix matrixForBitmapShader = new Matrix();
     private float mTextScale;
-    /**不包含动画view的ID*/
+    /**
+     * 不包含动画view的ID
+     */
     private int stickerNoIncludeAnimId;
 
-    /**贴纸名字*/
+    /**
+     * 贴纸名字
+     */
     private String downStickerTitle;
 
     /**
      * 当前贴纸选择的动画
      */
     public AnimType ChooseAnimId;
+
+    /**
+     * 镜像翻转后的bitmap
+     */
+    private Bitmap mMirrorBitmap;
 
     /**
      * 当前素材是否是视频
@@ -189,6 +222,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public static final int ONCLICK_MODE = 13;
 
     public boolean isOpenVoice = false;
+
     /**
      * 是否是第一次添加的贴纸
      */
@@ -220,7 +254,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private TextPaint shadowPaint = new TextPaint();
     private Paint mHelpPaint = new Paint();
     private RectF mHelpBoxRect = new RectF();
-    /**图像透明化要用到的遮罩*/
+    /**
+     * 图像透明化要用到的遮罩
+     */
     private Paint mHelpDstPaint = new Paint();
     /**
      * 按钮大小
@@ -255,28 +291,48 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private float frameWidth = 1;
     private int rotateLocation = RIGHT_BOTTOM_MODE;
     private int mCurrentMode = IDLE_MODE;
-    /**限制右侧滑动按钮在轨道之内*/
+    /**
+     * 限制右侧滑动按钮在轨道之内
+     */
     private int mRightLimited = 0;
-    /**右侧滑动按钮距离底部的距离百分比*/
+    /**
+     * 右侧滑动按钮距离底部的距离百分比
+     */
     private float mRightOffsetPercent = 0f;
-    /**右侧滑动按钮距离底部的距离*/
+    /**
+     * 右侧滑动按钮距离底部的距离
+     */
     private float mRightOffset = 0f;
-    /**是否允许辅助水平*/
+    /**
+     * 是否允许辅助水平
+     */
     private boolean enableAutoAdjustDegree = true;
-    /**是否允许辅助居中*/
+    /**
+     * 是否允许辅助居中
+     */
     private boolean enableAutoAdjustCenter = false;
     private float lastX = 0;
     private float lastY = 0;
-    /**辅助线颜色*/
+    /**
+     * 辅助线颜色
+     */
     private int guideLineColor = Color.WHITE;
-    /**辅助线宽度*/
+    /**
+     * 辅助线宽度
+     */
     private float guideLineWidth = 5;
-    /**是否显示辅助线*/
+    /**
+     * 是否显示辅助线
+     */
     private boolean guideLineShow = true;
-    /**当touch时显示辅助线*/
+    /**
+     * 当touch时显示辅助线
+     */
     private boolean guideLineShowOntouch = false;
     private Vibrator vibrator;
-    /**是否显示*/
+    /**
+     * 是否显示
+     */
     private boolean frameShow = false;
 
     /**
@@ -343,13 +399,19 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 文字paint
      */
     private Paint mTextPaint;
-    /**没有选择效果之前的样式*/
+    /**
+     * 没有选择效果之前的样式
+     */
     private Paint mTextPaint2;
-    /**高光*/
+    /**
+     * 高光
+     */
     private Paint mPaintShadow;
     private float mTextSize = 100;
     private float paintWidth = 50;
-    /**贴纸的时间轴 起止时间*/
+    /**
+     * 贴纸的时间轴 起止时间
+     */
     private long showStickerStartTime;
     private long showStickerEndTime;
 
@@ -642,8 +704,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         }
     }
 
-    public void setLeftBitmapNoSave(){
-        leftBitmap =null;
+    public void setLeftBitmapNoSave() {
+        leftBitmap = null;
         invalidate();
     }
 
@@ -868,18 +930,18 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 mTextPaint2.setLetterSpacing(letterSpacingSize);
                 float oneImageWith = MeasureTextUtils.getFontWidth(mTextPaint, "一");
 
-                if(bpTestTextBj!=null){
+                if (bpTestTextBj != null) {
                     bpTestTextBj = bitmapToCenter(bpTestTextBj, (int) mMeasureHeight, (int) mMeasureHeight);
                     for (int i = 0; i < stickerText.length(); i++) {
                         canvas.drawBitmap(bpTestTextBj, mHelpBoxRect.left + mMeasureHeight * i, mHelpBoxRect.top, mTextPaint);
                     }
-                }else{
-                    LogUtil.d("OOM4","bpTestTextBj==NULL");
+                } else {
+                    LogUtil.d("OOM4", "bpTestTextBj==NULL");
                 }
 
                 for (int y = 0; y < stickerText.length(); y++) {
                     for (int i = 1; i < 10; i++) {
-                        canvas.drawText(listFontList.get(y), mHelpBoxRect.left + mMeasureHeight / 2 - (oneImageWith / 2) - i+ mMeasureHeight * y, needRectHeight - 10 + i / (float) 2, mTextPaint);
+                        canvas.drawText(listFontList.get(y), mHelpBoxRect.left + mMeasureHeight / 2 - (oneImageWith / 2) - i + mMeasureHeight * y, needRectHeight - 10 + i / (float) 2, mTextPaint);
                     }
                 }
                 RadialGradient radialGradient4 = new RadialGradient(mHelpBoxRect.centerX(),
@@ -923,6 +985,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
         } else if (currentDrawable != null) {
+            if (mMirrorBitmap != null) {
+                currentDrawable = (D) new BitmapDrawable(getResources(), mMirrorBitmap);
+                mMirrorBitmap = null;
+            }
             RectF rectF = new RectF(0, 0, currentDrawable.getIntrinsicWidth(), currentDrawable.getIntrinsicHeight());
             rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
             mHelpBoxRect.set(rectF);
@@ -1129,7 +1195,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         callback.stickerOnclick(RIGHT_TOP_MODE);
                         return true;
                     } else if (mCurrentMode == LEFT_BOTTOM_MODE) {
-                        callback.stickerOnclick(LEFT_BOTTOM_MODE);
+                        //callback.stickerOnclick(LEFT_BOTTOM_MODE);
+                        mMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
                         return true;
                     } else if (mCurrentMode == RIGHT_CENTER_MODE) {
                         callback.stickerOnclick(RIGHT_CENTER_MODE);
@@ -1212,7 +1279,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         invalidate();
                         lastX = x;
                         lastY = y;
-                    }  else if (mCurrentMode == NEW_POINTER_DOWN_MODE) {
+                    } else if (mCurrentMode == NEW_POINTER_DOWN_MODE) {
                         LogUtil.d("event", "NEW_POINTER_DOWN_MODE");
                         float dx1 = event.getX(1) - event.getX(0);
                         float dy1 = event.getY(1) - event.getY(0);
@@ -1540,7 +1607,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         this.mScale = scale;
     }
 
-
     public void setRotate(float rotate) {
         this.mRotateAngle = rotate;
     }
@@ -1630,6 +1696,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     StickerTarger targer;
 
     class StickerTarger extends SimpleTarget<D> {
+
         boolean autoRun = false;
 
         public void setAutoRun(boolean autoRun) {
@@ -1676,7 +1743,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    /**贴纸里面获得源地址，切记，选择的gif 是没得这个功能的*/
+    /**
+     * 贴纸里面获得源地址，切记，选择的gif 是没得这个功能的
+     */
     public String getOriginalPath() {
         return originalPath;
     }
@@ -1737,6 +1806,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         builder = manager.asDrawable();
                     }
                     options.override((int) contentWidth, (int) contentHeight);
+
                     builder.load(path)
                             .apply(options)
                             .into(getTarger());
@@ -2098,7 +2168,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public void setTextStyle(String path, String textStyleTitle) {
         this.textStyleTitle = textStyleTitle;
         TypefacePath = path;
-        LogUtil.d("OOM5","setTextStylepATH="+path);
+        LogUtil.d("OOM5", "setTextStylepATH=" + path);
         Typeface typeface = Typeface.createFromFile(path);
         Typeface typeface2 = Typeface.createFromFile(path);
         Typeface typeface1 = Typeface.createFromFile(path);
@@ -2118,8 +2188,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         getTypefaceBitmapPath = path;
         isChooseTextBjEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(path);
-        OpenThePattern=false;
-        textFrameTitle="";
+        OpenThePattern = false;
+        textFrameTitle = "";
     }
 
     public boolean getIsTextSticker() {
@@ -2133,7 +2203,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public String getBjFramePath() {
         return textFramePath;
     }
-
 
 
     public void disMissFrame() {
@@ -2167,31 +2236,29 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         colors.clear();
         colors.add(paintColor1);
         colors.add(paintColor2);
-        OpenThePattern=false;
-        textFrameTitle="";
+        OpenThePattern = false;
+        textFrameTitle = "";
     }
 
 
-    public void ChangeTextFrame(String textBjPath, String textFramePath,String frameTitle) {
-        this.textFramePath=textFramePath;
+    public void ChangeTextFrame(String textBjPath, String textFramePath, String frameTitle) {
+        this.textFramePath = textFramePath;
         getTypefaceBitmapPath = textBjPath;
-        this.textFrameTitle=frameTitle;
+        this.textFrameTitle = frameTitle;
         isChooseTextBjEffect = true;
         bpForTextBj = BitmapFactory.decodeFile(textBjPath);
-        OpenThePattern=true;
-        bpTestTextBj=BitmapFactory.decodeFile(textFramePath);
+        OpenThePattern = true;
+        bpTestTextBj = BitmapFactory.decodeFile(textFramePath);
     }
 
 
-    public void ChangeTextFrame(String color0, String color1, String textFramePath,String frameTitle) {
-        setTextPaintColor(color0,color1,"");
-        OpenThePattern=true;
-        bpTestTextBj=BitmapFactory.decodeFile(textFramePath);
-        this.textFramePath=textFramePath;
-        this.textFrameTitle=frameTitle;
+    public void ChangeTextFrame(String color0, String color1, String textFramePath, String frameTitle) {
+        setTextPaintColor(color0, color1, "");
+        OpenThePattern = true;
+        bpTestTextBj = BitmapFactory.decodeFile(textFramePath);
+        this.textFramePath = textFramePath;
+        this.textFrameTitle = frameTitle;
     }
-
-
 
 
     public String GetTextEffectTitle() {
@@ -2212,8 +2279,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public boolean GetOpenThePattern(){
-        return  OpenThePattern;
+    public boolean GetOpenThePattern() {
+        return OpenThePattern;
     }
 
     public ArrayList<String> GetTextColors() {
