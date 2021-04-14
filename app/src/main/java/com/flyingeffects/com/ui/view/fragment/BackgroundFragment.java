@@ -171,7 +171,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                         list.add(fragment);
                     } else {
                         if (data.get(i).getCategory() != null && !data.get(i).getCategory().isEmpty()) {
-                            Bundle bundle1 = SecondaryTypeFragment.buildArgument(data.get(i).getCategory(), 1, data.get(i).getId(),
+                            Bundle bundle1 = SecondaryTypeFragment.buildArgument(data.get(i).getCategory(), SecondaryTypeFragment.BUNDLE_VALUE_TYPE_BACKGROUND, data.get(i).getId(),
                                     1, i, -1, null, data.get(i).getName());
                             SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                             fragment.setArguments(bundle1);

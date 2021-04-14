@@ -141,15 +141,17 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                     intent.putExtra("position", intoTiktokClickPosition);
                     int selectPage = mPresenter.getselectPage();
                     intent.putExtra("nowSelectPage", selectPage);
-                    String templateType=allData.get(position).getTemplate_type();
+                    String templateType = allData.get(position).getTemplate_type();
                     //templateType 类型:1=模板,2=背景,3=换脸,4=换背景,5=表情包
-                    if(!TextUtils.isEmpty(templateType)){
-                        if(templateType.equals("3")||templateType.equals("4")){
+                    if (!TextUtils.isEmpty(templateType)) {
+
+                        if ("3".equals(templateType) || "4".equals(templateType)) {
                             intent.putExtra("fromTo", FromToTemplate.DRESSUP);
-                        }else{
+                        } else {
                             intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                         }
-                    }else{
+
+                    } else {
                         intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                     }
 //                    if (fromType == 4) {
@@ -202,7 +204,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 //                Presenter.requestData(category_id, tc_id, actTag);
 //            }
 
-            if (allData == null || allData.size() == 0 ) {
+            if (allData == null || allData.size() == 0) {
                 LogUtil.d("OOM", "allData==null");
                 mPresenter.requestData(category_id, tc_id, actTag);
             }

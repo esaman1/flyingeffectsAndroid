@@ -15,6 +15,7 @@ import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_TT
 
 public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
 
+    public static final String TEMPLATE_TYPE_TEMP = "1";
 
     public int getId() {
         return id;
@@ -197,7 +198,7 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
 //        this.minapp_share_title = minapp_share_title;
 //    }
 
-//    private String minapp_share_title;
+    //    private String minapp_share_title;
     private String temcategory_id;
     /**
      * 1需要激励视频，0 不需要激励视频
@@ -262,7 +263,6 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
         this.is_picout = is_picout;
     }
 
-
     /**
      * 是否需要抠图，0不需要，1 需要
      */
@@ -313,7 +313,6 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
     public void setAd(TTNativeExpressAd ad) {
         this.ad = ad;
     }
-
 
     /**
      * 信息流广告
@@ -377,7 +376,6 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
     public String report;
 
 
-
     public int getIs_praise() {
         return is_praise;
     }
@@ -385,6 +383,7 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
     public void setIs_praise(int is_praise) {
         this.is_praise = is_praise;
     }
+
     //是否赞过
     private int is_praise;
 
@@ -416,7 +415,7 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
         this.admin_id = admin_id;
     }
 
-    private String admin_id="";
+    private String admin_id = "";
 
     public int getIs_with_play() {
         return is_with_play;
@@ -437,7 +436,6 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
 //    public void setNeedChangeVideoPath(boolean needChangeVideoPath) {
 //        isNeedChangeVideoPath = needChangeVideoPath;
 //    }
-
 
     public String getPre_url() {
         return pre_url;
@@ -461,7 +459,7 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
         this.hasShowAd = hasShowAd;
     }
 
-    private boolean hasShowAd=false;
+    private boolean hasShowAd = false;
 
     public int getIsLandscape() {
         return isLandscape;
@@ -497,7 +495,7 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
     /**
      * 一键模板里面的选中模板的状态
      */
-    private boolean isCheckItem=false;
+    private boolean isCheckItem = false;
 
     public int getIs_pic() {
         return is_pic;
@@ -524,15 +522,15 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
      * creation date: 2021/3/11
      * user : zhangtongju
      */
-    private  transient  FeedAdConfigBean.FeedAdResultBean feedAdResultBean;
+    private transient FeedAdConfigBean.FeedAdResultBean feedAdResultBean;
 
 
     @Override
     public int getItemType() {
         int type = 0;
-        if(getFeedAdResultBean()!=null){
+        if (getFeedAdResultBean() != null) {
 
-            LogUtil.d("OOM44","etFeedAdResultBean().getEventType()="+getFeedAdResultBean().getEventType());
+            LogUtil.d("OOM44", "etFeedAdResultBean().getEventType()=" + getFeedAdResultBean().getEventType());
             switch (getFeedAdResultBean().getEventType()) {
                 case 0:
                     type = 0;
@@ -552,7 +550,7 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
             }
         }
 
-        LogUtil.d("OOM44","type="+type);
+        LogUtil.d("OOM44", "type=" + type);
         return type;
     }
 }

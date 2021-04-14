@@ -456,12 +456,12 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 //模板音乐
                 nowChooseMusicId = 2;
                 chooseTemplateMusic(true);
-                callback.ChooseMusicIndex(1);
+                callback.chooseMusicIndex(1);
             } else if (albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
                 LogUtil.d("OOM", "当前素材是视频");
                 nowChooseMusicId = 1;
                 chooseMaterialMusic(originalPath);
-                callback.ChooseMusicIndex(0);
+                callback.chooseMusicIndex(0);
             }
         }, 500);
     }
@@ -530,26 +530,26 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 case R.id.tv_0:
 
                     chooseMaterialMusic(nowChooseStickerView.getOriginalPath());
-                    callback.ChooseMusicIndex(0);
+                    callback.chooseMusicIndex(0);
                     break;
 
                 case R.id.tv_1:
                 case R.id.iv_check_box_1:
-                    callback.ChooseMusicIndex(1);
+                    callback.chooseMusicIndex(1);
                     chooseTemplateMusic(true);
 
                     break;
 
                 case R.id.tv_2:
                 case R.id.iv_check_box_2:
-                    callback.ChooseMusicIndex(2);
+                    callback.chooseMusicIndex(2);
                     nowChooseMusicId = 3;
                     chooseAddChooseBjPath();
                     break;
 
                 case R.id.iv_check_box_3:
                 case R.id.tv_3:
-                    callback.ChooseMusicIndex(3);
+                    callback.chooseMusicIndex(3);
                     clearCheckBox();
                     check_box_3.setImageResource(R.mipmap.template_btn_selected);
                     break;
@@ -970,7 +970,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                             if (nowChooseMusicId == 1) {
 
                                                 if (!TextUtils.isEmpty(mVideoPath)) {
-                                                    callback.ChooseMusicIndex(1);
+                                                    callback.chooseMusicIndex(1);
                                                     chooseTemplateMusic(true);
                                                 } else {
                                                     clearCheckBox();

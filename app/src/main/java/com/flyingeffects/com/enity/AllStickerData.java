@@ -20,7 +20,6 @@ public class AllStickerData implements Serializable {
     //true 表示素材 false 表示贴纸
     private boolean isMaterial = true;
 
-
     private float rotation;
 
     public Bitmap getMaskBitmap() {
@@ -69,7 +68,6 @@ public class AllStickerData implements Serializable {
     }
 
     private boolean isText = false;
-
 
     private float scale;
     private float translationX;
@@ -132,7 +130,6 @@ public class AllStickerData implements Serializable {
     }
 
     private long duration;
-
 
     private int BoxW;
 
@@ -207,6 +204,5 @@ public class AllStickerData implements Serializable {
      * 贴纸显示结束时间
      */
     public long showStickerEndTime;
-
 
 }

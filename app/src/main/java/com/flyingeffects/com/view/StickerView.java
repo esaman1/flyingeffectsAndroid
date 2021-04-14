@@ -77,6 +77,9 @@ import androidx.annotation.Nullable;
  * @date 2019/12/19
  */
 public class StickerView<D extends Drawable> extends View implements TickerAnimated {
+    private static final int CODE_CONVERSE_ON = 0;
+    private static final int CODE_CONVERSE_OFF = 1;
+
     private static final String TAG = "StickerView";
     /**
      * 高光
@@ -91,6 +94,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private float mMeasureWidth = 300;
     private float mMeasureHeight = 300;
     private String stickerText = "输入文本";
+
     /**
      * 选择字体的名字
      */
@@ -1986,6 +1990,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         } else {
             builder = manager.asDrawable();
         }
+
         builder.load(path)
                 .apply(options)
                 .into(getTarger());

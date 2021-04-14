@@ -350,7 +350,7 @@ public class DressUpPreviewActivity extends BaseActivity {
             }
         }, false);
         if (!TextUtils.isEmpty(keepUploadPath)) {
-            dressUpModel.RequestDressUp(keepUploadPath, templateId);
+            dressUpModel.requestDressUp(keepUploadPath, templateId);
         } else {
             dressUpModel.toDressUp(localImage, templateId, new DressUpModel.DressUpCatchCallback() {
                 @Override

@@ -5,11 +5,11 @@ import com.flyingeffects.com.view.StickerView;
 
 public interface CreationTemplateMvpView {
 
-    void ItemClickForStickView(AnimStickerModel stickView);
+    void itemClickForStickView(AnimStickerModel stickView);
 
     void hasPlayingComplete();
 
-    void ChooseMusicIndex(int index);
+    void chooseMusicIndex(int index);
 
     void deleteFirstSticker();
 

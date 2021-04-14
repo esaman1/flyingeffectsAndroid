@@ -186,7 +186,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
     public void IntoChooseMusic() {
         String text = horizontalselectedView.getSelectedString();
         long duration;
-        if (!TextUtils.isEmpty(text) && (text.equals("无限") || text.equals("默认"))) {
+        if (!TextUtils.isEmpty(text) && ("无限".equals(text) || "默认".equals(text))) {
             duration = 0;
         } else {
             duration = fUBeautyMvpmodel.FetChooseDuration(text);
@@ -228,7 +228,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
                 ArrayList<String> paths = new ArrayList<>();
                 paths.add(path);
                 String videoTime = templateItem.getVideotime();
-                if (!TextUtils.isEmpty(videoTime) && !videoTime.equals("0")) {
+                if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime)) {
                     float needVideoTime = Float.parseFloat(videoTime);
                     Intent intoCutVideo = new Intent(context, TemplateCutVideoActivity.class);
                     intoCutVideo.putExtra("needCropDuration", needVideoTime);
@@ -601,7 +601,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
      * creation date: 2021/2/22
      * user : zhangtongju
      */
-    public void SetDefaultTime(String musicPath) {
+    public void setDefaultTime(String musicPath) {
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(musicPath);
         int duration = (int) videoInfo.getDuration();
         LogUtil.d("OOM2", "duration=" + duration);
@@ -609,8 +609,8 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
         fUBeautyMvpmodel.setTimeDataInt(timeDataInt);
         int[] timeDataInt2 = fUBeautyMvpmodel.getTimeDataInt();
 
-        for (int i = 0; i < timeDataInt2.length; i++) {
-            LogUtil.d("OOM2", "timeDataInt2=" + timeDataInt2[i]);
+        for (int value : timeDataInt2) {
+            LogUtil.d("OOM2", "timeDataInt2=" + value);
         }
 
         ArrayList<String> list = fUBeautyMvpmodel.GetTimeData();

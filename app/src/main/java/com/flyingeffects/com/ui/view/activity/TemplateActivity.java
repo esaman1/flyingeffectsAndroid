@@ -428,7 +428,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         Bundle bundle = getIntent().getBundleExtra(TEMPLATE_BUNDLE_NAME);
         templateItem = (NewFragmentTemplateItem) getIntent().getSerializableExtra(TEMPLATE_ITEM_NAME);
         String templateType=templateItem.getTemplate_type();
-        if(!TextUtils.isEmpty(templateType)&&templateType.equals("5")){
+        if(!TextUtils.isEmpty(templateType)&& "5".equals(templateType)){
             nowIsGifTemplate=true;
         }
         if (bundle != null) {
