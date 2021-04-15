@@ -266,6 +266,23 @@ public class BaseConstans {
     }
 
 
+    /**
+     * gif 教程配置说明图片地址
+     */
+    public static void setGifCourse(String json) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("GIFCOURSE", json);
+    }
+
+
+
+    public static String getGifCourse() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("GIFCOURSE", "");
+    }
+
+
+
     public static String getHasAdEntrance() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("AdEntrance", "");

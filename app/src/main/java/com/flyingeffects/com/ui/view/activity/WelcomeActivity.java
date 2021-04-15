@@ -438,7 +438,13 @@ public class WelcomeActivity extends BaseActivity {
                         }else if(id == 72){
                             String value = config.getValue();
                             BaseConstans.setHasAdEntrance(value);
+                        }else if(id == 73){
+                            String value = config.getValue();
+                            BaseConstans.setGifCourse(value);
                         }
+
+
+
                     }
                 }
             }
