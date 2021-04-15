@@ -79,7 +79,7 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 
 
-public class CreationTemplateActivity extends BaseActivity implements CreationTemplateMvpView, TemplateMaterialSeekBarView.SeekBarProgressListener {
+public class CreationTemplateActivityCopy extends BaseActivity implements CreationTemplateMvpView, TemplateMaterialSeekBarView.SeekBarProgressListener {
     private static final String TAG = "CreationTemplate";
 
     public static final String BUNDLE_KEY = "Message";
@@ -91,11 +91,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public static final String BUNDLE_KEY_TITLE = "bjTemplateTitle";
     public static final String BUNDLE_KEY_TEMPLATE_ID = "templateId";
     public static final String BUNDLE_KEY_IS_LANDSCAPE = "isLandscape";
-    public static final String BUNDLE_KEY_BACKGROUND_IMAGE = "backgroundImage";
 
     public static final int FROM_CREATION_CODE = 0;
     public static final int FROM_DRESS_UP_BACK_CODE = 1;
-
 
     private Context mContext;
 
@@ -201,7 +199,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private MediaSource mediaSource;
 
     private ActCreationTemplateEditBinding mBinding;
-    private String mBackgroundImage;
 
     @Override
     protected int getLayoutId() {
@@ -210,7 +207,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     protected void initView() {
-        mContext = CreationTemplateActivity.this;
+        mContext = CreationTemplateActivityCopy.this;
         mBinding = ActCreationTemplateEditBinding.inflate(getLayoutInflater());
         View view = mBinding.getRoot();
 
@@ -240,7 +237,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         setProgressBarListener();
 
         mBinding.materialSeekBarView.setProgressListener(this);
-        //初始化整体容器，获取高度
         initCreationContainer();
     }
 
@@ -303,6 +299,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
         mBinding.rlCreationContainer.getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
     }
+
 
 
     /**
@@ -430,14 +427,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             title = bundle.getString(BUNDLE_KEY_TITLE);
             templateId = bundle.getInt(BUNDLE_KEY_TEMPLATE_ID);
             nowUiIsLandscape = bundle.getBoolean(BUNDLE_KEY_IS_LANDSCAPE, false);
-            mBackgroundImage = bundle.getString(BUNDLE_KEY_BACKGROUND_IMAGE);
             LogUtil.d("OOM2", "nowUiIsLandscape=" + nowUiIsLandscape);
         }
     }
 
     /**
      * 是否显示多时间线
-     *
      * @param isShow
      */
     private void seekBarViewIsShow(boolean isShow) {
@@ -463,12 +458,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
+
     private void initExo(String videoPath) {
         if (TextUtils.isEmpty(videoPath)) {
             return;
         }
 
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplateActivity.this);
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplateActivityCopy.this);
         mBinding.exoPlayer.setPlayer(exoPlayer);
         //不使用控制器
         mBinding.exoPlayer.setUseController(false);
@@ -490,7 +486,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
         });
         mediaSource = new ProgressiveMediaSource.Factory(
-                new DefaultDataSourceFactory(CreationTemplateActivity.this, "exoplayer-codelab")).
+                new DefaultDataSourceFactory(CreationTemplateActivityCopy.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(videoPath)));
 
         exoPlayer.prepare(mediaSource, true, false);
@@ -620,7 +616,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         } else if (view == mBinding.tvAddText) {
             addText();
         } else if (view == mBinding.tvBackground) {
-            onClickBackGroundBtn();
+            chooseBackground();
         } else if (view == mBinding.tvAnim) {
             chooseAnimBtn();
         } else if (view == mBinding.tvTiezhi) {
@@ -695,20 +691,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
     /**
-     * 选择背景 相框页面
+     * 选择音乐
      */
     private void onClickBackGroundBtn() {
-        if (mFrom == FROM_CREATION_CODE) {
-            chooseBackground();
-        } else if (mFrom == FROM_DRESS_UP_BACK_CODE) {
-            chooseBackgroundDressUp();
-        }
-    }
-
-    private void chooseBackgroundDressUp() {
         seekBarViewIsShow(false);
         presenter.chooseAnim(2);
-        setTextColor(4);
+        setTextColor(2);
         isClickAddTextTag = false;
     }
 
@@ -726,11 +714,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 nowStateIsPlaying(false);
             }
             if (UiStep.isFromDownBj) {
-                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_material");
-                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_material");
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivityCopy.this, "5_mb_bj_material");
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivityCopy.this, "8_material");
             } else {
-                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_material");
-                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivityCopy.this, "6_customize_bj_material");
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivityCopy.this, "7_material");
             }
             //添加新的贴纸，这里的贴纸就是用户选择的贴纸
             AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
@@ -740,15 +728,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     String path = paths.get(0);
                     String pathType = GetPathTypeModel.getInstance().getMediaType(path);
                     if (albumType.isImage(pathType)) {
-                        StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage");
-                        CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
+                        StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivityCopy.this, "7_SelectImage");
+                        CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivityCopy.this, "", tailorPaths -> {
                             presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                         });
                         manage.toMatting(paths);
                     } else {
                         //贴纸选择的视频
                         intoVideoCropActivity(paths.get(0));
-                        StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo");
+                        StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivityCopy.this, "7_Selectvideo");
                     }
                 }
             }, "");
@@ -778,15 +766,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             endTimer();
         }
         if (!TextUtils.isEmpty(title)) {
-            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_save", title);
+            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivityCopy.this, "5_mb_bj_save", title);
         } else {
-            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_save");
+            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivityCopy.this, "6_customize_bj_save");
         }
 
         if (UiStep.isFromDownBj) {
-            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Preview");
+            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivityCopy.this, "7_Preview");
         } else {
-            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
+            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivityCopy.this, "8_Preview");
         }
         if (musicChooseIndex == 2) {
             musicEndTime = allVideoDuration;
@@ -811,7 +799,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 nowStateIsPlaying(false);
                 presenter.showAllAnim(false);
             } else {
-                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, " 14_preview_video_bj");
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivityCopy.this, " 14_preview_video_bj");
                 WaitingDialog.openPragressDialog(this);
                 new Thread(() -> presenter.showAllAnim(true)).start();
             }
@@ -877,7 +865,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
-    private static final int[] LIN_ID = {R.id.tv_tiezhi, R.id.tv_anim, R.id.tv_music, R.id.tv_add_text, R.id.tv_background};
+    private static final int[] LIN_ID = {R.id.tv_tiezhi, R.id.tv_anim, R.id.tv_music, R.id.tv_add_text};
 
     private void setTextColor(int chooseItem) {
         for (int value : LIN_ID) {
@@ -888,7 +876,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
 
     private void intoVideoCropActivity(String path) {
-        Intent intent = new Intent(CreationTemplateActivity.this, VideoCropActivity.class);
+        Intent intent = new Intent(CreationTemplateActivityCopy.this, VideoCropActivity.class);
         intent.putExtra("videoPath", path);
         intent.putExtra("comeFrom", FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -1644,7 +1632,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 musicEndTime = mCutEndTime;
 
                 new Handler().postDelayed(() ->
-                        Glide.with(CreationTemplateActivity.this)
+                        Glide.with(CreationTemplateActivityCopy.this)
                                 .load(s).into(mBinding.ivGreenBackground), 500);
             } else {
                 LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
@@ -2137,26 +2125,5 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 .build().show();
 
         presenter.intoOnPause();
-    }
-
-    /**
-     * 构造需要的intent
-     */
-    public static Intent buildIntent(Context context, int from, String imgPath, String videoPath, String originalPath,
-                                     boolean isNeedCut, String title, int templateId, boolean nowUiIsLandscape, String backgroundImage) {
-        Bundle bundle = new Bundle();
-        bundle.putInt(BUNDLE_KEY_FROM, from);
-        bundle.putString(BUNDLE_KEY_PATHS, imgPath);
-        bundle.putString(BUNDLE_KEY_VIDEO_PATH, videoPath);
-        bundle.putString(BUNDLE_KEY_ORIGINAL_PATH, originalPath);
-        bundle.putBoolean(BUNDLE_KEY_NEED_CUT, isNeedCut);
-        bundle.putString(BUNDLE_KEY_TITLE, title);
-        bundle.putInt(BUNDLE_KEY_TEMPLATE_ID, templateId);
-        bundle.putBoolean(BUNDLE_KEY_IS_LANDSCAPE, nowUiIsLandscape);
-        bundle.putString(BUNDLE_KEY_BACKGROUND_IMAGE, backgroundImage);
-
-        Intent intent = new Intent(context, CreationTemplateActivity.class);
-        intent.putExtra(BUNDLE_KEY, bundle);
-        return intent;
     }
 }

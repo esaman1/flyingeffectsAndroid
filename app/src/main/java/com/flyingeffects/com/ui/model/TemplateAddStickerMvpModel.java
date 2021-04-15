@@ -37,7 +37,6 @@ import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.StickerAnim;
 import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -85,7 +84,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.viewpager.widget.ViewPager;
 
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -320,13 +318,13 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
      */
     public void ChangeTextFrame(String textBjPath, String textFramePath, String Frametitle) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath, Frametitle);
+            nowChooseStickerView.changeTextFrame(textBjPath, textFramePath, Frametitle);
         }
     }
 
     public void ChangeTextFrame(String color0, String color1, String textFramePath, String Frametitle) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(color0, color1, textFramePath, Frametitle);
+            nowChooseStickerView.changeTextFrame(color0, color1, textFramePath, Frametitle);
         }
     }
 
@@ -1043,28 +1041,28 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         if (isCopy && copyStickerView != null) {
             if (copyStickerView.getIsTextSticker()) {
                 //是否是图片文字效果
-                if (copyStickerView.GetIsChooseTextBjEffect()) {
-                    if (copyStickerView.GetOpenThePattern()) {
+                if (copyStickerView.getIsChooseTextBjEffect()) {
+                    if (copyStickerView.getOpenThePattern()) {
                         //当前有边框
-                        stickView.ChangeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath(), copyStickerView.GetTextFrameTitle());
+                        stickView.changeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath(), copyStickerView.getTextFrameTitle());
                     } else {
                         if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(), copyStickerView.GetTextEffectTitle());
+                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getTextEffectTitle());
                         }
                     }
                 } else {
-                    ArrayList<String> colors = copyStickerView.GetTextColors();
-                    if (copyStickerView.GetOpenThePattern()) {
-                        nowChooseStickerView.ChangeTextFrame(colors.get(0), colors.get(1), copyStickerView.GetTextEffectTitle());
+                    ArrayList<String> colors = copyStickerView.getTextColors();
+                    if (copyStickerView.getOpenThePattern()) {
+                        nowChooseStickerView.changeTextFrame(colors.get(0), colors.get(1), copyStickerView.getTextEffectTitle());
                     } else {
-                        stickView.setTextPaintColor(colors.get(0), colors.get(1), copyStickerView.GetTextEffectTitle());
+                        stickView.setTextPaintColor(colors.get(0), colors.get(1), copyStickerView.getTextEffectTitle());
                     }
                 }
                 if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                    stickView.setTextStyle(copyStickerView.getTypefacePath(), copyStickerView.GetTextStyleTitle());
+                    stickView.setTextStyle(copyStickerView.getTypefacePath(), copyStickerView.getTextStyleTitle());
                 }
                 stickView.setStickerText(copyStickerView.getStickerText());
-                stickView.SetTextAngle(copyStickerView.getRotateAngle());
+                stickView.setTextAngle(copyStickerView.getRotateAngle());
                 stickView.setScale(copyStickerView.getCopyScale());
                 stickView.setCenter(copyStickerView.getCenterXAdd30(), copyStickerView.getCenterYAdd30());
             } else {

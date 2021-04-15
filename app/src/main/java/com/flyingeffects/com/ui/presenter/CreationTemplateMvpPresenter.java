@@ -29,8 +29,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void ChangeTextStyle(String path, int type,String title){
-        creationTemplatemodel.ChangeTextStyle(path,type,title);
+    public void changeTextStyle(String path, int type, String title){
+        creationTemplatemodel.changeTextStyle(path,type,title);
     }
 
     public void onclickRelativeLayout(){

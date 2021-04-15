@@ -2219,13 +2219,13 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public void SetTextScale(float scale) {
+    public void setTextScale(float scale) {
 
         mScale = scale;
     }
 
 
-    public void SetTextAngle(float angle) {
+    public void setTextAngle(float angle) {
         mRotateAngle = angle;
     }
 
@@ -2250,7 +2250,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public void ChangeTextFrame(String textBjPath, String textFramePath, String frameTitle) {
+    public void changeTextFrame(String textBjPath, String textFramePath, String frameTitle) {
         this.textFramePath = textFramePath;
         getTypefaceBitmapPath = textBjPath;
         this.textFrameTitle = frameTitle;
@@ -2261,7 +2261,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public void ChangeTextFrame(String color0, String color1, String textFramePath, String frameTitle) {
+    public void changeTextFrame(String color0, String color1, String textFramePath, String frameTitle) {
         setTextPaintColor(color0, color1, "");
         OpenThePattern = true;
         bpTestTextBj = BitmapFactory.decodeFile(textFramePath);
@@ -2270,29 +2270,29 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
 
-    public String GetTextEffectTitle() {
+    public String getTextEffectTitle() {
         return textEffectTitle;
     }
 
 
-    public String GetTextStyleTitle() {
+    public String getTextStyleTitle() {
         return textStyleTitle;
     }
 
-    public String GetTextFrameTitle() {
+    public String getTextFrameTitle() {
         return textFrameTitle;
     }
 
-    public boolean GetIsChooseTextBjEffect() {
+    public boolean getIsChooseTextBjEffect() {
         return isChooseTextBjEffect;
     }
 
 
-    public boolean GetOpenThePattern() {
+    public boolean getOpenThePattern() {
         return OpenThePattern;
     }
 
-    public ArrayList<String> GetTextColors() {
+    public ArrayList<String> getTextColors() {
         return colors;
     }
 

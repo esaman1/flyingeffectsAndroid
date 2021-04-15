@@ -39,9 +39,9 @@ public class GetAllStickerDataModel {
         titleFrame.clear();
         titleStyle.clear();
         if (stickerView.getIsTextSticker()) {
-            titleEffect.add(stickerView.GetTextEffectTitle());
-            titleStyle.add(stickerView.GetTextStyleTitle());
-            titleFrame.add(stickerView.GetTextFrameTitle());
+            titleEffect.add(stickerView.getTextEffectTitle());
+            titleStyle.add(stickerView.getTextStyleTitle());
+            titleFrame.add(stickerView.getTextFrameTitle());
             ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
             stickerData.setBoxH((int) stickerView.getmHelpBoxRectH());
             stickerData.setBoxW((int) stickerView.getmHelpBoxRectW());

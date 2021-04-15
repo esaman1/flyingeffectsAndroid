@@ -517,6 +517,16 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
         this.feedAdResultBean = feedAdResultBean;
     }
 
+    private String background_image;
+
+    public String getBackground_image() {
+        return background_image;
+    }
+
+    public void setBackground_image(String background_image) {
+        this.background_image = background_image;
+    }
+
     /**
      * description ： transient  设置可以不被序列化
      * creation date: 2021/3/11
