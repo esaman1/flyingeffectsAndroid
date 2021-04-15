@@ -165,5 +165,15 @@ public class home_fag_itemMvpModel {
     }
 
 
+    /**
+     * description ：刷新全部数据
+     * creation date: 2021/4/15
+     * user : zhangtongju
+     */
+    public void RefreshAllData(){
+        requestFagData(true,false);
+    }
+
+
 }
 

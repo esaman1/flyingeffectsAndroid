@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.BaseFragment;
+import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.templateDataCollectRefresh;
@@ -65,7 +66,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     private int fromType;
     private int intoTiktokClickPosition;
     private FeedAdManager mAdManager;
-    private boolean HasShowAd1=false;
+    private boolean HasShowAd1 = false;
     private int homePageNum;
 
     @Override
@@ -98,7 +99,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         }
 
         ChoosePageChange(() -> {
-            if (NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag && !HasShowAd1&&allData!=null&&allData.size()>0) {
+            if (NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag && !HasShowAd1 && allData != null && allData.size() > 0) {
                 LogUtil.d("requestAd", "onResume之模板请求广告");
                 needRequestFeedAd();
             }
@@ -114,7 +115,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!DoubleClick.getInstance().isFastDoubleClick()&&!allData.get(position).isHasShowAd()) {
+            if (!DoubleClick.getInstance().isFastDoubleClick() && !allData.get(position).isHasShowAd()) {
                 if (allData.get(position).getIs_ad_recommend() == 1) {
                     String url = allData.get(position).getRemark();
                     StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_dl_click", allData.get(position).getTitle());
@@ -140,15 +141,15 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                     intent.putExtra("position", intoTiktokClickPosition);
                     int selectPage = Presenter.getselectPage();
                     intent.putExtra("nowSelectPage", selectPage);
-                    String templateType=allData.get(position).getTemplate_type();
+                    String templateType = allData.get(position).getTemplate_type();
                     //templateType 类型:1=模板,2=背景,3=换脸,4=换背景,5=表情包
-                    if(!TextUtils.isEmpty(templateType)){
-                        if(templateType.equals("3")||templateType.equals("4")){
+                    if (!TextUtils.isEmpty(templateType)) {
+                        if (templateType.equals("3") || templateType.equals("4")) {
                             intent.putExtra("fromTo", FromToTemplate.DRESSUP);
-                        }else{
+                        } else {
                             intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                         }
-                    }else{
+                    } else {
                         intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                     }
 //                    if (fromType == 4) {
@@ -201,7 +202,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 //                Presenter.requestData(category_id, tc_id, actTag);
 //            }
 
-            if (allData == null || allData.size() == 0 ) {
+            if (allData == null || allData.size() == 0) {
                 LogUtil.d("OOM", "allData==null");
                 Presenter.requestData(category_id, tc_id, actTag);
             }
@@ -234,7 +235,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (getActivity() != null&&mAdManager!=null) {
+        if (getActivity() != null && mAdManager != null) {
             mAdManager.adDestroy();
         }
     }
@@ -342,9 +343,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
     @Override
     public void needRequestFeedAd() {
-         if (getActivity() != null && NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag) {
-             LogUtil.d("pageChange", "模板或者换装请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+actTag);
-             HasShowAd1 = true;
+        if (getActivity() != null && NowHomePageChooseNum == homePageNum && NowSecondChooseNum == actTag) {
+            LogUtil.d("pageChange", "模板或者换装请求广告NowHomePageChooseNum=" + NowHomePageChooseNum + "NowSecondChooseNum=" + NowSecondChooseNum + "actTag" + actTag);
+            HasShowAd1 = true;
             requestFeedAd(mAdManager, new RequestFeedBack() {
 
                 @Override
@@ -419,6 +420,21 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         }
     }
 
+
+    /**
+     * description ：收藏和取消收藏回调
+     * creation date: 2021/4/15
+     * user : zhangtongju
+     */
+    @Subscribe
+    public void onEventMainThread(BackgroundTemplateCollectionEvent event) {
+        if(getActivity()!=null){
+            if (fromType == 4 && !TextUtils.isEmpty(tabName)&&tabName.equals("4")) {
+            Presenter.RefreshAllData();
+            }
+        }
+
+    }
 
 }
 

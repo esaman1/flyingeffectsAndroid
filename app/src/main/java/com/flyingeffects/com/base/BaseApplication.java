@@ -44,7 +44,6 @@ import com.yanzhenjie.album.AlbumConfig;
 import java.util.Locale;
 
 import cn.jpush.android.api.JPushInterface;
-import cn.nt.lib.analytics.NTAnalytics;
 import de.greenrobot.event.EventBus;
 import rx.subjects.PublishSubject;
 
@@ -75,7 +74,6 @@ public class BaseApplication extends MultiDexApplication {
         initLicense();
         initYouMeng();
         initJPush();
-        initZt();
         //闪验SDK初始化（建议放在Application的onCreate方法中执行）
         initShanyanSDK(this);
         initByteDanceShare();
@@ -161,13 +159,7 @@ public class BaseApplication extends MultiDexApplication {
         }
     }
 
-    /**
-     * 中台
-     */
-    private void initZt() {
-        NTAnalytics.setDebug(false);
-        NTAnalytics.init(this, "87", "vQlTNPzHOzBYHzkg", ChannelUtil.getChannel(this));
-    }
+
 
 
     public void initJPush() {
