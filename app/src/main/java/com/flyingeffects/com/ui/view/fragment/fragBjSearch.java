@@ -83,7 +83,7 @@ public class fragBjSearch extends BaseFragment {
      */
     private String searchText;
     /**
-     * 0 表示搜索出来模板 1表示搜索内容为背景  3代表换装
+     * 0 表示搜索出来模板 1表示搜索内容为背景  3代表换装（闪图）
      */
     private int isFrom;
     private boolean hasSearch = false;
@@ -136,7 +136,14 @@ public class fragBjSearch extends BaseFragment {
                 intent.putExtra("fromTo", FromToTemplate.ISSEARCHTEMPLATE);
                 StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb_click", allData.get(position).getTitle());
             } else if (isFrom == 3) {
-                intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                String templateType = allData.get(position).getTemplate_type();
+                if(!TextUtils.isEmpty(templateType)&&templateType.equals("3")){
+                    intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                }else if(!TextUtils.isEmpty(templateType)&&templateType.equals("4")){
+                    intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                }else{
+                    intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                }
             } else {
                 //背景页面
                 intent.putExtra("fromTo", FromToTemplate.ISSEARCHBJ);
@@ -247,13 +254,14 @@ public class fragBjSearch extends BaseFragment {
             if (isFrom == 0) {
                 params.put("template_type", "1");
             } else if (isFrom == 3) {
-                params.put("template_type", "3");
+                //不传表示所有
+             //   params.put("template_type", "3");
             } else {
                 params.put("template_type", "2");
             }
             Observable ob;
             if (isFrom == 3) {
-                ob = Api.getDefault().getMeargeTemplate(BaseConstans.getRequestHead(params));
+                ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
             } else {
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
             }

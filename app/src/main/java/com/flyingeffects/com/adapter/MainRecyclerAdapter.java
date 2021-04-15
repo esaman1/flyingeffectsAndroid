@@ -85,7 +85,6 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
     public static final int FROM_DRESS_CODE = 4;
 
     public final static String TAG = "MainRecyclerAdapter";
-    //0 模板  1 背景 2 搜索/我的收藏 3 表示背景模板下载 4 换装
     private int fromType;
     boolean isFromSearch;
     public FeedAdManager mAdManager;
@@ -118,6 +117,21 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
                 if (item.isHasShowAd()) {
                     ll_content_patents.setVisibility(View.GONE);
                 } else {
+                    TextView tv_gif_logo=helper.getView(R.id.tv_gif_logo);
+                    if(fromType==3||fromType==4){
+                        tv_gif_logo.setVisibility(View.VISIBLE);
+                        String templateType=item.getTemplate_type();
+                        if(!TextUtils.isEmpty(templateType)&&templateType.equals("3")){
+                            tv_gif_logo.setText("换装");
+                        }else if(!TextUtils.isEmpty(templateType)&&templateType.equals("4")){
+                            tv_gif_logo.setText("换背景");
+                        }else{
+                            tv_gif_logo.setText("表情包");
+                        }
+                    }else{
+                        tv_gif_logo.setVisibility(View.GONE);
+                    }
+
                     ll_content_patents.setVisibility(View.VISIBLE);
                     //默认样式，正常的模板
                     Glide.with(mContext)

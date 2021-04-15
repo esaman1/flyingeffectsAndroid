@@ -399,11 +399,11 @@ public class TemplateSearchActivity extends BaseActivity {
     private void showHeadTitle() {
         String[] titles;
         if (isFrom == 0) {
-            titles = new String[]{"背景", "模板", "换装", "用户"};
+            titles = new String[]{"背景", "模板", "闪图", "用户"};
         } else if (isFrom == 3) {
-            titles = new String[]{"换装", "背景", "模板", "用户"};
+            titles = new String[]{"闪图", "背景", "模板", "用户"};
         } else {
-            titles = new String[]{"模板", "背景", "换装", "用户"};
+            titles = new String[]{"模板", "背景", "闪图", "用户"};
         }
         Bundle bundle = new Bundle();
         bundle.putSerializable("from", 1);
