@@ -283,6 +283,27 @@ public class BaseConstans {
 
 
 
+    public static void setAdShowErrorCanSave(String json) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("AdShowErrorCanSave", json);
+    }
+
+
+    /**
+     * description ：激励视频出错的情况下能够得到奖励 1 是可以的，0是不可以
+     * creation date: 2021/4/16
+     * user : zhangtongju
+     */
+    public static String getAdShowErrorCanSave() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("AdShowErrorCanSave", "1");
+    }
+
+
+
+
+
+
     public static String getHasAdEntrance() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("AdEntrance", "");

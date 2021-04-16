@@ -37,7 +37,6 @@ import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.StickerAnim;
 import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
