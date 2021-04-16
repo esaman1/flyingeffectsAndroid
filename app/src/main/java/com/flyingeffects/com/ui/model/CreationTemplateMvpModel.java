@@ -395,6 +395,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         });
         templateGridViewAnimAdapter = new TemplateGridViewAnimAdapter(listAllAnima, context);
         gridViewAnim.setAdapter(templateGridViewAnimAdapter);
+
         listForInitBottom.add(templateThumbView);
         listForInitBottom.add(viewForChooseAnim);
 
