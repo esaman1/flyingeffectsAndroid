@@ -21,6 +21,7 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
@@ -117,6 +118,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private String originalPath;
     private String imgPath;
     private CreationTemplateMvpPresenter presenter;
+
     /**
      * 默认背景，也是是否选择了背景的重要判断，
      */
@@ -136,6 +138,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private boolean isInitVideoLayer = false;
     private long allVideoDuration;
     private boolean isPlayComplate = false;
+
     /**
      * 只有背景模板才有，自定义的话这个值为""
      */
@@ -201,6 +204,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private MediaSource mediaSource;
 
     private ActCreationTemplateEditBinding mBinding;
+
+    /**
+     * 换脸-换背景过来时带的背景图
+     */
     private String mBackgroundImage;
 
     @Override
@@ -213,7 +220,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mContext = CreationTemplateActivity.this;
         mBinding = ActCreationTemplateEditBinding.inflate(getLayoutInflater());
         View view = mBinding.getRoot();
-
         setContentView(view);
 
         mBinding.tvTopSubmit.setText("下一步");
@@ -242,6 +248,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mBinding.materialSeekBarView.setProgressListener(this);
         //初始化整体容器，获取高度
         initCreationContainer();
+
+        setDefaultBottomVisible();
+    }
+
+    /**
+     * 根据不同来源显示不同UI
+     */
+    private void setDefaultBottomVisible() {
+        if (mFrom == FROM_DRESS_UP_BACK_CODE) {
+            mBinding.tvMusic.setVisibility(View.GONE);
+            mBinding.tvAnim.setVisibility(View.GONE);
+            mBinding.tvFrame.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -373,6 +392,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     LogUtil.d("oom444", "xx=");
                     mBinding.materialSeekBarView.scrollToPosition(endTime);
                 }
+
                 presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
             }
 
@@ -407,6 +427,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             initExo(videoPath);
         } else {
             showGreenBj(true);
+            if (!TextUtils.isEmpty(mBackgroundImage)) {
+                Glide.with(mContext).load(mBackgroundImage)
+                        .into(mBinding.ivGreenBackground);
+            }
+//            } else {
+//                showGreenBj(true);
+//            }
         }
         //从前一个页面设置的横竖屏判断
         if (nowUiIsLandscape) {
@@ -489,6 +516,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
             }
         });
+
         mediaSource = new ProgressiveMediaSource.Factory(
                 new DefaultDataSourceFactory(CreationTemplateActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(videoPath)));
@@ -602,6 +630,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mBinding.tvTiezhi.setOnClickListener(this::onViewClicked);
         mBinding.tvAddText.setOnClickListener(this::onViewClicked);
         mBinding.rlCreationContainer.setOnClickListener(this::onViewClicked);
+        mBinding.tvFrame.setOnClickListener(this::onViewClicked);
     }
 
     private void onViewClicked(View view) {
@@ -629,8 +658,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             changeLandscape();
         } else if (view == mBinding.rlCreationContainer) {
             mBinding.progressBarView.hindArrow();
+        }else if (view == mBinding.tvFrame) {
+            choosePhotoFrame();
         }
 
+    }
+
+    /**
+     * 选择相框
+     */
+    private void choosePhotoFrame() {
+        seekBarViewIsShow(false);
+        presenter.chooseAnim(0);
+        setTextColor(5);
+        isClickAddTextTag = false;
     }
 
     /**
@@ -777,6 +818,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             pauseBgmMusic();
             endTimer();
         }
+
         if (!TextUtils.isEmpty(title)) {
             StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_save", title);
         } else {
@@ -793,6 +835,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             musicStartTime = 0;
         }
         presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutStartTime, mCutEndTime, title);
+
         seekBarViewIsShow(true);
     }
 
@@ -877,7 +920,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
-    private static final int[] LIN_ID = {R.id.tv_tiezhi, R.id.tv_anim, R.id.tv_music, R.id.tv_add_text, R.id.tv_background};
+    private static final int[] LIN_ID = {R.id.tv_tiezhi, R.id.tv_anim, R.id.tv_music, R.id.tv_add_text, R.id.tv_background,R.id.tv_frame};
 
     private void setTextColor(int chooseItem) {
         for (int value : LIN_ID) {
@@ -895,7 +938,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         startActivity(intent);
     }
 
-
     private void videoToPause() {
         LogUtil.d("OOM44", "videoToPause");
         pauseExoPlayer();
@@ -905,7 +947,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         presenter.showGifAnim(false);
         nowStateIsPlaying(false);
     }
-
 
     private void nowStateIsPlaying(boolean isPlaying) {
         if (isPlaying) {
@@ -1016,7 +1057,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mBinding.materialSeekBarView.setGreenScreen(true);
     }
 
-
     /**
      * description ：设置播放器尺寸,如果不设置的话会出现黑屏，因为外面嵌套了ScrollView
      * 横竖屏切换的时候例外2层都需要修改尺寸,
@@ -1030,6 +1070,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         videoToPause();//切换横竖屏
         LinearLayout.LayoutParams relativeLayoutParams = (LinearLayout.LayoutParams) mBinding.exoPlayer.getLayoutParams();
         float oriRatio = 9f / 16f;
+
         if (isLandscape) {
             //横屏的情况
             mBinding.scrollView.post(() -> {
@@ -1091,8 +1132,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     });
                 }
             });
-
-
         }
 
 
@@ -1377,6 +1416,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void animIsComplate() {
         LogUtil.d("OOM", "animIsComplate");
         WaitingDialog.closeProgressDialog();
+
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             nowStateIsPlaying(true);
             if (!TextUtils.isEmpty(videoPath)) {
@@ -1546,7 +1586,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
         }
 
-
     }
 
 
@@ -1585,7 +1624,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             bgmPlayer = null;
         }
     }
-
 
     /**
      * user :TongJu  ; email:jutongzhang@sina.com

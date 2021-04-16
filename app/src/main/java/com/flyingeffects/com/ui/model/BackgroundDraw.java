@@ -372,21 +372,20 @@ public class BackgroundDraw {
      */
     private void addGifLayer(AllStickerData stickerItem, int id) {
         long endTime = stickerItem.getShowStickerEndTime() * 1000;
-        long STARTTime = stickerItem.getShowStickerStartTime();
+        long startTime = stickerItem.getShowStickerStartTime();
         GifLayer gifLayer;
         if (endTime != 0) {
             if (isBackgroundTemplate) {
-                if (STARTTime <= cutStartTime) {
-                    STARTTime = 0;
+                if (startTime <= cutStartTime) {
+                    startTime = 0;
                 } else {
-                    STARTTime = Math.max(STARTTime, cutStartTime) - Math.min(STARTTime, cutStartTime);
+                    startTime = Math.max(startTime, cutStartTime) - Math.min(startTime, cutStartTime);
                 }
 
-                LogUtil.d("OOM44", "开始增加的时间为" + STARTTime + "--消失的时间为" + (endTime >= cutEndTime * 1000 ? Long.MAX_VALUE : cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime));
-
+                LogUtil.d("OOM44", "开始增加的时间为" + startTime + "--消失的时间为" + (endTime >= cutEndTime * 1000 ? Long.MAX_VALUE : cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime));
 
                 endTime = endTime >= cutEndTime * 1000 ? Long.MAX_VALUE : cutStartTime > 0 ? duration * 1000 - (cutEndTime * 1000 - endTime) : endTime;
-                gifLayer = execute.addGifLayer(stickerItem.getPath(), STARTTime * 1000, endTime);
+                gifLayer = execute.addGifLayer(stickerItem.getPath(), startTime * 1000, endTime);
             } else {
                 gifLayer = execute.addGifLayer(stickerItem.getPath(), 0,
                         endTime >= duration * 1000 ? Long.MAX_VALUE : endTime);
@@ -423,7 +422,7 @@ public class BackgroundDraw {
         gifLayer.switchFilterTo(FilterUtils.createBlendFilter(context, LanSongMaskBlendFilter.class, stickerItem.getMaskBitmap()));
         if (stickerItem.getChooseAnimId() != null && stickerItem.getChooseAnimId() != AnimType.NULL) {
             int needSublayer = animCollect.getAnimNeedSubLayerCount(stickerItem.getChooseAnimId());
-            addGifSubLayer(needSublayer, gifLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale, STARTTime * 1000, endTime);
+            addGifSubLayer(needSublayer, gifLayer, stickerItem.getChooseAnimId(), rotate, layerScale * stickerScale, startTime * 1000, endTime);
         }
 
     }

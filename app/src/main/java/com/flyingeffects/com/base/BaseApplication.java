@@ -96,6 +96,7 @@ public class BaseApplication extends MultiDexApplication {
                 .addTask(TaskNameConstants.INIT_ALBUM)
                 .addTask(TaskNameConstants.INIT_FU)
                 .build();
+
         project.start().await(3000);
 
         project.addListener(new OnProjectExecuteListener() {
