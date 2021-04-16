@@ -27,6 +27,7 @@ import com.flyingeffects.com.ui.view.activity.webViewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
+import com.kwad.sdk.mvp.Presenter;
 import com.nineton.market.android.sdk.AppMarketHelper;
 import com.nineton.ntadsdk.bean.FeedAdConfigBean;
 import com.nineton.ntadsdk.manager.FeedAdManager;
@@ -431,9 +432,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
      */
     @Subscribe
     public void onEventMainThread(BackgroundTemplateCollectionEvent event) {
-        if(getActivity()!=null){
-            if (fromType == 4 && !TextUtils.isEmpty(tabName)&&tabName.equals("4")) {
-            Presenter.RefreshAllData();
+        if (getActivity() != null) {
+            if (fromType == 4 && !TextUtils.isEmpty(tabName) && tabName.equals("4")) {
+               mPresenter.RefreshAllData();
             }
         }
 

@@ -1,15 +1,15 @@
 package com.flyingeffects.com.base.anchortask;
 
-import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
-import com.bytedance.sdk.open.douyin.DouYinOpenConfig;
+import android.os.Handler;
+
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.SystemUtil;
 import com.nineton.ntadsdk.NTAdConfig;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.xj.anchortask.library.AnchorTask;
+
 
 public class NtAdAnchor extends AnchorTask {
 
@@ -19,6 +19,7 @@ public class NtAdAnchor extends AnchorTask {
 
     @Override
     public void run() {
+
         NTAdSDK.init(BaseApplication.getInstance()
                 , new NTAdConfig.Builder()
                         .appName("飞闪")
@@ -31,5 +32,10 @@ public class NtAdAnchor extends AnchorTask {
                         .GDTAppKey(AdConfigs.APP_ID_GDT)
                         .isDebug(false)
                         .build());
+    }
+
+    @Override
+    public boolean isRunOnMainThread() {
+        return true;
     }
 }
