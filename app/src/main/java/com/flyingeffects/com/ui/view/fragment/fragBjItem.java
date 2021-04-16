@@ -325,7 +325,7 @@ public class fragBjItem extends BaseFragment {
             requestFeedAd(mAdManager, new RequestFeedBack() {
                 @Override
                 public void getAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
-                    getAdCallback(bean);
+                    adCallback(bean);
                 }
 
                 @Override
@@ -339,7 +339,7 @@ public class fragBjItem extends BaseFragment {
     }
 
 
-    private void getAdCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
+    private void adCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
         LogUtil.d("OOM2", "GetAdCallback");
         if (allData != null && allData.size() > 0) {
             int allSize = allData.size() - 1;
