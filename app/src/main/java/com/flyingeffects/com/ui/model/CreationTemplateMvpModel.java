@@ -39,6 +39,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.HttpResult;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.StickerAnim;
 import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.VideoInfo;
@@ -531,6 +532,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     fragment.setArguments(bundle);
                     fragments.add(fragment);
                 }
+
                 home_vp_frg_adapter vp_frg_adapter = new home_vp_frg_adapter(fragmentManager, fragments);
                 stickerViewPager.setOffscreenPageLimit(list.size() - 1);
                 stickerViewPager.setAdapter(vp_frg_adapter);
@@ -540,6 +542,24 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
     public void requestBackList() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("page", "1");
+        Observable<HttpResult<List<NewFragmentTemplateItem>>> ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(context) {
+            @Override
+            protected void onSubError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
+
+            }
+        }, "backList", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
+
+    }
+
+    public void requestPhotoFrameList() {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", "1");
         Observable<HttpResult<Object>> ob = Api.getDefault().imageBorder(BaseConstans.getRequestHead(params));
@@ -553,10 +573,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             protected void onSubNext(Object data) {
 
             }
-        }, "backList", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
-
-
+        }, "backList", ActivityLifeCycleEvent.DESTROY,
+                lifecycleSubject, false, true, true);
     }
+
+
 
     private long getDuration() {
         long duration = 0;
@@ -1056,12 +1077,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 //                    startTimer(stickView);
 //                }
                 isIntoDragMove = false;
-                if (stickView.isFirstAddSticker()) {
-                    //显示音乐按钮
-                    callback.showMusicBtn(true);
-                } else {
-                    callback.showMusicBtn(false);
-                }
+                //显示音乐按钮
+                callback.showMusicBtn(stickView.isFirstAddSticker());
                 if (!stickView.getIsTextSticker()) {
                     callback.hideKeyBord();
                 }
