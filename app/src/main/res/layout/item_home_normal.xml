@@ -35,6 +35,26 @@
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop" />
 
+
+
+                <TextView
+                    android:id="@+id/tv_gif_logo"
+                    android:layout_width="wrap_content"
+                    android:text="测试"
+                    android:layout_alignParentBottom="true"
+                    android:textColor="@color/white"
+                    android:layout_marginRight="20dp"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:textSize="10sp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/strok_soft_gray_bk"
+                    android:layout_height="wrap_content"/>
+
+
             </RelativeLayout>
 
 

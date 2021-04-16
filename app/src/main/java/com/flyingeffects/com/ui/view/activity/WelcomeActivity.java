@@ -441,6 +441,14 @@ public class WelcomeActivity extends BaseActivity {
                         } else if (id == 72) {
                             String value = config.getValue();
                             BaseConstans.setHasAdEntrance(value);
+                        }else if(id == 73){
+                            String value = config.getValue();
+                            BaseConstans.setGifCourse(value);
+                        }else if(id == 74){
+                            String video_error_can_save=config.getValue();
+                            //1 表示能保存 0 表示不能保存
+                            LogUtil.d("OOM3","video_error_can_save="+video_error_can_save);
+                            BaseConstans.setAdShowErrorCanSave(video_error_can_save);
                         }
                     }
                 }

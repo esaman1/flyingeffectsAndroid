@@ -41,6 +41,11 @@ public class home_fag_itemMvpPresenter extends BasePresenter implements homeItem
 //    }
 
 
+    public void RefreshAllData(){
+        homeItemModel.RefreshAllData();
+    }
+
+
     @Override
     public void isOnRefresh() {
 

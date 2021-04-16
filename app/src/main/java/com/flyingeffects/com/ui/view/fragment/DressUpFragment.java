@@ -101,6 +101,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                         bundle.putSerializable("num", i);
                         bundle.putSerializable("from", 4);
                         bundle.putString("tabName", data.get(i).getName());
+                        bundle.putSerializable("homePageNum", 2);
                         HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
                         fragment.setArguments(bundle);
                         list.add(fragment);

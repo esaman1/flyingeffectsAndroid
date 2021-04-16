@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -28,7 +27,6 @@ import androidx.fragment.app.FragmentActivity;
 import com.bytedance.applog.AppLog;
 import com.bytedance.applog.InitConfig;
 import com.bytedance.applog.util.UriConfig;
-import com.bytedance.hume.readapk.HumeSDK;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
@@ -84,6 +82,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cn.nt.lib.analytics.NTAnalytics;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -156,8 +155,17 @@ public class HomeMainActivity extends FragmentActivity {
         initYouMeng();
         statisticsUpgradeApp();
         initFaceSdkModel.initFaceSdk();
+        initZt();
     }
 
+
+    /**
+     * 中台
+     */
+    private void initZt() {
+        NTAnalytics.setDebug(false);
+        NTAnalytics.init(this, "87", "vQlTNPzHOzBYHzkg", ChannelUtil.getChannel(this));
+    }
 
     private void initYouMeng() {
         UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件

@@ -119,7 +119,7 @@ public class LogUtil {
 
     // 日志级别
 //    private static LogLevel logLevel = BaseConstans.PRODUCTION ? LogLevel.RELEASE_LEVEL : LogLevel.DEBUG_LEVEL;
-    private static LogLevel logLevel = LogLevel.DEBUG_LEVEL ;
+    private static LogLevel logLevel = LogLevel.RELEASE_LEVEL ;
 
     static final String LINE_SEPARATOR = System.getProperty("line.separator");
 

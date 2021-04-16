@@ -405,6 +405,7 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
         this.template_type = template_type;
     }
 
+    //1 模板 2 背景 2 换脸  4 换背景 5表情包
     private String template_type;
 
     public String getAdmin_id() {

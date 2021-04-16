@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.BaseFragment;
+import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.TemplateDataCollectRefresh;
@@ -26,6 +27,7 @@ import com.flyingeffects.com.ui.view.activity.webViewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
+import com.kwad.sdk.mvp.Presenter;
 import com.nineton.market.android.sdk.AppMarketHelper;
 import com.nineton.ntadsdk.bean.FeedAdConfigBean;
 import com.nineton.ntadsdk.manager.FeedAdManager;
@@ -422,6 +424,21 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
         }
     }
 
+
+    /**
+     * description ：收藏和取消收藏回调
+     * creation date: 2021/4/15
+     * user : zhangtongju
+     */
+    @Subscribe
+    public void onEventMainThread(BackgroundTemplateCollectionEvent event) {
+        if (getActivity() != null) {
+            if (fromType == 4 && !TextUtils.isEmpty(tabName) && tabName.equals("4")) {
+               mPresenter.RefreshAllData();
+            }
+        }
+
+    }
 
 }
 
