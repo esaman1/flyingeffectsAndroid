@@ -32,7 +32,7 @@ public class initFaceSdkModel {
 //            long str = System.currentTimeMillis();
             LogUtil.d("OO3", "result=" + result);
             if (result == FaceppApi.MG_RETCODE_OK) {
-                if (RomUtil.isEmui()|| EquipmentUtil.getSystemModel().equals("M2006C3LC")) {
+                if (RomUtil.isEmui()|| "M2006C3LC".equals(EquipmentUtil.getSystemModel())) {
                     //如果是华为设备，则初始化华为推送
                     BodySegmentApi.getInstance().initBodySegment(1, BodySegmentApi.SEGMENT_MODE_FAST, BodySegmentApi.CPU_FORCED);//初始化人体抠像
                 } else {

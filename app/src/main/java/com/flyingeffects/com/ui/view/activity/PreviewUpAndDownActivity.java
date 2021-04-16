@@ -34,7 +34,7 @@ import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.ReplayMessageEvent;
 import com.flyingeffects.com.enity.showAdCallback;
-import com.flyingeffects.com.enity.templateDataCollectRefresh;
+import com.flyingeffects.com.enity.TemplateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -562,25 +562,25 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
         switch (mOldFromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
-                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 1));
+                EventBus.getDefault().post(new TemplateDataCollectRefresh(nowChoosePosition, collectionResult, 1));
                 break;
             case FromToTemplate.ISHOMEMYLIKE:
                 break;
             case FromToTemplate.ISHOMEMYTEMPLATECOLLECT:
-                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 0));
+                EventBus.getDefault().post(new TemplateDataCollectRefresh(nowChoosePosition, collectionResult, 0));
                 break;
             case FromToTemplate.ISMESSAGEMYPRODUCTION:
                 break;
             case FromToTemplate.ISMESSAGEMYLIKE:
                 break;
             case FromToTemplate.ISTEMPLATE:
-                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 3));
+                EventBus.getDefault().post(new TemplateDataCollectRefresh(nowChoosePosition, collectionResult, 3));
                 break;
             case FromToTemplate.ISBJ:
-                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 4));
+                EventBus.getDefault().post(new TemplateDataCollectRefresh(nowChoosePosition, collectionResult, 4));
                 break;
             case FromToTemplate.ISBJCOLLECT:
-                EventBus.getDefault().post(new templateDataCollectRefresh(nowChoosePosition, collectionResult, 2));
+                EventBus.getDefault().post(new TemplateDataCollectRefresh(nowChoosePosition, collectionResult, 2));
                 break;
             case FromToTemplate.ISCHOOSEBJ:
                 break;
@@ -631,7 +631,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 .setAdStatus(showAd)
                 .setAdId(AdConfigs.AD_IMAGE_DIALOG_OPEN_VIDEO)
                 .setTitle("亲爱的友友")
-                .setMessage("这个模板需要观看几秒广告")
+                .setMessage("模板需要观看几秒广告")
                 .setMessage2("「看完后就能制作飞闪视频」")
                 .setPositiveButton("观看广告并制作")
                 .setNegativeButton("取消")
@@ -688,9 +688,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     @Override
     public void showDownProgress(int progress) {
-        Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+        Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(progress1 -> {
             if (!ondestroy) {
-                if (integer >= 100) {
+                if (progress1 >= 100) {
                     isDownIng = false;
                     mLoadingDialog.dismiss();
                 } else {
@@ -698,7 +698,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         mLoadingDialog.show();
                         isDownIng = true;
                     }
-                    mLoadingDialog.setProgress(integer);
+                    mLoadingDialog.setProgress(progress1);
                 }
             }
         });
@@ -1046,8 +1046,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         }
                     }
                     if (mOldFromTo.equals(FromToTemplate.DRESSUP)) {
+                        LogUtil.d(TAG, "toCreation " + templateItem.getBackground_image());
+                        if ("0".equals(templateItem.getBackground_image())) {
+                            mMvpPresenter.toDressUp(paths.get(0), templateId, templateItem.getTitle());
+                        } else {
+                            createMattingImage(paths);
+                        }
                         //来自换装页面
-                        mMvpPresenter.toDressUp(paths.get(0), templateId, templateItem.getTitle());
                     } else if (templateItem.getIs_anime() == 1) {
                         //模板换装新逻辑
                         DressUpModel dressUpModel = new DressUpModel(this, paths1 -> mMvpPresenter.GetDressUpPath(paths1), true);
@@ -1056,87 +1061,104 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     } else {
                         chooseAlbumStatistics(paths);
                         LogUtil.d("OOM", "pathsSize=" + paths.size());
-                        mattingImage.createHandle(PreviewUpAndDownActivity.this, isDone -> {
-                            if (isDone) {
-                                Observable.just("tag").subscribeOn(AndroidSchedulers.mainThread()).subscribe(str -> {
-                                    if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
-                                        //背景模板文案
-                                        alert = "正在生成中~";
-                                    } else {
-                                        //一键模板不抠图的情况下
-                                        if (mIsPicOut == 0) {
-                                            alert = "正在生成中~";
-                                        }
-                                    }
-                                    new Handler().postDelayed(() -> {
-                                        if (!ondestroy) {
-                                            WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
-                                            GSYVideoManager.onPause();
-                                        }
-                                    }, 200);
-
-                                    new Thread(() -> {
-                                        originalImagePath = paths;
-                                        //如果是视频，就不抠图了
-                                        if (isPic == 0) {
-                                            LogUtil.d("OOM6", "is_pic==0");
-                                            String path = paths.get(0);
-                                            String pathType = GetPathTypeModel.getInstance().getMediaType(path);
-                                            if (albumType.isImage(pathType)) {
-                                                //选择的时图片
-                                                if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
-                                                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
-                                                }
-                                                compressImage(paths, templateItem.getId() + "");
-                                            } else {
-                                                //选择的时视频
-                                                if ("2".equals(templateType)) {
-                                                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                                                        toCloseProgressDialog();
-                                                        if (originalImagePath.get(0).equals(paths.get(0))) {
-                                                            createDownVideoPath = videoPath;
-                                                            //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
-                                                            Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
-                                                            intent.putExtra("videoPath", paths.get(0));
-                                                            intent.putExtra("comeFrom", FromToTemplate.ISCHOOSEBJ);
-                                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                            startActivity(intent);
-                                                        } else {
-                                                            intoCreationTemplateActivity(paths.get(0), videoPath, originalImagePath.get(0), true);
-                                                        }
-                                                    });
-                                                } else {
-                                                    toCloseProgressDialog();
-                                                    String videoTime = templateItem.getVideotime();
-                                                    if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime)) {
-                                                        float needVideoTime = Float.parseFloat(videoTime);
-                                                        LogUtil.d("OOM", "needVideoTime=" + needVideoTime);
-                                                        Intent intoCutVideo = new Intent(PreviewUpAndDownActivity.this, TemplateCutVideoActivity.class);
-                                                        intoCutVideo.putExtra("needCropDuration", needVideoTime);
-                                                        intoCutVideo.putExtra("templateName", templateItem.getTitle());
-                                                        intoCutVideo.putExtra("videoPath", paths.get(0));
-                                                        intoCutVideo.putExtra("picout", templateItem.getIs_picout());
-                                                        startActivity(intoCutVideo);
-                                                    } else {
-                                                        intoTemplateActivity(paths, TemplateFilePath);
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            LogUtil.d("OOM6", "进入到了intoTemplate");
-                                            intoTemplateActivity(paths, TemplateFilePath);
-                                        }
-
-                                    }).start();
-                                });
-                            }
-                        });
+                        createMattingImage(paths);
                     }
 
                 }
             }
 
         }, this);
+    }
+
+    private void createMattingImage(List<String> paths) {
+        mattingImage.createHandle(PreviewUpAndDownActivity.this, isDone -> {
+            if (isDone) {
+                Observable.just("tag").subscribeOn(AndroidSchedulers.mainThread()).subscribe(str -> {
+                    if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
+                        //背景模板文案
+                        alert = "正在生成中~";
+                    } else {
+                        //一键模板不抠图的情况下
+                        if (mIsPicOut == 0) {
+                            alert = "正在生成中~";
+                        }
+                    }
+
+                    new Handler().postDelayed(() -> {
+                        if (!ondestroy) {
+                            WaitingDialog.openPragressDialog(PreviewUpAndDownActivity.this, alert);
+                            GSYVideoManager.onPause();
+                        }
+                    }, 200);
+
+                    new Thread(() -> {
+                        originalImagePath = paths;
+                        //如果是视频，就不抠图了
+                        if (isPic == 0) {
+                            LogUtil.d("OOM6", "is_pic==0");
+                            String path = paths.get(0);
+                            String pathType = GetPathTypeModel.getInstance().getMediaType(path);
+                            if (albumType.isImage(pathType)) {
+                                //选择的时图片
+                                if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
+                                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
+                                }
+                                compressImage(paths, templateItem.getId() + "");
+                            } else {
+                                //选择的时视频
+                                if ("2".equals(templateType)) {
+                                    Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+                                        toCloseProgressDialog();
+                                        if (originalImagePath.get(0).equals(paths.get(0))) {
+                                            createDownVideoPath = videoPath;
+                                            //源图地址和剪切之后的地址完全一样，那说明只有一个情况，就是当前选择的素材是视频的情况，那么需要去得到视频的第一针，然后传过去
+                                            Intent intent = new Intent(PreviewUpAndDownActivity.this, VideoCropActivity.class);
+                                            intent.putExtra("videoPath", paths.get(0));
+                                            intent.putExtra("comeFrom", FromToTemplate.ISCHOOSEBJ);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(intent);
+                                        } else {
+                                            intoCreationTemplateActivity(paths.get(0), videoPath, originalImagePath.get(0), true);
+                                        }
+                                    });
+                                } else {
+                                    toCloseProgressDialog();
+                                    String videoTime = templateItem.getVideotime();
+                                    if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime)) {
+                                        float needVideoTime = Float.parseFloat(videoTime);
+                                        LogUtil.d("OOM", "needVideoTime=" + needVideoTime);
+                                        Intent intoCutVideo = new Intent(PreviewUpAndDownActivity.this, TemplateCutVideoActivity.class);
+                                        intoCutVideo.putExtra("needCropDuration", needVideoTime);
+                                        intoCutVideo.putExtra("templateName", templateItem.getTitle());
+                                        intoCutVideo.putExtra("videoPath", paths.get(0));
+                                        intoCutVideo.putExtra("picout", templateItem.getIs_picout());
+                                        startActivity(intoCutVideo);
+                                    } else {
+                                        intoTemplateActivity(paths, TemplateFilePath);
+                                    }
+                                }
+                            }
+                        } else {
+                            LogUtil.d("OOM6", "进入到了intoTemplate");
+                            intoTemplateActivity(paths, TemplateFilePath);
+                        }
+
+                    }).start();
+                });
+            }
+        });
+
+    }
+
+    /**
+     * 换脸-换背景
+     */
+    private void toCreationActivity(String imgUrl, String originalPath) {
+        LogUtil.d(TAG, "toCreation");
+        Intent intent = CreationTemplateActivity.buildIntent(mContext, CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE, imgUrl,
+                "", originalPath, true, templateItem.getTitle(),
+                templateItem.getTemplate_id(), false, templateItem.getBackground_image());
+        startActivity(intent);
     }
 
 
@@ -1162,7 +1184,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private void compressImage(List<String> paths, String templateId) {
         boolean hasCache = templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
-            if ("2".equals(templateType)) {
+            //
+            if (mOldFromTo.equals(FromToTemplate.DRESSUP)) {
+                toCreationActivity(tailorPaths.get(0), paths.get(0));
+            } else if ("2".equals(templateType)) {
                 mMvpPresenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId() + "", false);
             } else {
                 toCloseProgressDialog();
@@ -1181,8 +1206,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private void intoTemplateActivity(List<String> paths, String templateFilePath) {
         toCloseProgressDialog();
         Intent intent = TemplateActivity
-                .buildIntent(mContext,paths,originalImagePath,defaultnum,
-                        mOldFromTo,templateItem.getIs_picout(),templateItem,templateFilePath);
+                .buildIntent(mContext, paths, originalImagePath, defaultnum,
+                        mOldFromTo, templateItem.getIs_picout(), templateItem, templateFilePath);
         startActivity(intent);
         Observable.just(200).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override

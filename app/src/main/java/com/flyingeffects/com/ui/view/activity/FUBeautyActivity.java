@@ -266,7 +266,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         presenter.SetNowChooseMusic(nowChooseBjPath, nowOriginal);
         if (isFrom == 0) {
             LogUtil.d("OOM2", "nowChooseBjPath=" + nowChooseBjPath);
-            presenter.SetDefaultTime(nowChooseBjPath);
+            presenter.setDefaultTime(nowChooseBjPath);
             horizontalselectedView.setChoosePosition(0);
         }
     }

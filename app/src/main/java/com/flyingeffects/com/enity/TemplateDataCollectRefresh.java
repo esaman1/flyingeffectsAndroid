@@ -2,8 +2,20 @@ package com.flyingeffects.com.enity;
 
 import java.io.Serializable;
 
-public class templateDataCollectRefresh implements Serializable {
+/**
+ * @author 111
+ */
+public class TemplateDataCollectRefresh implements Serializable {
+    private boolean isSeleted;
+    private int position;
+    //0模板收藏  1//我上传的背景,2//收藏背景,3 模板,4, 背景
+    private int from;
 
+    public TemplateDataCollectRefresh(int position, boolean isSeleted, int from) {
+        this.position = position;
+        this.isSeleted = isSeleted;
+        this.from = from;
+    }
 
     public int getPosition() {
         return position;
@@ -13,14 +25,6 @@ public class templateDataCollectRefresh implements Serializable {
         this.position = position;
     }
 
-
-
-
-
-    private int position;
-    private int zanCount;
-
-
     public int getFrom() {
         return from;
     }
@@ -29,12 +33,6 @@ public class templateDataCollectRefresh implements Serializable {
         this.from = from;
     }
 
-
-
-    //0模板收藏  1//我上传的背景,2//收藏背景,3 模板,4, 背景
-    private int from;
-
-
     public boolean isSeleted() {
         return isSeleted;
     }
@@ -42,14 +40,5 @@ public class templateDataCollectRefresh implements Serializable {
     public void setSeleted(boolean seleted) {
         isSeleted = seleted;
     }
-
-    private boolean isSeleted;
-
-    public templateDataCollectRefresh(int position, boolean isSeleted, int from ) {
-        this.position = position;
-        this.isSeleted = isSeleted;
-        this.from=from;
-    }
-
 
 }

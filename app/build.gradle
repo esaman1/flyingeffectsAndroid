@@ -222,6 +222,8 @@ dependencies {
 
     //face sdk
     implementation(name: 'faceSdk', ext: 'aar')
+
+    implementation 'com.xj.android:anchortask:1.0.0'
 }
 
 

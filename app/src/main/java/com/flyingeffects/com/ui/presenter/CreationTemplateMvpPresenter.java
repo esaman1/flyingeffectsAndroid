@@ -29,8 +29,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void ChangeTextStyle(String path, int type,String title){
-        creationTemplatemodel.ChangeTextStyle(path,type,title);
+    public void changeTextStyle(String path, int type, String title){
+        creationTemplatemodel.changeTextStyle(path,type,title);
     }
 
     public void onclickRelativeLayout(){
@@ -136,8 +136,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
-    public void ItemClickForStickView(AnimStickerModel stickView) {
-        creationTemplatemvpView.ItemClickForStickView(stickView);
+    public void itemClickForStickView(AnimStickerModel stickView) {
+        creationTemplatemvpView.itemClickForStickView(stickView);
     }
 
     @Override
@@ -146,8 +146,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
-    public void ChooseMusicIndex(int index) {
-        creationTemplatemvpView.ChooseMusicIndex(index);
+    public void chooseMusicIndex(int index) {
+        creationTemplatemvpView.chooseMusicIndex(index);
     }
 
     @Override

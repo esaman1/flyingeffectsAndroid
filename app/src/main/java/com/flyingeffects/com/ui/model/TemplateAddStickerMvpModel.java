@@ -68,7 +68,6 @@ import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,7 +84,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.viewpager.widget.ViewPager;
 
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -119,7 +117,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
     private TemplateGridViewAdapter gridAdapter;
     private ViewPager viewPager;
-    private backgroundDraw backgroundDraw;
+    private BackgroundDraw backgroundDraw;
     /**
      * 默认视频时长,如果没选择背景的时候会用到
      */
@@ -320,13 +318,13 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
      */
     public void ChangeTextFrame(String textBjPath, String textFramePath, String Frametitle) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(textBjPath, textFramePath, Frametitle);
+            nowChooseStickerView.changeTextFrame(textBjPath, textFramePath, Frametitle);
         }
     }
 
     public void ChangeTextFrame(String color0, String color1, String textFramePath, String Frametitle) {
         if (nowChooseStickerView.getIsTextSticker()) {
-            nowChooseStickerView.ChangeTextFrame(color0, color1, textFramePath, Frametitle);
+            nowChooseStickerView.changeTextFrame(color0, color1, textFramePath, Frametitle);
         }
     }
 
@@ -1043,28 +1041,28 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         if (isCopy && copyStickerView != null) {
             if (copyStickerView.getIsTextSticker()) {
                 //是否是图片文字效果
-                if (copyStickerView.GetIsChooseTextBjEffect()) {
-                    if (copyStickerView.GetOpenThePattern()) {
+                if (copyStickerView.getIsChooseTextBjEffect()) {
+                    if (copyStickerView.getOpenThePattern()) {
                         //当前有边框
-                        stickView.ChangeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath(), copyStickerView.GetTextFrameTitle());
+                        stickView.changeTextFrame(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getBjFramePath(), copyStickerView.getTextFrameTitle());
                     } else {
                         if (!TextUtils.isEmpty(copyStickerView.getTypefaceBitmapPath())) {
-                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(), copyStickerView.GetTextEffectTitle());
+                            stickView.setTextBitmapStyle(copyStickerView.getTypefaceBitmapPath(), copyStickerView.getTextEffectTitle());
                         }
                     }
                 } else {
-                    ArrayList<String> colors = copyStickerView.GetTextColors();
-                    if (copyStickerView.GetOpenThePattern()) {
-                        nowChooseStickerView.ChangeTextFrame(colors.get(0), colors.get(1), copyStickerView.GetTextEffectTitle());
+                    ArrayList<String> colors = copyStickerView.getTextColors();
+                    if (copyStickerView.getOpenThePattern()) {
+                        nowChooseStickerView.changeTextFrame(colors.get(0), colors.get(1), copyStickerView.getTextEffectTitle());
                     } else {
-                        stickView.setTextPaintColor(colors.get(0), colors.get(1), copyStickerView.GetTextEffectTitle());
+                        stickView.setTextPaintColor(colors.get(0), colors.get(1), copyStickerView.getTextEffectTitle());
                     }
                 }
                 if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
-                    stickView.setTextStyle(copyStickerView.getTypefacePath(), copyStickerView.GetTextStyleTitle());
+                    stickView.setTextStyle(copyStickerView.getTypefacePath(), copyStickerView.getTextStyleTitle());
                 }
                 stickView.setStickerText(copyStickerView.getStickerText());
-                stickView.SetTextAngle(copyStickerView.getRotateAngle());
+                stickView.setTextAngle(copyStickerView.getRotateAngle());
                 stickView.setScale(copyStickerView.getCopyScale());
                 stickView.setCenter(copyStickerView.getCenterXAdd30(), copyStickerView.getCenterYAdd30());
             } else {
@@ -1250,7 +1248,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     listAllSticker.clear();
                     cutSuccessNum = 0;
                     cutVideoPathList.clear();
-                    backgroundDraw = new backgroundDraw(context, mVideoPath, videoVoicePath, "", 0, 0, 0, new backgroundDraw.saveCallback() {
+                    backgroundDraw = new BackgroundDraw(context, mVideoPath, videoVoicePath, "", 0, 0, 0, new BackgroundDraw.saveCallback() {
                         @Override
                         public void saveSuccessPath(String path, int progress) {
                             if (!isDestroy) {
@@ -1362,7 +1360,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
         if ((titleStyle != null && titleStyle.size() > 0) || (titleEffect != null && titleEffect.size() > 0)) {
             StatisticsEventAffair.getInstance().setFlag(context, "20_mb_text_save_save");
-
         }
 
 
@@ -1375,7 +1372,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 .setAdStatus(CommonMessageDialog.AD_STATUS_BOTTOM)
                 .setAdId(AdConfigs.AD_IMAGE_DIALOG_OPEN_VIDEO)
                 .setTitle("亲爱的友友")
-                .setMessage("这个模板需要观看几秒广告")
+                .setMessage("模板需要观看几秒广告")
                 .setMessage2("「看完后就能一件保存视频」")
                 .setPositiveButton("观看广告并保存")
                 .setNegativeButton("取消")

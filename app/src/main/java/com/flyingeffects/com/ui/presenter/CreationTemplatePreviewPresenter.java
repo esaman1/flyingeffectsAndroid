@@ -9,7 +9,6 @@ import com.flyingeffects.com.ui.model.CreationTemplatePreviewModel;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
-import com.orhanobut.hawk.Hawk;
 ;
 
 
@@ -42,7 +41,7 @@ public class CreationTemplatePreviewPresenter extends BasePresenter implements C
 
 
     public void initTimer(){
-        CreationTemplatePreviewModel.ToInitTimer();
+        CreationTemplatePreviewModel.toInitTimer();
     }
 
     public void requestData(){

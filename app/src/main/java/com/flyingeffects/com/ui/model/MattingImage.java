@@ -250,11 +250,9 @@ public class MattingImage {
         void isSuccess(boolean isSuccess, Bitmap bp);
     }
 
-
     public interface mattingStatusForMultiple {
         void isSuccess(boolean isSuccess, byte[] bytes);
     }
-
 
     /*
      * 获取位图的YUV数据
@@ -307,12 +305,12 @@ public class MattingImage {
                 // if (v > 255)
                 // v = 255;
                 // 调整
-                y = y < 16 ? 16 : (y > 255 ? 255 : y);
-                u = u < 0 ? 0 : (u > 255 ? 255 : u);
-                v = v < 0 ? 0 : (v > 255 ? 255 : v);
+                y = y < 16 ? 16 : (Math.min(y, 255));
+                u = u < 0 ? 0 : (Math.min(u, 255));
+                v = v < 0 ? 0 : (Math.min(v, 255));
                 // 赋值
                 yuv[i * width + j] = (byte) y;
-                yuv[len + (i >> 1) * width + (j & ~1) + 0] = (byte) u;
+                yuv[len + (i >> 1) * width + (j & ~1)] = (byte) u;
                 yuv[len + +(i >> 1) * width + (j & ~1) + 1] = (byte) v;
             }
         }

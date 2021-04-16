@@ -97,6 +97,11 @@ import static com.flyingeffects.com.constans.BaseConstans.getChannel;
  */
 public class HomeMainActivity extends FragmentActivity {
     private static final String TAG = "HomeMainActivity";
+
+    private static final String[] CATCH_DIRECTORY = {"dynamic", "runCatch", "def", "imageCopy", "faceFolder", "faceMattingFolder",
+            "soundFolder", "cacheMattingFolder", "ExtractFrame", "DownVideo", "TextFolder", "toHawei", "downVideoForMusic",
+            "downSoundForMusic", "downCutSoundForMusic", "fontStyle", "DressUpFolder"};
+
     private final ImageView[] mIvMenuBack = new ImageView[4];
     private final TextView[] tv_main = new TextView[4];
     private final int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
@@ -109,7 +114,7 @@ public class HomeMainActivity extends FragmentActivity {
     private NoSlidingViewPager viewpager_home;
 
     private Context mContext;
-//    private boolean mCancelBtnPressed;
+    private boolean mCancelBtnPressed;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -450,26 +455,14 @@ public class HomeMainActivity extends FragmentActivity {
         LanSongFileUtil.deleteDefaultDir();
         //清理外部sdk
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("dynamic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("runCatch"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("def"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("imageCopy"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("faceFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("faceMattingFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("soundFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("DownVideo"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("TextFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("toHawei"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downVideoForMusic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downSoundForMusic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downCutSoundForMusic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("fontStyle"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("DressUpFolder"));
+            for (String s : CATCH_DIRECTORY) {
+                DataCleanManager.deleteFilesByDirectory(getExternalFilesDir(s));
+            }
         }
 
     }
+
+
 
     private final NoDoubleClickListener listener = new NoDoubleClickListener() {
         @Override
@@ -566,10 +559,7 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void exitPressAgain() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Toast.makeText(ThisMain, "再点一次退出程序" +
-                    "" +
-                    "" +
-                    "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ThisMain, "再点一次退出程序", Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
         } else {
             finish();
@@ -586,7 +576,8 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void showBackMessage() {
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_quit_app");
-        CommonMessageDialog.getBuilder(mContext)
+        mCancelBtnPressed = false;
+        CommonMessageDialog dialog = CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
                 .setAdId(AdConfigs.AD_IMAGE_EXIT)
                 .setPositiveButton("狠心退出")
@@ -595,17 +586,26 @@ public class HomeMainActivity extends FragmentActivity {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         dialog.dismiss();
-                        finish();
                     }
 
                     @Override
                     public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        mCancelBtnPressed = true;
                         dialog.dismiss();
                     }
                 })
-                .build().show();
+                .setDialogDismissListener(new CommonMessageDialog.DialogDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        if (!mCancelBtnPressed) {
+                            finish();
+                        }
+                    }
+                })
+                .build();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
-
 
 
     @Override
@@ -613,9 +613,6 @@ public class HomeMainActivity extends FragmentActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         // 获取到Activity下的Fragment
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        if (fragments == null) {
-            return;
-        }
         // 查找在Fragment中onRequestPermissionsResult方法并调用
         for (Fragment fragment : fragments) {
             if (fragment != null) {
@@ -672,25 +669,26 @@ public class HomeMainActivity extends FragmentActivity {
         params.put("user_id", BaseConstans.GetUserId());
         Observable ob = Api.getDefault().getAllMessageNum(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<messageCount>(this) {
-            @Override
-            protected void onSubError(String message) {
-                ToastUtil.showToast(message);
-            }
-
-            @Override
-            protected void onSubNext(messageCount data) {
-                if (message_count != null) {
-                    String allCount = data.getAll_num();
-                    int intAllCount = Integer.parseInt(allCount);
-                    if (intAllCount == 0) {
-                        message_count.setVisibility(View.GONE);
-                    } else {
-                        message_count.setVisibility(View.VISIBLE);
-                        message_count.setText(intAllCount + "");
+                    @Override
+                    protected void onSubError(String message) {
+                        ToastUtil.showToast(message);
                     }
-                }
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+                    @Override
+                    protected void onSubNext(messageCount data) {
+                        if (message_count != null) {
+                            String allCount = data.getAll_num();
+                            int intAllCount = Integer.parseInt(allCount);
+                            if (intAllCount == 0) {
+                                message_count.setVisibility(View.GONE);
+                            } else {
+                                message_count.setVisibility(View.VISIBLE);
+                                message_count.setText(intAllCount + "");
+                            }
+                        }
+                    }
+                }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject,
+                false, true, false);
     }
 
 
@@ -724,7 +722,6 @@ public class HomeMainActivity extends FragmentActivity {
         }
     }
 
-
     /**
      * description ：统计手机信息
      * creation date: 2020/12/10
@@ -737,6 +734,7 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().add_active(BaseConstans.getRequestHead(params));
         LogUtil.d("OOM", "用户ip=" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(HomeMainActivity.this) {
+
             @Override
             protected void onSubError(String message) {
 

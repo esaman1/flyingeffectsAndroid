@@ -165,7 +165,7 @@ public class CreationTemplatePreviewModel {
     }
 
 
-    public void ToInitTimer() {
+    public void toInitTimer() {
         initTimer(updateCursorIntervalMs);
     }
 

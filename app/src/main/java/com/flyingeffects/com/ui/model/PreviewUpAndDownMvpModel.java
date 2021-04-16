@@ -363,7 +363,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
     /**
      * 模板操作行为统计
      *
@@ -887,7 +886,7 @@ public class PreviewUpAndDownMvpModel {
                     });
                 }
             }));
-            manage.DownloadVideo(path, videoName);
+            manage.downloadVideo(path, videoName);
         });
     }
 
@@ -1068,8 +1067,6 @@ public class PreviewUpAndDownMvpModel {
     public void GetDressUpPath(List<String> paths) {
         callback.getDressUpPathResult(paths);
     }
-
-
 
 
     /**

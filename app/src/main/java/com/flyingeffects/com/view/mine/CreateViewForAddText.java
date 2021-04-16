@@ -455,7 +455,7 @@ public class CreateViewForAddText {
                         callback.isSuccess(name, type, title);
                         WaitingDialog.closeProgressDialog();
                     });
-                    manage.DownloadVideo(path, name);
+                    manage.downloadVideo(path, name);
                 });
             }
         }
@@ -493,7 +493,7 @@ public class CreateViewForAddText {
                     DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> {
                         callback.isSuccess(name, 1);
                     });
-                    manage.DownloadVideo(path, name);
+                    manage.downloadVideo(path, name);
                 });
             }
         }

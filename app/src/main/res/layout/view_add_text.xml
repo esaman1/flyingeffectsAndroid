@@ -1,85 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_add_text_style"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/ll_add_text_style"
     android:layout_alignParentBottom="true"
+    android:orientation="vertical"
     android:visibility="gone"
-    android:orientation="vertical">
+    tools:showIn="@layout/act_creation_template_edit">
+
     <View
         android:id="@+id/view_transparent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent" />
+
     <LinearLayout
+        android:id="@+id/ll_add_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/ll_add_text"
-        android:background="#181818">
+        android:background="#181818"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:singleLine="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="5dp"
-        android:padding="5dp"
-        android:background="@drawable/stroke_editext_add_text"
-        android:textColor="@color/soft_gray"
-        android:hint="输入文本"
-        android:textColorHint="@color/soft_text"
-        android:textSize="14sp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="47dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
-
-        <ImageView
-            android:id="@+id/iv_delete_all_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:padding="5dp"
-            android:src="@mipmap/text_delete_all" />
-        <HorizontalScrollView
+        <EditText
+            android:id="@+id/edit_text"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_gravity="center">
+            android:layout_height="42dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/stroke_editext_add_text"
+            android:hint="输入文本"
+            android:padding="5dp"
+            android:singleLine="true"
+            android:textColor="@color/soft_gray"
+            android:textColorHint="@color/soft_text"
+            android:textSize="14sp" />
 
-            <LinearLayout
-                android:id="@+id/ll_add_child_text"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="47dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:id="@+id/iv_delete_all_text"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:padding="5dp"
+                android:src="@mipmap/text_delete_all" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:orientation="horizontal" />
-        </HorizontalScrollView>
+                android:layout_gravity="center"
+                android:layout_weight="1">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:textColor="@color/capture_btn_blue"
-            android:id="@+id/iv_down"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:textStyle="bold"
-            android:text="完成"
-            android:layout_gravity="right|center_vertical"
-            android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:id="@+id/ll_add_child_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/iv_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingTop="3dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="3dp"
+                android:text="完成"
+                android:textColor="@color/capture_btn_blue"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

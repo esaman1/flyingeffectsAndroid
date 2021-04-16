@@ -54,7 +54,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
 
     private FragmentManager manager;
 
-    private DressUpMvpPresenter Presenter;
+    private DressUpMvpPresenter mPresenter;
 
     @Override
     protected int getContentLayout() {
@@ -63,7 +63,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
 
     @Override
     protected void initView() {
-        Presenter = new DressUpMvpPresenter(getActivity(), this);
+        mPresenter = new DressUpMvpPresenter(getActivity(), this);
     }
 
     @Override
@@ -107,14 +107,10 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                         list.add(fragment);
                     } else {
                         if (data.get(i).getCategory() != null && !data.get(i).getCategory().isEmpty()) {
-                            bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
-                            bundle.putSerializable("id", data.get(i).getId());
-                            bundle.putInt("type", 2);
-                            bundle.putSerializable("homePageNum", 2);
-                            bundle.putSerializable("num", i);
-                            bundle.putString("categoryTabName", data.get(i).getName());
+                            Bundle bundle1 = SecondaryTypeFragment.buildArgument(data.get(i).getCategory(), SecondaryTypeFragment.BUNDLE_VALUE_TYPE_FACE, data.get(i).getId(),
+                                    -1, -1, 2, null, data.get(i).getName());
                             SecondaryTypeFragment fragment = new SecondaryTypeFragment();
-                            fragment.setArguments(bundle);
+                            fragment.setArguments(bundle1);
                             list.add(fragment);
                         } else {
                             bundle.putSerializable("id", data.get(i).getId());
@@ -128,6 +124,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                         }
                     }
                 }
+
                 home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
                 viewpager.setAdapter(adapter);
                 viewpager.setOffscreenPageLimit(1);
@@ -151,6 +148,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
 
                     }
                 });
+
                 tabLayout.setupWithViewPager(viewpager);
                 for (int i = 0; i < tabLayout.getTabCount(); i++) {
                     tabLayout.getTabAt(i).setCustomView(R.layout.item_home_tab);
@@ -163,6 +161,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                         tvTabText.setTextColor(Color.parseColor("#ffffff"));
                     }
                 }
+
                 tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                     @Override
                     public void onTabSelected(TabLayout.Tab tab) {
@@ -185,6 +184,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                     public void onTabReselected(TabLayout.Tab tab) {
 
                     }
+
                 });
 
             }
@@ -195,7 +195,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
     public void onResume() {
         super.onResume();
         if (data == null || data.size() == 0) {
-            Presenter.getFragmentList();
+            mPresenter.getFragmentList();
         }
     }
 }

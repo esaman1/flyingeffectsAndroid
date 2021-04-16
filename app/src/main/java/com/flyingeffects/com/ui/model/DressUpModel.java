@@ -195,11 +195,11 @@ public class DressUpModel {
     }
 
 
-    public void RequestDressUp(String uploadPath, String template_id) {
+    public void requestDressUp(String uploadPath, String templateId) {
         progress = new WaitingDialog_progress(context);
         progress.openProgressDialog("正在换装中...");
 
-        requestDressUpCallback(uploadPath, template_id);
+        requestDressUpCallback(uploadPath, templateId);
     }
 
 
@@ -208,10 +208,10 @@ public class DressUpModel {
      * creation date: 2020/12/4
      * user : zhangtongju
      */
-    private void requestDressUpCallback(String path, String template_id) {
+    private void requestDressUpCallback(String path, String templateId) {
         HashMap<String, String> params = new HashMap<>();
         params.put("image", path);
-        params.put("template_id", template_id);
+        params.put("template_id", templateId);
 
 //        params.put("request_id", request_id);
         Observable ob = Api.getDefault().humanMerageResult(BaseConstans.getRequestHead(params));
@@ -282,7 +282,6 @@ public class DressUpModel {
                                 }
                             }
                         });
-
                     }
 
                     @Override
@@ -343,7 +342,7 @@ public class DressUpModel {
     private MattingImage mattingImage;
 
     private void toKeepFace(Bitmap path, int allSize) {
-        mattingImage.mattingImageForMultiple2(path,  (isSuccess, bp) -> {
+        mattingImage.mattingImageForMultiple2(path, (isSuccess, bp) -> {
             downSuccessNum++;
             LogUtil.d("OOM", "正在抠图" + downSuccessNum);
             String fileName = mCatchFolder + File.separator + UUID.randomUUID() + ".png";
@@ -364,6 +363,5 @@ public class DressUpModel {
 
         });
     }
-
 
 }

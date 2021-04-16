@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.androidquery.util.Common;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
@@ -26,7 +25,6 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.StimulateControlManage;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplatePreviewMvpView;
-import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplatePreviewPresenter;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
@@ -78,7 +76,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     private boolean isIntoPause = false;
 
-    private CreationTemplatePreviewPresenter Presenter;
+    private CreationTemplatePreviewPresenter mPresenter;
 
     @BindView(R.id.timeLineBar)
     RangeSeekBarView mRangeSeekBarView;
@@ -91,7 +89,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
     @BindView(R.id.iv_play)
     ImageView iv_play;
-
 
     @BindView(R.id.tv_duration)
     TextView tv_duration;
@@ -131,7 +128,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             LogUtil.d("OOM3", "titleFrameSize=" + titleFrame.get(0));
         }
         nowUiIsLandscape = bundle.getBoolean("nowUiIsLandscape", false);
-        Presenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
+        mPresenter = new CreationTemplatePreviewPresenter(this, this, imagePath);
         VideoInfo videoInfo = getVideoInfo.getInstance().getRingDuring(imagePath);
         LogUtil.d("OOM", "TimeUtils.timeParse(videoInfo.getDuration())=" + TimeUtils.timeParse(videoInfo.getDuration()));
         tv_duration.setText(TimeUtils.timeParse(videoInfo.getDuration()));
@@ -264,8 +261,8 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     showMessageDialog();
                 } else {
                     videoPause();
-                    Presenter.destroyTimer();
-                    Presenter.toSaveVideo(false, nowUiIsLandscape);
+                    mPresenter.destroyTimer();
+                    mPresenter.toSaveVideo(false, nowUiIsLandscape);
                 }
                 break;
             case R.id.rela_parent_content:
@@ -389,9 +386,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             }
             isIntoPause = false;
         }
-
     }
-
 
     private void initExo() {
         exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplatePreviewActivity.this);
@@ -406,10 +401,10 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     case Player.STATE_READY:
                         videoPlay();
                         if (!isIntoInitTrimmer) {
-                            Presenter.setUpTrimmer(mRangeSeekBarView, mTimeLineView, progressCursor, exoPlayer.getDuration());
+                            mPresenter.setUpTrimmer(mRangeSeekBarView, mTimeLineView, progressCursor, exoPlayer.getDuration());
                             isIntoInitTrimmer = true;
                         }
-                        Presenter.initTimer();
+                        mPresenter.initTimer();
                         break;
                     case Player.STATE_ENDED:
                         seekTo(0);
@@ -580,13 +575,13 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "video_ad_alert_request_fail");
                     LogUtil.d("OOM", "onVideoAdError" + s);
                     videoPause();
-                    Presenter.toSaveVideo(false, nowUiIsLandscape);
+                    mPresenter.toSaveVideo(false, nowUiIsLandscape);
                 }
 
                 @Override
                 public void onVideoAdClose() {
                     videoPause();
-                    Presenter.toSaveVideo(true, nowUiIsLandscape);
+                    mPresenter.toSaveVideo(true, nowUiIsLandscape);
                 }
 
                 @Override
@@ -611,7 +606,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         } else {
             saveToAlbum(imagePath, true);
         }
-
 
     }
 

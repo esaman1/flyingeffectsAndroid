@@ -57,7 +57,6 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     home_fagMvpPresenter Presenter;
     @BindView(R.id.tl_tabs)
     TabLayout tabLayout;
-
     @BindView(R.id.viewpager_bj)
     ViewPager viewpager;
     @BindView(R.id.tv_search_hint)
@@ -70,12 +69,10 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     private ArrayList<String> listSearchKey = new ArrayList<>();
     int listSearchKeyIndex = 0;
 
-
     @Override
     protected int getContentLayout() {
         return R.layout.fragment_template;
     }
-
 
     @Override
     protected void initView() {
@@ -92,7 +89,6 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
         manager = getChildFragmentManager();
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -107,13 +103,11 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
             if (mScheduledExecutorService != null) {
                 mScheduledExecutorService.shutdownNow();
                 mScheduledExecutorService = null;
-
             }
             pollingSetSearchText();
         } else {
             requestKeywordList();
         }
-
     }
 
 
@@ -129,14 +123,10 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 for (int i = 0; i < data.size(); i++) {
                     Bundle bundle = new Bundle();
                     if (data.get(i).getCategory() != null && !data.get(i).getCategory().isEmpty()) {
-                        bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
-                        bundle.putInt("type", 0);
-                        bundle.putSerializable("id", data.get(i).getId());
-                        bundle.putSerializable("homePageNum", 1);
-                        bundle.putString("categoryTabName", data.get(i).getName());
-                        bundle.putSerializable("num", i);
+                        Bundle bundle1 = SecondaryTypeFragment.buildArgument(data.get(i).getCategory(), SecondaryTypeFragment.BUNDLE_VALUE_TYPE_TEMPLATE, data.get(i).getId(),
+                                -1, i, 1, null, data.get(i).getName());
                         SecondaryTypeFragment fragment = new SecondaryTypeFragment();
-                        fragment.setArguments(bundle);
+                        fragment.setArguments(bundle1);
                         list.add(fragment);
                     } else {
                         bundle.putSerializable("id", data.get(i).getId());

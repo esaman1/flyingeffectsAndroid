@@ -2,7 +2,6 @@ package com.flyingeffects.com.base;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,24 +9,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.flyingeffects.com.enity.CommonNewsBean;
 import com.flyingeffects.com.enity.HomeChoosePageListener;
 import com.flyingeffects.com.enity.SecondChoosePageListener;
 import com.flyingeffects.com.manager.AdConfigs;
-import com.flyingeffects.com.ui.interfaces.PermissionListener;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.nineton.ntadsdk.bean.FeedAdConfigBean;
 import com.nineton.ntadsdk.itr.FeedAdCallBack;
 import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.nineton.ntadsdk.utils.DeviceUtil;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -228,8 +221,7 @@ public abstract class BaseFragment extends Fragment implements IActivity {
 //                            break;
 //                    }
 
-
-                    callback.GetAdCallback(feedAdResultBean);
+                    callback.getAdCallback(feedAdResultBean);
                 }
 
                 @Override
@@ -240,7 +232,7 @@ public abstract class BaseFragment extends Fragment implements IActivity {
                 @Override
                 public void onFeedAdClose(int type, int adIndex) {
                     LogUtil.d("OOM2", "onFeedAdClose=");
-                    callback.ChoseAdBack(type, adIndex);
+                    callback.choseAdBack(type, adIndex);
                 }
 
                 @Override
@@ -262,9 +254,9 @@ public abstract class BaseFragment extends Fragment implements IActivity {
 
 
     public interface RequestFeedBack {
-        void GetAdCallback(FeedAdConfigBean.FeedAdResultBean bean);
+        void getAdCallback(FeedAdConfigBean.FeedAdResultBean bean);
 
-        void ChoseAdBack(int type, int adIndex);
+        void choseAdBack(int type, int adIndex);
     }
 
 

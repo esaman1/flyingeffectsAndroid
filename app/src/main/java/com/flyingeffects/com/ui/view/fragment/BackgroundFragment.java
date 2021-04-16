@@ -48,7 +48,6 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.shixing.sxve.ui.albumType;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -172,14 +171,10 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                         list.add(fragment);
                     } else {
                         if (data.get(i).getCategory() != null && !data.get(i).getCategory().isEmpty()) {
-                            bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
-                            bundle.putInt("type", 1);
-                            bundle.putSerializable("id", data.get(i).getId());
-                            bundle.putInt("from", 1);
-                            bundle.putSerializable("num", i);
-                            bundle.putString("categoryTabName", data.get(i).getName());
+                            Bundle bundle1 = SecondaryTypeFragment.buildArgument(data.get(i).getCategory(), SecondaryTypeFragment.BUNDLE_VALUE_TYPE_BACKGROUND, data.get(i).getId(),
+                                    1, i, -1, null, data.get(i).getName());
                             SecondaryTypeFragment fragment = new SecondaryTypeFragment();
-                            fragment.setArguments(bundle);
+                            fragment.setArguments(bundle1);
                             list.add(fragment);
                         } else {
                             bundle.putSerializable("id", data.get(i).getId());
@@ -296,7 +291,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     TemplateDown templateDown = new TemplateDown(new TemplateDown.DownFileCallback() {
                         @Override
                         public void isSuccess(String filePath) {
-                            IntoTemplateActivity(filePath);
+                            intoTemplateActivity(filePath);
                             LogUtil.d(TAG, "Background template filePath = " + filePath);
                         }
 
@@ -313,11 +308,11 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
     }
 
-    public void IntoTemplateActivity(String path) {
+    public void intoTemplateActivity(String path) {
         if (getActivity() != null) {
             mLoadingDialog.dismiss();
-            Observable.just(path).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> toPhotographAlbum(template_item, path));
-
+            Observable.just(path).subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(s -> toPhotographAlbum(template_item, path));
         }
     }
 
