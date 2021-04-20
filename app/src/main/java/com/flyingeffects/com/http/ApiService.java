@@ -7,6 +7,7 @@ import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.FontEnity;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.enity.ImageFrameEntity;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MineCommentEnity;
 import com.flyingeffects.com.enity.MineZanEnity;
@@ -36,7 +37,6 @@ import rx.Observable;
  * Created by zhangtongju
  * on 2016/10/9 17:09.
  */
-
 public interface ApiService {
 
     //登录
@@ -178,8 +178,6 @@ public interface ApiService {
     Observable<HttpResult<Object>> addComment(@FieldMap Map<String, String> params);
 
 
-
-
     @FormUrlEncoded
     @POST("/api/message/allMessageNumNew")
     Observable<HttpResult<messageCount>> getAllMessageNum(@FieldMap Map<String, String> params);
@@ -245,13 +243,12 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/mearge/imageBorder")
-    Observable<HttpResult<Object>> imageBorder(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<ImageFrameEntity>>> imageBorder(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded
     @POST("/api/photo/photoList")
     Observable<HttpResult<List<NewFragmentTemplateItem>>> photoList(@FieldMap Map<String, String> params);
-
 
 //
 //    //用戶的关注数或者粉丝数
@@ -259,12 +256,10 @@ public interface ApiService {
 //    @POST("/api/message/followerList")
 //    Observable<HttpResult<List<MyProduction>>> followerList(@FieldMap Map<String, String> params);
 
-
     //我发布的作品和我喜欢的作品
     @FormUrlEncoded
     @POST("/api/message/getMyProduction")
     Observable<HttpResult<List<NewFragmentTemplateItem>>> getMyProduction(@FieldMap Map<String, String> params);
-
 
     //请求我的评论列表
     @FormUrlEncoded
@@ -286,7 +281,6 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/followUser")
     Observable<HttpResult<Object>> followUser(@FieldMap Map<String, String> params);
-
 
     @FormUrlEncoded
     @POST("/api/version/versionCheck")
@@ -414,11 +408,6 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/addTimes")
     Observable<HttpResult<Object>> addTimes(@FieldMap Map<String,String> params);
-
-
-
-
-
 
 
 }

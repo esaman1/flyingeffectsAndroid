@@ -138,7 +138,7 @@ public class StickerFragment extends BaseFragment {
                             downSticker(listForSticker.get(position).getImage(), listForSticker.get(position).getId(), position, listForSticker.get(position).getTitle());
                         }
                     }
-                },200);
+                }, 200);
 
             }
         });
@@ -267,6 +267,9 @@ public class StickerFragment extends BaseFragment {
             @Override
             protected void onSubNext(ArrayList<StickerList> list) {
                 finishData();
+                if (isRefresh) {
+                    listForSticker.clear();
+                }
                 if (!isRefresh && list.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getContext().getResources().getString(R.string.no_more_data));
                 }

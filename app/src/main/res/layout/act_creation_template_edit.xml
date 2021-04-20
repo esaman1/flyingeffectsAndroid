@@ -127,7 +127,6 @@
                     app:surface_type="texture_view"
                     app:use_controller="false" />
 
-
             </LinearLayout>
 
         </com.flyingeffects.com.view.MyScrollView>
@@ -156,7 +155,7 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:contentDescription="@string/app_name"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:src="@mipmap/green" />
         </RelativeLayout>
 
@@ -343,8 +342,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="相框"
-            android:visibility="gone"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_tiezhi"

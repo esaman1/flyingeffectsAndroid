@@ -45,12 +45,12 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
 
     public void ChangeTextLabe(String str){
-        creationTemplatemodel.ChangeTextLabe(str);
+        creationTemplatemodel.changeTextLabe(str);
     }
 
 
     public void ChangeTextColor(String color0, String color1,String title){
-        creationTemplatemodel.ChangeTextColor(color0,color1,title);
+        creationTemplatemodel.changeTextColor(color0,color1,title);
     }
 
     public void isEndTimer(){
@@ -58,13 +58,13 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     public void  ChangeTextFrame(String textBjPath, String textFramePath,String frameTitle){
-        creationTemplatemodel.ChangeTextFrame(textBjPath,textFramePath,frameTitle);
+        creationTemplatemodel.changeTextFrame(textBjPath,textFramePath,frameTitle);
     }
 
 
 
     public void ChangeTextFrame(String color0, String color1, String textFramePath,String frameTitle) {
-        creationTemplatemodel.ChangeTextFrame(color0,color1, textFramePath,frameTitle);
+        creationTemplatemodel.changeTextFrame(color0,color1, textFramePath,frameTitle);
     }
 
 
@@ -74,8 +74,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.addTextSticker();
     }
 
-    public void CheckedChanged(boolean isChecked){
-        creationTemplatemodel.CheckedChanged(isChecked);
+    public void checkedChanged(boolean isChecked){
+        creationTemplatemodel.checkedChanged(isChecked);
     }
 
     public void setAddChooseBjPath(String path){
@@ -114,8 +114,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void initBottomLayout(ViewPager viewPager,FragmentManager fragmentManager){
-        creationTemplatemodel.initBottomLayout(viewPager,fragmentManager);
+    public void initBottomLayout(ViewPager viewPager, FragmentManager fragmentManager, int from){
+        creationTemplatemodel.initBottomLayout(viewPager,fragmentManager,from);
     }
 
     public void initStickerView(String path,String originalPath){

@@ -229,11 +229,6 @@ public class SystemMessageDetailActivity extends BaseActivity {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
-
-
-
-
-
     private void finishData() {
         smartRefreshLayout.finishRefresh();
         smartRefreshLayout.finishLoadMore();
