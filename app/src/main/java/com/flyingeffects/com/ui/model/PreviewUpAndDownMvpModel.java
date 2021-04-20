@@ -49,6 +49,7 @@ import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
+import com.flyingeffects.com.ui.view.activity.MemeKeepActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.FileUtil;
@@ -1091,6 +1092,49 @@ public class PreviewUpAndDownMvpModel {
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+
+
+    /**
+     * description ：进行特殊模板的操作，可能为视频
+     * paths 选择的图片
+     * api_type特殊模板类型
+     * creation date: 2021/4/19
+     * user : zhangtongju
+     */
+    public void   ToDressUpSpecial(List<String> paths,int api_type){
+        Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            LogUtil.d("OOM3", "toDressUp");
+            DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
+                LogUtil.d("OOM3", "DressUpSpecialModel="+url);
+                if(!TextUtils.isEmpty(url)){
+                    if(url.contains("mp4")){
+                        //视频的话进入到gif 页面
+                        Intent intent = new Intent(context, MemeKeepActivity.class);
+                        intent.putExtra("videoPath", url);
+                        intent.putExtra("title", "");
+                        intent.putExtra("IsFrom", fromTo);
+                        context.startActivity(intent);
+
+                    }else{
+                        //进入到类似于换装页面
+                        Intent intent = new Intent(context, DressUpPreviewActivity.class);
+                        intent.putExtra("url", paths.get(0));
+                        intent.putExtra("template_id", "");
+                        intent.putExtra("localImage", url);
+                        intent.putExtra("isSpecial",true);
+                        intent.putExtra("templateTitle", "");
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        context.startActivity(intent);
+                    }
+                }
+
+            });
+            dressUpModel.toDressUp(paths, api_type);
+        });
+
     }
 
 

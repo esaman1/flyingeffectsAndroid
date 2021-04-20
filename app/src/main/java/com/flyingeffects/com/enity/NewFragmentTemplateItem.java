@@ -15,6 +15,18 @@ import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_TT
 
 public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
 
+
+    public int getApi_type() {
+        return api_type;
+    }
+
+    public void setApi_type(int api_type) {
+        this.api_type = api_type;
+    }
+
+   // 1变年龄 2女变男3男变女 4多图渐变 5图片驱动
+    int api_type;
+
     public static final String TEMPLATE_TYPE_TEMP = "1";
 
     public int getId() {
@@ -405,7 +417,7 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
         this.template_type = template_type;
     }
 
-    //1 模板 2 背景 2 换脸  4 换背景 5表情包
+    //1 模板 2 背景 3 换脸  4 换背景 5表情包
     private String template_type;
 
     public String getAdmin_id() {

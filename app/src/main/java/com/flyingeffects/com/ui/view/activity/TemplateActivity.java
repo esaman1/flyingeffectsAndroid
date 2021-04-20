@@ -97,7 +97,6 @@ import rx.schedulers.Schedulers;
 /**
  * 模板页面
  * 漫画和抠图gif比较特殊,
- *
  */
 public class TemplateActivity extends BaseActivity implements TemplateMvpView, AssetDelegate, AlbumChooseCallback {
     private static final String TAG = "TemplateActivity";
@@ -107,6 +106,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     public static final String INTENT_FROM_TO = "fromTo";
     public static final String INTENT_IS_PIC_NUM = "isPicNum";
     public static final String INTENT_TEMPLATE_ID = "templateId";
+    public static final String INTENT_IS_SPECIAL = "isSpecial";
     public static final String INTENT_TEMPLATE_FILE_PATH = "templateFilePath";
     public static final String INTENT_IMAGE_PATH = "paths";
     public static final String INTENT_VIDEO_TIME = "videoTime";
@@ -196,11 +196,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
     private String templateId;
 
-//    private String getCartoonPath;
 
     private static final int REQUEST_SINGLE_MEDIA = 11;
 
-//    private static final int REQUEST_SINGLE_MEDIA_VIDEO = 12;
     /**
      * 点击事件选择的组位置
      */
@@ -284,13 +282,21 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     /**
      * 当前是否是gif模板
      */
-    private boolean nowIsGifTemplate=false;
+    private boolean nowIsGifTemplate = false;
 
     /**
      * 如果是仿抖音一样的去唱歌，那么ui 界面需要修改，变成只有下一步功能
      */
     private boolean isToSing = false;
+
+    /**
+     * 和isToSing 类似，通过服务器来进行合成，页面没得预览功能
+     */
+    private boolean isSpecial = false;
+
     private LoadingDialog mLoadingDialog;
+
+    private int api_type;
 
     @Override
     protected int getLayoutId() {
@@ -298,12 +304,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-
     @Override
     protected void initView() {
         mContext = TemplateActivity.this;
         EventBus.getDefault().register(this);
-
         mLoadingDialog = buildProgressDialog();
         getLifecycle().addObserver(mLoadingDialog);
         initData();
@@ -311,18 +315,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         findViewById(R.id.tv_top_submit).setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tv_top_submit)).setText("下一步");
-
-
-
         //换装的话需要的素材数量就是后台返回的素材数量
         if (nowTemplateIsAnim == 1) {
             needAssetsCount = imgPath.size();
         }
-
         if (nowTemplateIsAnim == 2) {
             isToSing = true;
         }
-
         presenter = new TemplatePresenter(this, this, fromTo, templateName);
         LogUtil.d("OOM3", "initView");
 
@@ -414,8 +413,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
 
         //只是唱歌页面
-        if (isToSing) {
-//            relayout_bottom.setVisibility(View.GONE);
+        if (isToSing || isSpecial) {
             findViewById(R.id.ll_progress).setVisibility(View.GONE);
             findViewById(R.id.ll_viewpager_container).setVisibility(View.GONE);
         }
@@ -427,9 +425,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private void initData() {
         Bundle bundle = getIntent().getBundleExtra(TEMPLATE_BUNDLE_NAME);
         templateItem = (NewFragmentTemplateItem) getIntent().getSerializableExtra(TEMPLATE_ITEM_NAME);
-        String templateType=templateItem.getTemplate_type();
-        if(!TextUtils.isEmpty(templateType)&& "5".equals(templateType)){
-            nowIsGifTemplate=true;
+        String templateType = templateItem.getTemplate_type();
+        if (!TextUtils.isEmpty(templateType) && "5".equals(templateType)) {
+            nowIsGifTemplate = true;
         }
         if (bundle != null) {
             fromTo = bundle.getString(INTENT_FROM_TO);
@@ -444,9 +442,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             mOriginalPathList = bundle.getStringArrayList(INTENT_ORIGINAL_PATH);
             templateName = bundle.getString(INTENT_TEMPLATE_NAME);
             nowTemplateIsAnim = bundle.getInt(INTENT_IS_ANIME);
-            LogUtil.d(TAG, "picout=" + picout);
-            LogUtil.d(TAG, "templateName=" + templateName);
-            LogUtil.d(TAG, "templateFilePath = " + mTemplateFilePath);
+            api_type = bundle.getInt(INTENT_IS_SPECIAL);
+            if (api_type != 0) {
+                isSpecial = true;
+            }
         }
     }
 
@@ -1166,6 +1165,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                                 videoFusionModel.uploadFileToHuawei(path, templateId);
                             }
                         });
+                    } else if (isSpecial) {
+                        presenter.SaveSpecialTemplate(api_type);
                     } else {
                         LogUtil.d(TAG, "renderVideo");
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
@@ -1183,12 +1184,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         }
                         if (nowChooseMusic != 0) {
                             if (nowChooseMusic == 3) {
-                                presenter.renderVideo(mFolder.getPath(), downMusicPath, false, nowTemplateIsAnim, imgPath,nowIsGifTemplate);
+                                presenter.renderVideo(mFolder.getPath(), downMusicPath, false, nowTemplateIsAnim, imgPath, nowIsGifTemplate);
                             } else {
-                                presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false, nowTemplateIsAnim, imgPath,nowIsGifTemplate);
+                                presenter.renderVideo(mFolder.getPath(), nowSpliteMusic, false, nowTemplateIsAnim, imgPath, nowIsGifTemplate);
                             }
                         } else {
-                            presenter.renderVideo(mFolder.getPath(), mAudio1Path, false, nowTemplateIsAnim, imgPath,nowIsGifTemplate);
+                            presenter.renderVideo(mFolder.getPath(), mAudio1Path, false, nowTemplateIsAnim, imgPath, nowIsGifTemplate);
                         }
 
                         presenter.StatisticsToSave(templateId);
@@ -1547,10 +1548,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     changeMaterialCallbackForVideo(event.getOriginalPath(), event.getMattingPath(), true);
                     presenter.getButtomIcon(event.getOriginalPath());
                     changeMaterialMusic(event.getMattingPath());
-//                if(!switch_button.isChecked()){
-//                    new Handler().postDelayed(() -> switch_button.setChecked(true),500);
-//                }
-//                LogUtil.d("OOM","重新选择了抠图");
                 }
             }
             templateThumbForMusic.findViewById(R.id.ll_choose_0).setVisibility(View.VISIBLE);
@@ -1559,10 +1556,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         if (nowChooseMusic == 1) {
             //重新勾选音乐
-
             chooseMaterialMusic();
-
-
         }
 
     }
@@ -1628,7 +1622,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_edit),
                         getString(R.string.template_music)};
-            } else if (isToSing||nowIsGifTemplate) {
+            } else if (isToSing || nowIsGifTemplate || isSpecial) {
                 LogUtil.d("OOM3", "0000+");
                 titlesHasBj = new String[]{getString(R.string.template_edit)
                 };
@@ -1975,11 +1969,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
 
-
-
-    public static Intent buildIntent(Context context,List<String> paths,List<String> originalImagePath,
-                                     int isPicNum,String fromTo,int isPicOut,NewFragmentTemplateItem templateItem,
-                                     String templateFilePath){
+    public static Intent buildIntent(Context context, List<String> paths, List<String> originalImagePath,
+                                     int isPicNum, String fromTo, int isPicOut, NewFragmentTemplateItem templateItem,
+                                     String templateFilePath) {
         Intent intent = new Intent(context, TemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putStringArrayList(INTENT_IMAGE_PATH, (ArrayList<String>) paths);
@@ -1990,6 +1982,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         bundle.putInt(INTENT_IS_ANIME, templateItem.getIs_anime());
         bundle.putString(INTENT_TEMPLATE_NAME, templateItem.getTitle());
         bundle.putString(INTENT_TEMPLATE_ID, templateItem.getId() + "");
+        bundle.putInt(INTENT_IS_SPECIAL, templateItem.getApi_type());
         bundle.putString(INTENT_VIDEO_TIME, templateItem.getVideotime());
         bundle.putString(INTENT_TEMPLATE_FILE_PATH, templateFilePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

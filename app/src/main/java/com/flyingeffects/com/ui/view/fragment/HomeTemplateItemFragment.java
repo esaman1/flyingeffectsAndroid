@@ -27,7 +27,6 @@ import com.flyingeffects.com.ui.view.activity.webViewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
-import com.kwad.sdk.mvp.Presenter;
 import com.nineton.market.android.sdk.AppMarketHelper;
 import com.nineton.ntadsdk.bean.FeedAdConfigBean;
 import com.nineton.ntadsdk.manager.FeedAdManager;
@@ -121,7 +120,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                 if (allData.get(position).getIs_ad_recommend() == 1) {
                     String url = allData.get(position).getRemark();
                     StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_dl_click", allData.get(position).getTitle());
-                    LogUtil.d("OOM", url);
+                    //  LogUtil.d("OOM", url);
                     boolean result = AppMarketHelper.of(getActivity()).skipMarket(url);
                     if (!result) {
                         Intent intent = new Intent(getActivity(), webViewActivity.class);
@@ -147,20 +146,26 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                     //templateType 类型:1=模板,2=背景,3=换脸,4=换背景,5=表情包
                     if (!TextUtils.isEmpty(templateType)) {
 
-                        if ("3".equals(templateType) || "4".equals(templateType)) {
-                            intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                        int api_type = allData.get(position).getApi_type();
+                        if (api_type != 0) {
+                            //只要闪图页面，特殊模板，都走dressUp逻辑
+                            if (!"1".equals(templateType) && !"2".equals(templateType)) {
+                                intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                            }
+                            //只要模板页面，特殊模板，都走模板逻辑
+                            if ("1".equals(templateType)) {
+                                intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                            }
                         } else {
-                            intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                            if ("3".equals(templateType) || "4".equals(templateType)) {
+                                intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                            } else {
+                                intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                            }
                         }
-
                     } else {
                         intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                     }
-//                    if (fromType == 4) {
-//                        intent.putExtra("fromTo", FromToTemplate.DRESSUP);
-//                    } else {
-//                        intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
-//                    }
                     startActivity(intent);
                 }
             }
@@ -434,7 +439,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     public void onEventMainThread(BackgroundTemplateCollectionEvent event) {
         if (getActivity() != null) {
             if (fromType == 4 && !TextUtils.isEmpty(tabName) && tabName.equals("4")) {
-               mPresenter.RefreshAllData();
+                mPresenter.RefreshAllData();
             }
         }
 

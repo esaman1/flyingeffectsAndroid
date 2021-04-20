@@ -3,6 +3,7 @@ package com.flyingeffects.com.http;
 import com.flyingeffects.com.enity.ChooseMusic;
 import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.enity.DressUpSpecial;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.FontEnity;
 import com.flyingeffects.com.enity.HttpResult;
@@ -414,6 +415,13 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/addTimes")
     Observable<HttpResult<Object>> addTimes(@FieldMap Map<String,String> params);
+
+
+
+    /**腾讯api 联调，通过上传的图片，生成有趣的视频*/
+    @FormUrlEncoded
+    @POST("/api/Api/test")
+    Observable<HttpResult<DressUpSpecial>> ApiTest(@FieldMap Map<String,String> params);
 
 
 

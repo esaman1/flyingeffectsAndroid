@@ -81,6 +81,10 @@ public class DressUpPreviewActivity extends BaseActivity {
     private String localImage;
     private String templateTitle;
     /**
+     * 不是换脸，而是其他特殊类型页面
+     */
+    private boolean isSpecial;
+    /**
      * 换装切换次数
      */
     int dressupSwitchNumber = 0;
@@ -98,6 +102,7 @@ public class DressUpPreviewActivity extends BaseActivity {
         String urlPath = getIntent().getStringExtra("url");
         template_id = getIntent().getStringExtra("template_id");
         localImage = getIntent().getStringExtra("localImage");
+        isSpecial = getIntent().getBooleanExtra("isSpecial", false);
         templateTitle = getIntent().getStringExtra("templateTitle");
         tv_top_title.setText("上传清晰正脸照片最佳");
         showAndSaveImage(urlPath);
@@ -106,8 +111,9 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-
-
+        if (isSpecial) {
+            findViewById(R.id.dress_up_next).setVisibility(View.GONE);
+        }
     }
 
 

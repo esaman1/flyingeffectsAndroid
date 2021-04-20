@@ -74,6 +74,11 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
+    public void SaveSpecialTemplate(int api_type){
+        home_model.SaveSpecialTemplate(api_type);
+    }
+
+
     public void loadTemplate(String filePath, AssetDelegate delegate, int nowTemplateIsAnim, int nowTemplateIsMattingVideo,boolean isToSing) {
         home_model.loadTemplate(filePath, delegate, nowTemplateIsAnim, nowTemplateIsMattingVideo,isToSing);
     }

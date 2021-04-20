@@ -371,6 +371,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         mBinding.ibBack.setOnClickListener(this::onViewClick);
     }
 
+
     private void intoUserHome(int position) {
         Intent intent = new Intent(PreviewUpAndDownActivity.this, UserHomepageActivity.class);
         intent.putExtra("toUserId", allData.get(position).getAdmin_id());
@@ -920,6 +921,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     private void hasLoginToNext() {
         mMvpPresenter.requestMessageStatistics("1", "", templateId);
+
         switch (mOldFromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
                 StatisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
@@ -960,7 +962,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 }
                 break;
             case FromToTemplate.DRESSUP:
-                AlbumManager.chooseImageAlbum(this, 1, SELECTALBUMFROMDressUp, this, "");
+                AlbumManager.chooseImageAlbum(this, templateItem.getDefaultnum(), SELECTALBUMFROMDressUp, this, "");
                 break;
             default:
                 break;
@@ -1046,13 +1048,22 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         }
                     }
                     if (mOldFromTo.equals(FromToTemplate.DRESSUP)) {
-                        LogUtil.d(TAG, "toCreation " + templateItem.getBackground_image());
-                        if ("0".equals(templateItem.getBackground_image())) {
-                            mMvpPresenter.toDressUp(paths.get(0), templateId, templateItem.getTitle());
+                        //来自换装,闪图页面
+                        //换装闪图大分类里面包含特殊模板，核心还是和换装一样，通过上传图片到服务器，然后生成图片和视频
+                        int api_type = templateItem.getApi_type();
+                        if (api_type != 0) {
+
+                            mMvpPresenter.ToDressUpSpecial(paths, api_type);
                         } else {
-                            createMattingImage(paths);
+                            LogUtil.d(TAG, "toCreation " + templateItem.getBackground_image());
+                            if ("0".equals(templateItem.getBackground_image())) {
+                                mMvpPresenter.toDressUp(paths.get(0), templateId, templateItem.getTitle());
+                            } else {
+                                createMattingImage(paths);
+                            }
                         }
-                        //来自换装页面
+
+
                     } else if (templateItem.getIs_anime() == 1) {
                         //模板换装新逻辑
                         DressUpModel dressUpModel = new DressUpModel(this, paths1 -> mMvpPresenter.GetDressUpPath(paths1), true);
@@ -1271,6 +1282,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             bundle.putString("videoTime", templateItem.getVideotime());
             bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
             bundle.putString("templateFilePath", TemplateFilePath);
+            bundle.putInt("isSpecial",templateItem.getApi_type());
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("Message", bundle);
             LogUtil.d("OOM3", "startActivity=");
@@ -1334,7 +1346,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     public void onVideoAdError(String s) {
                         StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
                         LogUtil.d("OOM4", "onVideoAdError" + s);
-                        if(BaseConstans.getAdShowErrorCanSave().equals("1")){
+                        if (BaseConstans.getAdShowErrorCanSave().equals("1")) {
                             hasLoginToNext();
                         }
                     }

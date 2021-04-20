@@ -35,6 +35,7 @@ import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
+import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.MemeKeepActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -55,6 +56,7 @@ import com.shixing.sxvideoengine.SXTemplateRender;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -319,6 +321,32 @@ public class TemplateMvpModel {
             });
 
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> renderFinish(aBoolean, isPreview, savePath));
+
+    }
+
+
+
+    /**
+     * description ：生成特殊模板，主要通过后台服务器合成方式
+     * creation date: 2021/4/20
+     * user : zhangtongju
+     */
+    public void SaveSpecialTemplate(int api_type){
+        String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
+        List<String> strToList1= Arrays.asList(paths);
+        DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
+            if(!TextUtils.isEmpty(url)){
+                Intent intent = new Intent(context, TemplateAddStickerActivity.class);
+                intent.putExtra("videoPath", url);
+                intent.putExtra("title", templateName);
+                intent.putExtra("IsFrom", fromTo);
+                context.startActivity(intent);
+            }
+        });
+        dressUpModel.toDressUp(strToList1, api_type);
+
+
+
 
     }
 
