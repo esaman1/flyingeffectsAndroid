@@ -72,7 +72,7 @@ public class CreationBackListFragment extends BaseFragment {
     @Override
     protected void initView() {
         mId = getArguments().getString("id");
-        LogUtil.d(TAG,"initView");
+        LogUtil.d(TAG, "initView");
     }
 
     @Override
@@ -112,7 +112,7 @@ public class CreationBackListFragment extends BaseFragment {
                     public void run() {
                         modificationSingleItemIsChecked(position);
                         if (mBackChooseListener != null) {
-                            mBackChooseListener.chooseBack(position);
+                            mBackChooseListener.chooseBack(listForSticker.get(position).getBackground_image());
                         }
                         if (UiStep.isFromDownBj) {
                             StatisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", listForSticker.get(position).getTitle());
@@ -188,7 +188,7 @@ public class CreationBackListFragment extends BaseFragment {
 
 
     public interface BackChooseListener {
-        void chooseBack(int position);
+        void chooseBack(String path);
     }
 
     @Override
@@ -210,5 +210,6 @@ public class CreationBackListFragment extends BaseFragment {
         }
         mGridViewAdapter.notifyDataSetChanged();
     }
+
 
 }

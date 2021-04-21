@@ -266,6 +266,16 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
+    public void chooseBack(String path) {
+        creationTemplatemvpView.chooseBack(path);
+    }
+
+    @Override
+    public void chooseFrame(String path) {
+        creationTemplatemvpView.chooseFrame(path);
+    }
+
+    @Override
     public void modifyTimeLineSickerPath(String id,String path,StickerView stickerView) {
         creationTemplatemvpView.modifyTimeLineSickerPath(id,path,stickerView);
     }
@@ -283,4 +293,5 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     public void bringStickerFront(String id){
         creationTemplatemodel.bringStickerFront(id);
     }
+
 }

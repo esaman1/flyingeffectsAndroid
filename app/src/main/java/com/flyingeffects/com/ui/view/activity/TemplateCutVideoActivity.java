@@ -16,7 +16,6 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.DataCleanManager;
-import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;
 import com.flyingeffects.com.ui.model.videoCutDurationForVideoOneDo;
@@ -36,7 +35,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -320,7 +318,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
     private void ktStart(boolean isKt) {
         LogUtil.d("OOM", "needDuration" + needDuration);
         long duration = (long) (needDuration * 1000);
-        new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, false, duration, videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
+        new Thread(() -> videoCutDurationForVideoOneDo.getInstance().cutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, false, duration, videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                 if (!nowActivityIsDestroy) {

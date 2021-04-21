@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 
+import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
@@ -67,6 +68,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
@@ -212,6 +214,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 换脸-换背景过来时带的背景图
      */
     private String mBackgroundImage;
+    private String mFramePath;
 
     @Override
     protected int getLayoutId() {
@@ -263,7 +266,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             mBinding.tvMusic.setVisibility(View.GONE);
             mBinding.tvAnim.setVisibility(View.GONE);
             mBinding.tvFrame.setVisibility(View.VISIBLE);
-
+            mBinding.rlBackImage.setVisibility(View.VISIBLE);
+            mBinding.relativePlayerView.setVisibility(View.GONE);
         }
     }
 
@@ -428,16 +432,33 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             initExo(videoPath);
         } else {
             //todo 无视频但有背景图，处理换背景 方案待修改
-            showGreenBj(true);
-            if (!TextUtils.isEmpty(mBackgroundImage)) {
-                Glide.with(mContext).load(mBackgroundImage)
-                        .into(mBinding.ivGreenBackground);
-            }
+            changeImageBack();
         }
         //从前一个页面设置的横竖屏判断
         if (nowUiIsLandscape) {
             new Handler().postDelayed(() -> setPlayerViewSize(nowUiIsLandscape), 500);
         }
+    }
+
+    /**
+     * 将线上图片下载到本地缓存
+     */
+    private void downloadBackImage() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File file = null;
+                try {
+                    file = Glide.with(BaseApplication.getInstance()).load(mBackgroundImage)
+                            .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                            .get();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                imageBjPath = file.getPath();
+            }
+        }).start();
+
     }
 
 
@@ -669,6 +690,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
+
     /**
      * 选择相框
      */
@@ -685,7 +707,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private void changeLandscape() {
         //横竖屏切换
         nowUiIsLandscape = !nowUiIsLandscape;
-        setPlayerViewSize(nowUiIsLandscape);
+        if (mFrom == FROM_DRESS_UP_BACK_CODE) {
+            setImageBackSize(nowUiIsLandscape);
+        } else {
+            setPlayerViewSize(nowUiIsLandscape);
+        }
     }
 
     /**
@@ -843,6 +869,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             musicEndTime = allVideoDuration;
             musicStartTime = 0;
         }
+
         presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutStartTime, mCutEndTime, title);
 
         seekBarViewIsShow(true);
@@ -1163,6 +1190,136 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
+    private void setImageBackSize(boolean isLandscape) {
+
+        videoToPause();
+        //切换横竖屏
+        ViewGroup.LayoutParams relativeLayoutParams = mBinding.ivBackImage.getLayoutParams();
+        float oriRatio = 9f / 16f;
+        float frameRatio = 1f;
+
+        if (isLandscape) {
+            //横屏的情况
+            mBinding.svBackImage.post(() -> {
+                int oriWidth = mBinding.llSpace.getWidth();
+                int spaceHeight = mBinding.llSpace.getHeight();
+
+                RelativeLayout.LayoutParams relativeLayoutParams2 = (RelativeLayout.LayoutParams) mBinding.svBackImage.getLayoutParams();
+                relativeLayoutParams2.width = oriWidth;
+                relativeLayoutParams2.height = Math.round(1f * oriWidth * oriRatio);
+                mBinding.svBackImage.setLayoutParams(relativeLayoutParams2);
+
+                relativeLayoutParams.width = oriWidth;
+                relativeLayoutParams.height = Math.round(1f * oriWidth / oriRatio);
+                mBinding.ivBackImage.setLayoutParams(relativeLayoutParams);
+
+                //设置预览编辑界面
+                mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+
+//                if (mBinding.ivFrameImage.getVisibility() == View.VISIBLE) {
+//                    ViewGroup.LayoutParams frameLayoutParams = mBinding.ivFrameImage.getLayoutParams();
+//                    frameLayoutParams.height = spaceHeight;
+//                    frameLayoutParams.width = spaceHeight;
+//                    mBinding.ivFrameImage.setLayoutParams(frameLayoutParams);
+//                }
+            });
+
+
+        } else {
+            //横屏模式下切换到了竖屏
+            mBinding.svBackImage.post(() -> {
+                RelativeLayout.LayoutParams relativeLayoutParams2 = (RelativeLayout.LayoutParams) mBinding.svBackImage.getLayoutParams();
+
+                int height = mBinding.llSpace.getHeight();
+                int width = mBinding.llSpace.getWidth();
+
+
+                if (mBinding.ivFrameImage.getVisibility() == View.VISIBLE) {
+                    relativeLayoutParams2.height = Math.round(1f * height / oriRatio);//height;
+                    relativeLayoutParams2.width = height;//Math.round(1f * height * oriRatio);
+                    mBinding.svBackImage.setLayoutParams(relativeLayoutParams2);
+
+                    relativeLayoutParams.width = height;//Math.round(1f * height * oriRatio)
+                    relativeLayoutParams.height = Math.round(1f * height / oriRatio);// height
+                    mBinding.ivBackImage.setLayoutParams(relativeLayoutParams);
+                    //设置预览编辑界面
+                    mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+                    RelativeLayout.LayoutParams frameLayoutParams = (RelativeLayout.LayoutParams) mBinding.ivFrameImage.getLayoutParams();
+                    frameLayoutParams.height = height;
+                    frameLayoutParams.width = height;
+
+                    mBinding.ivFrameImage.setLayoutParams(frameLayoutParams);
+                } else {
+                    relativeLayoutParams2.height = height;
+                    relativeLayoutParams2.width = Math.round(1f * height * oriRatio);
+                    mBinding.svBackImage.setLayoutParams(relativeLayoutParams2);
+
+                    relativeLayoutParams.width = Math.round(1f * height * oriRatio);
+                    relativeLayoutParams.height = height;
+                    mBinding.ivBackImage.setLayoutParams(relativeLayoutParams);
+                    //设置预览编辑界面
+                    mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+                }
+            });
+        }
+
+
+        if (mBinding.llGreenBackground.getVisibility() == View.VISIBLE) {
+            //可见的时候需要修稿这里
+            Observable.just(isLandscape).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> {
+                if (isLandscape) {
+                    //横屏的情况
+                    mBinding.ivGreenBackground.post(() -> {
+                        int oriWidth = mBinding.llSpace.getWidth();
+
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) mBinding.llGreenBackground.getLayoutParams();
+                        relativeLayoutParams3.width = oriWidth;
+                        relativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
+                        mBinding.llGreenBackground.setLayoutParams(relativeLayoutParams3);
+
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) mBinding.ivGreenBackground.getLayoutParams();
+                        relativeLayoutParams4.width = oriWidth;
+                        relativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
+                        mBinding.ivGreenBackground.setLayoutParams(relativeLayoutParams4);
+                    });
+                } else {
+                    mBinding.ivGreenBackground.post(() -> {
+                        int oriHeight = mBinding.llSpace.getHeight();
+
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) mBinding.llGreenBackground.getLayoutParams();
+                        relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
+                        relativeLayoutParams3.height = oriHeight;
+                        mBinding.llGreenBackground.setLayoutParams(relativeLayoutParams3);
+
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) mBinding.ivGreenBackground.getLayoutParams();
+                        relativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
+                        relativeLayoutParams4.height = oriHeight;
+
+                        mBinding.ivGreenBackground.setLayoutParams(relativeLayoutParams4);
+                    });
+                }
+            });
+        }
+
+        mBinding.svBackImage.setOnScrollListener(scrollY -> {
+            int totalHeight = mBinding.svBackImage.getChildAt(0).getHeight();
+            int svBackImageHeight = mBinding.svBackImage.getHeight();
+            percentageH = scrollY / (float) (totalHeight - svBackImageHeight);
+            LogUtil.d(TAG, "svBackImageHeight" + svBackImageHeight);
+            LogUtil.d(TAG, "percentageH" + percentageH);
+            LogUtil.d(TAG, "totalHeight = " + totalHeight);
+            LogUtil.d(TAG, "scrollY = " + scrollY);
+        });
+
+        new Handler().postDelayed(() -> {
+            presenter.setAllStickerCenter();
+            if (isLandscape) {
+                int height = Math.round(1f * mBinding.llSpace.getWidth() / oriRatio);
+                mBinding.svBackImage.scrollTo(0, height / 2 - mBinding.svBackImage.getHeight() / 2);
+            }
+        }, 500);
+    }
+
     @Override
     protected void onPause() {
         videoToPause();//onPause
@@ -1304,7 +1461,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         presenter.addNewSticker(path, originalPath);
         if (TextUtils.isEmpty(videoPath)) {
             //如果还是绿屏。那么需要刷新底部的时长
-            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> presenter.initVideoProgressView());
+            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer ->
+                    presenter.initVideoProgressView());
         }
     }
 
@@ -2018,6 +2176,33 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mLoadingDialog.setTitleStr(title);
         mLoadingDialog.setProgress(dialogProgress);
         mLoadingDialog.setContentStr(content);
+    }
+
+    @Override
+    public void chooseBack(String path) {
+        mBackgroundImage = path;
+        changeImageBack();
+
+    }
+
+    private void changeImageBack() {
+        setImageBackSize(false);
+        if (!TextUtils.isEmpty(mBackgroundImage)) {
+            Glide.with(mContext).load(mBackgroundImage)
+                    .into(mBinding.ivBackImage);
+            downloadBackImage();
+        }
+    }
+
+    @Override
+    public void chooseFrame(String path) {
+        mBinding.ivFrameImage.setVisibility(View.VISIBLE);
+        mFramePath = path;
+        Glide.with(mContext)
+                .load(path)
+                .into(mBinding.ivFrameImage);
+
+        setImageBackSize(nowUiIsLandscape);
     }
 
     @Override

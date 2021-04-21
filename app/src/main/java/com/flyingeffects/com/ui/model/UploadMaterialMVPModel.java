@@ -44,7 +44,6 @@ import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.onDrawPadCompletedListener;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.io.IOException;
@@ -725,7 +724,7 @@ public class UploadMaterialMVPModel {
 //        }
         long startDurtion = Math.round(cropStartRatio * durationUs);
         LogUtil.d("OOM2", "duration=" + duration + "startDurtion=" + startDurtion);
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, false, duration, videoPath, startDurtion, new videoCutDurationForVideoOneDo.isSuccess() {
+        videoCutDurationForVideoOneDo.getInstance().cutVideoForDrawPadAllExecute2(mContext, false, duration, videoPath, startDurtion, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                 if (progress > 100) {

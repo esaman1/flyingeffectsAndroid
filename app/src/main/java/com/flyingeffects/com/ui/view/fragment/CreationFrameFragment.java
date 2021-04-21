@@ -51,7 +51,7 @@ public class CreationFrameFragment extends BaseFragment {
     private boolean isRefresh = true;
 
 
-    private BackChooseListener mBackChooseListener;
+    private FrameChooseListener mFrameChooseListener;
 
     @Override
     protected int getContentLayout() {
@@ -100,8 +100,8 @@ public class CreationFrameFragment extends BaseFragment {
                     @Override
                     public void run() {
                         modificationSingleItemIsChecked(position);
-                        if (mBackChooseListener != null) {
-                            mBackChooseListener.chooseBack(position);
+                        if (mFrameChooseListener != null) {
+                            mFrameChooseListener.chooseFrame(mImageFrameList.get(position).getImage());
                         }
                         if (UiStep.isFromDownBj) {
                             StatisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", mImageFrameList.get(position).getTitle());
@@ -167,13 +167,13 @@ public class CreationFrameFragment extends BaseFragment {
         mGridViewAdapter.notifyDataSetChanged();
     }
 
-    public void setBackChooseListener(BackChooseListener listener) {
-        mBackChooseListener = listener;
+    public void setFrameChooseListener(FrameChooseListener listener) {
+        mFrameChooseListener = listener;
     }
 
 
-    public interface BackChooseListener {
-        void chooseBack(int position);
+    public interface FrameChooseListener {
+        void chooseFrame(String path);
     }
 
     @Override
@@ -195,5 +195,7 @@ public class CreationFrameFragment extends BaseFragment {
         }
         mGridViewAdapter.notifyDataSetChanged();
     }
+
+
 
 }

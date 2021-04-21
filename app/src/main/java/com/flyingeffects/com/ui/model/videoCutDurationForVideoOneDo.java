@@ -111,7 +111,7 @@ public class videoCutDurationForVideoOneDo {
      */
     private DrawPadAllExecute2 execute;
 
-    public void CutVideoForDrawPadAllExecute2(Context context, boolean nowUiIsLandscape, long duration, String path, long startDurtion, isSuccess callback) {
+    public void cutVideoForDrawPadAllExecute2(Context context, boolean nowUiIsLandscape, long duration, String path, long startDurtion, isSuccess callback) {
         try {
 //            VideoInfo   videoInfo = getVideoInfo.getInstance().getRingDuring(path);
 //            long allDuration=videoInfo.getDuration();

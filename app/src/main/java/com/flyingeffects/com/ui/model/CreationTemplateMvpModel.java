@@ -39,8 +39,6 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.enity.HttpResult;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.SecondaryTypeEntity;
 import com.flyingeffects.com.enity.StickerAnim;
 import com.flyingeffects.com.enity.StickerTypeEntity;
@@ -88,7 +86,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 
 import androidx.collection.SparseArrayCompat;
 import androidx.core.content.ContextCompat;
@@ -108,7 +105,7 @@ import rx.subjects.PublishSubject;
  * param :
  * user : zhangtongju
  */
-public class CreationTemplateMvpModel implements StickerFragment.StickerListener {
+public class CreationTemplateMvpModel implements StickerFragment.StickerListener, CreationBackListFragment.BackChooseListener, CreationFrameFragment.FrameChooseListener {
     private static final String TAG = "CreationTemplateMvpMode";
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private CreationTemplateMvpCallback mCallback;
@@ -541,7 +538,6 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 case R.id.iv_check_box_1:
                     mCallback.chooseMusicIndex(1);
                     chooseTemplateMusic(true);
-
                     break;
 
                 case R.id.tv_2:
@@ -561,10 +557,12 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     break;
             }
         };
+
         tv_0.setOnClickListener(tvMusicListener);
         tv_1.setOnClickListener(tvMusicListener);
         tv_2.setOnClickListener(tvMusicListener);
         tv_3.setOnClickListener(tvMusicListener);
+
         check_box_0.setOnClickListener(tvMusicListener);
         check_box_1.setOnClickListener(tvMusicListener);
         check_box_2.setOnClickListener(tvMusicListener);
@@ -640,7 +638,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                             Bundle bundle = new Bundle();
                             bundle.putString("id", categoryList.get(j).getId());
                             CreationBackListFragment fragment = new CreationBackListFragment();
-
+                            fragment.setBackChooseListener(CreationTemplateMvpModel.this);
                             fragment.setArguments(bundle);
                             fragments.add(fragment);
                         }
@@ -666,6 +664,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     public void requestPhotoFrameList(ViewPager frameViewPager, SlidingTabLayout backTab, FragmentManager fragmentManager) {
         List<Fragment> fragments = new ArrayList<>();
         CreationFrameFragment fragment = new CreationFrameFragment();
+        fragment.setFrameChooseListener(CreationTemplateMvpModel.this);
         String[] titles = {"相框"};
         fragments.add(fragment);
         home_vp_frg_adapter vpFrgAdapter = new home_vp_frg_adapter(fragmentManager, fragments);
@@ -1643,6 +1642,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                     bundle.putString("templateTitle", title);
                                     intent.putExtra("bundle", bundle);
                                     mContext.startActivity(intent);
+
                                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread())
                                             .subscribe(integer -> new Handler().postDelayed(() ->
                                                     isIntoSaveVideo = false, 500));
@@ -1659,11 +1659,13 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                             }
                         }
                     }, mAnimCollect, true);
+
                     backgroundDraw.setCutStartTime(cutStartTime);
                     backgroundDraw.setCutEndTime(cutEndTime);
 
                     for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                         StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+
                         if (stickerView.getIsTextSticker()) {
                             stickerView.disMissFrame();
                         }
@@ -1752,58 +1754,63 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      */
     private void cutVideo(VideoType videoType, long duration, long materialDuration, boolean nowUiIsLandscape) {
         LogUtil.d("oom3", "需要裁剪的时长为" + materialDuration);
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, false, materialDuration, videoType.getPath(), 0, new videoCutDurationForVideoOneDo.isSuccess() {
-            @Override
-            public void progresss(int progress) {
-                float positionF = progress / (float) 100;
-                Log.d("OOM", "裁剪的进度百分比为" + positionF);
-                float prencent = 5 / (float) (cutVideoPathList.size() + 1);
-                Log.d("OOM", "裁剪有几份" + prencent);
-                int position = (int) ((int) (positionF * prencent) + cutSuccessNum * prencent);
-                Log.d("OOM", "裁剪的总进度为" + position);
-                dialogProgress = position;
-                handler.sendEmptyMessage(1);
-            }
 
-            @Override
-            public void isSuccess(boolean isSuccess, String path) {
-                LogUtil.d("OOM", "保存后的地址为" + path);
-                int position = videoType.getPosition();
-                cutList.add(path);
-                AllStickerData sticker = listAllSticker.get(position);
-                statisticsAnim();
-                sticker.setPath(path);
-                cutSuccessNum++;
-                if (cutSuccessNum == cutVideoPathList.size()) {
-                    if (isMatting) {
-                        LogUtil.d("OOM2", "裁剪完成，准备抠图");
-                        //全部裁剪完成之后需要去把视频裁剪成全部帧
-                        videoGetFrameModel getFrameModel = new videoGetFrameModel(mContext, cutList, (isSuccess1, progress) -> {
-                            if (isSuccess1) {
-                                backgroundDraw.toSaveVideo(listAllSticker, true, nowUiIsLandscape, percentageH);
+        videoCutDurationForVideoOneDo.getInstance().cutVideoForDrawPadAllExecute2(mContext,
+                false, materialDuration, videoType.getPath(), 0,
+                new videoCutDurationForVideoOneDo.isSuccess() {
+                    @Override
+                    public void progresss(int progress) {
+                        float positionF = progress / (float) 100;
+                        Log.d("OOM", "裁剪的进度百分比为" + positionF);
+                        float prencent = 5 / (float) (cutVideoPathList.size() + 1);
+                        Log.d("OOM", "裁剪有几份" + prencent);
+                        int position = (int) ((int) (positionF * prencent) + cutSuccessNum * prencent);
+                        Log.d("OOM", "裁剪的总进度为" + position);
+                        dialogProgress = position;
+                        handler.sendEmptyMessage(1);
+                    }
+
+                    @Override
+                    public void isSuccess(boolean isSuccess, String path) {
+                        LogUtil.d("OOM", "保存后的地址为" + path);
+                        int position = videoType.getPosition();
+                        cutList.add(path);
+
+                        AllStickerData sticker = listAllSticker.get(position);
+                        statisticsAnim();
+                        sticker.setPath(path);
+
+                        cutSuccessNum++;
+                        if (cutSuccessNum == cutVideoPathList.size()) {
+                            if (isMatting) {
+                                LogUtil.d("OOM2", "裁剪完成，准备抠图");
+                                //全部裁剪完成之后需要去把视频裁剪成全部帧
+                                videoGetFrameModel getFrameModel = new videoGetFrameModel(mContext, cutList, (isSuccess1, progress) -> {
+                                    if (isSuccess1) {
+                                        backgroundDraw.toSaveVideo(listAllSticker, true, nowUiIsLandscape, percentageH);
+                                    } else {
+                                        //todo  临时手段
+                                        if (progress <= 5) {
+                                            progress = 5;
+                                        }
+                                        dialogProgress = progress;
+                                        handler.sendEmptyMessage(1);
+                                    }
+
+                                });
+                                getFrameModel.startExecute();
                             } else {
-                                //todo  临时手段
-                                if (progress <= 5) {
-                                    progress = 5;
-                                }
-                                dialogProgress = progress;
-                                handler.sendEmptyMessage(1);
+                                backgroundDraw.toSaveVideo(listAllSticker, false, nowUiIsLandscape, percentageH);
                             }
-
-                        });
-                        getFrameModel.startExecute();
-                    } else {
-                        backgroundDraw.toSaveVideo(listAllSticker, false, nowUiIsLandscape, percentageH);
+                        } else {
+                            if (videoInfo != null) {
+                                cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration(), nowUiIsLandscape);
+                            } else {
+                                cutVideo(cutVideoPathList.get(cutSuccessNum), defaultVideoDuration, cutVideoPathList.get(cutSuccessNum).getDuration(), nowUiIsLandscape);
+                            }
+                        }
                     }
-                } else {
-                    if (videoInfo != null) {
-                        cutVideo(cutVideoPathList.get(cutSuccessNum), videoInfo.getDuration(), cutVideoPathList.get(cutSuccessNum).getDuration(), nowUiIsLandscape);
-                    } else {
-                        cutVideo(cutVideoPathList.get(cutSuccessNum), defaultVideoDuration, cutVideoPathList.get(cutSuccessNum).getDuration(), nowUiIsLandscape);
-                    }
-                }
-            }
-        });
+                });
     }
 
 
@@ -1814,8 +1821,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      */
     private void statisticsAnim() {
 
-        for (AllStickerData data : listAllSticker
-        ) {
+        for (AllStickerData data : listAllSticker) {
             if (data.getChooseAnimId() != null && data.getChooseAnimId() != AnimType.NULL) {
 
                 if (data.isMaterial()) {
@@ -1823,7 +1829,6 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 } else {
                     StatisticsEventAffair.getInstance().setFlag(mContext, "9_Animation3", data.getChooseAnimId().name());
                 }
-
             }
         }
     }
@@ -2207,6 +2212,16 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         nowChooseStickerView.showFrame();
         viewLayerRelativeLayout.addView(nowChooseStickerView);
         mCallback.showMusicBtn(nowChooseStickerView.isFirstAddSticker());
+    }
+
+    @Override
+    public void chooseBack(String path) {
+        mCallback.chooseBack(path);
+    }
+
+    @Override
+    public void chooseFrame(String path) {
+        mCallback.chooseFrame(path);
     }
 }
 

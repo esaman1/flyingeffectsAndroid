@@ -26,7 +26,6 @@ import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.flyingeffects.com.view.beans.Thumb;
 import com.flyingeffects.com.view.interfaces.OnProgressVideoListener;
 import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -377,7 +376,7 @@ public class CreationTemplatePreviewModel {
             long duration= (long) ((cropEndRatio-cropStartRatio)*allDuration/1000);
             long startDurtion= (long) ((cropStartRatio*allDuration)/1000);
 
-            videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext,nowUiIsLandscape,duration,videoPath, startDurtion, new videoCutDurationForVideoOneDo.isSuccess() {
+            videoCutDurationForVideoOneDo.getInstance().cutVideoForDrawPadAllExecute2(mContext,nowUiIsLandscape,duration,videoPath, startDurtion, new videoCutDurationForVideoOneDo.isSuccess() {
                 @Override
                 public void progresss(int progress) {
                     if (progress > 100) {

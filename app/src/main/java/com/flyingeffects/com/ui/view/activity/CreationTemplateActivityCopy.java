@@ -1970,6 +1970,16 @@ public class CreationTemplateActivityCopy extends BaseActivity implements Creati
     }
 
     @Override
+    public void chooseBack(String path) {
+
+    }
+
+    @Override
+    public void chooseFrame(String path) {
+
+    }
+
+    @Override
     public void progress(long progress, boolean manualDrag) {
         mSeekBarViewManualDrag = manualDrag;
         if (manualDrag) {
