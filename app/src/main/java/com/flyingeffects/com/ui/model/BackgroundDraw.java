@@ -136,7 +136,6 @@ public class BackgroundDraw {
         this.cutEndTime = cutEndTime;
     }
 
-
     public void toSaveVideo(ArrayList<AllStickerData> list, boolean isMatting, boolean nowUiIsLandscape, float percentageH) {
         nowCurtime = System.currentTimeMillis();
         this.nowUiIsLandscape = nowUiIsLandscape;
@@ -230,6 +229,7 @@ public class BackgroundDraw {
                             execute.setBackgroundColor(Color.parseColor("#1FA400"));
                         }
                     }
+
                     if (!TextUtils.isEmpty(videoVoice)) {
                         LogUtil.d("OOM44", "musicStartTime=" + musicStartTime + "--musicEndTime=" + musicEndTime + "--cutStartTime=" + cutStartTime);
                         if (musicEndTime == 0) {
@@ -244,6 +244,7 @@ public class BackgroundDraw {
                     boolean started = execute.start();
                     subscriber.onNext(started);
                     subscriber.onCompleted();
+
                 }
             }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
                 @Override

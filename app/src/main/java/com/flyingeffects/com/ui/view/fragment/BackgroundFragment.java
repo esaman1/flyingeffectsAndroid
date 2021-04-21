@@ -459,6 +459,11 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
     }
 
 
+    /**
+     * 前往影集页面
+     * @param item
+     * @param templateFilePath
+     */
     private void toPhotographAlbum(NewFragmentTemplateItem item, String templateFilePath) {
         mLoadingDialog.dismiss();
         if (getActivity() != null) {
@@ -467,6 +472,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     Intent intent = new Intent(getActivity(), TemplateActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putStringArrayList("paths", (ArrayList<String>) paths);
+                    LogUtil.d(TAG,"paths.size = "+paths.size());
                     bundle.putInt("isPicNum", 20);
                     bundle.putString("fromTo", FromToTemplate.PICTUREALBUM);
                     bundle.putInt("picout", 0);

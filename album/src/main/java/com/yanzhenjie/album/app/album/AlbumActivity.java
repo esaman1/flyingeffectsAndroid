@@ -602,18 +602,18 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     public void onPreviewComplete() {
-        if (!TextUtils.isEmpty(material_info) && material_info.equals("pictureAlbum")) {
-            if (mCheckedList.size() < 20) {
-                mCheckedList = toBespreadMaterial();
-                ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
-                task.execute();
-            } else {
-                callbackResult();
-            }
+//        if (!TextUtils.isEmpty(material_info) && material_info.equals("pictureAlbum")) {
+//
+//        } else {
+//            callbackResult();
+//        }
+        if (mCheckedList.size() < mLimitCount) {
+            mCheckedList = toBespreadMaterial();
+            ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
+            task.execute();
         } else {
             callbackResult();
         }
-
     }
 
     @Override
@@ -659,18 +659,19 @@ public class AlbumActivity extends BaseActivity implements
             }
             mView.toast(messageRes);
         } else {
-            if (!TextUtils.isEmpty(material_info) && material_info.equals("pictureAlbum")) {
-                if (mCheckedList.size() < 20) {
+            if (mCheckedList.size() < mLimitCount) {
 //                    showMaterialCountDialog();
-                    mCheckedList = toBespreadMaterial();
-                    ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
-                    task.execute();
-                } else {
-                    callbackResult();
-                }
+                mCheckedList = toBespreadMaterial();
+                ThumbnailBuildTask task = new ThumbnailBuildTask(this, mCheckedList, this);
+                task.execute();
             } else {
                 callbackResult();
             }
+//            if (!TextUtils.isEmpty(material_info) && material_info.equals("pictureAlbum")) {
+//
+//            } else {
+//                callbackResult();
+//            }
         }
     }
 
@@ -776,9 +777,9 @@ public class AlbumActivity extends BaseActivity implements
     private ArrayList<AlbumFile> toBespreadMaterial() {
         if (mCheckedList != null && mCheckedList.size() > 0) {
             int CheckListSize = mCheckedList.size();
-            if (CheckListSize < 20) {
+            if (CheckListSize < mLimitCount) {
                 Random r = new Random(1);
-                int needAddSize = 20 - mCheckedList.size();
+                int needAddSize = mLimitCount - mCheckedList.size();
                 for (int i = 0; i < needAddSize; i++) {
                     mCheckedList.add(mCheckedList.get(r.nextInt(CheckListSize)));
                 }
@@ -799,6 +800,7 @@ public class AlbumActivity extends BaseActivity implements
 
     @Override
     public void onThumbnailCallback(ArrayList<AlbumFile> albumFiles) {
+        Log.d(TAG, "paths.size = " + albumFiles.size());
         if (sResult != null) {
             sResult.onAction(albumFiles, false);
         }

@@ -106,7 +106,7 @@ public class TemplateMvpModel {
     }
 
 
-    public void StatisticsToSave(String templateId) {
+    public void statisticsToSave(String templateId) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
         params.put("action_type", 2 + "");

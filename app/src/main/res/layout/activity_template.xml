@@ -197,7 +197,6 @@
                 android:layout_height="1dp"
                 android:background="#606074" />
 
-
             <com.flyco.tablayout.CommonTabLayout
                 android:id="@+id/template_tablayout"
                 android:layout_width="match_parent"
@@ -211,6 +210,7 @@
                 app:tl_indicator_width="30dp"
                 app:tl_textSelectColor="@color/white"
                 app:tl_textsize="16sp" />
+
         </LinearLayout>
     </LinearLayout>
 

@@ -963,7 +963,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         ((TextView) findViewById(LIN_ID[chooseItem])).setTextColor(Color.parseColor("#5496FF"));
     }
 
-
     private void intoVideoCropActivity(String path) {
         Intent intent = new Intent(CreationTemplateActivity.this, VideoCropActivity.class);
         intent.putExtra("videoPath", path);

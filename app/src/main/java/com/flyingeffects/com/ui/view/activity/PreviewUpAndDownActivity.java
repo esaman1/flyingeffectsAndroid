@@ -1082,6 +1082,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
     private void createMattingImage(List<String> paths) {
+
         mattingImage.createHandle(PreviewUpAndDownActivity.this, isDone -> {
             if (isDone) {
                 Observable.just("tag").subscribeOn(AndroidSchedulers.mainThread()).subscribe(str -> {

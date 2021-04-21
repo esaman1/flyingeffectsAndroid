@@ -122,9 +122,9 @@ public class videoCutDurationForVideoOneDo {
             }
             execute.setFrameRate(20);
             execute.setEncodeBitrate(5 * 1024 * 1024);
-            execute.setOnLanSongSDKErrorListener(message -> {
-                LogUtil.e("execute", String.valueOf(message));
-            });
+            execute.setOnLanSongSDKErrorListener(message ->
+                    LogUtil.e("execute", String.valueOf(message)));
+
             execute.setOnLanSongSDKProgressListener((l, i) -> {
                 callback.progresss(i);
             });
@@ -132,11 +132,13 @@ public class videoCutDurationForVideoOneDo {
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
                 execute.removeAllLayer();
                 execute.release();
+
                 if (exportPath == null) {
                     ToastUtil.showToast(context.getString(R.string.render_error));
                     callback.isSuccess(false, "");
                     return;
                 }
+
                 File video = new File(exportPath);
                 LogUtil.d("OOM", "exportPath=" + exportPath);
                 if (video.exists()) {

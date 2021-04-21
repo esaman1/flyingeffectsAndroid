@@ -1864,6 +1864,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         WaitingDialog.openPragressDialog(mContext);
 //        new Thread(() -> {
         mediaManager manager = new mediaManager(mContext);
+
         manager.splitMp4(videoPath, new File(outputPath), (isSuccess, putPath) -> {
             WaitingDialog.closeProgressDialog();
             if (isSuccess) {

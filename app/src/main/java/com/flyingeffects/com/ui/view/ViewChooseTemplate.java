@@ -40,10 +40,10 @@ public class ViewChooseTemplate {
     private List<NewFragmentTemplateItem> list = new ArrayList<>();
     private int changeTemplatePosition;
 
-    public ViewChooseTemplate(Context context, View templateThumb,int changeTemplatePosition, Callback callback) {
+    public ViewChooseTemplate(Context context, View templateThumb, int changeTemplatePosition, Callback callback) {
         this.context = context;
         this.callback = callback;
-        this.changeTemplatePosition=changeTemplatePosition;
+        this.changeTemplatePosition = changeTemplatePosition;
         initAllView(templateThumb);
         requestPictureAlbumData();
     }
@@ -58,19 +58,19 @@ public class ViewChooseTemplate {
 
 
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)&&context!=null){
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000) && context != null) {
                 WaitingDialog.openPragressDialog(context);
-                NewFragmentTemplateItem items=list.get(position);
-                TemplateDown templateDown=new TemplateDown(new TemplateDown.DownFileCallback() {
+                NewFragmentTemplateItem items = list.get(position);
+                TemplateDown templateDown = new TemplateDown(new TemplateDown.DownFileCallback() {
                     @Override
                     public void isSuccess(String filePath) {
                         Observable.just(filePath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                             @Override
                             public void call(String s) {
                                 WaitingDialog.closeProgressDialog();
-                                StatisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click",list.get(position).getTitle());
-                                if(callback!=null){
-                                    callback.onItemClick(position,filePath,items);
+                                StatisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click", list.get(position).getTitle());
+                                if (callback != null) {
+                                    callback.onItemClick(position, filePath, items);
                                 }
                             }
                         });
@@ -93,6 +93,7 @@ public class ViewChooseTemplate {
         params.put("page", "1");
         params.put("pageSize", "10");
         Observable ob = Api.getDefault().photoList(BaseConstans.getRequestHead(params));
+
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(context) {
             @Override
             protected void onSubError(String message) {
@@ -101,11 +102,11 @@ public class ViewChooseTemplate {
 
             @Override
             protected void onSubNext(List<NewFragmentTemplateItem> data) {
-                String test= StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM2",test);
+                String test = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM2", test);
                 list.clear();
                 list.addAll(data);
-                NewFragmentTemplateItem items=list.get(changeTemplatePosition);
+                NewFragmentTemplateItem items = list.get(changeTemplatePosition);
                 items.setCheckItem(true);
                 templateThumbAdapter.notifyDataSetChanged();
             }
@@ -117,7 +118,7 @@ public class ViewChooseTemplate {
 
     public interface Callback {
 
-        void onItemClick(int position,String  filePath, NewFragmentTemplateItem item);
+        void onItemClick(int position, String filePath, NewFragmentTemplateItem item);
 
         void isNeedToCutVideo(int position);
 

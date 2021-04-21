@@ -101,7 +101,7 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
 
     @Override
     public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> listItem, List<String> list_all, List<String> listAssets) {
-        home_mvpView.ChangeMaterialCallback(listItem, list_all, listAssets);
+        home_mvpView.changeMaterialCallback(listItem, list_all, listAssets);
     }
 
     @Override
@@ -154,8 +154,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_mvpView.showProgressDialog();
     }
 
-    public void StatisticsToSave(String templateId) {
-        home_model.StatisticsToSave(templateId);
+    public void statisticsToSave(String templateId) {
+        home_model.statisticsToSave(templateId);
 
     }
 

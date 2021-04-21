@@ -226,8 +226,8 @@ public class MediaUiModel2 extends MediaUiModel {
      * user : zhangtongju
      */
 
-    public void GetTransFormChangeData(TranChangeCallback callback) {
-        float values[] = new float[9];
+    public void getTransFormChangeData(TranChangeCallback callback) {
+        float[] values = new float[9];
         mMatrix.getValues(values);
         float nowTranX = values[2];
         float nowTranY = values[5];
@@ -246,7 +246,7 @@ public class MediaUiModel2 extends MediaUiModel {
 
 
     public interface TranChangeCallback {
-        void changeBack(float TranX, float TranY, float Scale);
+        void changeBack(float tranX, float tranY, float scale);
     }
 
 

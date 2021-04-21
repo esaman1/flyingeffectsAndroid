@@ -140,8 +140,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private TemplateModel mTemplateModel;
 
     private File mFolder;
+    /**
+     * 底部图片选择的适配器
+     */
     private TemplateThumbAdapter templateThumbAdapter;
     private ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
+
     private ArrayList<TemplateView> mTemplateViews;
     private String mAudio1Path;
     private static final String MUSIC_PATH = "/bj.mp3";
@@ -362,6 +366,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         mAudio1Path = mFolder.getPath() + MUSIC_PATH;
         FileManager manager = new FileManager();
         String dir = manager.getFileCachePath(this, "");
+
         mTemplateViews = new ArrayList<>();
 
         SxveConstans.default_bg_path = new
@@ -559,7 +564,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     }
 
     @Override
-    public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> callbackListItem, List<String> list_all, List<String> listAssets) {
+    public void changeMaterialCallback(ArrayList<TemplateThumbItem> callbackListItem, List<String> list_all, List<String> listAssets) {
         listItem.clear();
         listItem.addAll(callbackListItem);
         templateThumbAdapter.notifyDataSetChanged();
@@ -668,7 +673,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         }
         videoMattingCaver = bp;
-        runOnUiThread(() -> modificationSingleThumbItem(bpPath));
+        runOnUiThread(() ->
+                modificationSingleThumbItem(bpPath));
     }
 
     @Override
@@ -927,6 +933,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
      */
     private void isFirstReplace(List<String> paths) {
         LogUtil.d("OOM4", "isFirstReplace");
+
         if (mTemplateViews != null && mTemplateViews.size() > 0) {
             //这里只是为了底部按钮
             List<String> list_all = new ArrayList<>();
@@ -937,6 +944,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     list_all.add(SxveConstans.default_bg_path);
                 }
             }
+
             if (nowTemplateIsAnim == 1 || nowTemplateIsMattingVideo == 1) {
                 //漫画 特殊
                 TemplateThumbItem templateThumbItem = new TemplateThumbItem();
@@ -947,6 +955,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
                 templateThumbItem.setIsCheck(0);
                 listItem.set(0, templateThumbItem);
+
             } else {
                 for (int i = 0; i < list_all.size(); i++) {  //合成底部缩略图
 //                    MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(i).ui;
@@ -994,6 +1003,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     selectGroup(0);
                     nowChoosePosition = 0;
                     templateThumbAdapter.notifyDataSetChanged();
+
                     if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime)) {
                         if (videoMattingCaver != null) {
                             for (int i = 0; i < mTemplateModel.mAssets.size(); i++) {
@@ -1002,6 +1012,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             }
                         }
                     }
+
                     if (mTemplateViews != null && mTemplateViews.size() > 0) {
                         mTemplateViews.get(nowChoosePosition).invalidate(); //提示重新绘制预览图
                     }
@@ -1009,6 +1020,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     LogUtil.d("OOM4", "关闭加载框");
                     progress.closeProgressDialog();
                     WaitingDialog.closeProgressDialog();
+
                 }
 
             }));  //批量替换图片
@@ -1042,6 +1054,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     public void initTemplateThumb(int bottomButtonCount) {
+
         for (int i = 0; i < bottomButtonCount; i++) {
             listItem.add(new TemplateThumbItem("", 1, false));
         }
@@ -1049,14 +1062,18 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
+
         if (nowTemplateIsAnim == 1 && listItem.size() > 1) {
             ArrayList<TemplateThumbItem> newTem = new ArrayList<>();
             newTem.add(listItem.get(1));
             listItem.clear();
             listItem.addAll(newTem);
         }
+
         templateThumbAdapter = new TemplateThumbAdapter(R.layout.item_group_thumb, listItem, TemplateActivity.this);
+
         templateThumbAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+
             if (!DoubleClick.getInstance().isFastZDYDoubleClick(200)) {
                 nowChoosePosition = position;
                 getNowChooseIndexMidiaUi();
@@ -1099,6 +1116,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 }
             }
         });
+
         recyclerView.setAdapter(templateThumbAdapter);
     }
 
@@ -1154,14 +1172,14 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         String path = mediaUi2.getSnapPath(Objects.requireNonNull(this.getExternalFilesDir("runCatch/")).getPath());
                         LogUtil.d("OOM2", "上传的图片地址为" + path);
 //                        String path = CopyFileFromAssets.copyAssets(this, "test.mp4");
-                        mediaUi2.GetTransFormChangeData(new MediaUiModel2.TranChangeCallback() {
+                        mediaUi2.getTransFormChangeData(new MediaUiModel2.TranChangeCallback() {
                             @Override
-                            public void changeBack(float TranX, float TranY, float Scale) {
+                            public void changeBack(float tranX, float tranY, float scale) {
                                 String bjPath = mOriginalPathList.get(0);
                                 if (nowIsChooseMatting) {
                                     bjPath = imgPath.get(0);
                                 }
-                                VideoFusionModel videoFusionModel = new VideoFusionModel(TemplateActivity.this, path, bjPath, fromTo, templateName, mediaUi2.getOriginalBitmapWidth(), mediaUi2.getOriginalBitmapHeight(), TranX, TranY, Scale);
+                                VideoFusionModel videoFusionModel = new VideoFusionModel(TemplateActivity.this, path, bjPath, fromTo, templateName, mediaUi2.getOriginalBitmapWidth(), mediaUi2.getOriginalBitmapHeight(), tranX, tranY, scale);
                                 videoFusionModel.uploadFileToHuawei(path, templateId);
                             }
                         });
@@ -1192,7 +1210,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             presenter.renderVideo(mFolder.getPath(), mAudio1Path, false, nowTemplateIsAnim, imgPath, nowIsGifTemplate);
                         }
 
-                        presenter.StatisticsToSave(templateId);
+                        presenter.statisticsToSave(templateId);
                     }
 
 
@@ -1662,7 +1680,6 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     } else {
                         viewPager.setCurrentItem(1);
                         StatisticsEventAffair.getInstance().setFlag(TemplateActivity.this, "11_yj_muscle");
-
                     }
                     lastChooseCommonTabLayout = 2;
                 } else {
@@ -1680,7 +1697,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         ArrayList<View> pagerList = new ArrayList<>();
 
-
+        //相册进入
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
             View templateThumb = LayoutInflater.from(this).inflate(R.layout.view_choose_template, null);
             new ViewChooseTemplate(TemplateActivity.this, templateThumb, changeTemplatePosition, new ViewChooseTemplate.Callback() {
@@ -1729,6 +1746,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         recyclerView = templateItemThumb.findViewById(R.id.recyclerView);
         pagerList.add(recyclerView);
         initTemplateThumb(mTemplateModel.groupSize);
+
         templateThumbForMusic = LayoutInflater.from(this).inflate(R.layout.view_choose_music, null);
         LinearLayout ll_choose_0 = templateThumbForMusic.findViewById(R.id.ll_choose_0);
         if (nowIsPhotographAlbum) {
@@ -1748,10 +1766,12 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         ll_choose_1.setOnClickListener(tvMusicListener);
         ll_choose_2.setOnClickListener(tvMusicListener);
         ll_choose_3.setOnClickListener(tvMusicListener);
+
         cb_0 = templateThumbForMusic.findViewById(R.id.iv_check_box_0);
         cb_1 = templateThumbForMusic.findViewById(R.id.iv_check_box_1);
         cb_2 = templateThumbForMusic.findViewById(R.id.iv_check_box_2);
         cb_3 = templateThumbForMusic.findViewById(R.id.iv_check_box_3);
+
         cb_2.setImageResource(R.mipmap.template_btn_selected);
         TextView tv_1 = templateThumbForMusic.findViewById(R.id.tv_1);
         tv_1.setText("背景音乐");
@@ -1761,7 +1781,9 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         cb_1.setOnClickListener(tvMusicListener);
         cb_2.setOnClickListener(tvMusicListener);
         cb_3.setOnClickListener(tvMusicListener);
+
         pagerList.add(templateThumbForMusic);
+
         TemplateViewPager adapter = new TemplateViewPager(pagerList);
         viewPager.setAdapter(adapter);
 
@@ -1770,8 +1792,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
 
     private boolean hasDefaultBj(String[] paths) {
-        for (String str : paths
-        ) {
+        for (String str : paths) {
             if (str.equals(SxveConstans.default_bg_path)) {
                 return true;
             }
