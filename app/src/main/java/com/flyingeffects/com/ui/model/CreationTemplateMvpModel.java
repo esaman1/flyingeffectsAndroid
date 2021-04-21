@@ -410,16 +410,21 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             initViewForChooseBack(fragmentManager);
             initViewForChooseFrame(fragmentManager);
             initViewForSticker(from, fragmentManager);
+            CreationBottomPagerAdapter adapter = new CreationBottomPagerAdapter(fragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mFragmentList);
+            mViewPager.setAdapter(adapter);
+            mViewPager.setOffscreenPageLimit(3);
         } else {
             initViewForSticker(from, fragmentManager);
             initViewForChooseAnim();
             initViewForChooseMusic();
+            TemplateViewPager templateViewPager = new TemplateViewPager(listForInitBottom);
+            mViewPager.setAdapter(templateViewPager);
         }
-
-        TemplateViewPager templateViewPager = new TemplateViewPager(listForInitBottom);
-        CreationBottomPagerAdapter adapter = new CreationBottomPagerAdapter(fragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mFragmentList);
-        mViewPager.setAdapter(adapter);
-        mViewPager.setOffscreenPageLimit(3);
+//
+//        TemplateViewPager templateViewPager = new TemplateViewPager(listForInitBottom);
+//        CreationBottomPagerAdapter adapter = new CreationBottomPagerAdapter(fragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mFragmentList);
+//        mViewPager.setAdapter(adapter);
+//        mViewPager.setOffscreenPageLimit(3);
 
     }
 
