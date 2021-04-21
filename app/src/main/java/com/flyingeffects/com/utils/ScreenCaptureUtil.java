@@ -5,8 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.flyingeffects.com.manager.BitmapManager;
@@ -176,14 +179,43 @@ public class ScreenCaptureUtil {
     }
 
 
-    public String getFilePath(RelativeLayout view) {
+    public String getFilePath(RelativeLayout view, ImageView iv) {
+        int width = view.getWidth();
+        int height = view.getHeight();
+        int Owidth = width;
+        int OHeight = height;
+        if (iv != null && iv.getVisibility() == View.VISIBLE) {
+            Owidth = iv.getWidth();
+            OHeight = iv.getHeight();
+            Drawable imgDrawable = iv.getDrawable();
+            if (imgDrawable != null) {
+                //获得ImageView中Image的真实宽高，
+                int dw = iv.getDrawable().getBounds().width();
+                int dh = iv.getDrawable().getBounds().height();
+                //获得ImageView中Image的变换矩阵
+                Matrix m = iv.getImageMatrix();
+                float[] values = new float[10];
+                m.getValues(values);
+                //Image在绘制过程中的变换矩阵，从中获得x和y方向的缩放系数
+                float sx = values[0];
+                float sy = values[4];
+                //计算Image在屏幕上实际绘制的宽高
+                Owidth = (int) (dw * sx);
+                OHeight = (int) (dh * sy);
+            }
+        }
         String path = mTextFolder + File.separator + System.currentTimeMillis() + ".png";
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
         Bitmap bp = view.getDrawingCache();
-            if (bp != null) {
-                BitmapManager.getInstance().saveBitmapToPath(bp, path);
-            }
+        Bitmap bitmap = Bitmap.createBitmap(Owidth, OHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        Matrix matrix = new Matrix();
+        float needHeight = (OHeight - height) / (float) 2;
+        float needWidth = (Owidth - width) / (float) 2;
+        matrix.setTranslate(needWidth, needHeight);
+        canvas.drawBitmap(bp, matrix, new Paint());
+        BitmapManager.getInstance().saveBitmapToPath(bitmap, path);
         view.setDrawingCacheEnabled(false);
         return path;
     }

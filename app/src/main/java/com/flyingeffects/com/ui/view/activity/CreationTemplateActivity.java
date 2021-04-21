@@ -2,7 +2,11 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -14,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,6 +44,7 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.DownImageManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
@@ -860,7 +866,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private void submitCreation() {
         if (mFrom == FROM_DRESS_UP_BACK_CODE) {
-            presenter.keepPicture(mBinding.relativeContentAllContent);
+            presenter.keepPicture(mBinding.relativeContentAllContent,mBinding.ivFrameImage);
         } else {
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
@@ -2212,13 +2218,34 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void chooseFrame(String path) {
         mBinding.ivFrameImage.setVisibility(View.VISIBLE);
-        mFramePath = path;
+
+
+
         Glide.with(mContext)
                 .load(path)
                 .into(mBinding.ivFrameImage);
-
         setImageBackSize(nowUiIsLandscape);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                test();
+
+
+
+            }
+        }, 1000);
+
     }
+
+
+//    private void test() {
+//        mBinding.ivFrameImage.post(() -> {
+//            getImgDisplaySize( mBinding.ivFrameImage);
+//        });
+//    }
+
+
+
 
     @Override
     public void progress(long progress, boolean manualDrag) {

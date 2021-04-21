@@ -211,15 +211,14 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
 
-    public void keepPicture(RelativeLayout relativeLayout) {
+    public void keepPicture(RelativeLayout relativeLayout,ImageView iv) {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-            if (stickerView.getIsTextSticker()) {
-                stickerView.disMissFrame();
-            }
+            stickerView.disMissFrame();
         }
+
         ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
-        String textImagePath = screenCaptureUtil.getFilePath(relativeLayout);
+        String textImagePath = screenCaptureUtil.getFilePath(relativeLayout,iv);
         Intent intent = new Intent(mContext, DressUpPreviewActivity.class);
         intent.putExtra("url", textImagePath);
         intent.putExtra("template_id", "");

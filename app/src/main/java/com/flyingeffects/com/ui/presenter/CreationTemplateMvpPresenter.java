@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.presenter;
 
 import android.content.Context;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
@@ -39,9 +40,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void keepPicture(RelativeLayout relativeLayout){
+    public void keepPicture(RelativeLayout relativeLayout, ImageView iv){
 
-        creationTemplatemodel.keepPicture(relativeLayout);
+        creationTemplatemodel.keepPicture(relativeLayout,iv);
     }
 
 
