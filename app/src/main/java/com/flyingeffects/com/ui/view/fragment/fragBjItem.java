@@ -104,7 +104,7 @@ public class fragBjItem extends BaseFragment {
             templateId = bundle.getString("id");
             fromType = bundle.getInt("from");
             cover = bundle.getString("cover");
-            nowPageNum=bundle.getInt("num");
+            nowPageNum = bundle.getInt("num");
             tc_id = bundle.getString("tc_id");
         }
         initRecycler();
@@ -123,7 +123,7 @@ public class fragBjItem extends BaseFragment {
     protected void initData() {
         ChoosePageChange2(() -> {
             if (getActivity() != null) {
-                if (listData!=null&&listData.size()>0) {
+                if (listData != null && listData.size() > 0) {
                     LogUtil.d("requestAd", "onResume之背景请求广告");
                     requestFeedAd();
                 }
@@ -142,7 +142,7 @@ public class fragBjItem extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!DoubleClick.getInstance().isFastDoubleClick()&&!allData.get(position).isHasShowAd()) {
+            if (!DoubleClick.getInstance().isFastDoubleClick() && !allData.get(position).isHasShowAd()) {
                 if (!TextUtils.isEmpty(cover) && position == 0) {
                     EventBus.getDefault().post(new DownVideoPath(""));
                 } else {
@@ -197,14 +197,13 @@ public class fragBjItem extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        LogUtil.d("OOM","onResume");
+        LogUtil.d("OOM", "onResume");
         mAdManager.adResume();
         if (getActivity() != null && "12".equals(templateId)) {
             isRefresh = true;
             selectPage = 1;
             requestFagData(false, false);
         }
-
 
 
     }
@@ -314,14 +313,11 @@ public class fragBjItem extends BaseFragment {
     }
 
 
-
-
-
-    private void requestFeedAd(){
-       LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+nowPageNum);
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()&&  NowHomePageChooseNum==0 &&nowPageNum==NowSecondChooseNum) {
+    private void requestFeedAd() {
+        LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum + "NowSecondChooseNum=" + NowSecondChooseNum + "actTag" + nowPageNum);
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && NowHomePageChooseNum == 0 && nowPageNum == NowSecondChooseNum) {
 //            LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+nowPageNum);
-            HasShowAd=true;
+            HasShowAd = true;
             requestFeedAd(mAdManager, new RequestFeedBack() {
                 @Override
                 public void getAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {

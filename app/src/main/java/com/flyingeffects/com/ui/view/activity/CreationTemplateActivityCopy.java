@@ -565,7 +565,7 @@ public class CreationTemplateActivityCopy extends BaseActivity implements Creati
     @Override
     protected void initAction() {
         presenter.initStickerView(imgPath, originalPath);
-        presenter.initBottomLayout(mBinding.viewPager, getSupportFragmentManager());
+        presenter.initBottomLayout(mBinding.viewPager, getSupportFragmentManager(), mFrom);
         initViewLayerRelative();
         mBinding.switchButton.setOnCheckedChangeListener((view, isChecked) -> {
             if (isChecked) {
@@ -581,7 +581,7 @@ public class CreationTemplateActivityCopy extends BaseActivity implements Creati
                     StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutoff");
                 }
             }
-            presenter.CheckedChanged(isChecked);
+            presenter.checkedChanged(isChecked);
         });
     }
 
@@ -1967,6 +1967,16 @@ public class CreationTemplateActivityCopy extends BaseActivity implements Creati
         mLoadingDialog.setTitleStr(title);
         mLoadingDialog.setProgress(dialogProgress);
         mLoadingDialog.setContentStr(content);
+    }
+
+    @Override
+    public void chooseBack(String path) {
+
+    }
+
+    @Override
+    public void chooseFrame(String path) {
+
     }
 
     @Override

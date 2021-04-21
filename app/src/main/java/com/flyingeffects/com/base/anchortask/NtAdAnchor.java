@@ -34,8 +34,8 @@ public class NtAdAnchor extends AnchorTask {
                         .build());
     }
 
-    @Override
-    public boolean isRunOnMainThread() {
-        return true;
-    }
+//    @Override
+//    public boolean isRunOnMainThread() {
+//        return true;
+//    }
 }

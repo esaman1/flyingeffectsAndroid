@@ -29,6 +29,16 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
 
     public static final String TEMPLATE_TYPE_TEMP = "1";
 
+    private boolean isChecked;
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
     public int getId() {
         return id;
     }

@@ -11,14 +11,6 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <ImageView
-            android:id="@+id/iv_delete_sticker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:padding="5dp"
-            android:src="@mipmap/text_delete_all" />
-
         <com.flyco.tablayout.SlidingTabLayout
             android:id="@+id/tb_sticker"
             android:layout_width="wrap_content"
@@ -56,9 +48,8 @@
     </LinearLayout>
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpager_sticker"
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

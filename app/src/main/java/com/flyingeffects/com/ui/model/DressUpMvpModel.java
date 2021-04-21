@@ -23,12 +23,10 @@ public class DressUpMvpModel {
     private DressUpMvpCallback callback;
     private Context context;
 
-
     public DressUpMvpModel(Context context, DressUpMvpCallback callback) {
         this.context = context;
         this.callback = callback;
     }
-
 
     public void getFragmentList() {
         requestData();
@@ -40,10 +38,13 @@ public class DressUpMvpModel {
 
     private void requestMainData(boolean isShowDialog) {
         HashMap<String, String> params = new HashMap<>();
+
         //类型 1模板 2背景 3换脸  4 加上了最新的闪图
         params.put("type","4");
+
         Observable ob = Api.getDefault().getCategoryList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FirstLevelTypeEntity>>(context) {
+
             @Override
             protected void onSubError(String message) {
                 ToastUtil.showToast(message);
@@ -51,10 +52,10 @@ public class DressUpMvpModel {
 
             @Override
             protected void onSubNext(List<FirstLevelTypeEntity> data) {
-
                 callback.setFragmentList(data);
-
             }
+
         }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, isShowDialog);
     }
+
 }

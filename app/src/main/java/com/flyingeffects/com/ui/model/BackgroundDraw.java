@@ -51,6 +51,7 @@ import rx.schedulers.Schedulers;
  * 蓝松后台绘制方法
  */
 public class BackgroundDraw {
+    private static final String TAG = "BackgroundDraw";
 
     private static int DRAWPADWIDTH = 720;
     private static int DRAWPADHEIGHT = 1280;
@@ -65,7 +66,7 @@ public class BackgroundDraw {
      */
     private long duration;
     private int intoCanvesCount;
-    private String ExtractFramegFolder;
+    private String mExtractFramegFolder;
 
     private boolean noVideo = false;
     /**
@@ -120,7 +121,7 @@ public class BackgroundDraw {
         LogUtil.d("OOM", "videoVoice=" + videoVoice);
         intoCanvesCount = 0;
         FileManager fileManager = new FileManager();
-        ExtractFramegFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "ExtractFrame");
+        mExtractFramegFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "ExtractFrame");
     }
 
     private float percentageH;
@@ -142,8 +143,7 @@ public class BackgroundDraw {
         this.percentageH = percentageH;
         //说明没得背景视频，那么渲染时长就是
         if (duration == 0) {
-            for (AllStickerData data : list
-            ) {
+            for (AllStickerData data : list) {
                 if (duration < (int) data.getDuration()) {
                     duration = (int) data.getDuration();
                 }
@@ -154,6 +154,7 @@ public class BackgroundDraw {
             noVideo = true;
             duration = 10000;
         }
+
         LogUtil.d("OOM2", "进入到了最后渲染");
         try {
             if (nowUiIsLandscape) {
@@ -202,6 +203,7 @@ public class BackgroundDraw {
 //                waitingProgress.setProgress("正在保存中" + i + "%\n" +
 //                        "请勿离开页面");
             });
+
             execute.setOnLanSongSDKCompletedListener(exportPath -> {
 //                waitingProgress.closePragressDialog();
                 callback.saveSuccessPath(exportPath, 100);
@@ -211,6 +213,7 @@ public class BackgroundDraw {
                 execute.release();
                 Log.d("OOM", "exportPath=" + exportPath);
             });
+
             Observable.create(new Observable.OnSubscribe<Boolean>() {
                 @Override
                 public void call(Subscriber<? super Boolean> subscriber) {
@@ -219,6 +222,7 @@ public class BackgroundDraw {
                         setMainLayer();
                     } else {
                         if (!TextUtils.isEmpty(imagePath)) {
+                            LogUtil.d(TAG, "backImagePath = " + imagePath);
                             Bitmap bt_nj = BitmapManager.getInstance().getOrientationBitmap(imagePath);
                             bt_nj = BitmapUtils.zoomImg2(bt_nj, execute.getPadWidth() / 16 * 16, execute.getPadHeight() / 16 * 16);
                             execute.addBitmapLayer(bt_nj, 0, Long.MAX_VALUE);
@@ -571,7 +575,7 @@ public class BackgroundDraw {
         float[] nowProgressTime = {0};
         float preTime;
         LogUtil.d("OOM", "开始添加CanversLayer");
-        String path = ExtractFramegFolder + "/" + i;
+        String path = mExtractFramegFolder + "/" + i;
         LogUtil.d("OOM", "path" + path);
         List<File> getMattingList = FileManager.listFileSortByModifyTime(path);
         LogUtil.d("OOM", "第一张图片地址为" + getMattingList.get(0).getPath());

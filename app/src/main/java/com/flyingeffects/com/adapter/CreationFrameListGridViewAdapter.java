@@ -11,7 +11,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.StickerList;
+import com.flyingeffects.com.enity.ImageFrameEntity;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 
 import java.util.List;
@@ -20,14 +21,14 @@ import java.util.List;
  * user :TongJu  ;描述：贴纸item
  * 时间：2018/5/3
  **/
-public class TemplateGridViewAdapter extends BaseAdapter {
+public class CreationFrameListGridViewAdapter extends BaseAdapter {
 
 
-    private List<StickerList> list;
+    private List<ImageFrameEntity> list;
     private Context context;
 //    private String mGifFolder;
 
-    public TemplateGridViewAdapter(List<StickerList> list, Context context) {
+    public CreationFrameListGridViewAdapter(List<ImageFrameEntity> list, Context context) {
         this.list = list;
         this.context = context;
 //        FileManager fileManager = new FileManager();
@@ -64,31 +65,31 @@ public class TemplateGridViewAdapter extends BaseAdapter {
             holder = (ViewHold) view.getTag();
         }
 
-        StickerList stickerList = list.get(position);
-        if (stickerList.isClearSticker()) {
+        ImageFrameEntity stickerList = list.get(position);
+//        if (stickerList.isClearSticker()) {
+//
+//            Glide.with(context)
+//                    .load(R.mipmap.sticker_clear)
+//                    .into(holder.image);
+//
+//            holder.tv_name.setText("默认");
+//
+//        } else {
 
-            Glide.with(context)
-                    .load(R.mipmap.sticker_clear)
-                    .into(holder.image);
+        Glide.with(context)
+                .load(list.get(position).getIcon_image())
+                .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
+                .into(holder.image);
 
-            holder.tv_name.setText("默认");
+        holder.tv_name.setText(list.get(position).getTitle());
 
+        if (stickerList.isChecked()) {
+            holder.tv_checked.setVisibility(View.VISIBLE);
         } else {
-
-            Glide.with(context)
-                    .load(list.get(position).getThumbnailimage())
-                    .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
-                    .into(holder.image);
-
-            holder.tv_name.setText(list.get(position).getTitle());
-
-            if (stickerList.isChecked()) {
-                holder.tv_checked.setVisibility(View.VISIBLE);
-            } else {
-                holder.tv_checked.setVisibility(View.GONE);
-            }
-
+            holder.tv_checked.setVisibility(View.GONE);
         }
+
+        //}
         return view;
     }
 

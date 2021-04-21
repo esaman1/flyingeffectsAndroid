@@ -23,7 +23,6 @@
             android:src="@mipmap/back"
             android:visibility="visible" />
 
-
         <LinearLayout
             android:id="@+id/ll_Matting"
             android:layout_width="match_parent"
@@ -127,10 +126,53 @@
                     app:surface_type="texture_view"
                     app:use_controller="false" />
 
+            </LinearLayout>
+
+        </com.flyingeffects.com.view.MyScrollView>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_back_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:visibility="invisible">
+
+        <com.flyingeffects.com.view.MyScrollView
+            android:id="@+id/sv_back_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_back_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
 
             </LinearLayout>
 
         </com.flyingeffects.com.view.MyScrollView>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_frame_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:visibility="invisible"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"/>
 
     </RelativeLayout>
 
@@ -156,7 +198,7 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:contentDescription="@string/app_name"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:src="@mipmap/green" />
         </RelativeLayout>
 
@@ -274,7 +316,6 @@
 
             </RelativeLayout>
 
-
             <View
                 android:layout_width="2.5dp"
                 android:layout_height="match_parent"
@@ -311,6 +352,7 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:background="#5496FF" />
+
     </RelativeLayout>
 
     <View
@@ -343,8 +385,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="相框"
-            android:visibility="gone"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_tiezhi"
@@ -364,7 +406,6 @@
             android:text="动画"
             android:textColor="@color/white" />
 
-
         <TextView
             android:id="@+id/tv_music"
             android:layout_width="0dp"
@@ -382,7 +423,6 @@
             android:gravity="center"
             android:text="加字"
             android:textColor="@color/white" />
-
 
     </LinearLayout>
 
