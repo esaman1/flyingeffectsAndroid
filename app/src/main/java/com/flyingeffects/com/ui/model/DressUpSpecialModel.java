@@ -169,7 +169,7 @@ public class DressUpSpecialModel {
         Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
             DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s1 -> {
                 VideoInfo info = getVideoInfo.getInstance().getRingDuring(s1);
-                videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, false, info.getDuration(), videoName, 0, new videoCutDurationForVideoOneDo.isSuccess() {
+                videoCutDurationForVideoOneDo.getInstance().cutVideoForDrawPadAllExecute2(context, false, info.getDuration(), videoName, 0, new videoCutDurationForVideoOneDo.isSuccess() {
                     @Override
                     public void progresss(int progress) {
                         LogUtil.d("OOM3", "下载的进度为" + progress);
