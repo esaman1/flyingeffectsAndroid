@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
@@ -107,7 +108,6 @@ public class ScreenCaptureUtil {
         String path = mTextFolder + File.separator + System.currentTimeMillis() + ".png";
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
-        view.changePositionToScreenShot();
         Bitmap bp = view.getDrawingCache();
 
         int top;
@@ -172,6 +172,19 @@ public class ScreenCaptureUtil {
         }
         view.setDrawingCacheEnabled(false);
         view.restoreToScreenShot();
+        return path;
+    }
+
+
+    public String getFilePath(RelativeLayout view) {
+        String path = mTextFolder + File.separator + System.currentTimeMillis() + ".png";
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bp = view.getDrawingCache();
+            if (bp != null) {
+                BitmapManager.getInstance().saveBitmapToPath(bp, path);
+            }
+        view.setDrawingCacheEnabled(false);
         return path;
     }
 

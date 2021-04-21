@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,11 +61,13 @@ import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
+import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.fragment.CreationBackListFragment;
 import com.flyingeffects.com.ui.view.fragment.CreationFrameFragment;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.ScreenCaptureUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.StickerView;
@@ -207,6 +210,46 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         deleteSubLayerSticker();
     }
 
+
+    public void keepPicture(RelativeLayout relativeLayout) {
+        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+            if (stickerView.getIsTextSticker()) {
+                stickerView.disMissFrame();
+            }
+        }
+        ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
+        String textImagePath = screenCaptureUtil.getFilePath(relativeLayout);
+        Intent intent = new Intent(mContext, DressUpPreviewActivity.class);
+        intent.putExtra("url", textImagePath);
+        intent.putExtra("template_id", "");
+        intent.putExtra("localImage", textImagePath);
+        intent.putExtra("isSpecial", true);
+        intent.putExtra("templateTitle", "");
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        mContext.startActivity(intent);
+    }
+
+
+    private void showDialog(String path) {
+        if (!com.flyingeffects.com.commonlyModel.DoubleClick.getInstance().isFastDoubleClick()) {
+            ShowPraiseModel.keepAlbumCount();
+            LogUtil.d("showDialog", "showDialog");
+            AlertDialog.Builder builder = new AlertDialog.Builder(
+                    //去除黑边
+                    new ContextThemeWrapper(mContext, R.style.Theme_Transparent));
+            builder.setTitle(mContext.getString(R.string.notification));
+            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + mContext.getString(R.string.folder) + "】"
+            );
+            builder.setNegativeButton(mContext.getString(R.string.got_it), (dialog, which) -> {
+                dialog.dismiss();
+            });
+            builder.setCancelable(true);
+            Dialog mDialog = builder.show();
+            mDialog.setCanceledOnTouchOutside(false);
+            mDialog.show();
+        }
+    }
 
     /**
      * description ：更换文字

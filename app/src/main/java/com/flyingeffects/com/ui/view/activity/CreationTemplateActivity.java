@@ -27,6 +27,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetPathType;
+import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.databinding.ActCreationTemplateEditBinding;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
@@ -47,7 +48,9 @@ import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
+import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.ScreenCaptureUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.drag.CreationTemplateProgressBarView;
@@ -246,6 +249,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
         //数据收集
         presenter.statisticsDuration(videoPath, this);
+
+
         //是否显示多时间线
         seekBarViewIsShow(true);
 
@@ -268,6 +273,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             mBinding.tvFrame.setVisibility(View.VISIBLE);
             mBinding.rlBackImage.setVisibility(View.VISIBLE);
             mBinding.relativePlayerView.setVisibility(View.GONE);
+            mBinding.llProgress.setVisibility(View.GONE);
+            mBinding.ivChangeUi.setVisibility(View.GONE);
+            mBinding.tvCurrentTime.setVisibility(View.GONE);
+            mBinding.tvTotal.setVisibility(View.GONE);
+            mBinding.rlSeekBar.setVisibility(View.INVISIBLE);
+            mBinding.viewPager.setVisibility(View.VISIBLE);
         }
     }
 
@@ -488,17 +499,20 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * @param isShow
      */
     private void seekBarViewIsShow(boolean isShow) {
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mBinding.llProgress.getLayoutParams();
-        if (isShow) {
-            layoutParams.addRule(RelativeLayout.ABOVE, R.id.rl_seek_bar);
-            mBinding.viewPager.setVisibility(View.GONE);
-            mBinding.rlSeekBar.setVisibility(View.VISIBLE);
-        } else {
-            layoutParams.addRule(RelativeLayout.ABOVE, R.id.viewPager);
-            mBinding.viewPager.setVisibility(View.VISIBLE);
-            mBinding.rlSeekBar.setVisibility(View.GONE);
+        if (mFrom != FROM_DRESS_UP_BACK_CODE) {
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mBinding.llProgress.getLayoutParams();
+            if (isShow) {
+                layoutParams.addRule(RelativeLayout.ABOVE, R.id.rl_seek_bar);
+                mBinding.viewPager.setVisibility(View.GONE);
+                mBinding.rlSeekBar.setVisibility(View.VISIBLE);
+            } else {
+                layoutParams.addRule(RelativeLayout.ABOVE, R.id.viewPager);
+                mBinding.viewPager.setVisibility(View.VISIBLE);
+                mBinding.rlSeekBar.setVisibility(View.GONE);
+            }
+            mBinding.llProgress.setLayoutParams(layoutParams);
         }
-        mBinding.llProgress.setLayoutParams(layoutParams);
+
     }
 
     private LoadingDialog buildLoadingDialog() {
@@ -845,34 +859,36 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 提交完成品
      */
     private void submitCreation() {
-        DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
-        DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
-
-        if (isPlaying) {
-            videoToPause();//submit
-            pauseBgmMusic();
-            endTimer();
-        }
-
-        if (!TextUtils.isEmpty(title)) {
-            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_save", title);
+        if (mFrom == FROM_DRESS_UP_BACK_CODE) {
+            presenter.keepPicture(mBinding.relativeContentAllContent);
         } else {
-            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_save");
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
+            if (isPlaying) {
+                videoToPause();//submit
+                pauseBgmMusic();
+                endTimer();
+            }
+            if (!TextUtils.isEmpty(title)) {
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_save", title);
+            } else {
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_save");
+            }
+
+            if (UiStep.isFromDownBj) {
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Preview");
+            } else {
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
+            }
+            if (musicChooseIndex == 2) {
+                musicEndTime = allVideoDuration;
+                musicStartTime = 0;
+            }
+            presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutStartTime, mCutEndTime, title);
+            seekBarViewIsShow(true);
         }
 
-        if (UiStep.isFromDownBj) {
-            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Preview");
-        } else {
-            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
-        }
-        if (musicChooseIndex == 2) {
-            musicEndTime = allVideoDuration;
-            musicStartTime = 0;
-        }
 
-        presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutStartTime, mCutEndTime, title);
-
-        seekBarViewIsShow(true);
     }
 
     /**

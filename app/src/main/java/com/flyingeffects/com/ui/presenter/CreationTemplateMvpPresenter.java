@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.presenter;
 
 import android.content.Context;
+import android.widget.RelativeLayout;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
@@ -37,6 +38,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.onclickRelativeLayout();
     }
 
+
+    public void keepPicture(RelativeLayout relativeLayout){
+
+        creationTemplatemodel.keepPicture(relativeLayout);
+    }
 
 
     public void getNowPlayingTime(long nowProgressTime,long totalTime){

@@ -98,130 +98,135 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/relative_playerView"
+        android:id="@+id/relative_content_all_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:layout_above="@+id/ll_progress"
         android:layout_marginTop="50dp"
-        android:gravity="center">
-
-        <com.flyingeffects.com.view.MyScrollView
-            android:id="@+id/scrollView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_centerHorizontal="true">
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
-
-                <com.google.android.exoplayer2.ui.PlayerView
-                    android:id="@+id/exo_player"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:surface_type="texture_view"
-                    app:use_controller="false" />
-
-            </LinearLayout>
-
-        </com.flyingeffects.com.view.MyScrollView>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/rl_back_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/ll_progress"
-        android:layout_marginTop="50dp"
-        android:gravity="center"
-        android:visibility="invisible">
-
-        <com.flyingeffects.com.view.MyScrollView
-            android:id="@+id/sv_back_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_centerHorizontal="true">
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_back_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
-
-            </LinearLayout>
-
-        </com.flyingeffects.com.view.MyScrollView>
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_frame_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:visibility="invisible"
-            android:layout_centerInParent="true"
-            android:layout_centerHorizontal="true"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/ll_progress"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="50dp">
-
+        android:layout_height="wrap_content">
         <RelativeLayout
-            android:id="@+id/ll_green_background"
+            android:id="@+id/relative_playerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:visibility="gone">
+            android:layout_height="match_parent"
 
-            <ImageView
-                android:id="@+id/iv_green_background"
+            android:gravity="center">
+
+            <com.flyingeffects.com.view.MyScrollView
+                android:id="@+id/scrollView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:contentDescription="@string/app_name"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/green" />
+                android:layout_centerHorizontal="true">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <com.google.android.exoplayer2.ui.PlayerView
+                        android:id="@+id/exo_player"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:surface_type="texture_view"
+                        app:use_controller="false" />
+
+                </LinearLayout>
+
+            </com.flyingeffects.com.view.MyScrollView>
+
         </RelativeLayout>
 
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/ll_content_patents"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/ll_progress"
-        android:layout_marginTop="50dp"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <com.lansosdk.box.ViewLayerRelativeLayout
-            android:id="@+id/id_vview_realtime_gllayout"
+        <RelativeLayout
+            android:id="@+id/rl_back_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:gravity="center" />
+            android:gravity="center"
+            android:visibility="invisible">
+
+            <com.flyingeffects.com.view.MyScrollView
+                android:id="@+id/sv_back_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop" />
+
+                </LinearLayout>
+
+            </com.flyingeffects.com.view.MyScrollView>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_frame_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:visibility="invisible"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+        >
+
+            <RelativeLayout
+                android:id="@+id/ll_green_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_green_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/green" />
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/ll_content_patents"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.lansosdk.box.ViewLayerRelativeLayout
+                android:id="@+id/id_vview_realtime_gllayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="center" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
+
+
 
     <ImageView
         android:id="@+id/iv_change_ui"
