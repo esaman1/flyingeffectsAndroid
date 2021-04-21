@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.adapter.CreationBottomPagerAdapter;
 import com.flyingeffects.com.adapter.TemplateGridViewAnimAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
@@ -63,6 +64,7 @@ import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.fragment.CreationBackListFragment;
+import com.flyingeffects.com.ui.view.fragment.CreationBottomFragment;
 import com.flyingeffects.com.ui.view.fragment.CreationFrameFragment;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.FileUtil;
@@ -94,6 +96,7 @@ import androidx.collection.SparseArrayCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import rx.Observable;
@@ -108,12 +111,13 @@ import rx.subjects.PublishSubject;
  * param :
  * user : zhangtongju
  */
-public class CreationTemplateMvpModel implements StickerFragment.StickerListener, CreationBackListFragment.BackChooseListener, CreationFrameFragment.FrameChooseListener {
+public class CreationTemplateMvpModel implements StickerFragment.StickerListener, CreationBackListFragment.BackChooseListener, CreationFrameFragment.FrameChooseListener, CreationBottomFragment.FinishListener {
     private static final String TAG = "CreationTemplateMvpMode";
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private CreationTemplateMvpCallback mCallback;
     private final Context mContext;
     private List<View> listForInitBottom = new ArrayList<>();
+    private List<Fragment> mFragmentList = new ArrayList<>();
     private String mVideoPath;
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
     private int nowChooseMusicId = 0;
@@ -211,14 +215,14 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
 
-    public void keepPicture(RelativeLayout relativeLayout,ImageView iv) {
+    public void keepPicture(RelativeLayout relativeLayout, ImageView iv) {
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             stickerView.disMissFrame();
         }
 
         ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
-        String textImagePath = screenCaptureUtil.getFilePath(relativeLayout,iv);
+        String textImagePath = screenCaptureUtil.getFilePath(relativeLayout, iv);
         Intent intent = new Intent(mContext, DressUpPreviewActivity.class);
         intent.putExtra("url", textImagePath);
         intent.putExtra("template_id", "");
@@ -364,6 +368,8 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
     public void chooseAnim(int pageNum) {
         mViewPager.setCurrentItem(pageNum);
+        mViewPager.setVisibility(View.VISIBLE);
+
         //   showAllAnim(false);
     }
 
@@ -403,16 +409,17 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         if (from == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
             initViewForChooseBack(fragmentManager);
             initViewForChooseFrame(fragmentManager);
-            initViewForSticker(fragmentManager);
-
+            initViewForSticker(from, fragmentManager);
         } else {
-            initViewForSticker(fragmentManager);
+            initViewForSticker(from, fragmentManager);
             initViewForChooseAnim();
             initViewForChooseMusic();
         }
 
         TemplateViewPager templateViewPager = new TemplateViewPager(listForInitBottom);
-        viewPager.setAdapter(templateViewPager);
+        CreationBottomPagerAdapter adapter = new CreationBottomPagerAdapter(fragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mFragmentList);
+        mViewPager.setAdapter(adapter);
+        mViewPager.setOffscreenPageLimit(3);
 
     }
 
@@ -426,11 +433,21 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
         ViewPager frameViewPager = frameView.findViewById(R.id.view_pager);
 
-        frameView.findViewById(R.id.iv_down_sticker).setOnClickListener(v -> mCallback.stickerFragmentClose());
+        frameView.findViewById(R.id.iv_down_sticker).setOnClickListener(v ->
+                mCallback.stickerFragmentClose());
+
+        CreationBottomFragment fragment = new CreationBottomFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", 1);
+        fragment.setArguments(bundle);
+        fragment.setFinishListener(this);
+        fragment.setFrameChooseListener(this);
+        mFragmentList.add(fragment);
 
         SlidingTabLayout frameTab = frameView.findViewById(R.id.tb_sticker);
         requestPhotoFrameList(frameViewPager, frameTab, fragmentManager);
         listForInitBottom.add(frameView);
+
     }
 
     /**
@@ -446,6 +463,13 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         backView.findViewById(R.id.iv_down_sticker).setOnClickListener(v -> mCallback.stickerFragmentClose());
         SlidingTabLayout backTab = backView.findViewById(R.id.tb_sticker);
         requestBackList(backViewPager, backTab, fragmentManager);
+        CreationBottomFragment fragment = new CreationBottomFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", 0);
+        fragment.setArguments(bundle);
+        fragment.setFinishListener(this);
+        fragment.setBackChooseListener(this);
+        mFragmentList.add(fragment);
 
         listForInitBottom.add(backView);
     }
@@ -453,26 +477,40 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     /**
      * 初始化贴纸列表view
      *
+     * @param from
      * @param fragmentManager
      */
-    private void initViewForSticker(FragmentManager fragmentManager) {
-        View templateThumbView = LayoutInflater.from(mContext).inflate(R.layout.view_template_paster, mViewPager, false);
-        ViewPager stickerViewPager = templateThumbView.findViewById(R.id.viewpager_sticker);
-        templateThumbView.findViewById(R.id.iv_delete_sticker).setOnClickListener(v -> {
-            stopAllAnim();
-            closeAllAnim();
-            deleteAllSticker();
-            if (UiStep.isFromDownBj) {
-                StatisticsEventAffair.getInstance().setFlag(mContext, " 5_mb_bj_Stickeroff");
-            } else {
-                StatisticsEventAffair.getInstance().setFlag(mContext, " 6_customize_bj_Stickeroff");
-            }
-        });
+    private void initViewForSticker(int from, FragmentManager fragmentManager) {
 
-        templateThumbView.findViewById(R.id.iv_down_sticker).setOnClickListener(v -> mCallback.stickerFragmentClose());
-        SlidingTabLayout stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
-        getStickerTypeList(fragmentManager, stickerViewPager, stickerTab);
-        listForInitBottom.add(templateThumbView);
+        if (from == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+            CreationBottomFragment fragment = new CreationBottomFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt("id", 2);
+            fragment.setArguments(bundle);
+            fragment.setStickerListener(this);
+            fragment.setFinishListener(this);
+            mFragmentList.add(fragment);
+        } else {
+            View templateThumbView = LayoutInflater.from(mContext).inflate(R.layout.view_template_paster, mViewPager, false);
+            ViewPager stickerViewPager = templateThumbView.findViewById(R.id.viewpager_sticker);
+
+            templateThumbView.findViewById(R.id.iv_delete_sticker).setOnClickListener(v -> {
+                stopAllAnim();
+                closeAllAnim();
+                deleteAllSticker();
+                if (UiStep.isFromDownBj) {
+                    StatisticsEventAffair.getInstance().setFlag(mContext, " 5_mb_bj_Stickeroff");
+                } else {
+                    StatisticsEventAffair.getInstance().setFlag(mContext, " 6_customize_bj_Stickeroff");
+                }
+            });
+
+            templateThumbView.findViewById(R.id.iv_down_sticker).setOnClickListener(v -> mCallback.stickerFragmentClose());
+            SlidingTabLayout stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
+            getStickerTypeList(fragmentManager, stickerViewPager, stickerTab);
+            listForInitBottom.add(templateThumbView);
+        }
+
     }
 
 
@@ -617,6 +655,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         // 启动时间
         Observable ob = Api.getDefault().getStickerTypeList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerTypeEntity>>(mContext) {
+
             @Override
             protected void onSubError(String message) {
                 ToastUtil.showToast(message);
@@ -637,6 +676,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 }
 
                 home_vp_frg_adapter vp_frg_adapter = new home_vp_frg_adapter(fragmentManager, fragments);
+
                 stickerViewPager.setOffscreenPageLimit(list.size() - 1);
                 stickerViewPager.setAdapter(vp_frg_adapter);
                 stickerTab.setViewPager(stickerViewPager, titles);
@@ -675,7 +715,6 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         List<SecondaryTypeEntity> categoryList = data.get(i).getCategory();
                         String[] titles = new String[categoryList.size()];
                         for (int j = 0; j < categoryList.size(); j++) {
-
                             titles[j] = categoryList.get(j).getName();
                             Bundle bundle = new Bundle();
                             bundle.putString("id", categoryList.get(j).getId());
@@ -684,11 +723,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                             fragment.setArguments(bundle);
                             fragments.add(fragment);
                         }
-                        home_vp_frg_adapter vpFrgAdapter = new home_vp_frg_adapter(fragmentManager, fragments);
-                        backViewPager.setOffscreenPageLimit(categoryList.size() - 1);
-                        backViewPager.setAdapter(vpFrgAdapter);
-                        backTab.setViewPager(backViewPager, titles);
 
+                        LogUtil.d(TAG, "requestBackList");
+                        home_vp_frg_adapter backFragAdapter = new home_vp_frg_adapter(fragmentManager, fragments);
+                        backViewPager.setAdapter(backFragAdapter);
+                        backTab.setViewPager(backViewPager, titles);
                     }
                 }
             }
@@ -700,18 +739,20 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      * 请求相框
      *
      * @param frameViewPager
-     * @param backTab
+     * @param frameTab
      * @param fragmentManager
      */
-    public void requestPhotoFrameList(ViewPager frameViewPager, SlidingTabLayout backTab, FragmentManager fragmentManager) {
+    public void requestPhotoFrameList(ViewPager frameViewPager, SlidingTabLayout frameTab, FragmentManager fragmentManager) {
         List<Fragment> fragments = new ArrayList<>();
         CreationFrameFragment fragment = new CreationFrameFragment();
         fragment.setFrameChooseListener(CreationTemplateMvpModel.this);
         String[] titles = {"相框"};
         fragments.add(fragment);
+
         home_vp_frg_adapter vpFrgAdapter = new home_vp_frg_adapter(fragmentManager, fragments);
+
         frameViewPager.setAdapter(vpFrgAdapter);
-        backTab.setViewPager(frameViewPager, titles);
+        frameTab.setViewPager(frameViewPager, titles);
     }
 
 
@@ -2265,6 +2306,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     @Override
     public void chooseFrame(String path) {
         mCallback.chooseFrame(path);
+    }
+
+    @Override
+    public void onFinishClicked() {
+        mCallback.stickerFragmentClose();
     }
 }
 

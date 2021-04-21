@@ -136,7 +136,7 @@ public class CreationFrameFragment extends BaseFragment {
             @Override
             protected void onSubNext(List<ImageFrameEntity> data) {
                 finishData();
-                if (isRefresh){
+                if (isRefresh) {
                     mImageFrameList.clear();
                 }
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
@@ -147,6 +147,7 @@ public class CreationFrameFragment extends BaseFragment {
                 }
 
                 mImageFrameList.addAll(data);
+                mGridViewAdapter.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
     }
@@ -195,7 +196,6 @@ public class CreationFrameFragment extends BaseFragment {
         }
         mGridViewAdapter.notifyDataSetChanged();
     }
-
 
 
 }

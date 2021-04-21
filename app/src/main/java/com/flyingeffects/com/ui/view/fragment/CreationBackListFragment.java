@@ -15,6 +15,7 @@ import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ClearChooseStickerState;
+import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.StickerList;
@@ -136,7 +137,11 @@ public class CreationBackListFragment extends BaseFragment {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
-        //params.put("category_id", mId);
+        params.put("category_id", "2");
+        if (Integer.parseInt(mId) >= 0) {
+            params.put("tc_id", mId);
+        }
+        LogUtil.d(TAG, "category_id = " + mId);
 
         Observable<HttpResult<List<NewFragmentTemplateItem>>> ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
 
@@ -160,11 +165,10 @@ public class CreationBackListFragment extends BaseFragment {
                 }
 
                 listForSticker.addAll(list);
-
+                mGridViewAdapter.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
     }
-
 
     private void finishData() {
         mSmartRefreshLayout.finishRefresh();
@@ -187,6 +191,8 @@ public class CreationBackListFragment extends BaseFragment {
     }
 
 
+
+
     public interface BackChooseListener {
         void chooseBack(String path);
     }
@@ -197,12 +203,10 @@ public class CreationBackListFragment extends BaseFragment {
         EventBus.getDefault().unregister(this);
     }
 
-
     @Subscribe
     public void onEventMainThread(ClearChooseStickerState clearChooseStickerState) {
         modificationChecked();
     }
-
 
     private void modificationChecked() {
         for (NewFragmentTemplateItem item : listForSticker) {
@@ -210,6 +214,5 @@ public class CreationBackListFragment extends BaseFragment {
         }
         mGridViewAdapter.notifyDataSetChanged();
     }
-
 
 }

@@ -106,6 +106,7 @@ public class StickerFragment extends BaseFragment {
             selectPage = 1;
             requestStickersList(true);
         });
+
         mSmartRefreshLayout.setOnLoadMoreListener(refresh -> {
             isRefresh = false;
             selectPage++;
@@ -125,6 +126,7 @@ public class StickerFragment extends BaseFragment {
                         if (mStickerListener != null) {
                             mStickerListener.clickItemSelected(position);
                         }
+
                         if (UiStep.isFromDownBj) {
                             StatisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", listForSticker.get(position).getTitle());
                         } else {
@@ -137,6 +139,7 @@ public class StickerFragment extends BaseFragment {
                         } else {
                             downSticker(listForSticker.get(position).getImage(), listForSticker.get(position).getId(), position, listForSticker.get(position).getTitle());
                         }
+
                     }
                 }, 200);
 

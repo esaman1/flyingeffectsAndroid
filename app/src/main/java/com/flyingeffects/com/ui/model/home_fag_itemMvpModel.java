@@ -40,7 +40,7 @@ public class home_fag_itemMvpModel {
     private int template_type;
     private int fromType;
 
-    public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback, int fromType,FeedAdManager mAdManager) {
+    public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback, int fromType, FeedAdManager mAdManager) {
         this.context = context;
         this.callback = callback;
         this.fromType = fromType;
@@ -105,10 +105,11 @@ public class home_fag_itemMvpModel {
         params.put("search", "");
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
+
         Observable ob;
-        if(fromType == 4){
+        if (fromType == 4) {
             ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
-        }else{
+        } else {
             ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
         }
         LogUtil.d("requestFagData", StringUtil.beanToJSONString(params));
@@ -139,24 +140,22 @@ public class home_fag_itemMvpModel {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
 
-                if(BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()&&data.size()>BaseConstans.NOWADSHOWPOSITION){
-                    NewFragmentTemplateItem item=new NewFragmentTemplateItem();
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && data.size() > BaseConstans.NOWADSHOWPOSITION) {
+                    NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                     item.setHasShowAd(true);
                     //设置当前是导流，进入抖音列表页就会自动过滤
                     item.setIs_ad_recommend(1);
-                    data.add(BaseConstans.NOWADSHOWPOSITION,item);
+                    data.add(BaseConstans.NOWADSHOWPOSITION, item);
                 }
                 listData.addAll(data);
                 callback.showData(listData);
 
-                if(BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     callback.needRequestFeedAd();
                 }
             }
         }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, false);
     }
-
-
 
 
     private void finishData() {
@@ -170,8 +169,8 @@ public class home_fag_itemMvpModel {
      * creation date: 2021/4/15
      * user : zhangtongju
      */
-    public void RefreshAllData(){
-        requestFagData(true,false);
+    public void RefreshAllData() {
+        requestFagData(true, false);
     }
 
 

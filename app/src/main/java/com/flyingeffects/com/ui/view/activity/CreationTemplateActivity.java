@@ -283,8 +283,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             mBinding.ivChangeUi.setVisibility(View.GONE);
             mBinding.tvCurrentTime.setVisibility(View.GONE);
             mBinding.tvTotal.setVisibility(View.GONE);
-            mBinding.rlSeekBar.setVisibility(View.INVISIBLE);
-            mBinding.viewPager.setVisibility(View.VISIBLE);
+            mBinding.rlSeekBar.setVisibility(View.GONE);
+            mBinding.viewPager.setVisibility(View.GONE);
         }
     }
 
@@ -2180,6 +2180,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             seekBarViewIsShow(true);
         }
         mBinding.materialSeekBarView.scrollToTheBottom();
+        if (mFrom == FROM_DRESS_UP_BACK_CODE) {
+            mBinding.viewPager.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -2203,7 +2206,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void chooseBack(String path) {
         mBackgroundImage = path;
         changeImageBack();
-
     }
 
     private void changeImageBack() {
@@ -2285,6 +2287,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                     LogUtil.d("playBGMMusic", "musicEndTime=" + musicEndTime);
                 }
+
                 stickerView.setShowStickerStartTime(startTime);
                 stickerView.setShowStickerEndTime(endTime);
                 break;
@@ -2307,6 +2310,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private void stickerTimeLineOffset() {
 
         for (int i = 0; i < mBinding.idVviewRealtimeGllayout.getChildCount(); i++) {
+
             StickerView stickerView = (StickerView) mBinding.idVviewRealtimeGllayout.getChildAt(i);
 
             if (stickerView.getShowStickerStartTime() > mCutStartTime && stickerView.getShowStickerEndTime() < mCutEndTime) {
@@ -2381,6 +2385,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void onBackPressed() {
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_edit_back_bj");
+
         CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
                 .setAdId(AdConfigs.AD_IMAGE_EXIT)

@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_40"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <com.flyco.tablayout.SlidingTabLayout
             android:id="@+id/tb_sticker"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_marginStart="8dp"
+            android:layout_weight="1"
             app:tl_divider_padding="@dimen/dp_5"
             app:tl_indicator_color="#5496FF"
             app:tl_indicator_corner_radius="@dimen/dp_5"
@@ -30,20 +30,20 @@
             app:tl_textsize="@dimen/sp_16" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:textColor="@color/capture_btn_blue"
             android:id="@+id/iv_down_sticker"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:layout_marginRight="5dp"
-            android:textStyle="bold"
-            android:text="完成"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
-            android:layout_height="wrap_content"/>
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
+            android:text="完成"
+            android:textColor="@color/capture_btn_blue"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
