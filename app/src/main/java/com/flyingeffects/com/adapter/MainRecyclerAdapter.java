@@ -572,7 +572,6 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
         intent.putExtra("isFrom", 2);
         intent.putExtra("videoPath", path);
         mContext.startActivity(intent);
-
     }
 
     String tabName;

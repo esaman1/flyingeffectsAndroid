@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -37,6 +38,7 @@ public class CreationBottomFragment extends BaseFragment implements CreationBack
     private SlidingTabLayout mSlidingTabLayout;
     private TextView mTvFinish;
     private ViewPager mVpBottom;
+    private ImageView mIvDeleteSticker;
 
     private int mId;
     private CreationBackListFragment.BackChooseListener mBackChooseListener;
@@ -52,16 +54,21 @@ public class CreationBottomFragment extends BaseFragment implements CreationBack
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.tb_sticker);
         mTvFinish = (TextView) findViewById(R.id.iv_down_sticker);
         mVpBottom = (ViewPager) findViewById(R.id.view_pager);
+        mIvDeleteSticker = (ImageView) findViewById(R.id.iv_delete_sticker);
+
         setOnClickListener();
     }
 
     private void setOnClickListener() {
         mTvFinish.setOnClickListener(this::onViewClicked);
+        mIvDeleteSticker.setOnClickListener(this::onViewClicked);
     }
 
     private void onViewClicked(View view) {
         if (view.getId() == R.id.iv_down_sticker) {
             mFinishListener.onFinishClicked();
+        } else if (view.getId() == R.id.iv_delete_sticker) {
+            mFinishListener.onClearClicked(mId);
         }
     }
 
@@ -74,6 +81,7 @@ public class CreationBottomFragment extends BaseFragment implements CreationBack
     protected void initData() {
         if (mId == 0) {
             requestBackList(mVpBottom, mSlidingTabLayout, getChildFragmentManager());
+            mIvDeleteSticker.setVisibility(View.GONE);
         } else if (mId == 1) {
             requestPhotoFrameList(mVpBottom, mSlidingTabLayout, getChildFragmentManager());
         } else {
@@ -123,6 +131,7 @@ public class CreationBottomFragment extends BaseFragment implements CreationBack
                             titles[j] = categoryList.get(j).getName();
                             Bundle bundle = new Bundle();
                             bundle.putString("id", categoryList.get(j).getId());
+                            bundle.putString("categoryName", categoryList.get(j).getName());
                             CreationBackListFragment fragment = new CreationBackListFragment();
                             fragment.setBackChooseListener(CreationBottomFragment.this);
                             fragment.setArguments(bundle);
@@ -248,5 +257,7 @@ public class CreationBottomFragment extends BaseFragment implements CreationBack
 
     public interface FinishListener {
         void onFinishClicked();
+
+        void onClearClicked(int id);
     }
 }
