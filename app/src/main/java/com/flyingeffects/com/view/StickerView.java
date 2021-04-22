@@ -77,8 +77,10 @@ import androidx.annotation.Nullable;
  * @date 2019/12/19
  */
 public class StickerView<D extends Drawable> extends View implements TickerAnimated {
-    private static final int CODE_CONVERSE_ON = 0;
-    private static final int CODE_CONVERSE_OFF = 1;
+
+    public static final int CODE_STICKER_TYPE_NORMAL = 0;
+    public static final int CODE_STICKER_TYPE_TEXT = 1;
+    public static final int CODE_STICKER_TYPE_FLASH_PIC = 2;
 
     private static final String TAG = "StickerView";
     /**
@@ -89,8 +91,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             Color.parseColor("#00000000"), Color.parseColor("#EEEEEE"), Color.parseColor("#EEEEEE"), Color.parseColor("#00000000")};
 
 
+    private int mStickerType = CODE_STICKER_TYPE_NORMAL;
+
     private boolean isFromStickerAnim = false;
-    private boolean mIsText = false;
+
     private float mMeasureWidth = 300;
     private float mMeasureHeight = 300;
     private String stickerText = "输入文本";
@@ -119,10 +123,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 文字图片地址
      */
     private String getTypefaceBitmapPath;
+
     /**
      * 文字图片
      */
     private Bitmap bpForTextBj;
+
     /**
      * 是否设置花纹
      */
@@ -181,10 +187,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 正常
      */
     public static final int IDLE_MODE = 2;
+
     /**
      * 移动模式
      */
     public static final int MOVE_MODE = 3;
+
     /**
      * 左上角动作
      */
@@ -244,10 +252,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 中心
      */
     private PointF center = new PointF(0, 0);
+
     /**
      * 旋转角度
      */
     public float mRotateAngle = 0;
+
     /**
      * 缩放比
      */
@@ -258,6 +268,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private TextPaint shadowPaint = new TextPaint();
     private Paint mHelpPaint = new Paint();
     private RectF mHelpBoxRect = new RectF();
+
     /**
      * 图像透明化要用到的遮罩
      */
@@ -295,28 +306,34 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private float frameWidth = 1;
     private int rotateLocation = RIGHT_BOTTOM_MODE;
     private int mCurrentMode = IDLE_MODE;
+
     /**
      * 限制右侧滑动按钮在轨道之内
      */
     private int mRightLimited = 0;
+
     /**
      * 右侧滑动按钮距离底部的距离百分比
      */
     private float mRightOffsetPercent = 0f;
+
     /**
      * 右侧滑动按钮距离底部的距离
      */
     private float mRightOffset = 0f;
+
     /**
      * 是否允许辅助水平
      */
     private boolean enableAutoAdjustDegree = true;
+
     /**
      * 是否允许辅助居中
      */
     private boolean enableAutoAdjustCenter = false;
     private float lastX = 0;
     private float lastY = 0;
+
     /**
      * 辅助线颜色
      */
@@ -403,6 +420,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 文字paint
      */
     private Paint mTextPaint;
+
     /**
      * 没有选择效果之前的样式
      */
@@ -428,9 +446,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         this(context, attrs, 0);
     }
 
-    public StickerView(Context context, boolean isText) {
+    public StickerView(Context context, int stickerType) {
         this(context);
-        mIsText = isText;
+        mStickerType = stickerType;
         initTextPainter(context);
         colors.add("#F4F4F4");
         colors.add("#FFFFFF");
@@ -447,6 +465,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 //        setupGestureListeners();
         TypedArray mTypedArray = context.obtainStyledAttributes(attributeSet,
                 R.styleable.StickerView);
+
         leftTopBitmap = mTypedArray.getDrawable(R.styleable.StickerView_sv_left_top_drawable);
         leftBottomBitmap = mTypedArray.getDrawable(R.styleable.StickerView_sv_left_bottom_drawable);
         rightBitmap = mTypedArray.getDrawable(R.styleable.StickerView_sv_right_drawable);
@@ -894,7 +913,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * @param canvas
      */
     private void drawContent(Canvas canvas) {
-        if (mIsText) {
+        if (mStickerType == CODE_STICKER_TYPE_TEXT) {
             if (OpenThePattern) {
                 listFontList = getFontList(stickerText);
                 mMeasureWidth = MeasureTextUtils.getFontWidth(mTextPaint, stickerText) * 2;
@@ -1198,9 +1217,12 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         callback.stickerOnclick(RIGHT_TOP_MODE);
                         return true;
                     } else if (mCurrentMode == LEFT_BOTTOM_MODE) {
-                        //todo 添加来源判断
-                        //callback.stickerOnclick(LEFT_BOTTOM_MODE);
-                        mMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
+                        //添加来源判断
+                        if (mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
+                            mMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
+                        } else {
+                            callback.stickerOnclick(LEFT_BOTTOM_MODE);
+                        }
                         return true;
                     } else if (mCurrentMode == RIGHT_CENTER_MODE) {
                         callback.stickerOnclick(RIGHT_CENTER_MODE);
@@ -1620,7 +1642,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     public float getScale() {
-        if (mIsText) {
+        if (mStickerType == CODE_STICKER_TYPE_TEXT) {
             return mScale * mTextScale;
         } else {
             return mScale;
@@ -1690,7 +1712,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         return mMaskBitmap;
     }
 
-    public Bitmap getMirrorBitmap(){
+    public Bitmap getMirrorBitmap() {
         return mMirrorBitmap;
     }
 
@@ -1821,7 +1843,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     recyclerBitmap();
                 }
             });
-        } else if (!mIsText) {
+        } else if (mStickerType != CODE_STICKER_TYPE_TEXT) {
             //路径不存在
             ToastUtil.showToast("文件不存在");
         }
@@ -2202,7 +2224,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     public boolean getIsTextSticker() {
-        return mIsText;
+        return mStickerType == CODE_STICKER_TYPE_TEXT;
     }
 
     public String getTypefaceBitmapPath() {
@@ -2311,7 +2333,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private boolean hasChangeTextScale = false;
 
     public void changePositionToScreenShot() {
-        if (mIsText) {
+        if (mStickerType==CODE_STICKER_TYPE_TEXT) {
 //            if (mHelpBoxRect.left < 0 || mHelpBoxRect.right > getMeasuredWidth() || mHelpBoxRect.top < 0 || mHelpBoxRect.bottom > getMeasuredHeight()) {
             keepToScreenScale = mScale;
             hasChangeTextPosition = true;
@@ -2329,7 +2351,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     }
 
     public void restoreToScreenShot() {
-        if (mIsText && hasChangeTextPosition) {
+        if (mStickerType == CODE_STICKER_TYPE_TEXT && hasChangeTextPosition) {
             setCenter(keepToCenter[0], keepToCenter[1]);
             hasChangeTextPosition = false;
             if (hasChangeTextScale) {
@@ -2411,5 +2433,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public void setStickerNoIncludeAnimId(int stickerNoIncludeAnimId) {
         this.stickerNoIncludeAnimId = stickerNoIncludeAnimId;
     }
+
 
 }

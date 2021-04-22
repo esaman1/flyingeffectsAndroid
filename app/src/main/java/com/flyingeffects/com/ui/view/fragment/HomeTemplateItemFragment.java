@@ -438,7 +438,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
     @Subscribe
     public void onEventMainThread(BackgroundTemplateCollectionEvent event) {
         if (getActivity() != null) {
-            if (fromType == 4 && !TextUtils.isEmpty(tabName) && tabName.equals("4")) {
+            if (fromType == 4 && !TextUtils.isEmpty(tabName) && "4".equals(tabName)) {
                 mPresenter.RefreshAllData();
             }
         }

@@ -1347,7 +1347,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     public void onVideoAdError(String s) {
                         StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
                         LogUtil.d("OOM4", "onVideoAdError" + s);
-                        if (BaseConstans.getAdShowErrorCanSave().equals("1")) {
+                        if ("1".equals(BaseConstans.getAdShowErrorCanSave())) {
                             hasLoginToNext();
                         }
                     }

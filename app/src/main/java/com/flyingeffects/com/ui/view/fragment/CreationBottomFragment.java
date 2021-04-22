@@ -99,6 +99,7 @@ public class CreationBottomFragment extends BaseFragment implements CreationBack
         HashMap<String, String> params = new HashMap<>();
         //类型 1模板 2背景 3换脸  4 加上了最新的闪图
         params.put("type", "4");
+
         Observable ob = Api.getDefault().getCategoryList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FirstLevelTypeEntity>>(getContext()) {
             @Override

@@ -113,6 +113,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
         }
 
         if (ad == null) {
+
             if (OldFromTo.equals(FromToTemplate.DRESSUP)) {
                 videoPlayer.setVisibility(View.GONE);
                 iv_show_cover.setVisibility(View.VISIBLE);
@@ -158,7 +159,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
 
             if (needHideCreate) {
                 ll_down_bj.setVisibility(View.GONE);
-                tv_make.setVisibility(View.GONE);
+                //tv_make.setVisibility(View.GONE);
                 ll_comment.setVisibility(View.GONE);
                 ll_zan.setVisibility(View.GONE);
             } else {

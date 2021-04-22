@@ -246,7 +246,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
         initBundleData();
 
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath, null);
+        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath, null,mFrom);
         LogUtil.d(TAG, "videoPath = " + videoPath);
 
         setOnClickListener();
@@ -255,7 +255,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
         //数据收集
         presenter.statisticsDuration(videoPath, this);
-
 
         //是否显示多时间线
         seekBarViewIsShow(true);
@@ -637,6 +636,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     protected void initAction() {
         presenter.initStickerView(imgPath, originalPath);
+
         presenter.initBottomLayout(mBinding.viewPager, getSupportFragmentManager(), mFrom);
 
         //设置预览界面大小
@@ -866,7 +866,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private void submitCreation() {
         if (mFrom == FROM_DRESS_UP_BACK_CODE) {
-            presenter.keepPicture(mBinding.relativeContentAllContent,mBinding.ivFrameImage);
+            presenter.keepPicture(mBinding.relativeContentAllContent, mBinding.ivFrameImage);
         } else {
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
@@ -1672,58 +1672,65 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             task.cancel();
             task = null;
         }
+
         timer = new Timer();
 
         task = new TimerTask() {
             @Override
             public void run() {
-                totalPlayTime = totalPlayTime + 5;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!TextUtils.isEmpty(videoPath)) {
-                            bjMusicControl();
-                            if (isPlaying) {
-                                long nowCurrentPos = getCurrentPos();
-                                if (nowCurrentPos < 0) {
-                                    nowCurrentPos = 0;
-                                }
-                                if (nowCurrentPos >= mCutEndTime) {
-                                    exoPlayer.seekTo(mCutStartTime);
-                                    videoToPause();
-                                } else if (nowCurrentPos < mCutStartTime) {
-                                    exoPlayer.seekTo(mCutStartTime);
-                                    videoToPause();
-                                }
-                            }
-                            if (mBinding != null) {
-                                mBinding.progressBarView.scrollToPosition(getCurrentPos());
-                            }
-                        } else {
-                            bjMusicControl();
-                            //没有选择背景
-                            nowTime = nowTime + 5;
-                            LogUtil.d("OOM44", "nowTime==" + nowTime + "mCutEndTime=" + mCutEndTime);
-                            if (nowTime >= mCutEndTime) {
-                                nowTime = mCutStartTime;
-                                isPlayComplate = true;
-                                endTimer();
-                                isPlaying = false;
-                                presenter.showGifAnim(false);
-                                nowStateIsPlaying(false);
-                                presenter.showAllAnim(false);
-                            } else if (nowTime < mCutStartTime) {
-                                nowTime = mCutStartTime;
-                            }
-                            if (mBinding.progressBarView != null) {
-                                mBinding.progressBarView.scrollToPosition(nowTime);
-                            }
-                        }
-                    }
-                });
+                creationTimerTask();
             }
         };
         timer.schedule(task, 0, 5);
+    }
+
+    private void creationTimerTask() {
+        totalPlayTime = totalPlayTime + 5;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                bjMusicControl();
+                if (!TextUtils.isEmpty(videoPath)) {
+                    if (isPlaying) {
+                        long nowCurrentPos = getCurrentPos();
+                        if (nowCurrentPos < 0) {
+                            nowCurrentPos = 0;
+                        }
+                        if (nowCurrentPos >= mCutEndTime) {
+                            exoPlayer.seekTo(mCutStartTime);
+                            videoToPause();
+                        } else if (nowCurrentPos < mCutStartTime) {
+                            exoPlayer.seekTo(mCutStartTime);
+                            videoToPause();
+                        }
+                    }
+                    if (mBinding != null) {
+                        mBinding.progressBarView.scrollToPosition(getCurrentPos());
+                    }
+                } else {
+                    //没有选择背景
+                    nowTime = nowTime + 5;
+                    LogUtil.d("OOM44", "nowTime==" + nowTime + "mCutEndTime=" + mCutEndTime);
+
+                    if (nowTime >= mCutEndTime) {
+                        nowTime = mCutStartTime;
+                        isPlayComplate = true;
+                        endTimer();
+                        isPlaying = false;
+                        presenter.showGifAnim(false);
+                        nowStateIsPlaying(false);
+                        presenter.showAllAnim(false);
+                    } else if (nowTime < mCutStartTime) {
+                        nowTime = mCutStartTime;
+                    }
+
+                    if (mBinding.progressBarView != null) {
+                        mBinding.progressBarView.scrollToPosition(nowTime);
+                    }
+
+                }
+            }
+        });
     }
 
 
@@ -2222,7 +2229,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mBinding.ivFrameImage.setVisibility(View.VISIBLE);
 
 
-
         Glide.with(mContext)
                 .load(path)
                 .into(mBinding.ivFrameImage);
@@ -2231,7 +2237,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             @Override
             public void run() {
 //                test();
-
 
 
             }
@@ -2245,8 +2250,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 //            getImgDisplaySize( mBinding.ivFrameImage);
 //        });
 //    }
-
-
 
 
     @Override

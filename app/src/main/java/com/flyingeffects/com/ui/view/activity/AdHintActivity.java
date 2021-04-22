@@ -83,7 +83,8 @@ public class AdHintActivity extends Activity {
                     AdHintActivity.this.finish();
                 }
                 break;
-
+            default:
+                break;
         }
     };
 

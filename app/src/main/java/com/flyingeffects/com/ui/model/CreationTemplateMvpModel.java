@@ -79,6 +79,7 @@ import com.flyingeffects.com.view.animations.CustomMove.StartAnimModel;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.glidebitmappool.GlideBitmapPool;
+import com.lansosdk.box.T;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -129,6 +130,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private Vibrator vibrator;
     private String mImageCopyFolder;
     private boolean isCheckedMatting = true;
+    private int mFrom;
 
     View.OnClickListener tvMusicListener;
 
@@ -173,11 +175,12 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
     private AnimCollect mAnimCollect;
 
-    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath) {
+    public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, int from) {
         this.mContext = context;
         this.mCallback = callback;
         this.mOriginalPath = originalPath;
         this.mVideoPath = mVideoPath;
+        mFrom = from;
 
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
@@ -242,8 +245,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     //去除黑边
                     new ContextThemeWrapper(mContext, R.style.Theme_Transparent));
             builder.setTitle(mContext.getString(R.string.notification));
-            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + mContext.getString(R.string.folder) + "】"
-            );
+            builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + mContext.getString(R.string.folder) + "】");
             builder.setNegativeButton(mContext.getString(R.string.got_it), (dialog, which) -> {
                 dialog.dismiss();
             });
@@ -346,7 +348,16 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
     public void initStickerView(String imagePath, String originalPath) {
-        new Handler().postDelayed(() -> addSticker(imagePath, true, true, true, originalPath, false, null, false, false, null), 500);
+        int stickerType;
+        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+            stickerType = StickerView.CODE_STICKER_TYPE_FLASH_PIC;
+        } else {
+            stickerType = StickerView.CODE_STICKER_TYPE_NORMAL;
+        }
+        new Handler().postDelayed(() ->
+                addSticker(imagePath, true, true, true,
+                        originalPath, false, null, false,
+                        stickerType, null), 500);
     }
 
 
@@ -1075,9 +1086,10 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
     private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAlbum,
                             String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim,
-                            boolean isText, String title) {
+                            int stickerType, String title) {
         closeAllAnim();
-        StickerView stickView = new StickerView(mContext, isText);
+        StickerView stickView = new StickerView(mContext, stickerType);
+
         stickView.setId(stickerViewID);
 
         setStickerOnItemClick(stickView);
@@ -1088,6 +1100,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         stickView.setRightBottomBitmap(ContextCompat.getDrawable(mContext, R.mipmap.sticker_redact));
         stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAlbum);
+
         if (isFromAlbum) {
             LogUtil.d("OOM2", "ClipPath=" + path);
             stickView.setClipPath(path);
@@ -1105,16 +1118,16 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             stickView.setFirstAddSticker(true);
         }
 
-        if (hasReplace) {
-            stickView.setLeftBottomBitmap(ContextCompat.getDrawable(mContext, R.mipmap.sticker_change));
-        }
-
-        if (isText) {
+        if (stickerType == StickerView.CODE_STICKER_TYPE_TEXT) {
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(mContext, R.mipmap.shader_edit));
             nowChooseStickerView = stickView;
             if (!isCopy) {
                 new Handler().postDelayed(stickView::setIntoCenter, 500);
             }
+        } else if (stickerType == StickerView.CODE_STICKER_TYPE_NORMAL && hasReplace) {
+            stickView.setLeftBottomBitmap(ContextCompat.getDrawable(mContext, R.mipmap.sticker_change));
+        } else {
+            stickView.setLeftBottomBitmap(ContextCompat.getDrawable(mContext, R.mipmap.ic_mirror_btn));
         }
 
         if (title != null) {
@@ -1135,12 +1148,15 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     }
 
                 } else {
+
                     ArrayList<String> colors = copyStickerView.getTextColors();
+
                     if (copyStickerView.getOpenThePattern()) {
                         nowChooseStickerView.changeTextFrame(colors.get(0), colors.get(1), copyStickerView.getTextEffectTitle());
                     } else {
                         stickView.setTextPaintColor(colors.get(0), colors.get(1), copyStickerView.getTextEffectTitle());
                     }
+
                 }
 
                 if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
@@ -1151,6 +1167,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 stickView.setTextAngle(copyStickerView.getRotateAngle());
                 stickView.setScale(copyStickerView.getCopyScale());
                 stickView.setCenter(copyStickerView.getCenterXAdd30(), copyStickerView.getCenterYAdd30());
+
             } else {
                 //来做复制或者来自联系点击下面的item
                 StickerView.isFromCopy fromCopy = new StickerView.isFromCopy();
@@ -1162,7 +1179,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 fromCopy.setRightOffsetPercent(copyStickerView.getRightOffsetPercent());
 
                 if (isFromShowAnim) {
-                    if (isText) {
+                    if (stickerType == StickerView.CODE_STICKER_TYPE_TEXT) {
                         if (copyStickerView.getIsChooseTextBjEffect()) {
                             if (!TextUtils.isEmpty(copyStickerView.getTypefacePath())) {
                                 stickView.setTextStyle(copyStickerView.getTypefacePath(), copyStickerView.getTextStyleTitle());
@@ -1193,7 +1210,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         } else {
             stickView.setImageRes(path, true, null);
         }
-        if (!isText) {
+        if (stickerType != StickerView.CODE_STICKER_TYPE_TEXT) {
             stickView.setRightBitmap(ContextCompat.getDrawable(mContext, R.mipmap.sticker_updown));
             if (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                 stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.icon_pic_save));
@@ -1228,7 +1245,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
         if (!isFromShowAnim) {
             stickView.setStickerNoIncludeAnimId(stickerId);
-            mCallback.addStickerTimeLine(String.valueOf(stickerId), isText, isText ? stickView.getStickerText() : "", stickView);
+            mCallback.addStickerTimeLine(String.valueOf(stickerId), stickerType == StickerView.CODE_STICKER_TYPE_TEXT, stickerType == StickerView.CODE_STICKER_TYPE_TEXT ? stickView.getStickerText() : "", stickView);
             stickerId++;
         }
         stickerViewID++;
@@ -1564,8 +1581,14 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim, String title) {
 
         if (stickerView != null && stickerView.getIsTextSticker()) {
-            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true, null);
+            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, StickerView.CODE_STICKER_TYPE_TEXT, null);
         } else {
+            int stickerType;
+            if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+                stickerType = StickerView.CODE_STICKER_TYPE_FLASH_PIC;
+            } else {
+                stickerType = StickerView.CODE_STICKER_TYPE_NORMAL;
+            }
             try {
                 String copyName;
                 if (getResPath.endsWith(".gif")) {
@@ -1581,12 +1604,12 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         @Override
                         public void isSucceed() {
                             if (stickerView == null) {
-                                addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, null, isFromShowAnim, false, title);
+                                addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, null, isFromShowAnim, stickerType, title);
                             } else {
                                 if (stickerView != null) {
-                                    addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false, stickerView.getDownStickerTitle());
+                                    addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, stickerType, stickerView.getDownStickerTitle());
                                 } else {
-                                    addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false, null);
+                                    addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, stickerType, null);
                                 }
                             }
                         }
@@ -1604,9 +1627,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                         @Override
                         public void isSucceed() {
                             if (isFromShowAnim) {
-                                addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false, null);
+                                addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, stickerType, null);
                             } else {
-                                addSticker(finalCopyName1, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false, null);
+                                addSticker(finalCopyName1, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, stickerType, null);
                             }
                         }
                     });
@@ -1939,7 +1962,14 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      * user : zhangtongju
      */
     public void addNewSticker(String path, String originalPath) {
-        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 -> addSticker(path1, false, true, true, originalPath, false, null, false, false, null));
+        int stickerType;
+        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+            stickerType = StickerView.CODE_STICKER_TYPE_FLASH_PIC;
+        } else {
+            stickerType = StickerView.CODE_STICKER_TYPE_NORMAL;
+        }
+        Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(path1 ->
+                addSticker(path1, false, true, true, originalPath, false, null, false, stickerType, null));
     }
 
 
@@ -1970,7 +2000,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
     @Override
     public void addSticker(String stickerPath, String title) {
-        addSticker(stickerPath, false, false, false, null, false, null, false, false, title);
+        addSticker(stickerPath, false, false, false, null, false, null, false, StickerView.CODE_STICKER_TYPE_NORMAL, title);
     }
 
     @Override
@@ -2206,7 +2236,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
 
     public void addTextSticker() {
-        addSticker("", false, false, false, "", false, null, false, true, null);
+        addSticker("", false, false, false, "", false, null, false, StickerView.CODE_STICKER_TYPE_TEXT, null);
     }
 
 
