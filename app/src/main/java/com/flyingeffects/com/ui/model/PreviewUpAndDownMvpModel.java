@@ -668,6 +668,7 @@ public class PreviewUpAndDownMvpModel {
                 break;
             case FromToTemplate.CHOOSEBJ:
             case FromToTemplate.FACEGIF:
+            case FromToTemplate.SPECIAL:
             case FromToTemplate.DRESSUP:
                 params.put("template_type", "3");
                 ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
