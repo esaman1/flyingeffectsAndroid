@@ -122,7 +122,7 @@ public class DressUpPreviewActivity extends BaseActivity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.dress_up_next:
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
                     if (dressupSwitchNumber != 0 && dressupSwitchNumber % BaseConstans.getDressupIntervalsNumber() == 0 &&
                             BaseConstans.getIncentiveVideo() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                         VideoAdManager videoAdManager = new VideoAdManager();

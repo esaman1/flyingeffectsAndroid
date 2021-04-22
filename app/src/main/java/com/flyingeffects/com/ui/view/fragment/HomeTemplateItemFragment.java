@@ -150,15 +150,22 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                         if (api_type != 0) {
                             //只要闪图页面，特殊模板，都走dressUp逻辑
                             if (!"1".equals(templateType) && !"2".equals(templateType)) {
-                                intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                                intent.putExtra("fromTo", FromToTemplate.SPECIAL);
                             }
                             //只要模板页面，特殊模板，都走模板逻辑
                             if ("1".equals(templateType)) {
                                 intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                             }
                         } else {
-                            if ("3".equals(templateType) || "4".equals(templateType)) {
+                            if ("3".equals(templateType)) {
+                                //换脸
                                 intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                            } else if ("4".equals(templateType)) {
+                                //换背景
+                                intent.putExtra("fromTo", FromToTemplate.CHOOSEBJ);
+                            } else if ("5".equals(templateType)) {
+                                //表情包
+                                intent.putExtra("fromTo", FromToTemplate.FACEGIF);
                             } else {
                                 intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                             }

@@ -125,8 +125,10 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
                             tv_gif_logo.setText("换装");
                         }else if(!TextUtils.isEmpty(templateType)&&templateType.equals("4")){
                             tv_gif_logo.setText("换背景");
-                        }else{
+                        }else if(!TextUtils.isEmpty(templateType)&&templateType.equals("5")){
                             tv_gif_logo.setText("表情包");
+                        }else{
+                            tv_gif_logo.setText("特效");
                         }
                     }else{
                         tv_gif_logo.setVisibility(View.GONE);

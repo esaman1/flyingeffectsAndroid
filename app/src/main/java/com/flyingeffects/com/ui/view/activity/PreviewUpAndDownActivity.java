@@ -326,7 +326,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     int allDataCount = allData.size();
                     if (isCanLoadMore) {
                         if (position == allDataCount - 3) {
-                            LogUtil.d("OOM", "请求更多数据");
+                            LogUtil.d("OOM3", "请求更多数据");
                             mMvpPresenter.requestMoreData();
                         }
                     }
@@ -946,6 +946,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             case FromToTemplate.ISMESSAGEMYPRODUCTION:
             case FromToTemplate.ISMESSAGEMYLIKE:
             case FromToTemplate.ISTEMPLATE:
+
+                case FromToTemplate.FACEGIF:
             case FromToTemplate.ISBJCOLLECT:
             case FromToTemplate.ISSEARCHBJ:
             case FromToTemplate.ISSEARCHTEMPLATE:
@@ -962,6 +964,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 }
                 break;
             case FromToTemplate.DRESSUP:
+            case FromToTemplate.CHOOSEBJ:
+            case FromToTemplate.SPECIAL:
                 AlbumManager.chooseImageAlbum(this, templateItem.getDefaultnum(), SELECTALBUMFROMDressUp, this, "");
                 break;
             default:
@@ -1049,21 +1053,15 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     }
                     if (mOldFromTo.equals(FromToTemplate.DRESSUP)) {
                         //来自换装,闪图页面
-                        //换装闪图大分类里面包含特殊模板，核心还是和换装一样，通过上传图片到服务器，然后生成图片和视频
-                        int api_type = templateItem.getApi_type();
-                        if (api_type != 0) {
-
-                            mMvpPresenter.ToDressUpSpecial(paths, api_type);
+                        LogUtil.d(TAG, "toCreation " + templateItem.getBackground_image());
+                        if ("0".equals(templateItem.getBackground_image())) {
+                            mMvpPresenter.toDressUp(paths.get(0), templateId, templateItem.getTitle());
                         } else {
-                            LogUtil.d(TAG, "toCreation " + templateItem.getBackground_image());
-                            if ("0".equals(templateItem.getBackground_image())) {
-                                mMvpPresenter.toDressUp(paths.get(0), templateId, templateItem.getTitle());
-                            } else {
-                                createMattingImage(paths);
-                            }
+                            createMattingImage(paths);
                         }
-
-
+                    } else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
+                        int api_type = templateItem.getApi_type();
+                        mMvpPresenter.ToDressUpSpecial(paths, api_type);
                     } else if (templateItem.getIs_anime() == 1) {
                         //模板换装新逻辑
                         DressUpModel dressUpModel = new DressUpModel(this, paths1 -> mMvpPresenter.GetDressUpPath(paths1), true);
@@ -1197,7 +1195,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         boolean hasCache = templateItem.getIs_anime() != 1;
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
             //
-            if (mOldFromTo.equals(FromToTemplate.DRESSUP)) {
+            if (mOldFromTo.equals(FromToTemplate.CHOOSEBJ)) {
                 toCreationActivity(tailorPaths.get(0), paths.get(0));
             } else if ("2".equals(templateType)) {
                 mMvpPresenter.DownVideo(templateItem.getVidoefile(), tailorPaths.get(0), templateItem.getId() + "", false);
@@ -1283,7 +1281,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             bundle.putString("videoTime", templateItem.getVideotime());
             bundle.putStringArrayList("originalPath", (ArrayList<String>) originalImagePath);
             bundle.putString("templateFilePath", TemplateFilePath);
-            bundle.putInt("isSpecial",templateItem.getApi_type());
+            bundle.putInt("isSpecial", templateItem.getApi_type());
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("Message", bundle);
             LogUtil.d("OOM3", "startActivity=");
@@ -1421,7 +1419,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             if (requestCode == 1) {
                 toClickMake();
             } else {
-                mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem, mOldFromTo);
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                    mMvpPresenter.showBottomSheetDialog(templateItem.getVidoefile(), "", templateItem.getId() + "", templateItem, mOldFromTo);
+                }
             }
         } else {
             new AlertDialog.Builder(this)
