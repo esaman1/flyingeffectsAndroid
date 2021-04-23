@@ -47,7 +47,7 @@ public class CreationFrameFragment extends BaseFragment {
     private CreationFrameListGridViewAdapter mGridViewAdapter;
 
     private int selectPage = 1;
-    private int perPageCount = 20;
+    private int perPageCount = 10;
     private boolean isRefresh = true;
 
 

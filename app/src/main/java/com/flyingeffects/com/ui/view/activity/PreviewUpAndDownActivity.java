@@ -1024,6 +1024,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "12_mb_shoot", templateItem.getTitle());
                     //拍摄新页面
                     Intent intent = new Intent(PreviewUpAndDownActivity.this, FUBeautyActivity.class);
+
                     if ("2".equals(templateItem.getTemplate_type())) {
                         //背景
                         MediaInfo mediaInfo = new MediaInfo(videoPath);
@@ -1037,6 +1038,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         intent.putExtra("musicPath", bjMp3);
                         intent.putExtra("duration", (long) (bjMp3Duration * 1000));
                     }
+
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     intent.putExtra("isFrom", 1);
                     intent.putExtra("defaultnum", defaultnum);
@@ -1199,6 +1201,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     private void compressImage(List<String> paths, String templateId) {
         boolean hasCache = templateItem.getIs_anime() != 1;
+
         CompressionCuttingManage manage = new CompressionCuttingManage(PreviewUpAndDownActivity.this, templateId, hasCache, tailorPaths -> {
             //
             if (mOldFromTo.equals(FromToTemplate.CHOOSEBJ)) {

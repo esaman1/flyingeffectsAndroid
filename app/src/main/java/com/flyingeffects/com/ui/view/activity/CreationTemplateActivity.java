@@ -892,14 +892,15 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             } else {
                 StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
             }
+
             if (musicChooseIndex == 2) {
                 musicEndTime = allVideoDuration;
                 musicStartTime = 0;
             }
+
             presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutStartTime, mCutEndTime, title);
             seekBarViewIsShow(true);
         }
-
 
     }
 
@@ -933,6 +934,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mCreateViewForAddText.hideInputTextDialog();
                 mCreateViewForAddText = null;
             }
+
             mBinding.vAddText.llAddTextStyle.setVisibility(View.VISIBLE);
             mCreateViewForAddText = new CreateViewForAddText(this, mBinding.vAddText.llAddTextStyle, new CreateViewForAddText.downCallback() {
                 @Override
@@ -1588,16 +1590,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void showMusicBtn(boolean isShow) {
-        if (isShow) {
-            if (mFrom != FROM_DRESS_UP_BACK_CODE) {
+        if (mFrom != FROM_DRESS_UP_BACK_CODE) {
+            if (isShow) {
+
                 mBinding.tvMusic.setVisibility(View.VISIBLE);
+
+            } else {
+                mBinding.tvMusic.setVisibility(View.GONE);
+                mBinding.viewPager.setCurrentItem(0);
             }
-        } else {
-            mBinding.tvMusic.setVisibility(View.GONE);
-            mBinding.viewPager.setCurrentItem(0);
-        }
-        for (int value : LIN_ID) {
-            ((TextView) findViewById(value)).setTextColor(ContextCompat.getColor(mContext, R.color.white));
+
+            for (int value : LIN_ID) {
+                ((TextView) findViewById(value)).setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            }
         }
     }
 
