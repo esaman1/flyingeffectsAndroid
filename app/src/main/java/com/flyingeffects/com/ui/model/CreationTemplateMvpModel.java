@@ -1120,7 +1120,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             }
         } else if (stickerType == StickerView.CODE_STICKER_TYPE_NORMAL && hasReplace) {
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(mContext, R.mipmap.sticker_change));
-        } else {
+        } else if (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC) {
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(mContext, R.mipmap.ic_mirror_btn));
         }
 
@@ -1583,6 +1583,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             } else {
                 stickerType = StickerView.CODE_STICKER_TYPE_NORMAL;
             }
+
             try {
                 String copyName;
                 if (getResPath.endsWith(".gif")) {

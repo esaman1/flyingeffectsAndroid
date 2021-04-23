@@ -36,5 +36,6 @@
             app:srlFinishDuration="500"
             app:srlPrimaryColor="@color/black"
             app:srlTextSizeTitle="16sp" />
+
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

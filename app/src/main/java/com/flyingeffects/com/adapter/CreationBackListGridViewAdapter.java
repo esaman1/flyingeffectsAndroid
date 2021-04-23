@@ -78,6 +78,7 @@ public class CreationBackListGridViewAdapter extends BaseAdapter {
 //
 //        } else {
         if (!TextUtils.isEmpty(list.get(position).getBackground_image())) {
+            holder.ivLocal.setVisibility(View.INVISIBLE);
             Glide.with(context)
                     .load(list.get(position).getBackground_image())
                     .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
@@ -85,7 +86,6 @@ public class CreationBackListGridViewAdapter extends BaseAdapter {
         } else {
             holder.ivLocal.setVisibility(View.VISIBLE);
         }
-
 
         holder.tv_name.setText(list.get(position).getTitle());
 

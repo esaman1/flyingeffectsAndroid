@@ -57,7 +57,7 @@ public class CreationBackListFragment extends BaseFragment {
     private CreationBackListGridViewAdapter mGridViewAdapter;
 
     private int selectPage = 1;
-    private int perPageCount = 20;
+    private int perPageCount = 10;
     private boolean isRefresh = true;
 
     private String mId;
@@ -82,6 +82,7 @@ public class CreationBackListFragment extends BaseFragment {
     protected void initAction() {
         isRefresh = true;
         selectPage = 1;
+
         requestBackList(false);
     }
 
@@ -162,12 +163,13 @@ public class CreationBackListFragment extends BaseFragment {
                 if (!isRefresh && list.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getString(R.string.no_more_data));
                 }
+
                 if (list.size() < perPageCount) {
                     mSmartRefreshLayout.setEnableLoadMore(false);
                 }
-
-                addBackChooseItem();
-
+                if (listForSticker.size()==0){
+                    addBackChooseItem();
+                }
 
                 listForSticker.addAll(list);
                 mGridViewAdapter.notifyDataSetChanged();
