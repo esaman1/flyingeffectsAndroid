@@ -258,8 +258,9 @@ public class PreviewUpAndDownMvpModel {
 
                 StatisticsEventAffair.getInstance().setFlag(context, "save_back_template");
                 mLoadingDialog = buildLoadingDialog();
+                LogUtil.d("OOM2","needImagePath="+fag_template_item.getImage());
                 //换装保存的是图片
-                if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
+                if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)||TextUtils.equals(FromToTemplate.SPECIAL, fromTo)||TextUtils.equals(FromToTemplate.CHOOSEBJ, fromTo)) {
                     Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
                         @Override
                         public void call(Bitmap bitmap) {

@@ -166,7 +166,7 @@ public class MemeKeepActivity extends BaseActivity {
         @Override
         public void onError(SHARE_MEDIA platform, Throwable t) {
             String string = t.getMessage();
-            LogUtil.d("OOM2", "onError=" + string);
+            ToastUtil.showToast("分享失败");
         }
 
         /**

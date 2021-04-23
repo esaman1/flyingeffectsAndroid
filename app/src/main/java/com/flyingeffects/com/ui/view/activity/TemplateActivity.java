@@ -1632,6 +1632,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_edit), getString(R.string.template_bj),
                         getString(R.string.template_music)};
+            } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.FACEGIF)) {
+                titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_bj)};
             } else {
                 titlesHasBj = new String[]{getString(R.string.template_edit), getString(R.string.template_bj),
                         getString(R.string.template_music)};

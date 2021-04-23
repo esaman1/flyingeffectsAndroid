@@ -724,7 +724,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 bjMp3Duration = Float.parseFloat(templateItem.getVideotime());
                 LogUtil.d("OOM", "bj.mp3=" + TemplateFilePath);
                 bjMp3 = TemplateFilePath + File.separator + "bj.mp3";
-                AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (bjMp3Duration * 1000), templateItem.getTitle(), bjMp3);
+                if (mOldFromTo.equals(FromToTemplate.FACEGIF)) {
+                    //闪图表情包不需要跟随音乐拍摄
+                    AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "");
+                } else {
+                    AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "", (long) (bjMp3Duration * 1000), templateItem.getTitle(), bjMp3);
+                }
+
             } else {
                 AlbumManager.chooseImageAlbum(this, defaultnum, SELECTALBUM, this, "");
             }
@@ -947,7 +953,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             case FromToTemplate.ISMESSAGEMYLIKE:
             case FromToTemplate.ISTEMPLATE:
 
-                case FromToTemplate.FACEGIF:
+            case FromToTemplate.FACEGIF:
             case FromToTemplate.ISBJCOLLECT:
             case FromToTemplate.ISSEARCHBJ:
             case FromToTemplate.ISSEARCHTEMPLATE:
