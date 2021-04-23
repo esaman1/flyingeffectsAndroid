@@ -173,6 +173,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private SparseArrayCompat<ArrayList<StickerView>> sublayerListForBitmapLayer = new SparseArrayCompat<>();
 
     private AnimCollect mAnimCollect;
+    private int stickerType;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, int from) {
         this.mContext = context;
@@ -181,6 +182,12 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         this.mVideoPath = mVideoPath;
         mFrom = from;
 
+
+        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+            stickerType = StickerView.CODE_STICKER_TYPE_FLASH_PIC;
+        } else {
+            stickerType = StickerView.CODE_STICKER_TYPE_NORMAL;
+        }
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
         if (!TextUtils.isEmpty(mVideoPath)) {
@@ -353,12 +360,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
      * @param originalPath
      */
     public void initStickerView(String imagePath, String originalPath) {
-        int stickerType;
-        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
-            stickerType = StickerView.CODE_STICKER_TYPE_FLASH_PIC;
-        } else {
-            stickerType = StickerView.CODE_STICKER_TYPE_NORMAL;
-        }
+
         new Handler().postDelayed(() ->
                 addSticker(imagePath, true, true, true,
                         originalPath, false, null, false,
@@ -1214,7 +1216,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         }
         if (stickerType != StickerView.CODE_STICKER_TYPE_TEXT) {
             stickView.setRightBitmap(ContextCompat.getDrawable(mContext, R.mipmap.sticker_updown));
-            if (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
+            //分情况讨论 不是闪图页过来的，保持原有逻辑；闪图页过来的，只有从相册选择的图片需要保存
+            boolean showSavePngBitmap = (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance()
+                    .getPathType(stickView.getOriginalPath())) &&
+                    stickerType != StickerView.CODE_STICKER_TYPE_FLASH_PIC) || (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC && isFromAlbum);
+            if (showSavePngBitmap) {
                 stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.icon_pic_save));
             }
         }
@@ -2012,7 +2018,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
     @Override
     public void addSticker(String stickerPath, String title) {
-        addSticker(stickerPath, false, false, false, null, false, null, false, StickerView.CODE_STICKER_TYPE_NORMAL, title);
+        addSticker(stickerPath, false, false, false, null, false, null, false, stickerType, title);
     }
 
     @Override

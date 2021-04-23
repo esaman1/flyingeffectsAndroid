@@ -1583,16 +1583,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void showMusicBtn(boolean isShow) {
-        if (isShow) {
-            if (mFrom != FROM_DRESS_UP_BACK_CODE) {
+        if (mFrom != FROM_DRESS_UP_BACK_CODE) {
+            if (isShow) {
+
                 mBinding.tvMusic.setVisibility(View.VISIBLE);
+
+            } else {
+                mBinding.tvMusic.setVisibility(View.GONE);
+                mBinding.viewPager.setCurrentItem(0);
             }
-        } else {
-            mBinding.tvMusic.setVisibility(View.GONE);
-            mBinding.viewPager.setCurrentItem(0);
-        }
-        for (int value : LIN_ID) {
-            ((TextView) findViewById(value)).setTextColor(ContextCompat.getColor(mContext, R.color.white));
+
+            for (int value : LIN_ID) {
+                ((TextView) findViewById(value)).setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            }
         }
     }
 
