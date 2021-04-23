@@ -7,8 +7,16 @@
     <ImageView
         android:id="@+id/iv_icon"
         android:layout_width="match_parent"
-        android:layout_height="53dp" />
+        android:layout_height="53dp"
+        android:scaleType="centerCrop" />
 
+    <ImageView
+        android:id="@+id/iv_local"
+        android:layout_width="@dimen/dp_17"
+        android:layout_height="17dp"
+        android:layout_centerInParent="true"
+        android:src="@mipmap/ic_plus"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/iv_download"
@@ -19,14 +27,14 @@
 
     <TextView
         android:id="@+id/tv_name"
-        android:paddingStart="1dp"
-        android:paddingEnd="1dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/strok_sticker_strok"
         android:gravity="center"
+        android:paddingStart="1dp"
+        android:paddingEnd="1dp"
         android:text="@string/app_name"
         android:textColor="@color/white"
         android:textSize="10sp" />
@@ -34,9 +42,9 @@
     <TextView
         android:id="@+id/tv_checked"
         android:layout_width="match_parent"
-        android:layout_margin="1dp"
         android:layout_height="53dp"
         android:layout_centerInParent="true"
+        android:layout_margin="1dp"
         android:background="@drawable/stroke_sticker_bj"
         android:visibility="gone" />
 

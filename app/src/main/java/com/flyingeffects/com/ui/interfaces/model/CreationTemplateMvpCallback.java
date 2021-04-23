@@ -62,4 +62,6 @@ public interface CreationTemplateMvpCallback {
     void chooseBack(String path);
 
     void chooseFrame(String path);
+
+    void dismissFrame();
 }

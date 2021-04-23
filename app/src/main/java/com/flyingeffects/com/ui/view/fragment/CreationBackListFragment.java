@@ -63,6 +63,7 @@ public class CreationBackListFragment extends BaseFragment {
     private String mId;
 
     private BackChooseListener mBackChooseListener;
+    private String mName;
 
 
     @Override
@@ -73,6 +74,7 @@ public class CreationBackListFragment extends BaseFragment {
     @Override
     protected void initView() {
         mId = getArguments().getString("id");
+        mName = getArguments().getString("categoryName");
         LogUtil.d(TAG, "initView");
     }
 
@@ -164,10 +166,22 @@ public class CreationBackListFragment extends BaseFragment {
                     mSmartRefreshLayout.setEnableLoadMore(false);
                 }
 
+                addBackChooseItem();
+
+
                 listForSticker.addAll(list);
                 mGridViewAdapter.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
+    }
+
+    private void addBackChooseItem() {
+        if ("全部".equals(mName)){
+            NewFragmentTemplateItem item = new NewFragmentTemplateItem();
+            item.setTitle("本地背景");
+            item.setBackground_image("");
+            listForSticker.add(item);
+        }
     }
 
     private void finishData() {
@@ -189,8 +203,6 @@ public class CreationBackListFragment extends BaseFragment {
     public void setBackChooseListener(BackChooseListener listener) {
         mBackChooseListener = listener;
     }
-
-
 
 
     public interface BackChooseListener {

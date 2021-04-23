@@ -121,9 +121,9 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
                     if(fromType==3||fromType==4){
                         tv_gif_logo.setVisibility(View.VISIBLE);
                         String templateType=item.getTemplate_type();
-                        if(!TextUtils.isEmpty(templateType)&&templateType.equals("3")){
+                        if(!TextUtils.isEmpty(templateType)&& "3".equals(templateType)){
                             tv_gif_logo.setText("换装");
-                        }else if(!TextUtils.isEmpty(templateType)&&templateType.equals("4")){
+                        }else if(!TextUtils.isEmpty(templateType)&& "4".equals(templateType)){
                             tv_gif_logo.setText("换背景");
                         }else if(!TextUtils.isEmpty(templateType)&&templateType.equals("5")){
                             tv_gif_logo.setText("表情包");
@@ -574,7 +574,6 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
         intent.putExtra("isFrom", 2);
         intent.putExtra("videoPath", path);
         mContext.startActivity(intent);
-
     }
 
     String tabName;

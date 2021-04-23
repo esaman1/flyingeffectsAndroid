@@ -166,7 +166,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     }
 
 
-
     //    private TimelineAdapter mTimelineAdapter;
     private int mScrollX;
     private LinearLayoutManager linearLayoutManager;
@@ -761,7 +760,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim, String title) {
 
         if (stickerView != null && stickerView.getIsTextSticker()) {
-            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, true, null);
+            addSticker("", false, false, false, "", true, stickerView, isFromShowAnim, StickerView.CODE_STICKER_TYPE_TEXT, null);
         } else {
 
             try {
@@ -779,9 +778,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                         public void isSucceed() {
 
                             if (stickerView == null) {
-                                addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, null, isFromShowAnim, false, title);
+                                addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, null, isFromShowAnim, StickerView.CODE_STICKER_TYPE_NORMAL, title);
                             } else {
-                                addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, false, stickerView.getDownStickerTitle());
+                                addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, StickerView.CODE_STICKER_TYPE_NORMAL, stickerView.getDownStickerTitle());
                             }
 
                         }
@@ -798,7 +797,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     FileUtil.copyFile(new File(path), copyName, new FileUtil.copySucceed() {
                         @Override
                         public void isSucceed() {
-                            addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, false, null);
+                            addSticker(getResPath, false, isFromAubum, isFromAubum, OriginalPath, true, stickerView, isFromShowAnim, StickerView.CODE_STICKER_TYPE_NORMAL, null);
                         }
                     });
                 }
@@ -813,9 +812,10 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     private int stickerViewID;
     private boolean isIntoDragMove = false;
 
-    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, boolean isText, String title) {
+    private void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAubum, String originalPath,
+                            boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim, int stickerType, String title) {
         closeAllAnim();
-        StickerView stickView = new StickerView(BaseApplication.getInstance(), isText);
+        StickerView stickView = new StickerView(BaseApplication.getInstance(), stickerType);
         stickerViewID++;
         stickView.setId(stickerViewID);
         stickView.setOnitemClickListener(new StickerItemOnitemclick() {
@@ -947,13 +947,13 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                         vp.removeView(stickView);
                     }
                 }
+
                 callback.needPauseVideo();
                 viewLayerRelativeLayout.addView(stickView);
                 stickView.start();
 
                 nowChooseStickerView = stickView;
                 callback.stickerOnclickCallback(stickView.getStickerText());
-
 
             }
         });
@@ -989,7 +989,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         stickView.setRightTopBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(ContextCompat.getDrawable(context, R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_redact));
-        if (!isText) {
+        if (stickerType!=StickerView.CODE_STICKER_TYPE_TEXT) {
             stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
         }
 
@@ -1028,10 +1028,10 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 //            }
         }
         if (hasReplace) {
-            stickView.setLeftBottomBitmap(context.getDrawable(R.mipmap.sticker_change));
+            stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_change));
         }
 
-        if (isText) {
+        if (stickerType==StickerView.CODE_STICKER_TYPE_TEXT) {
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.shader_edit));
             nowChooseStickerView = stickView;
             if (!isCopy) {
@@ -1087,6 +1087,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             stickView.setImageRes(path, true, null);
         }
         AnimStickerModel animStickerModel = new AnimStickerModel(context, viewLayerRelativeLayout, stickView);
+
         //如果关闭了原图的，并且是用户添加的，那么就关闭扣的图，不过每次都是默认抠图的
         if (isFromAubum && !isCheckedMatting) {
             new Handler().postDelayed(new Runnable() {
@@ -1096,6 +1097,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 }
             }, 500);
         }
+
         if (isFromAubum && isCopy && isCheckedMatting) {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -1104,6 +1106,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                 }
             }, 500);
         }
+
         listForStickerModel.add(animStickerModel);
         if (stickView.getParent() != null) {
             ViewGroup vp = (ViewGroup) stickView.getParent();
@@ -1127,7 +1130,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
      * creation date: 2020/9/21
      * user : zhangtongju
      */
-    public void ChangeTextLabe(String text) {
+    public void changeTextLabe(String text) {
         if (nowChooseStickerView != null && nowChooseStickerView.getIsTextSticker()) {
             if (TextUtils.isEmpty(text)) {
                 deleteStickView(nowChooseStickerView);
@@ -1475,7 +1478,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
     @Override
     public void addSticker(String stickerPath, String title) {
-        addSticker(stickerPath, false, false, false, null, false, null, false, false, title);
+        addSticker(stickerPath, false, false, false, null, false, null, false, StickerView.CODE_STICKER_TYPE_NORMAL, title);
     }
 
     @Override
@@ -1598,7 +1601,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            String  title = "正在保存中";
+            String title = "正在保存中";
             String content;
             if (dialogProgress <= 25) {
                 content = "请耐心等待 不要离开";
@@ -1619,10 +1622,8 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     };
 
 
-
-
     public void addTextSticker() {
-        addSticker("", false, false, false, "", false, null, false, true, null);
+        addSticker("", false, false, false, "", false, null, false, StickerView.CODE_STICKER_TYPE_TEXT, null);
     }
 
 

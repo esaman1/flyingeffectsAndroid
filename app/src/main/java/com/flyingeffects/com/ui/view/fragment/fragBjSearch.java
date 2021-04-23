@@ -137,9 +137,9 @@ public class fragBjSearch extends BaseFragment {
                 StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb_click", allData.get(position).getTitle());
             } else if (isFrom == 3) {
                 String templateType = allData.get(position).getTemplate_type();
-                if(!TextUtils.isEmpty(templateType)&&templateType.equals("3")){
+                if(!TextUtils.isEmpty(templateType)&& "3".equals(templateType)){
                     intent.putExtra("fromTo", FromToTemplate.DRESSUP);
-                }else if(!TextUtils.isEmpty(templateType)&&templateType.equals("4")){
+                }else if(!TextUtils.isEmpty(templateType)&& "4".equals(templateType)){
                     intent.putExtra("fromTo", FromToTemplate.DRESSUP);
                 }else{
                     intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);

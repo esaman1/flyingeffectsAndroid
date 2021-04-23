@@ -222,7 +222,7 @@ public class CreationTemplateActivityCopy extends BaseActivity implements Creati
 
         initBundleData();
 
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath, null);
+        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath, null, mFrom);
         LogUtil.d(TAG, "videoPath = " + videoPath);
 
         setOnClickListener();
@@ -1976,6 +1976,11 @@ public class CreationTemplateActivityCopy extends BaseActivity implements Creati
 
     @Override
     public void chooseFrame(String path) {
+
+    }
+
+    @Override
+    public void dismissFrame() {
 
     }
 

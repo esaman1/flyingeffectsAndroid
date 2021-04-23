@@ -314,7 +314,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
 
-
     private void statisticsEventAffair() {
         if (titleEffect != null && titleEffect.size() > 0) {
             for (String str : titleEffect) {
@@ -349,7 +348,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             StatisticsEventAffair.getInstance().setFlag(CreationTemplatePreviewActivity.this, "20_bj_text_save_save");
         }
 
-
     }
 
 
@@ -361,7 +359,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             if (exoPlayer != null) {
                 exoPlayer.prepare(mediaSource, false, false);
             }
-
         } catch (NullPointerException | IllegalStateException e) {
             LogUtil.d("OOM", e.getMessage());
         }

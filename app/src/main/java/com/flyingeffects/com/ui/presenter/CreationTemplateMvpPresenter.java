@@ -21,9 +21,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     private CreationTemplateMvpView creationTemplatemvpView;
     private CreationTemplateMvpModel creationTemplatemodel;
 
-    public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, DrawPadView2 drawPadView2) {
+    public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, DrawPadView2 drawPadView2, int from) {
         this.creationTemplatemvpView = mvp_view;
-        creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout,originalPath);
+        creationTemplatemodel = new CreationTemplateMvpModel(context, this,mVideoPath,viewLayerRelativeLayout,originalPath,from);
     }
 
     public void setmVideoPath(String path){
@@ -280,6 +280,11 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     @Override
     public void chooseFrame(String path) {
         creationTemplatemvpView.chooseFrame(path);
+    }
+
+    @Override
+    public void dismissFrame() {
+        creationTemplatemvpView.dismissFrame();
     }
 
     @Override
