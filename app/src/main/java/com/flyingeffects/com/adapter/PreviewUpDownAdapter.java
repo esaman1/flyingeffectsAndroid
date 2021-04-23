@@ -92,12 +92,9 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
 
         boolean readOnly = item.getTest() != 0;
         boolean needHideCreate;
-
         tv_describe.setVisibility(View.GONE);
-
         if (readOnly) {
-            needHideCreate = OldFromTo.equals(FromToTemplate.ISHOMEFROMBJ) || OldFromTo.equals(FromToTemplate.ISMESSAGEMYPRODUCTION)
-                    || OldFromTo.equals(FromToTemplate.DRESSUP);
+            needHideCreate = OldFromTo.equals(FromToTemplate.ISHOMEFROMBJ) || OldFromTo.equals(FromToTemplate.ISMESSAGEMYPRODUCTION) || OldFromTo.equals(FromToTemplate.DRESSUP);
         } else {
             needHideCreate = false;
         }
