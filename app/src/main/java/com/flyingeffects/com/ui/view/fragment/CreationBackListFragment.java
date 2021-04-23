@@ -167,7 +167,7 @@ public class CreationBackListFragment extends BaseFragment {
                 if (list.size() < perPageCount) {
                     mSmartRefreshLayout.setEnableLoadMore(false);
                 }
-                if (listForSticker.size()==0){
+                if (listForSticker.size() == 0) {
                     addBackChooseItem();
                 }
 
@@ -178,7 +178,7 @@ public class CreationBackListFragment extends BaseFragment {
     }
 
     private void addBackChooseItem() {
-        if ("全部".equals(mName)){
+        if ("全部".equals(mName)) {
             NewFragmentTemplateItem item = new NewFragmentTemplateItem();
             item.setTitle("本地背景");
             item.setBackground_image("");

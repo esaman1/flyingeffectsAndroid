@@ -15,7 +15,7 @@ public class StartAnimModel {
 
 
 
-    public  synchronized void   ToStart(AnimType animType,StickerView mainStickerView ,List<StickerView> subLayer ) {
+    public  synchronized void toStart(AnimType animType, StickerView mainStickerView , List<StickerView> subLayer ) {
         animCollect.startAnimForChooseAnim(animType, mainStickerView, subLayer);
     }
 

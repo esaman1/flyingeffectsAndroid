@@ -123,6 +123,7 @@ public class StickerFragment extends BaseFragment {
                     @Override
                     public void run() {
                         modificationSingleItemIsChecked(position);
+
                         if (mStickerListener != null) {
                             mStickerListener.clickItemSelected(position);
                         }

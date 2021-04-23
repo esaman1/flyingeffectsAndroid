@@ -719,9 +719,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             }
             if (sublayerListForBitmapLayer != null) {
                 previewCount++;
-                startAnimModel.ToStart(animType, finalTargetStickerView, sublayerListForBitmapLayer.get(position));
+                startAnimModel.toStart(animType, finalTargetStickerView, sublayerListForBitmapLayer.get(position));
             } else {
-                startAnimModel.ToStart(animType, finalTargetStickerView, null);
+                startAnimModel.toStart(animType, finalTargetStickerView, null);
             }
             if (previewCount == hasAnimCount) {
                 callback.animIsComplate();
