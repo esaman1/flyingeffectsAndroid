@@ -139,7 +139,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                         EventBus.getDefault().post(new SecondChoosePageListener(i));
 
                         if (i <= data.size() - 1) {
-                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "hp_st_tab", titles[i]);
                         }
                     }
 
