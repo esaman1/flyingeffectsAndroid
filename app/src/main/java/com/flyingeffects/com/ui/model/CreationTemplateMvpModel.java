@@ -1318,10 +1318,16 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
-                    //copy
-                    //飞闪提供的贴纸是GIF 不支持抠像 所以抠像的情况下拿到的路径为空 这个时候择getResPath()
-                    String copyStickViewPath = stickView.getClipPath() == null ? stickView.getResPath() : stickView.getClipPath();
-                    copyGif(copyStickViewPath, copyStickViewPath, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false, stickView.getDownStickerTitle());
+                    if (stickView.isMirror()){
+                        String bitmapPath = FileUtil.saveBitmap(stickView.getMirrorBitmap(), "saveAlbum");
+                        copyGif(bitmapPath, bitmapPath, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false, stickView.getDownStickerTitle());
+                    }else {
+                        //copy
+                        //飞闪提供的贴纸是GIF 不支持抠像 所以抠像的情况下拿到的路径为空 这个时候择getResPath()
+                        String copyStickViewPath = stickView.getClipPath() == null ? stickView.getResPath() : stickView.getClipPath();
+                        copyGif(copyStickViewPath, copyStickViewPath, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false, stickView.getDownStickerTitle());
+                    }
+
                     if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
                         if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
                             if (UiStep.isFromDownBj) {
@@ -1446,31 +1452,39 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 } else if (type == StickerView.LEFT_MODE) {
                     if (!TextUtils.isEmpty(stickView.getResPath())) {
                         StatisticsEventAffair.getInstance().setFlag(mContext, "17_zdy_cutout_save");
-                        //开启抠像
-                        if (isMatting) {
-                            if (!TextUtils.isEmpty(stickView.getClipPath())) {
-                                saveToAlbum(stickView.getClipPath());
-                            } else {
-                                saveToAlbum(stickView.getResPath());
-                            }
+                        if (stickView.isMirror()) {
+                            String bitmapPath = FileUtil.saveBitmap(stickView.getMirrorBitmap(), "saveAlbum");
+                            saveToAlbum(bitmapPath);
                         } else {
-                            //没有开启抠像
-                            if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
-                                //素材的类型是视频 取视频的帧图进行保存
-                                GetVideoCover getVideoCover = new GetVideoCover(mContext);
-                                getVideoCover.getFileCoverForBitmap(stickView.getOriginalPath(), bitmap -> {
-                                    String bitmapPath = FileUtil.saveBitmap(bitmap, "saveAlbum");
-                                    saveToAlbum(bitmapPath);
-                                });
-                            } else {
-                                //取原图片的路径保存
-                                if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
-                                    saveToAlbum(stickView.getOriginalPath());
+                            //开启抠像
+                            if (isMatting) {
+
+                                if (!TextUtils.isEmpty(stickView.getClipPath())) {
+                                    saveToAlbum(stickView.getClipPath());
                                 } else {
                                     saveToAlbum(stickView.getResPath());
                                 }
+
+                            } else {
+                                //没有开启抠像
+                                if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
+                                    //素材的类型是视频 取视频的帧图进行保存
+                                    GetVideoCover getVideoCover = new GetVideoCover(mContext);
+                                    getVideoCover.getFileCoverForBitmap(stickView.getOriginalPath(), bitmap -> {
+                                        String bitmapPath = FileUtil.saveBitmap(bitmap, "saveAlbum");
+                                        saveToAlbum(bitmapPath);
+                                    });
+                                } else {
+                                    //取原图片的路径保存
+                                    if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
+                                        saveToAlbum(stickView.getOriginalPath());
+                                    } else {
+                                        saveToAlbum(stickView.getResPath());
+                                    }
+                                }
                             }
                         }
+
                     }
                 }
             }
