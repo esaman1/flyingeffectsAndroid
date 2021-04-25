@@ -395,6 +395,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private Bitmap mMaskBitmap;
 
+
 //    public StickerListener getTickerListener() {
 //        return tickerListener;
 //    }
@@ -438,6 +439,13 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private long showStickerEndTime;
     private boolean mIsMirror = false;
 
+    public boolean isMirror() {
+        return mIsMirror;
+    }
+
+    public void setMirror(boolean mirror) {
+        mIsMirror = mirror;
+    }
 
     public StickerView(Context context) {
         this(context, null);
@@ -2458,5 +2466,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         this.stickerNoIncludeAnimId = stickerNoIncludeAnimId;
     }
 
-
+    public void setMaskBitmap(Bitmap maskBitmap) {
+        mMaskBitmap = maskBitmap;
+    }
 }

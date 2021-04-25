@@ -84,6 +84,7 @@ public class CreationBottomFragment extends BaseFragment implements CreationBack
             mIvDeleteSticker.setVisibility(View.GONE);
         } else if (mId == 1) {
             requestPhotoFrameList(mVpBottom, mSlidingTabLayout, getChildFragmentManager());
+            mIvDeleteSticker.setVisibility(View.GONE);
         } else {
             getStickerTypeList(getChildFragmentManager(), mVpBottom, mSlidingTabLayout);
         }
@@ -92,7 +93,6 @@ public class CreationBottomFragment extends BaseFragment implements CreationBack
     @Override
     public void onResume() {
         super.onResume();
-
 
     }
 

@@ -84,6 +84,7 @@ public class CreationFrameFragment extends BaseFragment {
             selectPage = 1;
             requestFrameList(false);
         });
+
         mSmartRefreshLayout.setOnLoadMoreListener(refresh -> {
             isRefresh = false;
             selectPage++;
@@ -136,20 +137,35 @@ public class CreationFrameFragment extends BaseFragment {
             @Override
             protected void onSubNext(List<ImageFrameEntity> data) {
                 finishData();
+
                 if (isRefresh) {
                     mImageFrameList.clear();
                 }
+
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getString(R.string.no_more_data));
                 }
+
                 if (data.size() < perPageCount) {
                     mSmartRefreshLayout.setEnableLoadMore(false);
+                }
+
+                if (mImageFrameList.size() == 0) {
+                    addFirstItem();
                 }
 
                 mImageFrameList.addAll(data);
                 mGridViewAdapter.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
+    }
+
+    private void addFirstItem() {
+        ImageFrameEntity imageFrameEntity = new ImageFrameEntity();
+        imageFrameEntity.setIcon_image("");
+        imageFrameEntity.setImage("");
+        imageFrameEntity.setTitle("无");
+        mImageFrameList.add(imageFrameEntity);
     }
 
     private void finishData() {
