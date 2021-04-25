@@ -2360,7 +2360,11 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
     @Override
     public void chooseFrame(String path) {
-        mCallback.chooseFrame(path);
+        if (TextUtils.isEmpty(path)) {
+            clearImageFrame();
+        } else {
+            mCallback.chooseFrame(path);
+        }
     }
 
     @Override

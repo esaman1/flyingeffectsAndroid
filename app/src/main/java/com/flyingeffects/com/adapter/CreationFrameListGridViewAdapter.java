@@ -1,6 +1,7 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,7 @@ public class CreationFrameListGridViewAdapter extends BaseAdapter {
             holder.tv_name = view.findViewById(R.id.tv_name);
             holder.iv_download = view.findViewById(R.id.iv_download);
             holder.tv_checked = view.findViewById(R.id.tv_checked);
+            holder.ivLocal = view.findViewById(R.id.iv_local);
             view.setTag(holder);
         } else {
             holder = (ViewHold) view.getTag();
@@ -76,10 +78,16 @@ public class CreationFrameListGridViewAdapter extends BaseAdapter {
 //
 //        } else {
 
-        Glide.with(context)
-                .load(list.get(position).getIcon_image())
-                .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
-                .into(holder.image);
+        if (!TextUtils.isEmpty(stickerList.getIcon_image())) {
+            holder.ivLocal.setVisibility(View.INVISIBLE);
+            Glide.with(context)
+                    .load(list.get(position).getIcon_image())
+                    .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
+                    .into(holder.image);
+        } else {
+            holder.ivLocal.setImageResource(R.mipmap.ic_image_frame_none);
+            holder.ivLocal.setVisibility(View.VISIBLE);
+        }
 
         holder.tv_name.setText(list.get(position).getTitle());
 
@@ -96,6 +104,7 @@ public class CreationFrameListGridViewAdapter extends BaseAdapter {
 
     static class ViewHold {
         ImageView image;
+        ImageView ivLocal;
         TextView tv_name;
         ImageView iv_download;
         TextView tv_checked;

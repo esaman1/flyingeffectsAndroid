@@ -266,6 +266,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         setProgressBarListener();
 
         mBinding.materialSeekBarView.setProgressListener(this);
+
         //初始化整体容器，获取高度
         initCreationContainer();
 
@@ -304,6 +305,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             if (initHeight == 0) {
                 return;
             }
+
             currentHeight = mBinding.rlCreationContainer.getHeight();
             if (initHeight > currentHeight) {
                 //初始高度大于当前高度，说明虚拟导航栏由隐藏变为显示
@@ -452,7 +454,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
             initExo(videoPath);
         } else {
-            //todo 无视频但有背景图，处理换背景 方案待修改
+            //无视频但有背景图，处理换背景
             changeImageBack();
         }
         //从前一个页面设置的横竖屏判断
@@ -871,7 +873,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private void submitCreation() {
         if (mFrom == FROM_DRESS_UP_BACK_CODE) {
-            presenter.keepPicture(mBinding.relativeContentAllContent, mBinding.ivFrameImage);
+            presenter.keepPicture(mBinding.relativeContentAllContent2, mBinding.ivFrameImage);
         } else {
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
@@ -1288,6 +1290,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     relativeLayoutParams.width = Math.round(1f * height * oriRatio);
                     relativeLayoutParams.height = height;
                     mBinding.ivBackImage.setLayoutParams(relativeLayoutParams);
+                    mBinding.relativeContentAllContent2.setLayoutParams(relativeLayoutParams2);
                     //设置预览编辑界面
                     mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
                 }
@@ -2233,6 +2236,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     }
 
+    /**
+     * 上传本地背景
+     */
     private void upLoadLocalBack() {
         AlbumManager.chooseImageAlbum(mContext, 1, 0, new AlbumChooseCallback() {
             @Override
@@ -2246,6 +2252,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
 
+    /**
+     * 换背景
+     */
     private void changeImageBack() {
         setImageBackSize(false);
         if (!TextUtils.isEmpty(mBackgroundImage)) {
@@ -2255,10 +2264,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
+    /**
+     * 选择像款
+     * @param path
+     */
     @Override
     public void chooseFrame(String path) {
         mBinding.ivFrameImage.setVisibility(View.VISIBLE);
-
 
         Glide.with(mContext)
                 .load(path)
@@ -2276,6 +2288,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     }
 
+    /**
+     * 取消选择
+     */
     @Override
     public void dismissFrame() {
         mBinding.ivFrameImage.setVisibility(View.INVISIBLE);
@@ -2459,6 +2474,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             bgmPlayer.pause();
             bgmPlayer.release();
         }
+
         EventBus.getDefault().unregister(this);
         mBinding.rlCreationContainer.getViewTreeObserver().removeOnGlobalLayoutListener(mGlobalLayoutListener);
         super.onDestroy();
