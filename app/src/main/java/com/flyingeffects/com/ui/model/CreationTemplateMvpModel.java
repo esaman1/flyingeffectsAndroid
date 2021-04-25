@@ -1217,10 +1217,10 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         if (stickerType != StickerView.CODE_STICKER_TYPE_TEXT) {
             stickView.setRightBitmap(ContextCompat.getDrawable(mContext, R.mipmap.sticker_updown));
             //分情况讨论 不是闪图页过来的，保持原有逻辑；闪图页过来的，只有从相册选择的图片需要保存
-            boolean showSavePngBitmap = (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance()
-                    .getPathType(stickView.getOriginalPath())) &&
-                    stickerType != StickerView.CODE_STICKER_TYPE_FLASH_PIC) || (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC && isFromAlbum);
-            if (showSavePngBitmap) {
+//            boolean showSavePngBitmap = (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance()
+//                    .getPathType(stickView.getOriginalPath())) &&
+//                    stickerType != StickerView.CODE_STICKER_TYPE_FLASH_PIC) || (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC && isFromAlbum);
+            if (isFromAlbum) {
                 stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.icon_pic_save));
             }
         }
@@ -1318,10 +1318,10 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
-                    if (stickView.isMirror()){
+                    if (stickView.isMirror()) {
                         String bitmapPath = FileUtil.saveBitmap(stickView.getMirrorBitmap(), "saveAlbum");
                         copyGif(bitmapPath, bitmapPath, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false, stickView.getDownStickerTitle());
-                    }else {
+                    } else {
                         //copy
                         //飞闪提供的贴纸是GIF 不支持抠像 所以抠像的情况下拿到的路径为空 这个时候择getResPath()
                         String copyStickViewPath = stickView.getClipPath() == null ? stickView.getResPath() : stickView.getClipPath();
