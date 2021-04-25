@@ -455,7 +455,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             initExo(videoPath);
         } else {
             //todo 无视频但有背景图，处理换背景 方案待修改
-            showGreenBj(true);
             setImageBackSize(false);
             //无视频但有背景图，处理换背景
             changeImageBack();
@@ -1092,10 +1091,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void showGreenBj(boolean isInitialize) {
 
-        if(isInitialize){
+        if (isInitialize) {
             mBinding.llGreenBackground.setVisibility(View.VISIBLE);
             mBinding.ivGreenBackground.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             mBinding.llGreenBackground.setVisibility(View.GONE);
             mBinding.ivGreenBackground.setVisibility(View.GONE);
         }
@@ -2265,11 +2264,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 换背景
      */
     private void changeImageBack() {
-
         if (!TextUtils.isEmpty(mBackgroundImage)) {
             Glide.with(mContext).load(mBackgroundImage)
                     .into(mBinding.ivBackImage);
             downloadBackImage();
+        } else {
+            showGreenBj(true);
         }
     }
 
