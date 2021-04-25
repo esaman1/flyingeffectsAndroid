@@ -454,6 +454,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
             initExo(videoPath);
         } else {
+            //todo 无视频但有背景图，处理换背景 方案待修改
+            showGreenBj(true);
             setImageBackSize(false);
             //无视频但有背景图，处理换背景
             changeImageBack();
@@ -1089,8 +1091,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     boolean isInitImageBj = false;
 
     private void showGreenBj(boolean isInitialize) {
-        mBinding.llGreenBackground.setVisibility(View.VISIBLE);
-        mBinding.ivGreenBackground.setVisibility(View.VISIBLE);
+
+        if(isInitialize){
+            mBinding.llGreenBackground.setVisibility(View.VISIBLE);
+            mBinding.ivGreenBackground.setVisibility(View.VISIBLE);
+        }else{
+            mBinding.llGreenBackground.setVisibility(View.GONE);
+            mBinding.ivGreenBackground.setVisibility(View.GONE);
+        }
         if (isInitialize) {
             if (!isInitImageBj) {
                 float oriRatio = 9f / 16f;

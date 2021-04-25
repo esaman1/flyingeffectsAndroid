@@ -197,13 +197,16 @@ public class DressUpSpecialModel {
     public void toCompressImg(List<String> paths) {
 
 
-        if (paths.size() == 1 &&
+        if (
                 albumType.isVideo(GetPathType.getInstance().
                         getMediaType(paths.get(0)))) {
+            LogUtil.d("OOM3", "上传为视频");
+
             uploadPathList.add(paths.get(0));
             new Thread(() -> uploadFileToHuawei(paths.get(0))).start();
 
         }else{
+            LogUtil.d("OOM3", "上传为图片");
             Observable.just(paths).map(strings -> {
                 try {
                     return Luban.with(context).load(strings).get();

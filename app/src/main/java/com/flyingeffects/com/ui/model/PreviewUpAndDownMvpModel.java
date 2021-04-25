@@ -258,8 +258,9 @@ public class PreviewUpAndDownMvpModel {
 
                 StatisticsEventAffair.getInstance().setFlag(context, "save_back_template");
                 mLoadingDialog = buildLoadingDialog();
+                LogUtil.d("OOM2","needImagePath="+fag_template_item.getImage());
                 //换装保存的是图片
-                if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
+                if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)||TextUtils.equals(FromToTemplate.SPECIAL, fromTo)||TextUtils.equals(FromToTemplate.CHOOSEBJ, fromTo)) {
                     Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
                         @Override
                         public void call(Bitmap bitmap) {
@@ -666,9 +667,12 @@ public class PreviewUpAndDownMvpModel {
                 params.put("template_type", "1");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
+            case FromToTemplate.CHOOSEBJ:
+            case FromToTemplate.FACEGIF:
+            case FromToTemplate.SPECIAL:
             case FromToTemplate.DRESSUP:
                 params.put("template_type", "3");
-                ob = Api.getDefault().getMeargeTemplate(BaseConstans.getRequestHead(params));
+                ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
                 break;
             default:
                 break;
@@ -1121,7 +1125,7 @@ public class PreviewUpAndDownMvpModel {
                     }else{
                         //进入到类似于换装页面
                         Intent intent = new Intent(context, DressUpPreviewActivity.class);
-                        intent.putExtra("url", paths.get(0));
+                        intent.putExtra("url",url);
                         intent.putExtra("template_id", "");
                         intent.putExtra("localImage", url);
                         intent.putExtra("isSpecial",true);

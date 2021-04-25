@@ -236,6 +236,7 @@ public class NewFragmentTemplateItem implements Serializable, MultiItemEntity {
         this.test = test;
     }
 
+    //1 表示审核中  0正式模板
     private int test;
     private String preview;
     private String reading;

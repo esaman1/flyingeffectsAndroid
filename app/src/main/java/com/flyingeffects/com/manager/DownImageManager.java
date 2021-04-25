@@ -26,7 +26,6 @@ public class DownImageManager {
     private List<String> hasDownList = new ArrayList<>();
     private int downSuccessNum;
     private keepImageToLocalState callback;
-    private File keepUunCatchPath;
 
     public DownImageManager(Context context, ArrayList<String> listForMatting, keepImageToLocalState callback) {
         this.context = context;
@@ -34,8 +33,6 @@ public class DownImageManager {
         this.callback = callback;
         downSuccessNum = 0;
         hasDownList.clear();
-        FileManager fileManager = new FileManager();
-        keepUunCatchPath = new File(fileManager.getFileCachePath(context, "runCatch/"));
     }
 
 

@@ -110,7 +110,9 @@ public class AdManager {
 
                 @Override
                 public void onImageAdClose() {
-
+                    if(callback!=null){
+                        callback.adClose();
+                    }
                 }
 
                 @Override
