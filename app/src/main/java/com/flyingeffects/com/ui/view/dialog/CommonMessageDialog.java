@@ -174,7 +174,6 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
                         .inflate(R.layout.dialog_common_message, null);
             }
             dialog.setContentView(mView);
-
             LinearLayout llAdContainer = mView.findViewById(R.id.ll_ad_container);
 
 
@@ -268,8 +267,16 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
         }
 
         private void loadAd(LinearLayout llAdContainer, String id) {
-            AdManager.getInstance().showImageAd(mContext, id, llAdContainer, () -> {
-
+            AdManager.getInstance().showImageAd(mContext, id,llAdContainer , new AdManager.Callback() {
+                @Override
+                public void adClose() {
+                    if (mDialogDismissListener != null) {
+                        mDialogDismissListener.onDismiss();
+                    }
+                    if (llAdContainer != null) {
+                        AdManager.getInstance().imageAdClose(llAdContainer);
+                    }
+                }
             });
         }
 
@@ -280,6 +287,7 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
         void onPositiveBtnClick(CommonMessageDialog dialog);
 
         void onCancelBtnClick(CommonMessageDialog dialog);
+
 
     }
 

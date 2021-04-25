@@ -99,7 +99,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private ActivityPreviewUpAndDownBinding mBinding;
 
-    PreviewUpAndDownMvpPresenter mMvpPresenter;
+    private PreviewUpAndDownMvpPresenter mMvpPresenter;
 
     private PreviewUpDownAdapter adapter;
 
@@ -651,6 +651,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_cancel");
                         dialog.dismiss();
                     }
+
                 })
                 .setDialogDismissListener(() -> mAdDialogIsShow = false)
                 .build().show();

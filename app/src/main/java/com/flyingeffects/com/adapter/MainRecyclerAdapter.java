@@ -117,20 +117,22 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
                 if (item.isHasShowAd()) {
                     ll_content_patents.setVisibility(View.GONE);
                 } else {
-                    TextView tv_gif_logo=helper.getView(R.id.tv_gif_logo);
-                    if(fromType==3||fromType==4){
+                    TextView tv_gif_logo = helper.getView(R.id.tv_gif_logo);
+                    if (fromType == 3 || fromType == 4) {
                         tv_gif_logo.setVisibility(View.VISIBLE);
-                        String templateType=item.getTemplate_type();
-                        if(!TextUtils.isEmpty(templateType)&& "3".equals(templateType)){
+                        String templateType = item.getTemplate_type();
+                        if (!TextUtils.isEmpty(templateType) && "3".equals(templateType)) {
                             tv_gif_logo.setText("换装");
-                        }else if(!TextUtils.isEmpty(templateType)&& "4".equals(templateType)){
+                        } else if (!TextUtils.isEmpty(templateType) && "4".equals(templateType)) {
                             tv_gif_logo.setText("换背景");
-                        }else if(!TextUtils.isEmpty(templateType)&&templateType.equals("5")){
+                        } else if (!TextUtils.isEmpty(templateType) && templateType.equals("5")) {
                             tv_gif_logo.setText("表情包");
-                        }else{
+                        } else if (!TextUtils.isEmpty(templateType) && templateType.equals("6")) {
                             tv_gif_logo.setText("特效");
+                        }else{
+                            tv_gif_logo.setVisibility(View.GONE);
                         }
-                    }else{
+                    } else {
                         tv_gif_logo.setVisibility(View.GONE);
                     }
 
@@ -474,7 +476,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
             }
             case 13: {
                 FrameLayout frameLayout = helper.getView(R.id.item_news_sigle_image_fl);
-                if(frameLayout!=null){
+                if (frameLayout != null) {
                     frameLayout.removeAllViews();
                     if (null != item.getFeedAdResultBean().getAdView() && null != item.getFeedAdResultBean().getAdView().getParent()) {
                         ((ViewGroup) item.getFeedAdResultBean().getAdView().getParent()).removeAllViews();
