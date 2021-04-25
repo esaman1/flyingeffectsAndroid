@@ -225,21 +225,26 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
 
     public void keepPicture(RelativeLayout relativeLayout, ImageView iv) {
+        WaitingDialog.openPragressDialog(mContext);
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             stickerView.disMissFrame();
         }
+        //加耗时，因为绘制是需要时间的
+        handler.postDelayed(() -> {
+            WaitingDialog.closeProgressDialog();
+            ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
+            String textImagePath = screenCaptureUtil.getFilePath(relativeLayout, iv);
+            Intent intent = new Intent(mContext, DressUpPreviewActivity.class);
+            intent.putExtra("url", textImagePath);
+            intent.putExtra("template_id", "");
+            intent.putExtra("localImage", textImagePath);
+            intent.putExtra("isSpecial", true);
+            intent.putExtra("templateTitle", "");
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            mContext.startActivity(intent);
+        }, 500);
 
-        ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
-        String textImagePath = screenCaptureUtil.getFilePath(relativeLayout, iv);
-        Intent intent = new Intent(mContext, DressUpPreviewActivity.class);
-        intent.putExtra("url", textImagePath);
-        intent.putExtra("template_id", "");
-        intent.putExtra("localImage", textImagePath);
-        intent.putExtra("isSpecial", true);
-        intent.putExtra("templateTitle", "");
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        mContext.startActivity(intent);
     }
 
 
