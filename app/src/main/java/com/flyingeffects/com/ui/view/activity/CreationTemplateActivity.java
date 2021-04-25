@@ -454,6 +454,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
             initExo(videoPath);
         } else {
+            setImageBackSize(false);
             //无视频但有背景图，处理换背景
             changeImageBack();
         }
@@ -2256,7 +2257,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 换背景
      */
     private void changeImageBack() {
-        setImageBackSize(false);
+
         if (!TextUtils.isEmpty(mBackgroundImage)) {
             Glide.with(mContext).load(mBackgroundImage)
                     .into(mBinding.ivBackImage);
@@ -2266,6 +2267,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     /**
      * 选择像款
+     *
      * @param path
      */
     @Override
