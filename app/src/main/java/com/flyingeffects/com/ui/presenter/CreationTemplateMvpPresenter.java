@@ -273,8 +273,8 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
-    public void chooseBack(String path) {
-        creationTemplatemvpView.chooseBack(path);
+    public void chooseBack(String title, String path) {
+        creationTemplatemvpView.chooseBack(title,path);
     }
 
     @Override

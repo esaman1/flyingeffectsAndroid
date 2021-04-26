@@ -113,6 +113,7 @@ import rx.subjects.PublishSubject;
  */
 public class CreationTemplateMvpModel implements StickerFragment.StickerListener, CreationBackListFragment.BackChooseListener, CreationFrameFragment.FrameChooseListener, CreationBottomFragment.FinishListener {
     private static final String TAG = "CreationTemplateMvpMode";
+
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private CreationTemplateMvpCallback mCallback;
     private final Context mContext;
@@ -144,6 +145,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private BackgroundDraw backgroundDraw;
 
     private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
+
     /**
      * 视频默认声音
      */
@@ -225,26 +227,26 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
 
     public void keepPicture(RelativeLayout relativeLayout, ImageView iv) {
-        WaitingDialog.openPragressDialog(mContext);
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             stickerView.disMissFrame();
         }
-        //加耗时，因为绘制是需要时间的
-        handler.postDelayed(() -> {
-            WaitingDialog.closeProgressDialog();
-            ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
-            String textImagePath = screenCaptureUtil.getFilePath(relativeLayout, iv);
-            Intent intent = new Intent(mContext, DressUpPreviewActivity.class);
-            intent.putExtra("url", textImagePath);
-            intent.putExtra("template_id", "");
-            intent.putExtra("localImage", textImagePath);
-            intent.putExtra("isSpecial", true);
-            intent.putExtra("templateTitle", "");
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            mContext.startActivity(intent);
-        }, 500);
 
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
+                String textImagePath = screenCaptureUtil.getFilePath(relativeLayout, iv);
+                Intent intent = new Intent(mContext, DressUpPreviewActivity.class);
+                intent.putExtra("url", textImagePath);
+                intent.putExtra("template_id", "");
+                intent.putExtra("localImage", textImagePath);
+                intent.putExtra("isSpecial", true);
+                intent.putExtra("templateTitle", "");
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
 
@@ -691,6 +693,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     titles[i] = list.get(i).getName();
                     Bundle bundle = new Bundle();
                     bundle.putInt("stickerType", list.get(i).getId());
+                    bundle.putInt("from", CreationTemplateActivity.FROM_CREATION_CODE);
                     StickerFragment fragment = new StickerFragment();
                     fragment.setStickerListener(CreationTemplateMvpModel.this);
                     fragment.setArguments(bundle);
@@ -1035,9 +1038,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 if (stickerView != null && stickerView.getComeFrom()) {
                     if (isMatting) {
                         LogUtil.d("OOM", "当前裁剪的地址为" + stickerView.getClipPath());
-                        stickerView.mattingChange(stickerView.getClipPath());
+                        stickerView.mattingChange(isMatting, stickerView.getClipPath());
                     } else {
-                        stickerView.mattingChange(stickerView.getOriginalPath());
+                        stickerView.mattingChange(isMatting, stickerView.getOriginalPath());
                     }
                 }
             }
@@ -1225,7 +1228,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 //            boolean showSavePngBitmap = (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance()
 //                    .getPathType(stickView.getOriginalPath())) &&
 //                    stickerType != StickerView.CODE_STICKER_TYPE_FLASH_PIC) || (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC && isFromAlbum);
-            if (isFromAlbum) {
+            if (isFromAlbum && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                 stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.icon_pic_save));
             }
         }
@@ -1324,8 +1327,34 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     if (stickView.isMirror()) {
-                        String bitmapPath = FileUtil.saveBitmap(stickView.getMirrorBitmap(), "saveAlbum");
-                        copyGif(bitmapPath, bitmapPath, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false, stickView.getDownStickerTitle());
+                        String mirrorBitmapPath = FileUtil.saveBitmap(stickView.getMirrorBitmap(), "saveAlbum");
+                        String clipMirrorPath = "";
+                        String oriMirrorPath = "";
+                        if (stickView.getClipMirrorBitmap() != null) {
+                            clipMirrorPath = FileUtil.saveBitmap(stickView.getClipMirrorBitmap(), "saveAlbum");
+                        }
+                        if (stickView.getOriginalMirrorBitmap() != null) {
+                            oriMirrorPath = FileUtil.saveBitmap(stickView.getOriginalMirrorBitmap(), "saveAlbum");
+                        }
+                        if (!TextUtils.isEmpty(clipMirrorPath) && !TextUtils.isEmpty(oriMirrorPath)) {
+                            copyGif(clipMirrorPath, clipMirrorPath,
+                                    stickView.getComeFrom(), stickView, oriMirrorPath,
+                                    false, stickView.getDownStickerTitle());
+                        } else if (!TextUtils.isEmpty(clipMirrorPath) && TextUtils.isEmpty(oriMirrorPath)) {
+                            copyGif(clipMirrorPath, clipMirrorPath,
+                                    stickView.getComeFrom(), stickView, stickView.getOriginalPath(),
+                                    false, stickView.getDownStickerTitle());
+                        } else if (TextUtils.isEmpty(clipMirrorPath) && !TextUtils.isEmpty(oriMirrorPath)) {
+
+                            copyGif(mirrorBitmapPath, mirrorBitmapPath,
+                                    stickView.getComeFrom(), stickView, oriMirrorPath,
+                                    false, stickView.getDownStickerTitle());
+                        } else {
+                            copyGif(mirrorBitmapPath, mirrorBitmapPath,
+                                    stickView.getComeFrom(), stickView, stickView.getOriginalPath(),
+                                    false, stickView.getDownStickerTitle());
+                        }
+
                     } else {
                         //copy
                         //飞闪提供的贴纸是GIF 不支持抠像 所以抠像的情况下拿到的路径为空 这个时候择getResPath()
@@ -2372,16 +2401,18 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
     @Override
-    public void chooseBack(String path) {
+    public void chooseBack(String title, String path) {
 
-        mCallback.chooseBack(path);
+        mCallback.chooseBack(title, path);
     }
 
     @Override
-    public void chooseFrame(String path) {
+    public void chooseFrame(String title, String path) {
         if (TextUtils.isEmpty(path)) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_frame", "无相框");
             clearImageFrame();
         } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_frame", title);
             mCallback.chooseFrame(path);
         }
     }

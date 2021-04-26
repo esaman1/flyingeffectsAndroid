@@ -21,11 +21,10 @@ import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
+import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -189,6 +188,7 @@ public class CreationBottomFragment extends BaseFragment implements CreationBack
                     titles[i] = list.get(i).getName();
                     Bundle bundle = new Bundle();
                     bundle.putInt("stickerType", list.get(i).getId());
+                    bundle.putInt("from", CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE);
                     StickerFragment fragment = new StickerFragment();
                     fragment.setStickerListener(CreationBottomFragment.this);
                     fragment.setArguments(bundle);
@@ -215,16 +215,16 @@ public class CreationBottomFragment extends BaseFragment implements CreationBack
 
 
     @Override
-    public void chooseBack(String path) {
+    public void chooseBack(String title, String path) {
         if (mBackChooseListener != null) {
-            mBackChooseListener.chooseBack(path);
+            mBackChooseListener.chooseBack(title, path);
         }
     }
 
     @Override
-    public void chooseFrame(String path) {
+    public void chooseFrame(String title, String path) {
         if (mFrameChooseListener != null) {
-            mFrameChooseListener.chooseFrame(path);
+            mFrameChooseListener.chooseFrame(title, path);
         }
     }
 
