@@ -145,6 +145,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private BackgroundDraw backgroundDraw;
 
     private ArrayList<AllStickerData> listAllSticker = new ArrayList<>();
+
     /**
      * 视频默认声音
      */
@@ -1037,9 +1038,9 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 if (stickerView != null && stickerView.getComeFrom()) {
                     if (isMatting) {
                         LogUtil.d("OOM", "当前裁剪的地址为" + stickerView.getClipPath());
-                        stickerView.mattingChange(stickerView.getClipPath());
+                        stickerView.mattingChange(isMatting, stickerView.getClipPath());
                     } else {
-                        stickerView.mattingChange(stickerView.getOriginalPath());
+                        stickerView.mattingChange(isMatting, stickerView.getOriginalPath());
                     }
                 }
             }
@@ -1227,7 +1228,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 //            boolean showSavePngBitmap = (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance()
 //                    .getPathType(stickView.getOriginalPath())) &&
 //                    stickerType != StickerView.CODE_STICKER_TYPE_FLASH_PIC) || (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC && isFromAlbum);
-            if (isFromAlbum) {
+            if (isFromAlbum && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                 stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.icon_pic_save));
             }
         }
@@ -1326,8 +1327,34 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     if (stickView.isMirror()) {
-                        String bitmapPath = FileUtil.saveBitmap(stickView.getMirrorBitmap(), "saveAlbum");
-                        copyGif(bitmapPath, bitmapPath, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false, stickView.getDownStickerTitle());
+                        String mirrorBitmapPath = FileUtil.saveBitmap(stickView.getMirrorBitmap(), "saveAlbum");
+                        String clipMirrorPath = "";
+                        String oriMirrorPath = "";
+                        if (stickView.getClipMirrorBitmap() != null) {
+                            clipMirrorPath = FileUtil.saveBitmap(stickView.getClipMirrorBitmap(), "saveAlbum");
+                        }
+                        if (stickView.getOriginalMirrorBitmap() != null) {
+                            oriMirrorPath = FileUtil.saveBitmap(stickView.getOriginalMirrorBitmap(), "saveAlbum");
+                        }
+                        if (!TextUtils.isEmpty(clipMirrorPath) && !TextUtils.isEmpty(oriMirrorPath)) {
+                            copyGif(clipMirrorPath, clipMirrorPath,
+                                    stickView.getComeFrom(), stickView, oriMirrorPath,
+                                    false, stickView.getDownStickerTitle());
+                        } else if (!TextUtils.isEmpty(clipMirrorPath) && TextUtils.isEmpty(oriMirrorPath)) {
+                            copyGif(clipMirrorPath, clipMirrorPath,
+                                    stickView.getComeFrom(), stickView, stickView.getOriginalPath(),
+                                    false, stickView.getDownStickerTitle());
+                        } else if (TextUtils.isEmpty(clipMirrorPath) && !TextUtils.isEmpty(oriMirrorPath)) {
+
+                            copyGif(mirrorBitmapPath, mirrorBitmapPath,
+                                    stickView.getComeFrom(), stickView, oriMirrorPath,
+                                    false, stickView.getDownStickerTitle());
+                        } else {
+                            copyGif(mirrorBitmapPath, mirrorBitmapPath,
+                                    stickView.getComeFrom(), stickView, stickView.getOriginalPath(),
+                                    false, stickView.getDownStickerTitle());
+                        }
+
                     } else {
                         //copy
                         //飞闪提供的贴纸是GIF 不支持抠像 所以抠像的情况下拿到的路径为空 这个时候择getResPath()
@@ -2376,16 +2403,16 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     @Override
     public void chooseBack(String title, String path) {
 
-        mCallback.chooseBack(title,path);
+        mCallback.chooseBack(title, path);
     }
 
     @Override
     public void chooseFrame(String title, String path) {
         if (TextUtils.isEmpty(path)) {
-            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"st_bj_frame","无相框");
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_frame", "无相框");
             clearImageFrame();
         } else {
-            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"st_bj_frame",title);
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_frame", title);
             mCallback.chooseFrame(path);
         }
     }

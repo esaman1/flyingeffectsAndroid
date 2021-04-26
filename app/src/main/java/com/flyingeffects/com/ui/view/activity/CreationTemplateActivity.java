@@ -778,9 +778,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         presenter.addTextSticker();
         intoTextStyleDialog("");
         isClickAddTextTag = true;
-        if (mFrom==FROM_DRESS_UP_BACK_CODE){
+        if (mFrom == FROM_DRESS_UP_BACK_CODE) {
             StatisticsEventAffair.getInstance().setFlag(this, "st_bj_text");
-        }else {
+        } else {
             StatisticsEventAffair.getInstance().setFlag(this, "20_bj_text");
         }
     }
@@ -1438,11 +1438,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void deleteFirstSticker() {
-        new Handler().postDelayed(() -> {
-            mBinding.viewPager.setCurrentItem(0);
-            mBinding.tvMusic.setVisibility(View.GONE);
-            setTextColor(0);
-        }, 500);
+        if (mFrom != FROM_DRESS_UP_BACK_CODE) {
+            new Handler().postDelayed(() -> {
+                mBinding.viewPager.setCurrentItem(0);
+                mBinding.tvMusic.setVisibility(View.GONE);
+                setTextColor(0);
+            }, 500);
+        }
     }
 
 

@@ -438,6 +438,24 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     private long showStickerStartTime;
     private long showStickerEndTime;
     private boolean mIsMirror = false;
+    private Bitmap mClipMirrorBitmap;
+    private Bitmap mOriginalMirrorBitmap;
+
+    public Bitmap getClipMirrorBitmap() {
+        return mClipMirrorBitmap;
+    }
+
+    public void setClipMirrorBitmap(Bitmap clipMirrorBitmap) {
+        mClipMirrorBitmap = clipMirrorBitmap;
+    }
+
+    public Bitmap getOriginalMirrorBitmap() {
+        return mOriginalMirrorBitmap;
+    }
+
+    public void setOriginalMirrorBitmap(Bitmap originalMirrorBitmap) {
+        mOriginalMirrorBitmap = originalMirrorBitmap;
+    }
 
     public boolean isMirror() {
         return mIsMirror;
@@ -1232,10 +1250,13 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     } else if (mCurrentMode == LEFT_BOTTOM_MODE) {
                         //添加来源判断
                         if (mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
-                            if (mIsMirror){
+                            if (mIsMirror) {
                                 mMirrorBitmap = BitmapUtils.toHorizontalMirror(mMirrorBitmap);
-                            }else {
+                            } else {
                                 mMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
+                            }
+                            if (!isMatting) {
+                                mClipMirrorBitmap = mMirrorBitmap;
                             }
                             mIsMirror = !mIsMirror;
                         } else {
@@ -1774,13 +1795,22 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     setCenter(getWidth() / 2f, getHeight() / 2f);
                 }
             } else if (isMatting && mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
-                if (mIsMirror){
+
+                if (mIsMirror) {
                     mMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
-                }else {
+                } else {
                     mMirrorBitmap = BitmapUtils.drawableToBitmap(currentDrawable);
                 }
 
+                if (isMattingOn && mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
+                    mClipMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
+                } else if (!isMattingOn && mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
+                    mOriginalMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
+                }
+
             }
+
+
             invalidate();
         }
     }
@@ -2028,14 +2058,17 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
 
     boolean isMatting = false;
+    boolean isMattingOn = true;
 
     /**
      * 切换抠图/不抠图
      *
-     * @param path 图片地址
+     * @param isMatting
+     * @param path      图片地址
      */
-    public void mattingChange(String path) {
-        isMatting = true;
+    public void mattingChange(boolean isMatting, String path) {
+        this.isMatting = true;
+        isMattingOn = isMatting;
         RequestManager manager = Glide.with(BaseApplication.getInstance());
         RequestBuilder builder;
         if (path.endsWith(".gif")) {
