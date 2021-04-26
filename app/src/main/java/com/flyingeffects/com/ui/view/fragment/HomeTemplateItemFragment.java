@@ -156,6 +156,7 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                             if ("1".equals(templateType)) {
                                 intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
                             }
+                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "st_ft_click", allData.get(position).getTitle());
                         } else {
                             if ("3".equals(templateType)) {
                                 //换脸
@@ -163,7 +164,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                             } else if ("4".equals(templateType)) {
                                 //换背景
                                 intent.putExtra("fromTo", FromToTemplate.CHOOSEBJ);
+                                StatisticsEventAffair.getInstance().setFlag(getActivity(), "st_bj_click", allData.get(position).getTitle());
                             } else if ("5".equals(templateType)) {
+                                StatisticsEventAffair.getInstance().setFlag(getActivity(), "st_bqb_click", allData.get(position).getTitle());
                                 //表情包
                                 intent.putExtra("fromTo", FromToTemplate.FACEGIF);
                             } else {

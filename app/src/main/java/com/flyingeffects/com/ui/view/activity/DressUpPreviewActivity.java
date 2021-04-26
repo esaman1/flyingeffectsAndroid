@@ -187,7 +187,14 @@ public class DressUpPreviewActivity extends BaseActivity {
             case R.id.keep_to_album:
                 alertAlbumUpdate(false);
                 StatisticsToSave(template_id);
-                StatisticsEventAffair.getInstance().setFlag(this, "21_face_save", templateTitle);
+
+                if(isSpecial){
+                    StatisticsEventAffair.getInstance().setFlag(this, "st_ft_save", templateTitle);
+                }else{
+                    StatisticsEventAffair.getInstance().setFlag(this, "21_face_save", templateTitle);
+                }
+
+
                 break;
             case R.id.share:
                 share(listForKeep.get(nowChooseIndex));

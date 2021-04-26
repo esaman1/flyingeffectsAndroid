@@ -1002,7 +1002,17 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 UiStep.isFromDownBj = true;
             } else if (mOldFromTo.equals(FromToTemplate.DRESSUP)) {
                 StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "21_face_made", templateItem.getTitle());
-            } else {
+            }
+            else if (mOldFromTo.equals(FromToTemplate.CHOOSEBJ)) {
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_bj_make", templateItem.getTitle());
+            }
+            else if (mOldFromTo.equals(FromToTemplate.FACEGIF)) {
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_bqb_make", templateItem.getTitle());
+            }
+            else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_ft_make", templateItem.getTitle());
+            }
+            else {
                 StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_make", templateItem.getTitle());
             }
             if (BaseConstans.hasLogin()) {

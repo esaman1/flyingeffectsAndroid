@@ -572,12 +572,14 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
      * user : zhangtongju
      */
     private void intoUploadMaterialActivity(String path) {
+        if(fromType==4){
+            StatisticsEventAffair.getInstance().setFlag(mContext, "hp_st_up" );
+        }
         Intent intent = new Intent(mContext, UploadMaterialActivity.class);
         intent.putExtra("isFrom", 2);
         intent.putExtra("videoPath", path);
         mContext.startActivity(intent);
     }
-
     String tabName;
 
     /**
