@@ -123,8 +123,9 @@ public class DressUpPreviewActivity extends BaseActivity {
         switch (v.getId()) {
             case R.id.dress_up_next:
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
-                    LogUtil.d("nowShowPosition", "nowShowPosition=" + nowShowPosition);
-                    if (nowShowPosition != 0 && nowShowPosition % BaseConstans.getDressupIntervalsNumber() == 0 &&
+                    //1 开始记录位置，不然从0开始会能多做一次
+                    int needShowPosition=nowShowPosition+1;
+                    if (needShowPosition != 1 && needShowPosition % BaseConstans.getDressupIntervalsNumber() == 0 &&
                             BaseConstans.getIncentiveVideo() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                         VideoAdManager videoAdManager = new VideoAdManager();
                         videoAdManager.showVideoAd(this, AdConfigs.AD_DRESSUP_SCREEN_VIDEO, new VideoAdCallBack() {

@@ -93,7 +93,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     public final static int SELECTALBUMFROMUSETCENTERBJ = 1;
     private static final int CODE_PEELING = 10;
 
-    private String[] titles = {"我上传的背景", "喜欢", "模板收藏"};
+    private String[] titles = {"我上传的作品", "喜欢", "模板收藏"};
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;

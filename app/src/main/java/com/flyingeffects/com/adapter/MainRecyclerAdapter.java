@@ -122,7 +122,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
                         tv_gif_logo.setVisibility(View.VISIBLE);
                         String templateType = item.getTemplate_type();
                         if (!TextUtils.isEmpty(templateType) && "3".equals(templateType)) {
-                            tv_gif_logo.setText("换装");
+                            tv_gif_logo.setText("换脸");
                         } else if (!TextUtils.isEmpty(templateType) && "4".equals(templateType)) {
                             tv_gif_logo.setText("换背景");
                         } else if (!TextUtils.isEmpty(templateType) && templateType.equals("5")) {

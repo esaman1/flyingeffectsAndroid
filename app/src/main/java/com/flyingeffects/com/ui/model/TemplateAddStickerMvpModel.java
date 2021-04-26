@@ -182,6 +182,27 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     }
 
 
+    public void statisticsToSave(String templateId) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_id", templateId);
+        params.put("action_type", 2 + "");
+        // 启动时间
+        Observable ob = Api.getDefault().saveTemplate(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(context) {
+            @Override
+            protected void onSubError(String message) {
+            }
+
+            @Override
+            protected void onSubNext(Object data) {
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+    }
+
+
+
     private List<Long> perSticker = new ArrayList<>();
 
     private void getPlayVideoDuration() {

@@ -30,6 +30,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
+import com.flyingeffects.com.enity.ExitOrLogin;
 import com.flyingeffects.com.enity.LoginToAttentionUserEvent;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.WxLogin;
@@ -438,6 +439,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
                 EventBus.getDefault().post(new LoginToAttentionUserEvent());
                 EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
+                EventBus.getDefault().post(new ExitOrLogin());
                 LoginActivity.this.finish();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
@@ -485,6 +487,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         WaitingDialog.closeProgressDialog();
                         EventBus.getDefault().post(new LoginToAttentionUserEvent());
                         EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
+                        EventBus.getDefault().post(new ExitOrLogin());
                         LoginActivity.this.finish();
                     }
                 }

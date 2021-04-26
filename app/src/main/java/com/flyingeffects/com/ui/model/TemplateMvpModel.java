@@ -84,13 +84,15 @@ public class TemplateMvpModel {
     private String fromTo;
     private String saveVideoPath;
     private String templateName;
+    private String templateId;
 
 
-    public TemplateMvpModel(Context context, TemplateMvpCallback callback, String fromTo, String templateName) {
+    public TemplateMvpModel(Context context, TemplateMvpCallback callback, String fromTo, String templateName,String templateId) {
         this.context = context;
         this.callback = callback;
         this.fromTo = fromTo;
         this.templateName = templateName;
+        this.templateId=templateId;
         keepUunCatchPath = context.getExternalFilesDir("runCatch/");
         FileManager fileManager = new FileManager();
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
@@ -376,6 +378,7 @@ public class TemplateMvpModel {
                     Intent intent = new Intent(context, TemplateAddStickerActivity.class);
                     intent.putExtra("videoPath", outputPath);
                     intent.putExtra("title", templateName);
+                    intent.putExtra("templateId", templateId);
                     intent.putExtra("IsFrom", fromTo);
                     context.startActivity(intent);
                 }
