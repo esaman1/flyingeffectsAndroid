@@ -26,6 +26,7 @@ import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
+import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -73,6 +74,7 @@ public class StickerFragment extends BaseFragment {
     private int perPageCount = 20;
     private boolean isRefresh = true;
     private String mGifFolder;
+    private int mFrom;
 
     @Override
     protected int getContentLayout() {
@@ -83,6 +85,7 @@ public class StickerFragment extends BaseFragment {
     protected void initView() {
         stickerType = getArguments().getInt("stickerType");
         formToType = getArguments().getInt("type");
+        mFrom = getArguments().getInt("from");
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(getContext(), "gifFolder");
     }
@@ -127,8 +130,9 @@ public class StickerFragment extends BaseFragment {
                         if (mStickerListener != null) {
                             mStickerListener.clickItemSelected(position);
                         }
-
-                        if (UiStep.isFromDownBj) {
+                        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+                            StatisticsEventAffair.getInstance().setFlag(getContext(), " st_bj_sticker", listForSticker.get(position).getTitle());
+                        } else if (UiStep.isFromDownBj) {
                             StatisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", listForSticker.get(position).getTitle());
                         } else {
                             StatisticsEventAffair.getInstance().setFlag(getContext(), " 6_customize_bj_Sticker", listForSticker.get(position).getTitle());

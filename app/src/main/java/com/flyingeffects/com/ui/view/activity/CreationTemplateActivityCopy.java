@@ -1970,7 +1970,7 @@ public class CreationTemplateActivityCopy extends BaseActivity implements Creati
     }
 
     @Override
-    public void chooseBack(String path) {
+    public void chooseBack(String title, String path) {
 
     }
 

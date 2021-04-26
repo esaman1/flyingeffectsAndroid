@@ -5,30 +5,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import androidx.core.content.ContextCompat;
-
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.CreationBackListGridViewAdapter;
-import com.flyingeffects.com.adapter.TemplateGridViewAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ClearChooseStickerState;
-import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +58,6 @@ public class CreationBackListFragment extends BaseFragment {
     private BackChooseListener mBackChooseListener;
     private String mName;
 
-
     @Override
     protected int getContentLayout() {
         return R.layout.fragment_sticker;
@@ -99,6 +91,7 @@ public class CreationBackListFragment extends BaseFragment {
             selectPage = 1;
             requestBackList(false);
         });
+
         mSmartRefreshLayout.setOnLoadMoreListener(refresh -> {
             isRefresh = false;
             selectPage++;
@@ -115,14 +108,17 @@ public class CreationBackListFragment extends BaseFragment {
                     @Override
                     public void run() {
                         modificationSingleItemIsChecked(position);
+
                         if (mBackChooseListener != null) {
-                            mBackChooseListener.chooseBack(listForSticker.get(position).getBackground_image());
+                            mBackChooseListener.chooseBack(listForSticker.get(position).getTitle(), listForSticker.get(position).getBackground_image());
                         }
+
                         if (UiStep.isFromDownBj) {
                             StatisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", listForSticker.get(position).getTitle());
                         } else {
                             StatisticsEventAffair.getInstance().setFlag(getContext(), " 6_customize_bj_Sticker", listForSticker.get(position).getTitle());
                         }
+
                     }
                 }, 200);
 
@@ -167,6 +163,7 @@ public class CreationBackListFragment extends BaseFragment {
                 if (list.size() < perPageCount) {
                     mSmartRefreshLayout.setEnableLoadMore(false);
                 }
+
                 if (listForSticker.size() == 0) {
                     addBackChooseItem();
                 }
@@ -208,7 +205,7 @@ public class CreationBackListFragment extends BaseFragment {
 
 
     public interface BackChooseListener {
-        void chooseBack(String path);
+        void chooseBack(String title, String path);
     }
 
     @Override

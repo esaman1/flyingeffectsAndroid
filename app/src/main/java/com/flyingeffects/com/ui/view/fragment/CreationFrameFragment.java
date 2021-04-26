@@ -102,7 +102,7 @@ public class CreationFrameFragment extends BaseFragment {
                     public void run() {
                         modificationSingleItemIsChecked(position);
                         if (mFrameChooseListener != null) {
-                            mFrameChooseListener.chooseFrame(mImageFrameList.get(position).getImage());
+                            mFrameChooseListener.chooseFrame(mImageFrameList.get(position).getTitle(),mImageFrameList.get(position).getImage());
                         }
                         if (UiStep.isFromDownBj) {
                             StatisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", mImageFrameList.get(position).getTitle());
@@ -190,7 +190,7 @@ public class CreationFrameFragment extends BaseFragment {
 
 
     public interface FrameChooseListener {
-        void chooseFrame(String path);
+        void chooseFrame(String title, String path);
     }
 
     @Override

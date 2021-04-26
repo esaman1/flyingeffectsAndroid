@@ -58,7 +58,7 @@ public interface CreationTemplateMvpView {
 
     void setDialogProgress(String title, int dialogProgress, String content);
 
-    void chooseBack(String path);
+    void chooseBack(String title, String path);
 
     void chooseFrame(String path);
 

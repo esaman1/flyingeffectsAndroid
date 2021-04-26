@@ -2,11 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -18,7 +14,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,7 +27,6 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetPathType;
-import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.databinding.ActCreationTemplateEditBinding;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
@@ -44,7 +38,6 @@ import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.DownImageManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
@@ -55,9 +48,7 @@ import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
-import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.ScreenCaptureUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.drag.CreationTemplateProgressBarView;
@@ -228,6 +219,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private String mBackgroundImage;
     private String mFramePath;
+    private String mBackGroundTitle;
 
     @Override
     protected int getLayoutId() {
@@ -786,7 +778,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         presenter.addTextSticker();
         intoTextStyleDialog("");
         isClickAddTextTag = true;
-        StatisticsEventAffair.getInstance().setFlag(this, "20_bj_text");
+        if (mFrom==FROM_DRESS_UP_BACK_CODE){
+            StatisticsEventAffair.getInstance().setFlag(this, "st_bj_text");
+        }else {
+            StatisticsEventAffair.getInstance().setFlag(this, "20_bj_text");
+        }
     }
 
     /**
@@ -876,6 +872,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private void submitCreation() {
         if (mFrom == FROM_DRESS_UP_BACK_CODE) {
             presenter.keepPicture(mBinding.relativeContentAllContent2, mBinding.ivFrameImage);
+            if (TextUtils.isEmpty(mBackGroundTitle)) {
+                mBackGroundTitle = title;
+            }
+            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "st_bj_save", mBackGroundTitle);
         } else {
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
             DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
@@ -1116,6 +1116,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             setPlayerViewSize(nowUiIsLandscape);
         }
         presenter.initVideoProgressView();
+
         mBinding.progressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -1157,6 +1158,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mBinding.exoPlayer.setLayoutParams(relativeLayoutParams);
                 //设置预览编辑界面
                 mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+                RelativeLayout.LayoutParams contentParam = (RelativeLayout.LayoutParams) mBinding.relativeContentAllContent2.getLayoutParams();
+                contentParam.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                contentParam.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                contentParam.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+
+                //mBinding.relativeContentAllContent.setLayoutParams(contentParam);
+                mBinding.relativeContentAllContent2.setLayoutParams(contentParam);
             });
         } else {
             //横屏模式下切换到了竖屏
@@ -1173,6 +1181,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mBinding.exoPlayer.setLayoutParams(relativeLayoutParams);
                 //设置预览编辑界面
                 mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+                RelativeLayout.LayoutParams contentParam = (RelativeLayout.LayoutParams) mBinding.relativeContentAllContent2.getLayoutParams();
+                contentParam.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                contentParam.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                contentParam.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+
+                //mBinding.relativeContentAllContent.setLayoutParams(contentParam);
+                mBinding.relativeContentAllContent2.setLayoutParams(contentParam);
+
             });
         }
 
@@ -1203,6 +1219,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
                         relativeLayoutParams3.height = oriHeight;
                         mBinding.llGreenBackground.setLayoutParams(relativeLayoutParams3);
+
                         RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) mBinding.ivGreenBackground.getLayoutParams();
                         relativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
                         relativeLayoutParams4.height = oriHeight;
@@ -1298,9 +1315,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     relativeLayoutParams.width = Math.round(1f * height * oriRatio);
                     relativeLayoutParams.height = height;
                     mBinding.ivBackImage.setLayoutParams(relativeLayoutParams);
-                    mBinding.relativeContentAllContent2.setLayoutParams(relativeLayoutParams2);
                     //设置预览编辑界面
                     mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+//                    relativeLayoutParams2.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+//                    relativeLayoutParams2.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+                    mBinding.relativeContentAllContent2.setLayoutParams(relativeLayoutParams2);
                 }
             });
         }
@@ -1313,7 +1332,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     //横屏的情况
                     mBinding.ivGreenBackground.post(() -> {
                         int oriWidth = mBinding.llSpace.getWidth();
-
                         RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) mBinding.llGreenBackground.getLayoutParams();
                         relativeLayoutParams3.width = oriWidth;
                         relativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
@@ -1868,7 +1886,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 mBinding.scrollView.setVisibility(View.GONE);
                 presenter.setmVideoPath("");
                 videoPath = "";
-                showGreenBj(false);
+                showGreenBj(true);
                 imageBjPath = event.getPath();
                 //图片背景和绿幕背景默认都是10秒
                 //循环得到最长的视频时长
@@ -2234,10 +2252,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
     @Override
-    public void chooseBack(String path) {
+    public void chooseBack(String title, String path) {
         if (TextUtils.isEmpty(path)) {
             upLoadLocalBack();
         } else {
+            mBackGroundTitle = title;
+            if (TextUtils.isEmpty(mBackGroundTitle)) {
+                mBackGroundTitle = "本地背景";
+            }
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_background", mBackGroundTitle);
+
             mBackgroundImage = path;
             changeImageBack();
         }
@@ -2286,15 +2310,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 .load(path)
                 .into(mBinding.ivFrameImage);
         setImageBackSize(nowUiIsLandscape);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-//                test();
-
-
-            }
-        }, 1000);
 
     }
 

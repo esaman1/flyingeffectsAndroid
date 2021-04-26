@@ -113,6 +113,7 @@ import rx.subjects.PublishSubject;
  */
 public class CreationTemplateMvpModel implements StickerFragment.StickerListener, CreationBackListFragment.BackChooseListener, CreationFrameFragment.FrameChooseListener, CreationBottomFragment.FinishListener {
     private static final String TAG = "CreationTemplateMvpMode";
+
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private CreationTemplateMvpCallback mCallback;
     private final Context mContext;
@@ -230,16 +231,21 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             stickerView.disMissFrame();
         }
 
-        ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
-        String textImagePath = screenCaptureUtil.getFilePath(relativeLayout, iv);
-        Intent intent = new Intent(mContext, DressUpPreviewActivity.class);
-        intent.putExtra("url", textImagePath);
-        intent.putExtra("template_id", "");
-        intent.putExtra("localImage", textImagePath);
-        intent.putExtra("isSpecial", true);
-        intent.putExtra("templateTitle", "");
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        mContext.startActivity(intent);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
+                String textImagePath = screenCaptureUtil.getFilePath(relativeLayout, iv);
+                Intent intent = new Intent(mContext, DressUpPreviewActivity.class);
+                intent.putExtra("url", textImagePath);
+                intent.putExtra("template_id", "");
+                intent.putExtra("localImage", textImagePath);
+                intent.putExtra("isSpecial", true);
+                intent.putExtra("templateTitle", "");
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
 
@@ -686,6 +692,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     titles[i] = list.get(i).getName();
                     Bundle bundle = new Bundle();
                     bundle.putInt("stickerType", list.get(i).getId());
+                    bundle.putInt("from", CreationTemplateActivity.FROM_CREATION_CODE);
                     StickerFragment fragment = new StickerFragment();
                     fragment.setStickerListener(CreationTemplateMvpModel.this);
                     fragment.setArguments(bundle);
@@ -2367,16 +2374,18 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     }
 
     @Override
-    public void chooseBack(String path) {
+    public void chooseBack(String title, String path) {
 
-        mCallback.chooseBack(path);
+        mCallback.chooseBack(title,path);
     }
 
     @Override
-    public void chooseFrame(String path) {
+    public void chooseFrame(String title, String path) {
         if (TextUtils.isEmpty(path)) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"st_bj_frame","无相框");
             clearImageFrame();
         } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),"st_bj_frame",title);
             mCallback.chooseFrame(path);
         }
     }

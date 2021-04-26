@@ -1174,6 +1174,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     private void toCreationActivity(String imgUrl, String originalPath) {
         LogUtil.d(TAG, "toCreation");
+
         Intent intent = CreationTemplateActivity.buildIntent(mContext, CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE, imgUrl,
                 "", originalPath, true, templateItem.getTitle(),
                 templateItem.getTemplate_id(), false, templateItem.getBackground_image());

@@ -92,6 +92,7 @@ public class BaseConstans {
         map.put("uuid", GetUserUuid());
         map.put("token", GetUserToken());
         map.put("sign", getSine(nowTimestamp, map));
+
         return map;
     }
 
@@ -276,12 +277,10 @@ public class BaseConstans {
     }
 
 
-
     public static String getGifCourse() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("GIFCOURSE", "");
     }
-
 
 
     public static void setAdShowErrorCanSave(String json) {
@@ -299,10 +298,6 @@ public class BaseConstans {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("AdShowErrorCanSave", "1");
     }
-
-
-
-
 
 
     public static String getHasAdEntrance() {
