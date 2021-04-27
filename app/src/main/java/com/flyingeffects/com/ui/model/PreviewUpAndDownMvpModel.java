@@ -1108,7 +1108,7 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2021/4/19
      * user : zhangtongju
      */
-    public void   ToDressUpSpecial(List<String> paths,int api_type,String templateId){
+    public void   ToDressUpSpecial(List<String> paths,int api_type,String templateId,String title){
         Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             LogUtil.d("OOM3", "toDressUp");
             DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
@@ -1118,7 +1118,7 @@ public class PreviewUpAndDownMvpModel {
                         //视频的话进入到gif 页面
                         Intent intent = new Intent(context, MemeKeepActivity.class);
                         intent.putExtra("videoPath", url);
-                        intent.putExtra("title", "");
+                        intent.putExtra("title",title );
                         intent.putExtra("templateId", templateId);
                         intent.putExtra("IsFrom", fromTo);
                         context.startActivity(intent);

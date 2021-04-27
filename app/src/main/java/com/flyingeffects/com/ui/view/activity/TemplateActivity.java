@@ -326,7 +326,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (nowTemplateIsAnim == 2) {
             isToSing = true;
         }
-        presenter = new TemplatePresenter(this, this, fromTo, templateName,templateId);
+        presenter = new TemplatePresenter(this, this, fromTo, templateName, templateId);
         LogUtil.d("OOM3", "initView");
 
         if (mOriginalPathList != null && mOriginalPathList.size() > 0) {
@@ -1209,14 +1209,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         } else {
                             presenter.renderVideo(mFolder.getPath(), mAudio1Path, false, nowTemplateIsAnim, imgPath, nowIsGifTemplate);
                         }
-
-
                     }
-
-
                 }
-
-
                 break;
 
             case R.id.iv_play:

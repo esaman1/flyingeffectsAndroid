@@ -6,6 +6,8 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
+import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 
 import java.util.HashMap;
 
@@ -27,7 +29,8 @@ public class TemplateKeepStatistics {
 
 
 
-    public void statisticsToSave(String templateId) {
+    public void statisticsToSave(String templateId,String title) {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "all_save_type_num",title);
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
         params.put("action_type", 2 + "");

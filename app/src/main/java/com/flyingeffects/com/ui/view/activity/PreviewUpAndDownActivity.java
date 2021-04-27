@@ -1029,6 +1029,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
         initFaceSdkModel.getHasLoadSdkOk(() -> {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "all_next_step_type_num", templateItem.getTitle());
             LogUtil.d("OOM3", "模型也加载完成");
             if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
                 if (albumFileList.get(0).isClickToCamera()) {
@@ -1080,7 +1081,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         }
                     } else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
                         int api_type = templateItem.getApi_type();
-                        mMvpPresenter.ToDressUpSpecial(paths, api_type,templateId);
+                        mMvpPresenter.ToDressUpSpecial(paths, api_type,templateId,templateItem.getTitle());
                     } else if (templateItem.getIs_anime() == 1) {
                         //模板换装新逻辑
                         DressUpModel dressUpModel = new DressUpModel(this, paths1 -> mMvpPresenter.GetDressUpPath(paths1), true);

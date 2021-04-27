@@ -117,7 +117,7 @@ public class MemeKeepActivity extends BaseActivity {
         } else if (view == mBinding.ivBack) {
             finish();
         } else if (view == mBinding.llKeep) {
-            TemplateKeepStatistics.getInstance().statisticsToSave(templateId);
+            TemplateKeepStatistics.getInstance().statisticsToSave(templateId,title);
             StatisticsEventAffair.getInstance().setFlag(MemeKeepActivity.this, "st_bqb_save", title);
             //保存到本地
             String keepPath = SaveAlbumPathModel.getInstance().getKeepOutputForGif();

@@ -31,9 +31,9 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
         previewUpAndDownMvpModel.requestMessageStatistics(type,message_id,template_id);
     }
 
-    public void ToDressUpSpecial(List<String> paths,int api_type,String templateId){
+    public void ToDressUpSpecial(List<String> paths,int api_type,String templateId,String title){
 
-        previewUpAndDownMvpModel.ToDressUpSpecial(paths,api_type,templateId);
+        previewUpAndDownMvpModel.ToDressUpSpecial(paths,api_type,templateId,title);
     }
 
     public void downZip(String url,String zipPid){

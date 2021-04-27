@@ -538,7 +538,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                     StatisticsEventAffair.getInstance().setFlag(this, "12_shoot_finish_save");
                 }
                 presenter.toSaveVideo(0);
-                TemplateKeepStatistics.getInstance().statisticsToSave(templateId);
+                TemplateKeepStatistics.getInstance().statisticsToSave(templateId,title);
 
                 break;
 
