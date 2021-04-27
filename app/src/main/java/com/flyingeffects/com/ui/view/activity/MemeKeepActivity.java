@@ -20,6 +20,7 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
+import com.flyingeffects.com.ui.model.TemplateKeepStatistics;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -58,6 +59,7 @@ public class MemeKeepActivity extends BaseActivity {
     SaveShareDialog mShareDialog;
     private LinearLayout dialogShare;
     private String title;
+    private String templateId;
 
     @Override
     protected int getLayoutId() {
@@ -69,6 +71,7 @@ public class MemeKeepActivity extends BaseActivity {
         mBinding = ActMemeKeepBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         videoPath = getIntent().getStringExtra("videoPath");
+        templateId=getIntent().getStringExtra("templateId");
         title=getIntent().getStringExtra(title);
         mediaInfo = new MediaInfo(videoPath);
         mediaInfo.prepare();
@@ -114,6 +117,7 @@ public class MemeKeepActivity extends BaseActivity {
         } else if (view == mBinding.ivBack) {
             finish();
         } else if (view == mBinding.llKeep) {
+            TemplateKeepStatistics.getInstance().statisticsToSave(templateId);
             StatisticsEventAffair.getInstance().setFlag(MemeKeepActivity.this, "st_bqb_save", title);
             //保存到本地
             String keepPath = SaveAlbumPathModel.getInstance().getKeepOutputForGif();

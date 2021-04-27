@@ -1108,7 +1108,7 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2021/4/19
      * user : zhangtongju
      */
-    public void   ToDressUpSpecial(List<String> paths,int api_type){
+    public void   ToDressUpSpecial(List<String> paths,int api_type,String templateId){
         Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             LogUtil.d("OOM3", "toDressUp");
             DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
@@ -1119,6 +1119,7 @@ public class PreviewUpAndDownMvpModel {
                         Intent intent = new Intent(context, MemeKeepActivity.class);
                         intent.putExtra("videoPath", url);
                         intent.putExtra("title", "");
+                        intent.putExtra("templateId", templateId);
                         intent.putExtra("IsFrom", fromTo);
                         context.startActivity(intent);
 
@@ -1126,7 +1127,7 @@ public class PreviewUpAndDownMvpModel {
                         //进入到类似于换装页面
                         Intent intent = new Intent(context, DressUpPreviewActivity.class);
                         intent.putExtra("url",url);
-                        intent.putExtra("template_id", "");
+                        intent.putExtra("template_id", templateId);
                         intent.putExtra("localImage", url);
                         intent.putExtra("isSpecial",true);
                         intent.putExtra("templateTitle", "");

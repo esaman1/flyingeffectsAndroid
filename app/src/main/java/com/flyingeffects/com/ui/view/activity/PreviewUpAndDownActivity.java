@@ -1080,7 +1080,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         }
                     } else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
                         int api_type = templateItem.getApi_type();
-                        mMvpPresenter.ToDressUpSpecial(paths, api_type);
+                        mMvpPresenter.ToDressUpSpecial(paths, api_type,templateId);
                     } else if (templateItem.getIs_anime() == 1) {
                         //模板换装新逻辑
                         DressUpModel dressUpModel = new DressUpModel(this, paths1 -> mMvpPresenter.GetDressUpPath(paths1), true);

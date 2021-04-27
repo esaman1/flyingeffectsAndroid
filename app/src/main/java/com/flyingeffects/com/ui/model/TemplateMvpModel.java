@@ -372,6 +372,7 @@ public class TemplateMvpModel {
                     Intent intent = new Intent(context, MemeKeepActivity.class);
                     intent.putExtra("videoPath", outputPath);
                     intent.putExtra("title", templateName);
+                    intent.putExtra("templateId", templateId);
                     intent.putExtra("IsFrom", fromTo);
                     context.startActivity(intent);
                 }else{

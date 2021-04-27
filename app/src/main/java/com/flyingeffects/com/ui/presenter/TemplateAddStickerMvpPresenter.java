@@ -88,10 +88,6 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
         TemplateAddStickermodel.toSaveVideo(percentageH);
     }
 
-    public void statisticsToSave(String templateId) {
-        TemplateAddStickermodel.statisticsToSave(templateId);
-
-    }
 
 
     public void setPlayerViewSize(PlayerView playerView, MyScrollView scrollView, ViewLayerRelativeLayout viewLayerRelativeLayout) {

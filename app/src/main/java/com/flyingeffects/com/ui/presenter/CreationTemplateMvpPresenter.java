@@ -40,9 +40,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
 
-    public void keepPicture(RelativeLayout relativeLayout, ImageView iv){
+    public void keepPicture(RelativeLayout relativeLayout, ImageView iv,String TemplateId){
 
-        creationTemplatemodel.keepPicture(relativeLayout,iv);
+        creationTemplatemodel.keepPicture(relativeLayout,iv,TemplateId);
     }
 
 

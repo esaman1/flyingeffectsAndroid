@@ -20,6 +20,7 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.TemplateAddStickerMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.model.TemplateKeepStatistics;
 import com.flyingeffects.com.ui.presenter.TemplateAddStickerMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
@@ -537,8 +538,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                     StatisticsEventAffair.getInstance().setFlag(this, "12_shoot_finish_save");
                 }
                 presenter.toSaveVideo(0);
-
-                presenter.statisticsToSave(templateId);
+                TemplateKeepStatistics.getInstance().statisticsToSave(templateId);
 
                 break;
 
