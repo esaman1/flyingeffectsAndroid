@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:id="@+id/smart_refresh_layout"
@@ -12,17 +12,14 @@
         android:focusableInTouchMode="true"
         android:splitMotionEvents="false">
 
-        <GridView
-            android:id="@+id/gridView"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:verticalSpacing="10dp"
-            android:layout_marginTop="5dp"
-            android:paddingTop="10dp"
-            android:horizontalSpacing="5dp"
-            android:numColumns="6"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:paddingStart="16dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="16dp" />
 
         <com.scwang.smartrefresh.layout.footer.ClassicsFooter
             android:layout_width="match_parent"
@@ -39,4 +36,5 @@
             app:srlTextSizeTitle="16sp" />
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
 </LinearLayout>

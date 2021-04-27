@@ -44,6 +44,7 @@ import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.flyingeffects.com.R;
@@ -55,6 +56,7 @@ import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.TickerAnimated;
 import com.flyingeffects.com.utils.BitmapUtil;
 import com.flyingeffects.com.utils.BitmapUtils;
+import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.MeasureTextUtils;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -83,6 +85,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
     public static final int CODE_STICKER_TYPE_FLASH_PIC = 2;
 
     private static final String TAG = "StickerView";
+
     /**
      * 高光
      */
@@ -175,6 +178,16 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * 镜像翻转后的bitmap
      */
     private Bitmap mMirrorBitmap;
+
+    private boolean mIsMirror = false;
+
+    /**
+     * 镜像翻转数据分别保存
+     */
+    private Bitmap mClipMirrorBitmap;
+    private Bitmap mOriginalMirrorBitmap;
+    private String mClipMirrorPath;
+    private String mOriginalMirrorPath;
 
     /**
      * 当前素材是否是视频
@@ -437,9 +450,8 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     private long showStickerStartTime;
     private long showStickerEndTime;
-    private boolean mIsMirror = false;
-    private Bitmap mClipMirrorBitmap;
-    private Bitmap mOriginalMirrorBitmap;
+    private boolean mIsChange = false;
+
 
     public Bitmap getClipMirrorBitmap() {
         return mClipMirrorBitmap;
@@ -1255,9 +1267,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                             } else {
                                 mMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
                             }
-                            if (!isMatting) {
-                                mClipMirrorBitmap = mMirrorBitmap;
-                            }
                             mIsMirror = !mIsMirror;
                         } else {
                             callback.stickerOnclick(LEFT_BOTTOM_MODE);
@@ -1780,6 +1789,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             if (autoRun) {
                 start();
             }
+
             if (!isMatting) {
                 moveX = (getMeasuredWidth() + originalBitmapWidth) >> 1;
                 moveY = (getMeasuredHeight() + originalBitmapHeight) >> 1;
@@ -1794,6 +1804,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     setDegree(0f);
                     setCenter(getWidth() / 2f, getHeight() / 2f);
                 }
+
             } else if (isMatting && mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
 
                 if (mIsMirror) {
@@ -1802,17 +1813,77 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     mMirrorBitmap = BitmapUtils.drawableToBitmap(currentDrawable);
                 }
 
-                if (isMattingOn && mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
-                    mClipMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
-                } else if (!isMattingOn && mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
-                    mOriginalMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
-                }
-
+            } else if (mStickerType == CODE_STICKER_TYPE_FLASH_PIC && mIsChange) {
+                mMirrorBitmap = BitmapUtils.drawableToBitmap(currentDrawable);
             }
-
 
             invalidate();
         }
+    }
+
+
+    private void loadOriginalMirrorRes(String path) {
+        if (BaseApplication.getInstance() != null) {
+            RequestManager manager = Glide.with(BaseApplication.getInstance());
+            RequestBuilder builder = null;
+
+            builder = manager.asDrawable();
+
+            options.override((int) contentWidth, (int) contentHeight);
+
+            builder.load(path)
+                    .apply(options)
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition transition) {
+                            if (TextUtils.isEmpty(mOriginalMirrorPath)) {
+                                mOriginalMirrorBitmap = BitmapUtils.toHorizontalMirror(resource);
+                                mOriginalMirrorPath = FileUtil.saveBitmap(mOriginalMirrorBitmap, "saveAlbum");
+                            }
+                            invalidate();
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                        }
+                    });
+        }
+
+    }
+
+    /**
+     * 闪图第一次进入，加载镜像资源
+     */
+    private void loadClipMirrorRes(String path) {
+        if (BaseApplication.getInstance() != null) {
+            RequestManager manager = Glide.with(BaseApplication.getInstance());
+            RequestBuilder builder = null;
+
+            builder = manager.asDrawable();
+
+            options.override((int) contentWidth, (int) contentHeight);
+
+            builder.load(path)
+                    .apply(options)
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition transition) {
+                            if (TextUtils.isEmpty(mClipMirrorPath)) {
+                                mClipMirrorBitmap = BitmapUtils.toHorizontalMirror(resource);
+                                mClipMirrorPath = FileUtil.saveBitmap(mClipMirrorBitmap, "saveAlbum");
+                            }
+                            invalidate();
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                        }
+                    });
+        }
+
+
     }
 
 
@@ -1846,6 +1917,14 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     public String getResPath() {
         return resPath;
+    }
+
+    public String getClipMirrorPath() {
+        return mClipMirrorPath;
+    }
+
+    public String getOriginalMirrorPath() {
+        return mOriginalMirrorPath;
     }
 
     private String resPath = null;
@@ -1896,6 +1975,19 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     builder.load(path)
                             .apply(options)
                             .into(getTarger());
+
+
+                    if (mStickerType == CODE_STICKER_TYPE_FLASH_PIC && isFromAlbum) {
+
+                        if (TextUtils.isEmpty(mClipMirrorPath)) {
+                            loadClipMirrorRes(clipPath);
+                        }
+
+                        if (TextUtils.isEmpty(mOriginalMirrorPath)) {
+                            loadOriginalMirrorRes(originalPath);
+                        }
+                    }
+
                     recyclerBitmap();
                 }
             });
@@ -2011,6 +2103,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     public void changeImage(final String path, final boolean autoRun) {
         if (!TextUtils.isEmpty(path)) {
+            mIsChange = true;
             stop();
             this.resPath = path;
             getTarger().setAutoRun(autoRun);
@@ -2048,6 +2141,11 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                         recyclerBitmap();
                     }
 
+                    if (mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
+                        loadClipMirrorRes(clipPath);
+                        loadOriginalMirrorRes(originalPath);
+                    }
+
                 });
             }
         } else {
@@ -2080,7 +2178,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
         builder.load(path)
                 .apply(options)
                 .into(getTarger());
-
     }
 
     private void recyclerBitmap() {
