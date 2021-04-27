@@ -19,6 +19,7 @@ import com.flyingeffects.com.databinding.ActMemeKeepBinding;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.huaweiObs;
+import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.model.TemplateKeepStatistics;
 import com.flyingeffects.com.utils.FileUtil;
@@ -29,6 +30,7 @@ import com.flyingeffects.com.utils.record.SaveShareDialog;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.lansosdk.videoeditor.VideoEditor;
 import com.orhanobut.hawk.Hawk;
+import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
@@ -60,6 +62,10 @@ public class MemeKeepActivity extends BaseActivity {
     private LinearLayout dialogShare;
     private String title;
     private String templateId;
+    /**
+     * 0  视频 1 gif
+     */
+    private int Typematerial = 0;
 
     @Override
     protected int getLayoutId() {
@@ -71,10 +77,15 @@ public class MemeKeepActivity extends BaseActivity {
         mBinding = ActMemeKeepBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         videoPath = getIntent().getStringExtra("videoPath");
-        templateId=getIntent().getStringExtra("templateId");
-        title=getIntent().getStringExtra(title);
-        mediaInfo = new MediaInfo(videoPath);
-        mediaInfo.prepare();
+        templateId = getIntent().getStringExtra("templateId");
+        title = getIntent().getStringExtra(title);
+        if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(videoPath))) {
+            Typematerial = 0;
+            mediaInfo = new MediaInfo(videoPath);
+            mediaInfo.prepare();
+        } else {
+            Typematerial = 1;
+        }
         setContentView(rootView);
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(this, "gifFolder");
@@ -84,21 +95,27 @@ public class MemeKeepActivity extends BaseActivity {
         mBinding.ivBack.setOnClickListener(this::onViewClick);
         mBinding.llKeep.setOnClickListener(this::onViewClick);
         WaitingDialog.openPragressDialog(this);
-        dialogShare=findViewById(R.id.dialog_share);
+        dialogShare = findViewById(R.id.dialog_share);
         mShareDialog = new SaveShareDialog(this, dialogShare);
     }
 
     @Override
     protected void initAction() {
-        VideoEditor videoEditor = new VideoEditor();
-        String str = videoEditor.executeConvertVideoToGif(videoPath, 5, mediaInfo.getWidth() / 2, mediaInfo.getHeight() / 2, 1f);
-        mediaInfo.release();
+
+        String gifPath;
+        if (Typematerial == 0) {
+            VideoEditor videoEditor = new VideoEditor();
+            gifPath = videoEditor.executeConvertVideoToGif(videoPath, 5, mediaInfo.getWidth() / 2, mediaInfo.getHeight() / 2, 1f);
+            mediaInfo.release();
+        }else{
+            gifPath=videoPath;
+        }
         File gif = new File(mGifFolder + "/keep.gif");
         if (gif.exists()) {
             gif.delete();
         }
         WaitingDialog.closeProgressDialog();
-        File file = new File(str);
+        File file = new File(gifPath);
         if (file.exists()) {
             try {
                 FileUtil.copyFile(file, mGifFolder + "/keep.gif");
@@ -117,7 +134,7 @@ public class MemeKeepActivity extends BaseActivity {
         } else if (view == mBinding.ivBack) {
             finish();
         } else if (view == mBinding.llKeep) {
-            TemplateKeepStatistics.getInstance().statisticsToSave(templateId,title);
+            TemplateKeepStatistics.getInstance().statisticsToSave(templateId, title);
             StatisticsEventAffair.getInstance().setFlag(MemeKeepActivity.this, "st_bqb_save", title);
             //保存到本地
             String keepPath = SaveAlbumPathModel.getInstance().getKeepOutputForGif();
@@ -130,11 +147,6 @@ public class MemeKeepActivity extends BaseActivity {
             }
         }
     }
-
-
-
-
-
 
 
     /**

@@ -35,7 +35,6 @@ import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
-import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.MemeKeepActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.LogUtil;
