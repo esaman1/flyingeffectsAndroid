@@ -221,7 +221,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
             video_layout.addView(view);
         }
 
-        if (OldFromTo.equals(FromToTemplate.DRESSUP)) {
+        if (OldFromTo.equals(FromToTemplate.DRESSUP)||OldFromTo.equals(FromToTemplate.CHOOSEBJ)||OldFromTo.equals(FromToTemplate.SPECIAL)||OldFromTo.equals(FromToTemplate.FACEGIF)) {
             ll_describe.setVisibility(View.GONE);
         } else {
             ll_describe.setVisibility(View.VISIBLE);

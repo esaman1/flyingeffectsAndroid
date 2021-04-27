@@ -16,7 +16,6 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.ExitOrLogin;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
@@ -26,7 +25,6 @@ import com.flyingeffects.com.utils.ToastUtil;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import de.greenrobot.event.EventBus;
 
 /**
  * 关于界面
@@ -155,7 +153,7 @@ public class AboutActivity extends BaseActivity {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         BaseConstans.SetUserToken("");
-                        EventBus.getDefault().post(new ExitOrLogin());
+//                        EventBus.getDefault().post(new ExitOrLogin());
                         findViewById(R.id.tv_top_submit).setVisibility(View.GONE);
                         dialog.dismiss();
                     }
