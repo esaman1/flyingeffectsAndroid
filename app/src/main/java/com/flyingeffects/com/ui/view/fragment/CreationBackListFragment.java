@@ -5,7 +5,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.adapter.CreationBackListAdapter;
 import com.flyingeffects.com.adapter.CreationBackListGridViewAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
@@ -20,6 +25,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.view.GridItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -43,11 +49,12 @@ public class CreationBackListFragment extends BaseFragment {
 
     @BindView(R.id.smart_refresh_layout)
     SmartRefreshLayout mSmartRefreshLayout;
-    @BindView(R.id.gridView)
-    GridView mGridView;
+
+    @BindView(R.id.rv_list)
+    RecyclerView mRvList;
 
     List<NewFragmentTemplateItem> listForSticker = new ArrayList<>();
-    private CreationBackListGridViewAdapter mGridViewAdapter;
+    private CreationBackListAdapter mBackListAdapter;
 
     private int selectPage = 1;
     private int perPageCount = 10;
@@ -60,7 +67,7 @@ public class CreationBackListFragment extends BaseFragment {
 
     @Override
     protected int getContentLayout() {
-        return R.layout.fragment_sticker;
+        return R.layout.fragment_creation_back_list;
     }
 
     @Override
@@ -81,9 +88,12 @@ public class CreationBackListFragment extends BaseFragment {
     @Override
     protected void initData() {
 
-        mGridViewAdapter = new CreationBackListGridViewAdapter(listForSticker, getContext());
+        mBackListAdapter = new CreationBackListAdapter(listForSticker);
 
-        mGridView.setAdapter(mGridViewAdapter);
+
+        mRvList.setLayoutManager(new GridLayoutManager(getActivity(), 6));
+        mRvList.addItemDecoration(new GridItemDecoration());
+        mRvList.setAdapter(mBackListAdapter);
 
         mSmartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             isRefresh = true;
@@ -98,32 +108,33 @@ public class CreationBackListFragment extends BaseFragment {
             requestBackList(false);
         });
 
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
+        mBackListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                EventBus.getDefault().post(new ClearChooseStickerState());
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        modificationSingleItemIsChecked(position);
-
-                        if (mBackChooseListener != null) {
-                            mBackChooseListener.chooseBack(listForSticker.get(position).getTitle(), listForSticker.get(position).getBackground_image());
-                        }
-
-                        if (UiStep.isFromDownBj) {
-                            StatisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", listForSticker.get(position).getTitle());
-                        } else {
-                            StatisticsEventAffair.getInstance().setFlag(getContext(), " 6_customize_bj_Sticker", listForSticker.get(position).getTitle());
-                        }
-
-                    }
-                }, 200);
-
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                onRecyclerViewItemClicked(position);
             }
         });
+    }
+
+    private void onRecyclerViewItemClicked(int position) {
+        EventBus.getDefault().post(new ClearChooseStickerState());
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                modificationSingleItemIsChecked(position);
+
+                if (mBackChooseListener != null) {
+                    mBackChooseListener.chooseBack(listForSticker.get(position).getTitle(), listForSticker.get(position).getBackground_image());
+                }
+
+                if (UiStep.isFromDownBj) {
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", listForSticker.get(position).getTitle());
+                } else {
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), " 6_customize_bj_Sticker", listForSticker.get(position).getTitle());
+                }
+
+            }
+        }, 200);
     }
 
 
@@ -169,7 +180,7 @@ public class CreationBackListFragment extends BaseFragment {
                 }
 
                 listForSticker.addAll(list);
-                mGridViewAdapter.notifyDataSetChanged();
+                mBackListAdapter.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
     }
@@ -196,7 +207,7 @@ public class CreationBackListFragment extends BaseFragment {
         item1.setChecked(true);
         //修改对应的元素
         listForSticker.set(position, item1);
-        mGridViewAdapter.notifyDataSetChanged();
+        mBackListAdapter.notifyDataSetChanged();
     }
 
     public void setBackChooseListener(BackChooseListener listener) {
@@ -223,7 +234,7 @@ public class CreationBackListFragment extends BaseFragment {
         for (NewFragmentTemplateItem item : listForSticker) {
             item.setChecked(false);
         }
-        mGridViewAdapter.notifyDataSetChanged();
+        mBackListAdapter.notifyDataSetChanged();
     }
 
 }

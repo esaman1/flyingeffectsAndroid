@@ -77,13 +77,14 @@ public class CreationBackListGridViewAdapter extends BaseAdapter {
 //            holder.tv_name.setText("默认");
 //
 //        } else {
-        if (!TextUtils.isEmpty(stickerList.getBackground_image())) {
+        if (position != 0) {
             holder.ivLocal.setVisibility(View.INVISIBLE);
             Glide.with(context)
                     .load(stickerList.getBackground_image())
                     .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
                     .into(holder.image);
         } else {
+
             holder.ivLocal.setVisibility(View.VISIBLE);
         }
 

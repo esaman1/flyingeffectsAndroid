@@ -1228,7 +1228,10 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 //            boolean showSavePngBitmap = (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance()
 //                    .getPathType(stickView.getOriginalPath())) &&
 //                    stickerType != StickerView.CODE_STICKER_TYPE_FLASH_PIC) || (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC && isFromAlbum);
-            if (isFromAlbum && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
+
+            if (isFromAlbum && (!albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) && stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC) {
+                stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.shader_edit));
+            } else if (isFromAlbum && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                 stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.icon_pic_save));
             }
         }
@@ -1327,34 +1330,10 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 } else if (type == StickerView.RIGHT_TOP_MODE) {
                     stickView.dismissFrame();
                     if (stickView.isMirror()) {
-                        String mirrorBitmapPath = FileUtil.saveBitmap(stickView.getMirrorBitmap(), "saveAlbum");
-                        String clipMirrorPath = "";
-                        String oriMirrorPath = "";
-                        if (stickView.getClipMirrorBitmap() != null) {
-                            clipMirrorPath = FileUtil.saveBitmap(stickView.getClipMirrorBitmap(), "saveAlbum");
-                        }
-                        if (stickView.getOriginalMirrorBitmap() != null) {
-                            oriMirrorPath = FileUtil.saveBitmap(stickView.getOriginalMirrorBitmap(), "saveAlbum");
-                        }
-                        if (!TextUtils.isEmpty(clipMirrorPath) && !TextUtils.isEmpty(oriMirrorPath)) {
-                            copyGif(clipMirrorPath, clipMirrorPath,
-                                    stickView.getComeFrom(), stickView, oriMirrorPath,
-                                    false, stickView.getDownStickerTitle());
-                        } else if (!TextUtils.isEmpty(clipMirrorPath) && TextUtils.isEmpty(oriMirrorPath)) {
-                            copyGif(clipMirrorPath, clipMirrorPath,
-                                    stickView.getComeFrom(), stickView, stickView.getOriginalPath(),
-                                    false, stickView.getDownStickerTitle());
-                        } else if (TextUtils.isEmpty(clipMirrorPath) && !TextUtils.isEmpty(oriMirrorPath)) {
-
-                            copyGif(mirrorBitmapPath, mirrorBitmapPath,
-                                    stickView.getComeFrom(), stickView, oriMirrorPath,
-                                    false, stickView.getDownStickerTitle());
-                        } else {
-                            copyGif(mirrorBitmapPath, mirrorBitmapPath,
-                                    stickView.getComeFrom(), stickView, stickView.getOriginalPath(),
-                                    false, stickView.getDownStickerTitle());
-                        }
-
+                        LogUtil.d(TAG, "clipMirrorPath = " + stickView.getClipMirrorPath() + " originalMirrorPath = " + stickView.getOriginalMirrorPath());
+                        copyGif(stickView.getClipMirrorPath(), stickView.getClipMirrorPath(),
+                                stickView.getComeFrom(), stickView, stickView.getOriginalMirrorPath(),
+                                false, stickView.getDownStickerTitle());
                     } else {
                         //copy
                         //飞闪提供的贴纸是GIF 不支持抠像 所以抠像的情况下拿到的路径为空 这个时候择getResPath()
@@ -1396,129 +1375,12 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     }
 
                 } else if (type == StickerView.LEFT_BOTTOM_MODE) {
-
-                    if (!stickView.getIsTextSticker()) {
-
-                        if (UiStep.isFromDownBj) {
-                            StatisticsEventAffair.getInstance().setFlag(mContext, " 5_mb_bj_replace");
-                        } else {
-                            StatisticsEventAffair.getInstance().setFlag(mContext, " 6_customize_bj_replace");
-                        }
-
-                        //切換素材
-                        AlbumManager.chooseAlbum(mContext, 1, 0, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
-                            if (!isCancel) {
-                                if (albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))) {
-                                    GetVideoCover getVideoCover = new GetVideoCover(mContext);
-                                    getVideoCover.getCover(paths.get(0), path1 -> {
-                                        Observable.just(path1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-                                            stickView.setOriginalPath(paths.get(0));
-                                            stickView.setClipPath(s);
-                                            if (!isCheckedMatting) {
-                                                stickView.changeImage(paths.get(0), false);
-                                            } else {
-                                                stickView.changeImage(s, false);
-                                            }
-                                            stickView.setLeftBitmapNoSave();
-                                            if (stickView.isFirstAddSticker()) {
-                                                stickView.setShowStickerStartTime(0);
-                                                mCallback.changFirstVideoSticker(paths.get(0));
-                                                if (TextUtils.isEmpty(mVideoPath)) {
-                                                    //没得背景的情况下,重新分离出音乐来
-                                                    chooseMaterialMusic(paths.get(0));
-                                                } else {
-//                                                    callback.getBgmPath("");
-                                                    //只是分离，但是不选择素材音乐
-//                                                    getVideoVoice(paths.get(0), soundFolder);
-                                                    chooseMaterialMusic(paths.get(0));
-                                                }
-
-                                            }
-                                            mCallback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0), stickView);
-                                        });
-                                    });
-                                } else {
-                                    CompressionCuttingManage manage = new CompressionCuttingManage(mContext, "", tailorPaths -> {
-                                        Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-                                            stickView.setOriginalPath(paths.get(0));
-                                            stickView.setClipPath(s);
-
-                                            if (!isCheckedMatting) {
-                                                stickView.changeImage(paths.get(0), false);
-                                            } else {
-                                                stickView.changeImage(s, false);
-                                            }
-
-                                            mCallback.getBgmPath("");
-                                            if (nowChooseMusicId == 1) {
-                                                if (!TextUtils.isEmpty(mVideoPath)) {
-                                                    mCallback.chooseMusicIndex(1);
-                                                    chooseTemplateMusic(true);
-                                                } else {
-                                                    clearCheckBox();
-                                                }
-                                            }
-
-                                            if (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
-                                                stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.icon_pic_save));
-                                            }
-
-                                            mCallback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0), stickView);
-
-                                        });
-
-                                    });
-                                    manage.toMatting(paths);
-
-                                    if (stickView.isFirstAddSticker()) {
-                                        if (stickView.isOpenVoice()) {
-                                            stickView.setOpenVoice(false);
-                                            mCallback.getBgmPath("");
-                                        }
-                                    }
-
-                                }
-                            }
-                        }, "");
-                    } else {
-                        mCallback.showTextDialog(nowChooseStickerView.getStickerText());
-                    }
+                    changeMaterial(stickView);
                 } else if (type == StickerView.LEFT_MODE) {
-                    if (!TextUtils.isEmpty(stickView.getResPath())) {
-                        StatisticsEventAffair.getInstance().setFlag(mContext, "17_zdy_cutout_save");
-                        if (stickView.isMirror()) {
-                            String bitmapPath = FileUtil.saveBitmap(stickView.getMirrorBitmap(), "saveAlbum");
-                            saveToAlbum(bitmapPath);
-                        } else {
-                            //开启抠像
-                            if (isMatting) {
-
-                                if (!TextUtils.isEmpty(stickView.getClipPath())) {
-                                    saveToAlbum(stickView.getClipPath());
-                                } else {
-                                    saveToAlbum(stickView.getResPath());
-                                }
-
-                            } else {
-                                //没有开启抠像
-                                if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
-                                    //素材的类型是视频 取视频的帧图进行保存
-                                    GetVideoCover getVideoCover = new GetVideoCover(mContext);
-                                    getVideoCover.getFileCoverForBitmap(stickView.getOriginalPath(), bitmap -> {
-                                        String bitmapPath = FileUtil.saveBitmap(bitmap, "saveAlbum");
-                                        saveToAlbum(bitmapPath);
-                                    });
-                                } else {
-                                    //取原图片的路径保存
-                                    if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
-                                        saveToAlbum(stickView.getOriginalPath());
-                                    } else {
-                                        saveToAlbum(stickView.getResPath());
-                                    }
-                                }
-                            }
-                        }
-
+                    if (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC) {
+                        changeMaterial(stickView);
+                    } else {
+                        saveAlbum(stickView);
                     }
                 }
             }
@@ -1550,6 +1412,150 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             }
 
         });
+    }
+
+    /**
+     * 更换素材
+     *
+     * @param stickView
+     */
+    private void changeMaterial(StickerView stickView) {
+        if (!stickView.getIsTextSticker()) {
+
+            if (UiStep.isFromDownBj) {
+                StatisticsEventAffair.getInstance().setFlag(mContext, " 5_mb_bj_replace");
+            } else {
+                StatisticsEventAffair.getInstance().setFlag(mContext, " 6_customize_bj_replace");
+            }
+
+            //切換素材
+            AlbumManager.chooseAlbum(mContext, 1, 0, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
+                if (!isCancel) {
+                    if (albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))) {
+                        GetVideoCover getVideoCover = new GetVideoCover(mContext);
+                        getVideoCover.getCover(paths.get(0), path1 -> {
+                            Observable.just(path1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+
+                                stickView.setOriginalPath(paths.get(0));
+                                stickView.setClipPath(s);
+
+                                if (!isCheckedMatting) {
+                                    stickView.changeImage(paths.get(0), false);
+                                } else {
+                                    stickView.changeImage(s, false);
+                                }
+
+                                stickView.setLeftBitmapNoSave();
+                                if (stickView.isFirstAddSticker()) {
+                                    stickView.setShowStickerStartTime(0);
+                                    mCallback.changFirstVideoSticker(paths.get(0));
+                                    if (TextUtils.isEmpty(mVideoPath)) {
+                                        //没得背景的情况下,重新分离出音乐来
+                                        chooseMaterialMusic(paths.get(0));
+                                    } else {
+//                                                    callback.getBgmPath("");
+                                        //只是分离，但是不选择素材音乐
+//                                                    getVideoVoice(paths.get(0), soundFolder);
+                                        chooseMaterialMusic(paths.get(0));
+                                    }
+
+                                }
+                                mCallback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0), stickView);
+                            });
+                        });
+                    } else {
+                        CompressionCuttingManage manage = new CompressionCuttingManage(mContext, "", tailorPaths -> {
+                            Observable.just(tailorPaths.get(0)).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+                                stickView.setOriginalPath(paths.get(0));
+                                stickView.setClipPath(s);
+
+                                if (!isCheckedMatting) {
+                                    stickView.changeImage(paths.get(0), false);
+                                } else {
+                                    stickView.changeImage(s, false);
+                                }
+
+                                mCallback.getBgmPath("");
+                                if (nowChooseMusicId == 1) {
+                                    if (!TextUtils.isEmpty(mVideoPath)) {
+                                        mCallback.chooseMusicIndex(1);
+                                        chooseTemplateMusic(true);
+                                    } else {
+                                        clearCheckBox();
+                                    }
+                                }
+                                if (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC) {
+                                    stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.shader_edit));
+                                } else if (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
+                                    stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.icon_pic_save));
+                                }
+
+                                mCallback.modifyTimeLineSickerPath(String.valueOf(stickView.getStickerNoIncludeAnimId()), paths.get(0), stickView);
+
+                            });
+
+                        });
+                        manage.toMatting(paths);
+
+                        if (stickView.isFirstAddSticker()) {
+                            if (stickView.isOpenVoice()) {
+                                stickView.setOpenVoice(false);
+                                mCallback.getBgmPath("");
+                            }
+                        }
+
+                    }
+                }
+            }, "");
+        } else {
+            mCallback.showTextDialog(nowChooseStickerView.getStickerText());
+        }
+    }
+
+
+    /**
+     * 将stickerview的当前素材保存的相册
+     *
+     * @param stickView
+     */
+    private void saveAlbum(StickerView stickView) {
+        if (!TextUtils.isEmpty(stickView.getResPath())) {
+            StatisticsEventAffair.getInstance().setFlag(mContext, "17_zdy_cutout_save");
+            if (stickView.isMirror()) {
+                String bitmapPath = FileUtil.saveBitmap(stickView.getMirrorBitmap(), "saveAlbum");
+                saveToAlbum(bitmapPath);
+            } else {
+                //开启抠像
+                if (isMatting) {
+
+                    if (!TextUtils.isEmpty(stickView.getClipPath())) {
+                        saveToAlbum(stickView.getClipPath());
+                    } else {
+                        saveToAlbum(stickView.getResPath());
+                    }
+
+                } else {
+                    //没有开启抠像
+                    if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
+                        //素材的类型是视频 取视频的帧图进行保存
+                        GetVideoCover getVideoCover = new GetVideoCover(mContext);
+                        getVideoCover.getFileCoverForBitmap(stickView.getOriginalPath(), bitmap -> {
+                            String bitmapPath = FileUtil.saveBitmap(bitmap, "saveAlbum");
+                            saveToAlbum(bitmapPath);
+                        });
+                    } else {
+                        //取原图片的路径保存
+                        if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
+                            saveToAlbum(stickView.getOriginalPath());
+                        } else {
+                            saveToAlbum(stickView.getResPath());
+                        }
+                    }
+                }
+            }
+
+        }
+
     }
 
     /**

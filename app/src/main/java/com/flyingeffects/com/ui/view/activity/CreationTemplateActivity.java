@@ -184,6 +184,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     private long mCutEndTime;
 
     private long progressBarProgress;
+
     /**
      * 背景音乐播放的开始位置
      */
@@ -774,6 +775,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 添加文字
      */
     private void addText() {
+        mBinding.viewPager.setVisibility(View.GONE);
         seekBarViewIsShow(false);
         presenter.addTextSticker();
         intoTextStyleDialog("");
@@ -1317,9 +1319,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     mBinding.ivBackImage.setLayoutParams(relativeLayoutParams);
                     //设置预览编辑界面
                     mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
-//                    relativeLayoutParams2.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-//                    relativeLayoutParams2.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-                    mBinding.relativeContentAllContent2.setLayoutParams(relativeLayoutParams2);
+                    RelativeLayout.LayoutParams contentParam = (RelativeLayout.LayoutParams) mBinding.relativeContentAllContent2.getLayoutParams();
+                    contentParam.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                    contentParam.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                    contentParam.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+
+                    mBinding.relativeContentAllContent2.setLayoutParams(contentParam);
                 }
             });
         }
