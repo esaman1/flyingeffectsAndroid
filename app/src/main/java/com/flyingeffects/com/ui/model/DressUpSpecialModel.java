@@ -1,10 +1,13 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
@@ -20,6 +23,7 @@ import com.flyingeffects.com.manager.Calculagraph;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.huaweiObs;
+import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -55,15 +59,18 @@ public class DressUpSpecialModel {
     private final DressUpCallback callback;
     private final String mCatchFolder;
     private final String mVideoFolder;
+    private final String soundGifFolder;
+
     private String template_id;
 
-    public DressUpSpecialModel(Context context, DressUpCallback callback,String templateId) {
+    public DressUpSpecialModel(Context context, DressUpCallback callback, String templateId) {
         this.context = context;
         this.callback = callback;
         FileManager fileManager = new FileManager();
         mCatchFolder = fileManager.getFileCachePath(context, "runCatch");
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
-        this.template_id=templateId;
+        soundGifFolder = fileManager.getFileCachePath(context, "gifPath");
+        this.template_id = templateId;
     }
 
 
@@ -141,11 +148,13 @@ public class DressUpSpecialModel {
             @Override
             protected void onSubNext(DressUpSpecial object) {
                 LogUtil.d("OOM3", "通知后台完成=" + StringUtil.beanToJSONString(object));
-                String url=object.getUrl();
-                if(!url.contains(".")){
+                String url = object.getUrl();
+                if (!url.contains(".")) {
                     startTimer(object.getUrl());
-                }else{
+                    LogUtil.d("OOM3", "没有点");
+                } else {
                     keepUrlToLocal(url);
+                    LogUtil.d("OOM3", "得点");
                 }
 
             }
@@ -159,10 +168,14 @@ public class DressUpSpecialModel {
      * user : zhangtongju
      */
     private void keepUrlToLocal(String url) {
+        LogUtil.d("OOM3", "下载视频url=" + url);
         if (!TextUtils.isEmpty(url)) {
             if (url.contains("mp4")) {
                 LogUtil.d("OOM3", "下载视频=");
                 downVideo(url);
+            } else if (url.contains("gif")) {
+                SaveImageTask saveImageTask = new SaveImageTask(context);
+                saveImageTask.execute(url);
             } else {
                 LogUtil.d("OOM3", "下载图片=");
                 downImage(url);
@@ -217,7 +230,7 @@ public class DressUpSpecialModel {
             uploadPathList.add(paths.get(0));
             new Thread(() -> uploadFileToHuawei(paths.get(0))).start();
 
-        }else{
+        } else {
             LogUtil.d("OOM3", "上传为图片");
             Observable.just(paths).map(strings -> {
                 try {
@@ -240,7 +253,6 @@ public class DressUpSpecialModel {
             });
         }
     }
-
 
 
     /**
@@ -275,7 +287,6 @@ public class DressUpSpecialModel {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
 
 
     /**
@@ -334,5 +345,51 @@ public class DressUpSpecialModel {
         });
     }
 
+
+    /**
+     * Created by csonezp on 16-1-12.
+     */
+    public class SaveImageTask extends AsyncTask<String, Void, File> {
+        private
+        final Context context;
+
+        public SaveImageTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected File doInBackground(String... params) {
+            String url = params[0]; // should be easy to extend to share multiple images at once
+            try {
+                return Glide
+                        .with(context)
+                        .load(url)
+                        .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                        .get() // needs to be called on background thread
+                        ;
+            } catch (Exception ex) {
+                LogUtil.d("OOM3", "ex" + ex.getMessage());
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(File result) {
+            if (result == null) {
+                return;
+            }
+            LogUtil.d("OOM3", "onPostExecute");
+            String gifPath = soundGifFolder + "/aa.gif";
+            try {
+                FileUtil.copyFile(result, gifPath);
+                progress.closeProgressDialog();
+                callback.isSuccess(gifPath);
+            } catch (IOException e) {
+                LogUtil.d("OOM3", "e" + e.getMessage());
+                e.printStackTrace();
+            }
+//            GlobalUtil.shortToast(context, context.getString(R.string.save_success));
+        }
+    }
 
 }

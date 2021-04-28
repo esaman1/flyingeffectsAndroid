@@ -336,7 +336,7 @@ public class TemplateMvpModel {
         String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
         List<String> strToList1 = Arrays.asList(paths);
         DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
-            if (nowIsGifTemplate) {
+            if (nowIsGifTemplate||url.contains("gif")) {
                 Intent intent = new Intent(context, MemeKeepActivity.class);
                 intent.putExtra("videoPath", url);
                 intent.putExtra("title", templateName);
