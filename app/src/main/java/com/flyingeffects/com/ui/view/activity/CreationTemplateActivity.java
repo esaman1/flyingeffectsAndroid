@@ -372,7 +372,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
                 progressBarProgress = progress;
                 presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
-                mBinding.tvCurrentTime.setText(TimeUtils.timeParse(progress - mCutStartTime) + "s");
+                mBinding.tvCurrentTime.setText(String.format("%ss", TimeUtils.timeParse(progress - mCutStartTime)));
             }
 
             @Override
@@ -382,11 +382,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     mCutStartTime = starTime;
                 } else {
                     mCutStartTime = starTime;
-                    mBinding.tvCurrentTime.setText(TimeUtils.timeParse(progressBarProgress - mCutStartTime) + "s");
+                    mBinding.tvCurrentTime.setText(String.format("%ss", TimeUtils.timeParse(progressBarProgress - mCutStartTime)));
                 }
                 mCutEndTime = endTime;
 
-                mBinding.tvTotal.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
+                mBinding.tvTotal.setText(String.format("%ss", TimeUtils.timeParse(mCutEndTime - mCutStartTime)));
                 mBinding.materialSeekBarView.setCutStartAndEndTime(starTime, endTime);
                 stickerTimeLineOffset();
 //                LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
@@ -432,22 +432,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         //有视频的时候，初始化视频
         if (!TextUtils.isEmpty(videoPath)) {
             //改变默认横竖屏，需知视频宽高比
-            try {
-                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(videoPath);
-                String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-                String height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
-                int w = Integer.parseInt(width);
-                int h = Integer.parseInt(height);
-                LogUtil.d(TAG, "video width = " + width + " video height = " + height);
-                setPlayerViewSize(w > h);
-            } catch (Exception e) {
-                LogUtil.d("e", e.getMessage());
-                setPlayerViewSize(false);
-            }
+            boolean isLandscape = getDefaultPlayerViewSize();
+            setPlayerViewSize(isLandscape);
             initExo(videoPath);
+
         } else {
-            //todo 无视频但有背景图，处理换背景 方案待修改
             setImageBackSize(false);
             //无视频但有背景图，处理换背景
             changeImageBack();
@@ -455,6 +444,25 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         //从前一个页面设置的横竖屏判断
         if (nowUiIsLandscape) {
             new Handler().postDelayed(() -> setPlayerViewSize(nowUiIsLandscape), 500);
+        }
+    }
+
+    /**
+     * 判断当前是横屏竖屏
+     */
+    private boolean getDefaultPlayerViewSize() {
+        try {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(videoPath);
+            String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+            String height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+            int w = Integer.parseInt(width);
+            int h = Integer.parseInt(height);
+            LogUtil.d(TAG, "video width = " + width + " video height = " + height);
+            return w > h;
+        } catch (Exception e) {
+            LogUtil.d("e", e.getMessage());
+            return false;
         }
     }
 
@@ -1100,17 +1108,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             mBinding.llGreenBackground.setVisibility(View.GONE);
             mBinding.ivGreenBackground.setVisibility(View.GONE);
         }
+
         if (isInitialize) {
             if (!isInitImageBj) {
                 float oriRatio = 9f / 16f;
                 //保证获得mContainer大小不为0
-                RelativeLayout.LayoutParams RelativeLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
                 //如果没有选择下载视频，那么就是自定义视频入口进来，那么默认为绿布
                 mBinding.ivGreenBackground.post(() -> {
-                    int oriHeight = mBinding.ivGreenBackground.getHeight();
-                    RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
-                    RelativeLayoutParams.height = oriHeight;
-                    mBinding.ivGreenBackground.setLayoutParams(RelativeLayoutParams);
+                    int oriHeight = mBinding.llSpace.getHeight();
+                    LogUtil.d(TAG, "ivGreenBackground height = " + oriHeight);
+                    relativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
+                    relativeLayoutParams.height = oriHeight;
+                    mBinding.ivGreenBackground.setLayoutParams(relativeLayoutParams);
                 });
                 isInitImageBj = true;
             }
@@ -1889,12 +1899,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 //        videoStop();
         Observable.just(event.getPath()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(event.getPath()))) {
-                mBinding.llGreenBackground.setVisibility(View.VISIBLE);
-                mBinding.scrollView.setVisibility(View.GONE);
+                mBinding.relativePlayerView.setVisibility(View.INVISIBLE);
+                mBinding.rlBackImage.setVisibility(View.INVISIBLE);
+
                 presenter.setmVideoPath("");
                 videoPath = "";
                 showGreenBj(true);
                 imageBjPath = event.getPath();
+
                 //图片背景和绿幕背景默认都是10秒
                 //循环得到最长的视频时长
                 long maxVideoDuration = 0;
@@ -1911,8 +1923,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     modificationDuration(10 * 1000);
                 }
+
                 musicStartFirstTime = 0;
                 LogUtil.d("OOM44", "22222");
+                LogUtil.d("OOM44", s);
                 musicStartTime = 0;
                 musicEndFirstTime = mCutEndTime;
                 musicEndTime = mCutEndTime;
@@ -1924,7 +1938,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
                 videoPath = event.getPath();
                 mBinding.llGreenBackground.setVisibility(View.GONE);
-                mBinding.scrollView.setVisibility(View.VISIBLE);
+                mBinding.relativePlayerView.setVisibility(View.VISIBLE);
+
                 setPlayerViewSize(nowUiIsLandscape);
                 initExo(videoPath);
                 presenter.setmVideoPath(videoPath);
