@@ -367,6 +367,11 @@ public interface ApiService {
     Observable<HttpResult<List<HumanMerageResult>>> humanMerageResult(@FieldMap Map<String,String> params);
 
 
+    /**融合api*/
+    @FormUrlEncoded
+    @POST("/api/Api/query")
+    Observable<HttpResult<DressUpSpecial>> Apiquery(@FieldMap Map<String,String> params);
+
     /**通知服务器上传成功*/
     @FormUrlEncoded
     @POST("/api/mearge/animalImage")

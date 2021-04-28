@@ -953,7 +953,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             case FromToTemplate.ISMESSAGEMYPRODUCTION:
             case FromToTemplate.ISMESSAGEMYLIKE:
             case FromToTemplate.ISTEMPLATE:
-
+            case FromToTemplate.TEMPLATESPECIAL:
             case FromToTemplate.FACEGIF:
             case FromToTemplate.ISBJCOLLECT:
             case FromToTemplate.ISSEARCHBJ:

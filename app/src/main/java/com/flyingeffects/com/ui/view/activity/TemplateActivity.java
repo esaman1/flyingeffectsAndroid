@@ -1184,7 +1184,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             }
                         });
                     } else if (isSpecial) {
-                        presenter.SaveSpecialTemplate(api_type);
+                        presenter.SaveSpecialTemplate(api_type,nowIsGifTemplate);
                     } else {
                         LogUtil.d(TAG, "renderVideo");
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {

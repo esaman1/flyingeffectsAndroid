@@ -1138,7 +1138,7 @@ public class PreviewUpAndDownMvpModel {
                     }
                 }
 
-            });
+            },templateId);
             dressUpModel.toDressUp(paths, api_type);
         });
 

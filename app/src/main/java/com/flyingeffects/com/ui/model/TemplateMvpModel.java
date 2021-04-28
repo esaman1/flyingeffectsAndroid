@@ -86,12 +86,12 @@ public class TemplateMvpModel {
     private String templateId;
 
 
-    public TemplateMvpModel(Context context, TemplateMvpCallback callback, String fromTo, String templateName,String templateId) {
+    public TemplateMvpModel(Context context, TemplateMvpCallback callback, String fromTo, String templateName, String templateId) {
         this.context = context;
         this.callback = callback;
         this.fromTo = fromTo;
         this.templateName = templateName;
-        this.templateId=templateId;
+        this.templateId = templateId;
         keepUunCatchPath = context.getExternalFilesDir("runCatch/");
         FileManager fileManager = new FileManager();
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
@@ -251,8 +251,9 @@ public class TemplateMvpModel {
     //    private String outputPathForVideoSaveToPhoto;
     private String savePath;
     private boolean nowIsGifTemplate;
-    public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview, int nowTemplateIsAnim, List<String> originalPath,boolean nowIsGifTemplate) {
-        this.nowIsGifTemplate=nowIsGifTemplate;
+
+    public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview, int nowTemplateIsAnim, List<String> originalPath, boolean nowIsGifTemplate) {
+        this.nowIsGifTemplate = nowIsGifTemplate;
         callback.showProgressDialog();
         if (FromToTemplate.PICTUREALBUM.equals(fromTo)) {
             StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_yj");
@@ -326,32 +327,34 @@ public class TemplateMvpModel {
     }
 
 
-
     /**
      * description ：生成特殊模板，主要通过后台服务器合成方式
      * creation date: 2021/4/20
      * user : zhangtongju
      */
-    public void SaveSpecialTemplate(int api_type){
+    public void SaveSpecialTemplate(int api_type ,boolean nowIsGifTemplate){
         String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
-        List<String> strToList1= Arrays.asList(paths);
+        List<String> strToList1 = Arrays.asList(paths);
         DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
-            if(!TextUtils.isEmpty(url)){
+            if (nowIsGifTemplate) {
+                Intent intent = new Intent(context, MemeKeepActivity.class);
+                intent.putExtra("videoPath", url);
+                intent.putExtra("title", templateName);
+                intent.putExtra("templateId", templateId);
+                intent.putExtra("IsFrom", fromTo);
+                context.startActivity(intent);
+            } else {
                 Intent intent = new Intent(context, TemplateAddStickerActivity.class);
                 intent.putExtra("videoPath", url);
                 intent.putExtra("title", templateName);
+                intent.putExtra("templateId", templateId);
                 intent.putExtra("IsFrom", fromTo);
                 context.startActivity(intent);
             }
-        });
+        }, templateId);
         dressUpModel.toDressUp(strToList1, api_type);
 
-
-
-
     }
-
-
 
 
     public String[] getRealTimePreview() {
@@ -367,14 +370,14 @@ public class TemplateMvpModel {
             callback.toPreview(outputPath);
         } else {
             if (isSucceed && !isOnDestroy) {
-                if(nowIsGifTemplate){
+                if (nowIsGifTemplate) {
                     Intent intent = new Intent(context, MemeKeepActivity.class);
                     intent.putExtra("videoPath", outputPath);
                     intent.putExtra("title", templateName);
                     intent.putExtra("templateId", templateId);
                     intent.putExtra("IsFrom", fromTo);
                     context.startActivity(intent);
-                }else{
+                } else {
                     Intent intent = new Intent(context, TemplateAddStickerActivity.class);
                     intent.putExtra("videoPath", outputPath);
                     intent.putExtra("title", templateName);

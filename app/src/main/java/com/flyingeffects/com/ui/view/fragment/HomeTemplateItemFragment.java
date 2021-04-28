@@ -155,6 +155,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                             //只要模板页面，特殊模板，都走模板逻辑
                             if ("1".equals(templateType)) {
                                 intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                            } else if("5".equals(templateType)){
+                                //表情包走特效，会进入模板页面
+                                intent.putExtra("fromTo", FromToTemplate.TEMPLATESPECIAL);
                             }
                             StatisticsEventAffair.getInstance().setFlag(getActivity(), "st_ft_click", allData.get(position).getTitle());
                         } else {

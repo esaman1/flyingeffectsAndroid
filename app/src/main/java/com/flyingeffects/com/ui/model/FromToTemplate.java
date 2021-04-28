@@ -54,4 +54,7 @@ public class FromToTemplate {
     public static final String FACEGIF = "FACEGIF";
     //闪图特效
     public static final String SPECIAL = "SPECIAL";
+
+    //表情包特效
+    public static final String TEMPLATESPECIAL = "TEMPLATESPECIAL";
 }
