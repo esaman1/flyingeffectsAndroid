@@ -1804,8 +1804,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     setDegree(0f);
                     setCenter(getWidth() / 2f, getHeight() / 2f);
                 }
+            }
 
-            } else if (isMatting && mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
+            if (isMatting && mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
 
                 if (mIsMirror) {
                     mMirrorBitmap = BitmapUtils.toHorizontalMirror(currentDrawable);
@@ -1817,6 +1818,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                 mMirrorBitmap = BitmapUtils.drawableToBitmap(currentDrawable);
             }
 
+            LogUtil.d(TAG, "target isChange = " + mIsChange);
+            LogUtil.d(TAG, "target stickerType = " + mStickerType);
+            LogUtil.d(TAG, "target isMatting = " + isMatting);
+            LogUtil.d(TAG, "target isMirror = " + mIsMirror);
             invalidate();
         }
     }
@@ -1836,10 +1841,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     .into(new CustomTarget<Drawable>() {
                         @Override
                         public void onResourceReady(@NonNull Drawable resource, @Nullable Transition transition) {
-                            if (TextUtils.isEmpty(mOriginalMirrorPath)) {
-                                mOriginalMirrorBitmap = BitmapUtils.toHorizontalMirror(resource);
-                                mOriginalMirrorPath = FileUtil.saveBitmap(mOriginalMirrorBitmap, "saveAlbum");
-                            }
+
+                            mOriginalMirrorBitmap = BitmapUtils.toHorizontalMirror(resource);
+                            mOriginalMirrorPath = FileUtil.saveBitmap(mOriginalMirrorBitmap, "saveAlbum");
+
                             invalidate();
                         }
 
@@ -1869,10 +1874,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     .into(new CustomTarget<Drawable>() {
                         @Override
                         public void onResourceReady(@NonNull Drawable resource, @Nullable Transition transition) {
-                            if (TextUtils.isEmpty(mClipMirrorPath)) {
-                                mClipMirrorBitmap = BitmapUtils.toHorizontalMirror(resource);
-                                mClipMirrorPath = FileUtil.saveBitmap(mClipMirrorBitmap, "saveAlbum");
-                            }
+
+                            mClipMirrorBitmap = BitmapUtils.toHorizontalMirror(resource);
+                            mClipMirrorPath = FileUtil.saveBitmap(mClipMirrorBitmap, "saveAlbum");
+
                             invalidate();
                         }
 
@@ -2103,6 +2108,7 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     public void changeImage(final String path, final boolean autoRun) {
         if (!TextUtils.isEmpty(path)) {
+            LogUtil.d(TAG, "changeImage path = " + path);
             mIsChange = true;
             stop();
             this.resPath = path;
@@ -2144,6 +2150,10 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                     if (mStickerType == CODE_STICKER_TYPE_FLASH_PIC) {
                         loadClipMirrorRes(clipPath);
                         loadOriginalMirrorRes(originalPath);
+                        LogUtil.d(TAG, "changeImage clipPath = " + clipPath);
+                        LogUtil.d(TAG, "changeImage originalPath = " + originalPath);
+                        LogUtil.d(TAG, "changeImage clipMirrorPath = " + mClipMirrorPath);
+                        LogUtil.d(TAG, "changeImage originalMirrorPath = " + mOriginalMirrorPath);
                     }
 
                 });
@@ -2487,8 +2497,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      * * creation date: 2020/9/25
      * * user : zhangtongju
      */
-
-
     private float keepToScreenScale;
     private float[] keepToCenter = new float[2];
     private boolean hasChangeTextPosition = false;
