@@ -1709,6 +1709,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                     } else {
                         StatisticsEventAffair.getInstance().setFlag(mContext, "6_customize_bj_plus one");
                     }
+
                     String aa = path.substring(path.length() - 4);
                     copyName = mImageCopyFolder + File.separator + System.currentTimeMillis() + aa;
                     String finalCopyName1 = copyName;
