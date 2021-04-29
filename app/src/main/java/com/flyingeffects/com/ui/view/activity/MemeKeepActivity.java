@@ -110,16 +110,13 @@ public class MemeKeepActivity extends BaseActivity {
         }else{
             gifPath=videoPath;
         }
-        File gif = new File(mGifFolder + "/keep.gif");
-        if (gif.exists()) {
-            gif.delete();
-        }
         WaitingDialog.closeProgressDialog();
         File file = new File(gifPath);
+        String name= mGifFolder +File.separator + System.currentTimeMillis() +  "keep.gif";
         if (file.exists()) {
             try {
-                FileUtil.copyFile(file, mGifFolder + "/keep.gif");
-                Glide.with(this).load(mGifFolder + "/keep.gif").into(imageView);
+                FileUtil.copyFile(file,name);
+                Glide.with(this).load(name).into(imageView);
             } catch (IOException e) {
                 e.printStackTrace();
             }

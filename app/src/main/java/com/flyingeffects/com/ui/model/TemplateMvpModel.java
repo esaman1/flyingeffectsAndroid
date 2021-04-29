@@ -363,7 +363,7 @@ public class TemplateMvpModel {
 
 
     private void renderFinish(boolean isSucceed, boolean isPreview, String outputPath) {
-        LogUtil.d("OOM", "onFinish,success?=" + isSucceed + "MSG=" + isSucceed);
+        LogUtil.d("OOM", "onFinish,success?=" + isSucceed + "outputPath=" + outputPath);
 
         WaitingDialog.closeProgressDialog();
         if (isPreview) {

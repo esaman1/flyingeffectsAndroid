@@ -632,7 +632,7 @@ public class PreviewUpAndDownMvpModel {
     private void requestFagData() {
         Observable ob = null;
         HashMap<String, String> params = new HashMap<>();
-        LogUtil.d("templateId", "templateId=" + category_id);
+        LogUtil.d("templateId", "fromTo=" + fromTo);
         if (!TextUtils.isEmpty(category_id)) {
             params.put("category_id", category_id);
         }
@@ -671,6 +671,7 @@ public class PreviewUpAndDownMvpModel {
                 ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
                 break;
             case FromToTemplate.ISTEMPLATE:
+            case FromToTemplate.TEMPLATESPECIAL:
                 params.put("template_type", "1");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
@@ -703,6 +704,8 @@ public class PreviewUpAndDownMvpModel {
                 ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
                 break;
             default:
+                params.put("template_type", "3");
+                ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
                 break;
         }
 
