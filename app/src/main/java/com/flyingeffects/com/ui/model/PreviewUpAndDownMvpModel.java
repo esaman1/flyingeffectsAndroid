@@ -42,6 +42,7 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.GifManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
@@ -61,6 +62,7 @@ import com.flyingeffects.com.utils.screenUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
@@ -234,6 +236,8 @@ public class PreviewUpAndDownMvpModel {
             nowHasCollect = false;
             mIvCollect.setImageResource(R.mipmap.new_version_collect);
         }
+
+
         ll_collect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -247,7 +251,7 @@ public class PreviewUpAndDownMvpModel {
         });
 
         LinearLayout ivDownload = view.findViewById(R.id.ll_download);
-        if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo) || TextUtils.equals(FromToTemplate.SPECIAL, fromTo) || TextUtils.equals(FromToTemplate.CHOOSEBJ, fromTo) || TextUtils.equals(FromToTemplate.FACEGIF, fromTo)) {
+        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.SPECIAL)) {
             ivDownload.setVisibility(View.INVISIBLE);
         }
 
@@ -263,30 +267,50 @@ public class PreviewUpAndDownMvpModel {
                 StatisticsEventAffair.getInstance().setFlag(context, "save_back_template");
                 mLoadingDialog = buildLoadingDialog();
                 LogUtil.d("OOM2", "needImagePath=" + fag_template_item.getImage());
-                //换装保存的是图片
-                if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo) || TextUtils.equals(FromToTemplate.SPECIAL, fromTo) || TextUtils.equals(FromToTemplate.CHOOSEBJ, fromTo) || TextUtils.equals(FromToTemplate.FACEGIF, fromTo)) {
-                    Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
-                        @Override
-                        public void call(Bitmap bitmap) {
-                            mLoadingDialog.dismiss();
-                            LogUtil.d("OOM3", "整合bitmap");
-                            String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
-                            BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, new BitmapManager.saveToFileCallback() {
-                                @Override
-                                public void isSuccess(boolean isSuccess) {
-                                    saveToAlbum(fileName);
-                                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                                        AdManager.getInstance().showCpAd(context, AdConfigs.AD_PREVIEW_SCREEN_AD_ID);
-                                    }
-                                }
-                            });
-                        }
-                    });
-                } else {
+
+
+                String image = fag_template_item.getImage();
+                String pathType = GetPathTypeModel.getInstance().getMediaType(image);
+
+
+                if (!TextUtils.isEmpty(path)) {
+                    //表示是视频
                     //保存的是视频
                     downVideo(path, imagePath, id, true, false);
                     dismissDialog();
+                } else {
+                    if (albumType.isImage(pathType)) {
+                        Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+                            @Override
+                            public void call(Bitmap bitmap) {
+                                mLoadingDialog.dismiss();
+                                LogUtil.d("OOM3", "整合bitmap");
+                                String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
+                                BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, new BitmapManager.saveToFileCallback() {
+                                    @Override
+                                    public void isSuccess(boolean isSuccess) {
+                                        saveToAlbum(fileName);
+                                        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                                            AdManager.getInstance().showCpAd(context, AdConfigs.AD_PREVIEW_SCREEN_AD_ID);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        //保存的是gif
+                        GifManager gifManager = new GifManager(context, new GifManager.downGifCallback() {
+                            @Override
+                            public void downSuccess(String path) {
+                                ToastUtil.showToast("下載成功");
+                            }
+                        });
+                        gifManager.toDownGif(image);
+
+                    }
                 }
+
+
             } else {
                 Intent intent = new Intent(context, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -902,10 +926,13 @@ public class PreviewUpAndDownMvpModel {
 
     private void saveToAlbum(String path) {
         String albumPath;
-        if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
+        String pathType = GetPathTypeModel.getInstance().getMediaType(path);
+        if (albumType.isImage(pathType)) {
             albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForImage();
-        } else {
+        } else if (albumType.isVideo(pathType)) {
             albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
+        } else {
+            albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForGif();
         }
         try {
             FileUtil.copyFile(new File(path), albumPath);
@@ -1138,7 +1165,7 @@ public class PreviewUpAndDownMvpModel {
                     }
                 }
 
-            },templateId);
+            }, templateId);
             dressUpModel.toDressUp(paths, api_type);
         });
 

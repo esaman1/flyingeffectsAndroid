@@ -3,6 +3,7 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -120,8 +121,9 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
                 if (allData.get(position).getIs_ad_recommend() == 1) {
                     String url = allData.get(position).getRemark();
                     StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_dl_click", allData.get(position).getTitle());
-                    //  LogUtil.d("OOM", url);
+                    Log.d("url22","url="+url);
                     boolean result = AppMarketHelper.of(getActivity()).skipMarket(url);
+                    Log.d("url22","result="+result);
                     if (!result) {
                         Intent intent = new Intent(getActivity(), webViewActivity.class);
                         intent.putExtra("webUrl", url);
