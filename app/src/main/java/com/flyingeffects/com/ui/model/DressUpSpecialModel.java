@@ -141,6 +141,7 @@ public class DressUpSpecialModel {
             @Override
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "_onError=" + message);
+                progress.closeProgressDialog();
                 ToastUtil.showToast(message);
 
             }
