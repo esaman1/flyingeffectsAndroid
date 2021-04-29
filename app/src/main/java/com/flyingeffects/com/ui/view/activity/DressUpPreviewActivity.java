@@ -122,8 +122,10 @@ public class DressUpPreviewActivity extends BaseActivity {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.dress_up_next:
-                if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
-                    if (dressupSwitchNumber != 0 && dressupSwitchNumber % BaseConstans.getDressupIntervalsNumber() == 0 &&
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                    //1 开始记录位置，不然从0开始会能多做一次
+                    int needShowPosition=nowShowPosition+1;
+                    if (needShowPosition != 1 && needShowPosition % BaseConstans.getDressupIntervalsNumber() == 0 &&
                             BaseConstans.getIncentiveVideo() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                         VideoAdManager videoAdManager = new VideoAdManager();
                         videoAdManager.showVideoAd(this, AdConfigs.AD_DRESSUP_SCREEN_VIDEO, new VideoAdCallBack() {
@@ -150,7 +152,6 @@ public class DressUpPreviewActivity extends BaseActivity {
 
                             @Override
                             public void onRewardVerify() {
-
                             }
 
                             @Override
@@ -187,7 +188,14 @@ public class DressUpPreviewActivity extends BaseActivity {
             case R.id.keep_to_album:
                 alertAlbumUpdate(false);
                 StatisticsToSave(template_id);
-                StatisticsEventAffair.getInstance().setFlag(this, "21_face_save", templateTitle);
+
+                if(isSpecial){
+                    StatisticsEventAffair.getInstance().setFlag(this, "st_ft_save", templateTitle);
+                }else{
+                    StatisticsEventAffair.getInstance().setFlag(this, "21_face_save", templateTitle);
+                }
+
+
                 break;
             case R.id.share:
                 share(listForKeep.get(nowChooseIndex));
@@ -293,17 +301,18 @@ public class DressUpPreviewActivity extends BaseActivity {
         }
     };
 
+    private int nowShowPosition;
 
     private void showDressUp(boolean isNext) {
         LogUtil.d("OOM3", "nowChooseIndex=" + nowChooseIndex);
-        int needChooseIndex;
+
         if (isNext) {
-            needChooseIndex = nowChooseIndex + 1;
+            nowShowPosition = nowChooseIndex + 1;
         } else {
-            needChooseIndex = nowChooseIndex - 1;
+            nowShowPosition = nowChooseIndex - 1;
         }
 
-        if (needChooseIndex == 0) {
+        if (nowShowPosition == 0) {
             LogUtil.d("OOM3", "隐藏");
             Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                 @Override
@@ -313,17 +322,17 @@ public class DressUpPreviewActivity extends BaseActivity {
             });
 
         }
-        if (listForKeep.size() > needChooseIndex) {
+        if (listForKeep.size() > nowShowPosition) {
             LogUtil.d("OOM3", "有过缓存");
             //有过缓存
-            String needShowPath = listForKeep.get(needChooseIndex);
-            nowChooseIndex = needChooseIndex;
+            String needShowPath = listForKeep.get(nowShowPosition);
+            nowChooseIndex = nowShowPosition;
             Glide.with(this).load(needShowPath).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(iv_show_content);
         } else {
             LogUtil.d("OOM3", "没得缓存");
             //没有缓存
-            if (TemplateIdList.size() > needChooseIndex) {
-                String id = TemplateIdList.get(needChooseIndex);
+            if (TemplateIdList.size() > nowShowPosition) {
+                String id = TemplateIdList.get(nowShowPosition);
                 toNextDressUp(id);
                 dressupSwitchNumber++;
             } else {

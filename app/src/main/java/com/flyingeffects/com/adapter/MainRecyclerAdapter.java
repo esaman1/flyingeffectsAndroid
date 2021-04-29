@@ -122,7 +122,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
                         tv_gif_logo.setVisibility(View.VISIBLE);
                         String templateType = item.getTemplate_type();
                         if (!TextUtils.isEmpty(templateType) && "3".equals(templateType)) {
-                            tv_gif_logo.setText("换装");
+                            tv_gif_logo.setText("换脸");
                         } else if (!TextUtils.isEmpty(templateType) && "4".equals(templateType)) {
                             tv_gif_logo.setText("换背景");
                         } else if (!TextUtils.isEmpty(templateType) && templateType.equals("5")) {
@@ -572,12 +572,14 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
      * user : zhangtongju
      */
     private void intoUploadMaterialActivity(String path) {
+        if(fromType==4){
+            StatisticsEventAffair.getInstance().setFlag(mContext, "hp_st_up" );
+        }
         Intent intent = new Intent(mContext, UploadMaterialActivity.class);
         intent.putExtra("isFrom", 2);
         intent.putExtra("videoPath", path);
         mContext.startActivity(intent);
     }
-
     String tabName;
 
     /**

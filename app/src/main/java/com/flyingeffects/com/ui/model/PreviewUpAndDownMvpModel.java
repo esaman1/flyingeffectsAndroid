@@ -247,6 +247,10 @@ public class PreviewUpAndDownMvpModel {
         });
 
         LinearLayout ivDownload = view.findViewById(R.id.ll_download);
+        if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo) || TextUtils.equals(FromToTemplate.SPECIAL, fromTo) || TextUtils.equals(FromToTemplate.CHOOSEBJ, fromTo) || TextUtils.equals(FromToTemplate.FACEGIF, fromTo)) {
+            ivDownload.setVisibility(View.INVISIBLE);
+        }
+
         ivDownload.setOnClickListener(view12 -> {
             if (BaseConstans.hasLogin()) {
                 if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
@@ -258,9 +262,9 @@ public class PreviewUpAndDownMvpModel {
 
                 StatisticsEventAffair.getInstance().setFlag(context, "save_back_template");
                 mLoadingDialog = buildLoadingDialog();
-                LogUtil.d("OOM2","needImagePath="+fag_template_item.getImage());
+                LogUtil.d("OOM2", "needImagePath=" + fag_template_item.getImage());
                 //换装保存的是图片
-                if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)||TextUtils.equals(FromToTemplate.SPECIAL, fromTo)||TextUtils.equals(FromToTemplate.CHOOSEBJ, fromTo)) {
+                if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo) || TextUtils.equals(FromToTemplate.SPECIAL, fromTo) || TextUtils.equals(FromToTemplate.CHOOSEBJ, fromTo) || TextUtils.equals(FromToTemplate.FACEGIF, fromTo)) {
                     Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
                         @Override
                         public void call(Bitmap bitmap) {
@@ -1099,8 +1103,6 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
-
     /**
      * description ：进行特殊模板的操作，可能为视频
      * paths 选择的图片
@@ -1108,34 +1110,35 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2021/4/19
      * user : zhangtongju
      */
-    public void   ToDressUpSpecial(List<String> paths,int api_type){
+    public void ToDressUpSpecial(List<String> paths, int api_type, String templateId, String title) {
         Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             LogUtil.d("OOM3", "toDressUp");
             DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
-                LogUtil.d("OOM3", "DressUpSpecialModel="+url);
-                if(!TextUtils.isEmpty(url)){
-                    if(url.contains("mp4")){
+                LogUtil.d("OOM3", "DressUpSpecialModel=" + url);
+                if (!TextUtils.isEmpty(url)) {
+                    if (url.contains("mp4")) {
                         //视频的话进入到gif 页面
                         Intent intent = new Intent(context, MemeKeepActivity.class);
                         intent.putExtra("videoPath", url);
-                        intent.putExtra("title", "");
+                        intent.putExtra("title", title);
+                        intent.putExtra("templateId", templateId);
                         intent.putExtra("IsFrom", fromTo);
                         context.startActivity(intent);
 
-                    }else{
+                    } else {
                         //进入到类似于换装页面
                         Intent intent = new Intent(context, DressUpPreviewActivity.class);
-                        intent.putExtra("url",url);
-                        intent.putExtra("template_id", "");
+                        intent.putExtra("url", url);
+                        intent.putExtra("template_id", templateId);
                         intent.putExtra("localImage", url);
-                        intent.putExtra("isSpecial",true);
+                        intent.putExtra("isSpecial", true);
                         intent.putExtra("templateTitle", "");
                         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         context.startActivity(intent);
                     }
                 }
 
-            });
+            },templateId);
             dressUpModel.toDressUp(paths, api_type);
         });
 

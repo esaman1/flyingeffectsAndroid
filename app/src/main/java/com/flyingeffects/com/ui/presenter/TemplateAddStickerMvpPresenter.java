@@ -88,6 +88,8 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
         TemplateAddStickermodel.toSaveVideo(percentageH);
     }
 
+
+
     public void setPlayerViewSize(PlayerView playerView, MyScrollView scrollView, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         LinearLayout.LayoutParams RelativeLayoutParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
         float oriRatio = 9f / 16f;

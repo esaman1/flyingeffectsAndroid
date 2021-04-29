@@ -953,7 +953,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             case FromToTemplate.ISMESSAGEMYPRODUCTION:
             case FromToTemplate.ISMESSAGEMYLIKE:
             case FromToTemplate.ISTEMPLATE:
-
+            case FromToTemplate.TEMPLATESPECIAL:
             case FromToTemplate.FACEGIF:
             case FromToTemplate.ISBJCOLLECT:
             case FromToTemplate.ISSEARCHBJ:
@@ -1002,7 +1002,17 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 UiStep.isFromDownBj = true;
             } else if (mOldFromTo.equals(FromToTemplate.DRESSUP)) {
                 StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "21_face_made", templateItem.getTitle());
-            } else {
+            }
+            else if (mOldFromTo.equals(FromToTemplate.CHOOSEBJ)) {
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_bj_make", templateItem.getTitle());
+            }
+            else if (mOldFromTo.equals(FromToTemplate.FACEGIF)) {
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_bqb_make", templateItem.getTitle());
+            }
+            else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
+                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_ft_make", templateItem.getTitle());
+            }
+            else {
                 StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_make", templateItem.getTitle());
             }
             if (BaseConstans.hasLogin()) {
@@ -1019,6 +1029,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
         initFaceSdkModel.getHasLoadSdkOk(() -> {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "all_next_step_type_num", templateItem.getTitle());
             LogUtil.d("OOM3", "模型也加载完成");
             if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
                 if (albumFileList.get(0).isClickToCamera()) {
@@ -1070,7 +1081,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         }
                     } else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
                         int api_type = templateItem.getApi_type();
-                        mMvpPresenter.ToDressUpSpecial(paths, api_type);
+                        mMvpPresenter.ToDressUpSpecial(paths, api_type,templateId,templateItem.getTitle());
                     } else if (templateItem.getIs_anime() == 1) {
                         //模板换装新逻辑
                         DressUpModel dressUpModel = new DressUpModel(this, paths1 -> mMvpPresenter.GetDressUpPath(paths1), true);

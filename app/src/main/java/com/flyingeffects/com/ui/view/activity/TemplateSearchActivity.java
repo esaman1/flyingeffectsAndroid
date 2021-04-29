@@ -88,7 +88,7 @@ public class TemplateSearchActivity extends BaseActivity {
     @BindView(R.id.iv_delete)
     ImageView mIvDelete;
 
-    private ArrayList<Fragment> list = new ArrayList<>();;
+    private ArrayList<Fragment> list = new ArrayList<>();
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
     private String nowShowText;
 

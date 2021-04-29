@@ -1,7 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.TextView;
 
@@ -155,6 +153,7 @@ public class AboutActivity extends BaseActivity {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         BaseConstans.SetUserToken("");
+//                        EventBus.getDefault().post(new ExitOrLogin());
                         findViewById(R.id.tv_top_submit).setVisibility(View.GONE);
                         dialog.dismiss();
                     }

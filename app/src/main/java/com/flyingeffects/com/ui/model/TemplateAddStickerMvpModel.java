@@ -182,6 +182,10 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     }
 
 
+
+
+
+
     private List<Long> perSticker = new ArrayList<>();
 
     private void getPlayVideoDuration() {

@@ -438,6 +438,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
                 EventBus.getDefault().post(new LoginToAttentionUserEvent());
                 EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
+//                EventBus.getDefault().post(new ExitOrLogin());
                 LoginActivity.this.finish();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);

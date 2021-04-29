@@ -881,7 +881,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private void submitCreation() {
         if (mFrom == FROM_DRESS_UP_BACK_CODE) {
-            presenter.keepPicture(mBinding.relativeContentAllContent2, mBinding.ivFrameImage);
+            presenter.keepPicture(mBinding.relativeContentAllContent2, mBinding.ivFrameImage,templateId+"");
             if (TextUtils.isEmpty(mBackGroundTitle)) {
                 mBackGroundTitle = title;
             }

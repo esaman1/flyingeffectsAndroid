@@ -10,11 +10,13 @@ import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DressUpSpecial;
+import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.BitmapManager;
+import com.flyingeffects.com.manager.Calculagraph;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.huaweiObs;
@@ -34,6 +36,7 @@ import java.util.UUID;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import top.zibin.luban.Luban;
@@ -52,13 +55,15 @@ public class DressUpSpecialModel {
     private final DressUpCallback callback;
     private final String mCatchFolder;
     private final String mVideoFolder;
+    private String template_id;
 
-    public DressUpSpecialModel(Context context, DressUpCallback callback) {
+    public DressUpSpecialModel(Context context, DressUpCallback callback,String templateId) {
         this.context = context;
         this.callback = callback;
         FileManager fileManager = new FileManager();
         mCatchFolder = fileManager.getFileCachePath(context, "runCatch");
         mVideoFolder = fileManager.getFileCachePath(context, "downVideo");
+        this.template_id=templateId;
     }
 
 
@@ -122,6 +127,7 @@ public class DressUpSpecialModel {
         HashMap<String, String> params = new HashMap<>();
         params.put("type", api_type + "");
         params.put("image", image);
+        params.put("template_id", template_id);
         LogUtil.d("OOM3", "params=" + params.toString());
         Observable ob = Api.getDefault().ApiTest(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<DressUpSpecial>(context) {
@@ -129,13 +135,19 @@ public class DressUpSpecialModel {
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "_onError=" + message);
                 ToastUtil.showToast(message);
-                progress.closeProgressDialog();
+
             }
 
             @Override
             protected void onSubNext(DressUpSpecial object) {
                 LogUtil.d("OOM3", "通知后台完成=" + StringUtil.beanToJSONString(object));
-                keepUrlToLocal(object.getUrl());
+                String url=object.getUrl();
+                if(!url.contains(".")){
+                    startTimer(object.getUrl());
+                }else{
+                    keepUrlToLocal(url);
+                }
+
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
@@ -227,9 +239,43 @@ public class DressUpSpecialModel {
 
             });
         }
-
-
     }
+
+
+
+    /**
+     * description ：通知后台,请求换装接口
+     * creation date: 2020/12/4
+     * user : zhangtongju
+     */
+    private void requestDressUpCallback(String order_id) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("order_id", order_id);
+        Observable ob = Api.getDefault().Apiquery(BaseConstans.getRequestHead(params));
+        LogUtil.d("OOM3", "requestDressUpCallback的请求参数为" + StringUtil.beanToJSONString(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<DressUpSpecial>(context) {
+            @Override
+            protected void onSubError(String message) {
+                LogUtil.d("OOM3", "message=" + message);
+
+
+            }
+
+            @Override
+            protected void onSubNext(DressUpSpecial data) {
+                if (calculagraph != null) {
+                    calculagraph.destroyTimer();
+                }
+//                if (callback != null) {
+//                    callback.isSuccess(null);
+//                }
+                keepUrlToLocal(data.getUrl());
+
+
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
 
 
     /**
@@ -258,6 +304,33 @@ public class DressUpSpecialModel {
             String fileName = mCatchFolder + File.separator + UUID.randomUUID() + ".png";
             progress.closeProgressDialog();
             BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, isSuccess -> callback.isSuccess(fileName));
+        });
+    }
+
+
+    /***
+     * 开启轮训
+     */
+    private Calculagraph calculagraph;
+
+    private void startTimer(String id) {
+        calculagraph = new Calculagraph();
+        calculagraph.startTimer(5f, 10, new Calculagraph.Callback() {
+            @Override
+            public void isTimeUp() {
+                LogUtil.d("OOM3", "开始请求融合结果");
+                Observable.just(id).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        requestDressUpCallback(s);
+                    }
+                });
+            }
+
+            @Override
+            public void isDone() {
+                progress.closeProgressDialog();
+            }
         });
     }
 

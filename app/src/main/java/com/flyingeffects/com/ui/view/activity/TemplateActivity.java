@@ -326,7 +326,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (nowTemplateIsAnim == 2) {
             isToSing = true;
         }
-        presenter = new TemplatePresenter(this, this, fromTo, templateName);
+        presenter = new TemplatePresenter(this, this, fromTo, templateName, templateId);
         LogUtil.d("OOM3", "initView");
 
         if (mOriginalPathList != null && mOriginalPathList.size() > 0) {
@@ -1184,7 +1184,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             }
                         });
                     } else if (isSpecial) {
-                        presenter.SaveSpecialTemplate(api_type);
+                        presenter.SaveSpecialTemplate(api_type,nowIsGifTemplate);
                     } else {
                         LogUtil.d(TAG, "renderVideo");
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
@@ -1209,14 +1209,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         } else {
                             presenter.renderVideo(mFolder.getPath(), mAudio1Path, false, nowTemplateIsAnim, imgPath, nowIsGifTemplate);
                         }
-
-                        presenter.statisticsToSave(templateId);
                     }
-
-
                 }
-
-
                 break;
 
             case R.id.iv_play:

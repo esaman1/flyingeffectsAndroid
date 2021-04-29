@@ -108,7 +108,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                     } else {
                         if (data.get(i).getCategory() != null && !data.get(i).getCategory().isEmpty()) {
                             Bundle bundle1 = SecondaryTypeFragment.buildArgument(data.get(i).getCategory(), SecondaryTypeFragment.BUNDLE_VALUE_TYPE_FACE, data.get(i).getId(),
-                                    -1, -1, 2, null, data.get(i).getName());
+                                    4, i, 2, null, data.get(i).getName());
                             SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                             fragment.setArguments(bundle1);
                             list.add(fragment);
@@ -139,7 +139,7 @@ public class DressUpFragment extends BaseFragment implements DressUpMvpView {
                         EventBus.getDefault().post(new SecondChoosePageListener(i));
 
                         if (i <= data.size() - 1) {
-                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "hp_st_tab", titles[i]);
                         }
                     }
 

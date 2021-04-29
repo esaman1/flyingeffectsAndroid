@@ -114,7 +114,6 @@ public class HomeMainActivity extends FragmentActivity {
     private NoSlidingViewPager viewpager_home;
 
     private Context mContext;
-    private boolean mCancelBtnPressed;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -576,7 +575,6 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void showBackMessage() {
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_quit_app");
-        mCancelBtnPressed = false;
         CommonMessageDialog dialog = CommonMessageDialog.getBuilder(mContext)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
                 .setAdId(AdConfigs.AD_IMAGE_EXIT)
@@ -586,20 +584,18 @@ public class HomeMainActivity extends FragmentActivity {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         dialog.dismiss();
+                        finish();
                     }
 
                     @Override
                     public void onCancelBtnClick(CommonMessageDialog dialog) {
-                        mCancelBtnPressed = true;
                         dialog.dismiss();
                     }
                 })
                 .setDialogDismissListener(new CommonMessageDialog.DialogDismissListener() {
                     @Override
                     public void onDismiss() {
-                        if (!mCancelBtnPressed) {
-                            finish();
-                        }
+
                     }
                 })
                 .build();
