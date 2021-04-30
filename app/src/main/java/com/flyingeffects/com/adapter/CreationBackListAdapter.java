@@ -24,9 +24,9 @@ public class CreationBackListAdapter extends BaseQuickAdapter<NewFragmentTemplat
 
     @Override
     protected void convert(BaseViewHolder helper, NewFragmentTemplateItem item) {
-        int postion = helper.getAdapterPosition();
         ImageView image = helper.getView(R.id.iv_icon);
-        if (postion == 0) {
+
+        if (TextUtils.isEmpty(item.getBackground_image())) {
             helper.setVisible(R.id.iv_local, true);
             image.setVisibility(View.INVISIBLE);
         } else {

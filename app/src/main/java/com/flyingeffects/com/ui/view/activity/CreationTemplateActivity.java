@@ -243,7 +243,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
         initBundleData();
 
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath, null, mFrom);
+        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath, mFrom);
         LogUtil.d(TAG, "videoPath = " + videoPath);
 
         setOnClickListener();
@@ -377,6 +377,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             @Override
             public void cutInterval(long starTime, long endTime, boolean isDirection) {
+
                 if (starTime < mCutStartTime) {
                     mBinding.tvCurrentTime.setText(String.format("%ss", TimeUtils.timeParse(0)));
                     mCutStartTime = starTime;
@@ -384,6 +385,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     mCutStartTime = starTime;
                     mBinding.tvCurrentTime.setText(String.format("%ss", TimeUtils.timeParse(progressBarProgress - mCutStartTime)));
                 }
+
                 mCutEndTime = endTime;
 
                 mBinding.tvTotal.setText(String.format("%ss", TimeUtils.timeParse(mCutEndTime - mCutStartTime)));
@@ -957,7 +959,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                 @Override
                 public void setText(String text) {
-                    presenter.ChangeTextLabe(text);
+                    presenter.changeTextLabe(text);
                     if (TextUtils.isEmpty(text)) {
                         if (mCreateViewForAddText != null) {
                             mCreateViewForAddText.hideInputTextDialog();
@@ -978,19 +980,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 @Override
                 public void setTextColor(String color0, String color1, String title) {
                     LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1);
-                    presenter.ChangeTextColor(color0, color1, title);
+                    presenter.changeTextColor(color0, color1, title);
                 }
 
                 @Override
                 public void isSuccess(String textBjPath, String textFramePath, String frameTitle) {
                     LogUtil.d("OOM4", "textBjPath=" + textBjPath + "textFramePath=" + textFramePath + "frameTitle" + frameTitle);
-                    presenter.ChangeTextFrame(textBjPath, textFramePath, frameTitle);
+                    presenter.changeTextFrame(textBjPath, textFramePath, frameTitle);
                 }
 
                 @Override
                 public void isSuccess(String color0, String color1, String textFramePath, String frameTitle) {
                     LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1 + "textFramePath" + textFramePath + "frameTitle" + frameTitle);
-                    presenter.ChangeTextFrame(color0, color1, textFramePath, frameTitle);
+                    presenter.changeTextFrame(color0, color1, textFramePath, frameTitle);
                 }
             });
             mCreateViewForAddText.showBottomSheetDialog(inputText, "bj_template");
@@ -1411,6 +1413,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void hasPlayingComplete() {
+
     }
 
     @Override
@@ -1962,7 +1965,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     @Subscribe
     public void onEventMainThread(ChooseVideoAddSticker event) {
-        presenter.GetVideoCover(event.getPath());
+        presenter.getVideoCover(event.getPath());
     }
 
 
@@ -2456,6 +2459,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void modificationDuration(long duration) {
         allVideoDuration = duration;
+
         mBinding.progressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

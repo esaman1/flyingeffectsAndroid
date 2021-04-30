@@ -173,7 +173,6 @@ public class AdManager {
             }));
         }
 
-
     }
 
     public void releaseBannerManager() {
