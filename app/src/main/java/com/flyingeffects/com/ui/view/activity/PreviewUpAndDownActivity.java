@@ -162,6 +162,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     //表示进入的入口
     private String mOldFromTo;
 
+
     private boolean nowItemIsAd = false;
 
     private String templateType;
@@ -179,6 +180,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     //1表示可以合拍，而0表示不能合拍
     private int mIsWithPlay;
 
+    /**
+     * 第一次进入的类型，如果加载更多了，可能类型就得变了
+     */
     private String keepOldFrom;
 
     //0 表示不是影集，1表示影集
@@ -853,6 +857,38 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             if (!TextUtils.isEmpty(templateItem.getPre_url())) {
                 mOldFromTo = FromToTemplate.ISBJ;
             }
+
+            //2021-4-30 解決bug 列表进入，加载数据后列表类型没有更新的问题
+            String templateType = data.getTemplate_type();
+            //templateType 类型:1=模板,2=背景,3=换脸,4=换背景,5=表情包
+            if (!TextUtils.isEmpty(templateType)) {
+                int api_type = data.getApi_type();
+                if (api_type != 0) {
+                    //只要闪图页面，特殊模板，都走dressUp逻辑
+                    if (!"1".equals(templateType) && !"2".equals(templateType)) {
+                        mOldFromTo = FromToTemplate.SPECIAL;
+                    }
+                    //只要模板页面，特殊模板，都走模板逻辑
+                    if ("1".equals(templateType)) {
+                        mOldFromTo = FromToTemplate.ISTEMPLATE;
+                    } else if ("5".equals(templateType)) {
+                        //表情包走特效，会进入模板页面
+                        mOldFromTo = FromToTemplate.TEMPLATESPECIAL;
+                    }
+                } else {
+                    if ("3".equals(templateType)) {
+                        //换脸
+                        mOldFromTo = FromToTemplate.DRESSUP;
+                    } else if ("4".equals(templateType)) {
+                        //换背景
+                        mOldFromTo = FromToTemplate.CHOOSEBJ;
+                    } else if ("5".equals(templateType)) {
+                        //表情包
+                        mOldFromTo = FromToTemplate.FACEGIF;
+                    }
+                }
+            }
+            //2021-4-30 end 解決bug 列表进入，加载数据后列表类型没有更新的问题
             adapter.setCommentCount(data.getComment());
             mIsWithPlay = templateItem.getIs_with_play();
             mIsFollow = data.getIs_follow() == 1;
@@ -863,7 +899,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 adapter.notifyItemChanged(nowChoosePosition);
             }
         }
-
     }
 
 
@@ -1002,17 +1037,13 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 UiStep.isFromDownBj = true;
             } else if (mOldFromTo.equals(FromToTemplate.DRESSUP)) {
                 StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "21_face_made", templateItem.getTitle());
-            }
-            else if (mOldFromTo.equals(FromToTemplate.CHOOSEBJ)) {
+            } else if (mOldFromTo.equals(FromToTemplate.CHOOSEBJ)) {
                 StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_bj_make", templateItem.getTitle());
-            }
-            else if (mOldFromTo.equals(FromToTemplate.FACEGIF)) {
+            } else if (mOldFromTo.equals(FromToTemplate.FACEGIF)) {
                 StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_bqb_make", templateItem.getTitle());
-            }
-            else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
+            } else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
                 StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_ft_make", templateItem.getTitle());
-            }
-            else {
+            } else {
                 StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_make", templateItem.getTitle());
             }
             if (BaseConstans.hasLogin()) {
@@ -1027,7 +1058,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     @Override
-    public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
+    public void resultFilePath(int tag, List<String> paths, boolean isCancel,
+                               boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
         initFaceSdkModel.getHasLoadSdkOk(() -> {
             StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "all_next_step_type_num", templateItem.getTitle());
             LogUtil.d("OOM3", "模型也加载完成");
@@ -1081,7 +1113,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         }
                     } else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
                         int api_type = templateItem.getApi_type();
-                        mMvpPresenter.ToDressUpSpecial(paths, api_type,templateId,templateItem.getTitle());
+                        mMvpPresenter.ToDressUpSpecial(paths, api_type, templateId, templateItem.getTitle());
                     } else if (templateItem.getIs_anime() == 1) {
                         //模板换装新逻辑
                         DressUpModel dressUpModel = new DressUpModel(this, paths1 -> mMvpPresenter.GetDressUpPath(paths1), true);
@@ -1313,7 +1345,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         }
     }
 
-    private void intoCreationTemplateActivity(String imagePath, String videoPath, String originalPath, boolean isNeedCut) {
+    private void intoCreationTemplateActivity(String imagePath, String videoPath, String
+            originalPath, boolean isNeedCut) {
         Intent intent = new Intent(PreviewUpAndDownActivity.this, CreationTemplateActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("paths", imagePath);
@@ -1426,7 +1459,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         ArrayList<String> deniedPermission = new ArrayList<>();
         deniedPermission.clear();

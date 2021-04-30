@@ -251,9 +251,9 @@ public class PreviewUpAndDownMvpModel {
         });
 
         LinearLayout ivDownload = view.findViewById(R.id.ll_download);
-        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.SPECIAL)) {
-            ivDownload.setVisibility(View.INVISIBLE);
-        }
+//        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.SPECIAL)) {
+//            ivDownload.setVisibility(View.INVISIBLE);
+//        }
 
         ivDownload.setOnClickListener(view12 -> {
             if (BaseConstans.hasLogin()) {

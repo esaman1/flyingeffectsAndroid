@@ -82,7 +82,6 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
         TextView tv_title = helper.getView(R.id.tv_title);
         tv_describe = helper.getView(R.id.tv_describe);
         MarqueTextView tv_writer_name = helper.getView(R.id.tv_writer_name);
-
         helper.addOnClickListener(R.id.iv_writer);
         helper.addOnClickListener(R.id.tv_describe);
         helper.addOnClickListener(R.id.iv_download_bj);
@@ -111,7 +110,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
 
         if (ad == null) {
 
-            if (OldFromTo.equals(FromToTemplate.DRESSUP)) {
+            if (OldFromTo.equals(FromToTemplate.DRESSUP)||OldFromTo.equals(FromToTemplate.CHOOSEBJ)||OldFromTo.equals(FromToTemplate.SPECIAL)) {
                 videoPlayer.setVisibility(View.GONE);
                 iv_show_cover.setVisibility(View.VISIBLE);
                 Glide.with(mContext)
