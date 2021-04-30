@@ -332,9 +332,14 @@ public class TemplateMvpModel {
      * creation date: 2021/4/20
      * user : zhangtongju
      */
-    public void SaveSpecialTemplate(int api_type ,boolean nowIsGifTemplate){
+    public void SaveSpecialTemplate(int api_type ,boolean nowIsGifTemplate,int needAssetsCount){
+
         String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
-        List<String> strToList1 = Arrays.asList(paths);
+        List<String> list = Arrays.asList(paths);
+        List strToList1 = new ArrayList(list);
+        if(needAssetsCount==1&&strToList1.size()>1){
+            strToList1.remove(1);
+        }
         DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
             if (nowIsGifTemplate||url.contains("gif")) {
                 Intent intent = new Intent(context, MemeKeepActivity.class);

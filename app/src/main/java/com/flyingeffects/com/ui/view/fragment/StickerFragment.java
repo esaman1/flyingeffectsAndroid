@@ -131,11 +131,11 @@ public class StickerFragment extends BaseFragment {
                             mStickerListener.clickItemSelected(position);
                         }
                         if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
-                            StatisticsEventAffair.getInstance().setFlag(getContext(), " st_bj_sticker", listForSticker.get(position).getTitle());
+                            StatisticsEventAffair.getInstance().setFlag(getContext(), "st_bj_sticker", listForSticker.get(position).getTitle());
                         } else if (UiStep.isFromDownBj) {
-                            StatisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", listForSticker.get(position).getTitle());
+                            StatisticsEventAffair.getInstance().setFlag(getContext(), "5_mb_bj_Sticker", listForSticker.get(position).getTitle());
                         } else {
-                            StatisticsEventAffair.getInstance().setFlag(getContext(), " 6_customize_bj_Sticker", listForSticker.get(position).getTitle());
+                            StatisticsEventAffair.getInstance().setFlag(getContext(), "6_customize_bj_Sticker", listForSticker.get(position).getTitle());
                         }
 
                         if (formToType == 1) {

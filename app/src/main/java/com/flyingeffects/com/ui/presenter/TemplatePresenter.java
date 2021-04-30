@@ -74,8 +74,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
-    public void SaveSpecialTemplate(int api_type,boolean nowIsGifTemplate){
-        home_model.SaveSpecialTemplate(api_type,nowIsGifTemplate);
+    public void SaveSpecialTemplate(int api_type,boolean nowIsGifTemplate,int needAssetsCount){
+        home_model.SaveSpecialTemplate(api_type,nowIsGifTemplate,needAssetsCount);
     }
 
 

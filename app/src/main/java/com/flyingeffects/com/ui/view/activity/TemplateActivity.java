@@ -385,6 +385,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                         if (mOriginalPathList != null && mOriginalPathList.size() != 0) {
                             changeMaterialCallbackForVideo(null, mOriginalPathList.get(0),
                                     false);
+
                         } else {
                             changeMaterialCallbackForVideo(null, imgPath.get(0), false);
                         }
@@ -419,6 +420,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         //只是唱歌页面
         if (isToSing || isSpecial) {
+            Log.d("OOM22","isToSing="+isToSing);
+            Log.d("OOM22","isSpecial="+isSpecial);
             findViewById(R.id.ll_progress).setVisibility(View.GONE);
             findViewById(R.id.ll_viewpager_container).setVisibility(View.GONE);
         }
@@ -1184,7 +1187,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             }
                         });
                     } else if (isSpecial) {
-                        presenter.SaveSpecialTemplate(api_type,nowIsGifTemplate);
+                        presenter.SaveSpecialTemplate(api_type,nowIsGifTemplate,needAssetsCount);
                     } else {
                         LogUtil.d(TAG, "renderVideo");
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {

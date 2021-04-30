@@ -99,6 +99,8 @@ public class MemeKeepActivity extends BaseActivity {
         mShareDialog = new SaveShareDialog(this, dialogShare);
     }
 
+
+   private  String keepGifName;
     @Override
     protected void initAction() {
 
@@ -112,11 +114,11 @@ public class MemeKeepActivity extends BaseActivity {
         }
         WaitingDialog.closeProgressDialog();
         File file = new File(gifPath);
-        String name= mGifFolder +File.separator + System.currentTimeMillis() +  "keep.gif";
+        keepGifName = mGifFolder +File.separator + System.currentTimeMillis() +  "keep.gif";
         if (file.exists()) {
             try {
-                FileUtil.copyFile(file,name);
-                Glide.with(this).load(name).into(imageView);
+                FileUtil.copyFile(file,keepGifName);
+                Glide.with(this).load(keepGifName).into(imageView);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -127,7 +129,7 @@ public class MemeKeepActivity extends BaseActivity {
 
     public void onViewClick(View view) {
         if (view == mBinding.llSendFriends) {
-            uploadDressUpImage(mGifFolder + "/keep.gif");
+            uploadDressUpImage(keepGifName);
         } else if (view == mBinding.ivBack) {
             finish();
         } else if (view == mBinding.llKeep) {
@@ -136,7 +138,7 @@ public class MemeKeepActivity extends BaseActivity {
             //保存到本地
             String keepPath = SaveAlbumPathModel.getInstance().getKeepOutputForGif();
             try {
-                FileUtil.copyFile(new File(mGifFolder + "/keep.gif"), keepPath);
+                FileUtil.copyFile(new File(keepGifName), keepPath);
                 albumBroadcast(keepPath);
                 showDialog(keepPath);
             } catch (IOException e) {
