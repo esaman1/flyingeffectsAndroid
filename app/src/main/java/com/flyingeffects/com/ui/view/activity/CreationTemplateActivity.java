@@ -883,7 +883,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private void submitCreation() {
         if (mFrom == FROM_DRESS_UP_BACK_CODE) {
-            presenter.keepPicture(mBinding.relativeContentAllContent2, mBinding.ivFrameImage,templateId+"");
+            presenter.keepPicture(mBinding.relativeContentAllContent2, mBinding.ivFrameImage, templateId + "");
             if (TextUtils.isEmpty(mBackGroundTitle)) {
                 mBackGroundTitle = title;
             }
@@ -1103,13 +1103,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void showGreenBj(boolean isInitialize) {
 
-        if (isInitialize) {
-            mBinding.llGreenBackground.setVisibility(View.VISIBLE);
-            mBinding.ivGreenBackground.setVisibility(View.VISIBLE);
-        } else {
-            mBinding.llGreenBackground.setVisibility(View.GONE);
-            mBinding.ivGreenBackground.setVisibility(View.GONE);
-        }
+        mBinding.llGreenBackground.setVisibility(View.VISIBLE);
+        mBinding.ivGreenBackground.setVisibility(View.VISIBLE);
 
         if (isInitialize) {
             if (!isInitImageBj) {
@@ -1229,6 +1224,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                     mBinding.ivGreenBackground.post(() -> {
                         int oriHeight = mBinding.llSpace.getHeight();
+
                         RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) mBinding.llGreenBackground.getLayoutParams();
                         relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
                         relativeLayoutParams3.height = oriHeight;
@@ -1907,7 +1903,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                 presenter.setmVideoPath("");
                 videoPath = "";
-                showGreenBj(true);
+                showGreenBj(false);
                 imageBjPath = event.getPath();
 
                 //图片背景和绿幕背景默认都是10秒
