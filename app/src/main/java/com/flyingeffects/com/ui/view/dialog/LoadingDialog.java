@@ -107,7 +107,7 @@ public class LoadingDialog extends Dialog implements LifecycleObserver {
             return this;
         }
 
-       private LinearLayout llContainer;
+
         public LoadingDialog build() {
             // instantiate the dialog with the custom Theme
             final LoadingDialog dialog = new LoadingDialog(mContext);
@@ -116,11 +116,12 @@ public class LoadingDialog extends Dialog implements LifecycleObserver {
                 mView = LayoutInflater.from(mContext)
                         .inflate(R.layout.dialog_loading, null);
             }
+
             dialog.setContentView(mView);
 
             AppCompatTextView tvTitle = mView.findViewById(R.id.tv_dialog_title);
             AppCompatTextView tvContent = mView.findViewById(R.id.tv_content_1);
-            llContainer  = mView.findViewById(R.id.ll_ad_container);
+            LinearLayout llContainer  = mView.findViewById(R.id.ll_ad_container);
 
             if (!TextUtils.isEmpty(mTitle)) {
                 tvTitle.setText(mTitle);
@@ -151,6 +152,7 @@ public class LoadingDialog extends Dialog implements LifecycleObserver {
                 @Override
                 public void onShow(DialogInterface dialog) {
                     if (mHasAd && llContainer != null) {
+                        llContainer.setVisibility(View.VISIBLE);
                         loadAd(llContainer);
                     }
                 }
@@ -166,12 +168,7 @@ public class LoadingDialog extends Dialog implements LifecycleObserver {
             AdManager.getInstance().showImageAd(mContext, AdConfigs.AD_IMAGE_LOADING_DIALOG, llAdContainer, new AdManager.Callback() {
                 @Override
                 public void adClose() {
-                    if (mDialogDismissListener != null) {
-                        mDialogDismissListener.onDismiss();
-                    }
-                    if (llContainer != null) {
-                        AdManager.getInstance().imageAdClose(llContainer);
-                    }
+                    llAdContainer.setVisibility(View.GONE);
                 }
             });
         }

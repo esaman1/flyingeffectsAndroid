@@ -107,7 +107,9 @@ import rx.subjects.PublishSubject;
 
 
 /**
- * description ：使用蓝松的drawPadView来绘制页面，实现方式为一个主视频图层加上多个动态的mv图层+ 多个图片图层，最后渲染出来视频
+ * description ：使用蓝松的drawPadView来绘制页面，
+ * 实现方式为一个主视频图层加上多个动态的mv图层+ 多个图片图层，最后渲染出来视频
+ *
  * creation date: 2020/3/12
  * param :
  * user : zhangtongju
@@ -178,7 +180,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
     private SparseArrayCompat<ArrayList<StickerView>> sublayerListForBitmapLayer = new SparseArrayCompat<>();
 
     private AnimCollect mAnimCollect;
-    private int stickerType;
+    private final int mStickerType;
 
     public CreationTemplateMvpModel(Context context, CreationTemplateMvpCallback callback, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, int from) {
         this.mContext = context;
@@ -188,12 +190,13 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         mFrom = from;
 
         if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
-            stickerType = StickerView.CODE_STICKER_TYPE_FLASH_PIC;
+            mStickerType = StickerView.CODE_STICKER_TYPE_FLASH_PIC;
         } else {
-            stickerType = StickerView.CODE_STICKER_TYPE_NORMAL;
+            mStickerType = StickerView.CODE_STICKER_TYPE_NORMAL;
         }
 
         this.viewLayerRelativeLayout = viewLayerRelativeLayout;
+
         vibrator = (Vibrator) context.getSystemService(Service.VIBRATOR_SERVICE);
         if (!TextUtils.isEmpty(mVideoPath)) {
             videoInfo = getVideoInfo.getInstance().getRingDuring(mVideoPath);
@@ -231,6 +234,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
 
     public void keepPicture(RelativeLayout relativeLayout, ImageView iv,String templateId) {
+
         for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
             StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
             stickerView.disMissFrame();
@@ -375,7 +379,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         new Handler().postDelayed(() ->
                 addSticker(imagePath, true, true, true,
                         originalPath, false, null, false,
-                        stickerType, null), 500);
+                        mStickerType, null), 500);
     }
 
 
@@ -408,6 +412,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         retriever.setDataSource(path);
         Bitmap mBitmap = retriever.getFrameAtTime(0);
         String fileName = mImageCopyFolder + File.separator + UUID.randomUUID() + ".png";
+
         BitmapManager.getInstance().saveBitmapToPath(mBitmap, fileName, isSuccess -> {
             CompressionCuttingManage manage = new CompressionCuttingManage(mContext, ""
                     , false, tailorPaths -> mCallback.getVideoCover(tailorPaths.get(0), path));
@@ -863,7 +868,6 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
         check_box_1.setImageResource(R.mipmap.template_btn_unselected);
         check_box_2.setImageResource(R.mipmap.template_btn_unselected);
         check_box_3.setImageResource(R.mipmap.template_btn_unselected);
-
     }
 
 
@@ -1382,7 +1386,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                 } else if (type == StickerView.LEFT_BOTTOM_MODE) {
                     changeMaterial(stickView);
                 } else if (type == StickerView.LEFT_MODE) {
-                    if (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC) {
+                    if (mStickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC) {
                         changeMaterial(stickView);
                     } else {
                         saveAlbum(stickView);
@@ -1434,7 +1438,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
             }
 
             //切換素材
-            if (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC) {
+            if (mStickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC) {
                 AlbumManager.chooseImageAlbum(mContext, 1, 0, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
                     stickView.setMirror(false);
                     chooseImageMaterialCallback(stickView, paths, isCancel, isFromCamera, albumFileList);
@@ -1505,7 +1509,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
                                 clearCheckBox();
                             }
                         }
-                        if (stickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC) {
+                        if (mStickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC) {
                             stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.shader_edit));
                         } else if (!stickView.getResPath().endsWith(".gif") && !albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                             stickView.setLeftBitmap(ContextCompat.getDrawable(mContext, R.mipmap.icon_pic_save));
@@ -2090,7 +2094,7 @@ public class CreationTemplateMvpModel implements StickerFragment.StickerListener
 
     @Override
     public void addSticker(String stickerPath, String title) {
-        addSticker(stickerPath, false, false, false, null, false, null, false, stickerType, title);
+        addSticker(stickerPath, false, false, false, null, false, null, false, mStickerType, title);
     }
 
     @Override

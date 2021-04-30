@@ -222,7 +222,7 @@ public class CreationTemplateActivityCopy extends BaseActivity implements Creati
 
         initBundleData();
 
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath, null, mFrom);
+        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath,  mFrom);
         LogUtil.d(TAG, "videoPath = " + videoPath);
 
         setOnClickListener();
@@ -825,7 +825,7 @@ public class CreationTemplateActivityCopy extends BaseActivity implements Creati
 
                 @Override
                 public void setText(String text) {
-                    presenter.ChangeTextLabe(text);
+                    presenter.changeTextLabe(text);
                     if (TextUtils.isEmpty(text)) {
                         if (createViewForAddText != null) {
                             createViewForAddText.hideInputTextDialog();
@@ -846,19 +846,19 @@ public class CreationTemplateActivityCopy extends BaseActivity implements Creati
                 @Override
                 public void setTextColor(String color0, String color1, String title) {
                     LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1);
-                    presenter.ChangeTextColor(color0, color1, title);
+                    presenter.changeTextColor(color0, color1, title);
                 }
 
                 @Override
                 public void isSuccess(String textBjPath, String textFramePath, String frameTitle) {
                     LogUtil.d("OOM4", "textBjPath=" + textBjPath + "textFramePath=" + textFramePath + "frameTitle" + frameTitle);
-                    presenter.ChangeTextFrame(textBjPath, textFramePath, frameTitle);
+                    presenter.changeTextFrame(textBjPath, textFramePath, frameTitle);
                 }
 
                 @Override
                 public void isSuccess(String color0, String color1, String textFramePath, String frameTitle) {
                     LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1 + "textFramePath" + textFramePath + "frameTitle" + frameTitle);
-                    presenter.ChangeTextFrame(color0, color1, textFramePath, frameTitle);
+                    presenter.changeTextFrame(color0, color1, textFramePath, frameTitle);
                 }
             });
             createViewForAddText.showBottomSheetDialog(inputText, "bj_template");
@@ -1661,7 +1661,7 @@ public class CreationTemplateActivityCopy extends BaseActivity implements Creati
      */
     @Subscribe
     public void onEventMainThread(ChooseVideoAddSticker event) {
-        presenter.GetVideoCover(event.getPath());
+        presenter.getVideoCover(event.getPath());
     }
 
 

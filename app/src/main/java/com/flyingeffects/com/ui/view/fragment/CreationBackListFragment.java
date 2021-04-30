@@ -214,7 +214,6 @@ public class CreationBackListFragment extends BaseFragment {
         mBackChooseListener = listener;
     }
 
-
     public interface BackChooseListener {
         void chooseBack(String title, String path);
     }

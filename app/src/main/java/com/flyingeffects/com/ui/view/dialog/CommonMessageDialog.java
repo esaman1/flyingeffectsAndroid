@@ -52,6 +52,7 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
         private String mAdId;
         private DialogBtnClickListener mDialogBtnClickListener;
         private DialogDismissListener mDialogDismissListener;
+        private Group groupAdDialog;
 
         public Builder(Context context) {
             mContext = context;
@@ -178,7 +179,7 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
 
 
             if (mAdStatus == AD_STATUS_BOTTOM) {
-                Group groupAdDialog = mView.findViewById(R.id.group_ad_dialog);
+                groupAdDialog = mView.findViewById(R.id.group_ad_dialog);
 
                 mView.findViewById(R.id.iv_dialog_ad_close).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -267,14 +268,13 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
         }
 
         private void loadAd(LinearLayout llAdContainer, String id) {
-            AdManager.getInstance().showImageAd(mContext, id,llAdContainer , new AdManager.Callback() {
+            AdManager.getInstance().showImageAd(mContext, id, llAdContainer, new AdManager.Callback() {
                 @Override
                 public void adClose() {
-                    if (mDialogDismissListener != null) {
-                        mDialogDismissListener.onDismiss();
-                    }
-                    if (llAdContainer != null) {
-                        AdManager.getInstance().imageAdClose(llAdContainer);
+                    if (mAdStatus == AD_STATUS_BOTTOM) {
+                        groupAdDialog.setVisibility(View.GONE);
+                    } else {
+                        llAdContainer.setVisibility(View.GONE);
                     }
                 }
             });
@@ -287,8 +287,6 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
         void onPositiveBtnClick(CommonMessageDialog dialog);
 
         void onCancelBtnClick(CommonMessageDialog dialog);
-
-
     }
 
     public interface DialogDismissListener {
