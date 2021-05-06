@@ -870,7 +870,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     }
                     //只要模板页面，特殊模板，都走模板逻辑
                     if ("1".equals(templateType)) {
-                        mOldFromTo = FromToTemplate.ISTEMPLATE;
+                        mOldFromTo = FromToTemplate.TEMPLATESPECIAL1;
                     } else if ("5".equals(templateType)) {
                         //表情包走特效，会进入模板页面
                         mOldFromTo = FromToTemplate.TEMPLATESPECIAL;
@@ -997,17 +997,26 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     StatisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
                     mMvpPresenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId() + "", false);
                 } else {
-                    if (mOldFromTo.equals(FromToTemplate.ISSEARCHBJ) || mOldFromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
-                        StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "4_search_make", templateItem.getTitle());
+
+
+                    if(templateItem.getApi_type()!=0){
+                        AlbumManager.chooseImageAlbum(this, templateItem.getDefaultnum(), SELECTALBUMFROMDressUp, this, "");
+                    }else{
+
+                        if (mOldFromTo.equals(FromToTemplate.ISSEARCHBJ) || mOldFromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
+                            StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "4_search_make", templateItem.getTitle());
+                        }
+                        StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "mb_make", templateItem.getTitle());
+                        adapter.pauseVideo();
+                        mMvpPresenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
                     }
-                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "mb_make", templateItem.getTitle());
-                    adapter.pauseVideo();
-                    mMvpPresenter.downZip(templateItem.getTemplatefile(), templateItem.getZipid());
+
                 }
                 break;
             case FromToTemplate.DRESSUP:
             case FromToTemplate.CHOOSEBJ:
             case FromToTemplate.SPECIAL:
+            case FromToTemplate.TEMPLATESPECIAL1:
                 AlbumManager.chooseImageAlbum(this, templateItem.getDefaultnum(), SELECTALBUMFROMDressUp, this, "");
                 break;
             default:
@@ -1114,7 +1123,12 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     } else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
                         int api_type = templateItem.getApi_type();
                         mMvpPresenter.ToDressUpSpecial(paths, api_type, templateId, templateItem.getTitle());
-                    } else if (templateItem.getIs_anime() == 1) {
+                    }else if (mOldFromTo.equals(FromToTemplate.TEMPLATESPECIAL1)) {
+                        int api_type = templateItem.getApi_type();
+                        mMvpPresenter.ToTemplateAddStickerActivity(paths, templateItem.getTitle(), templateId,api_type);
+                    }
+
+                    else if (templateItem.getIs_anime() == 1) {
                         //模板换装新逻辑
                         DressUpModel dressUpModel = new DressUpModel(this, paths1 -> mMvpPresenter.GetDressUpPath(paths1), true);
                         dressUpModel.toDressUp(paths.get(0), templateId);

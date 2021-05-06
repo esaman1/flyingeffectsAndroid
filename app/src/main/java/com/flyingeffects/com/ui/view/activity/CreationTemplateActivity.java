@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1050,6 +1051,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             relativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
             relativeLayoutParams.height = oriHeight;
             mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams);
+            mBinding.relativeContentAllContent2.setLayoutParams(relativeLayoutParams);
+            mBinding.relativeContentAllContent.setGravity(Gravity.CENTER_HORIZONTAL);
         });
 
         if (!TextUtils.isEmpty(videoPath)) {

@@ -52,6 +52,7 @@ import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.MemeKeepActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -1172,6 +1173,21 @@ public class PreviewUpAndDownMvpModel {
             dressUpModel.toDressUp(paths, api_type);
         });
 
+    }
+
+
+
+    public void ToTemplateAddStickerActivity(List<String> strToList1,String templateName,String templateId,int api_type){
+
+        DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
+                Intent intent = new Intent(context, TemplateAddStickerActivity.class);
+                intent.putExtra("videoPath", url);
+                intent.putExtra("title", templateName);
+                intent.putExtra("templateId", templateId);
+                intent.putExtra("IsFrom", fromTo);
+                context.startActivity(intent);
+        }, templateId);
+        dressUpModel.toDressUp(strToList1, api_type);
     }
 
 

@@ -134,6 +134,10 @@ public class fragBjSearch extends BaseFragment {
             if (isFrom == 0) {
                 //模板页面
                 intent.putExtra("fromTo", FromToTemplate.ISSEARCHTEMPLATE);
+                int api_type = allData.get(position).getApi_type();
+                if (api_type != 0) {
+                    intent.putExtra("fromTo", FromToTemplate.TEMPLATESPECIAL1);
+                }
                 StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb_click", allData.get(position).getTitle());
             } else if (isFrom == 3) {
                 String templateType = allData.get(position).getTemplate_type();

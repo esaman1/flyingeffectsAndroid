@@ -55,6 +55,10 @@ public class FromToTemplate {
     //闪图特效
     public static final String SPECIAL = "SPECIAL";
 
+
+    //模板特效，不进入编辑，直接合成
+    public static final String TEMPLATESPECIAL1 = "TEMPLATESPECIAL1";
+
     //表情包特效
     public static final String TEMPLATESPECIAL = "TEMPLATESPECIAL";
 }
