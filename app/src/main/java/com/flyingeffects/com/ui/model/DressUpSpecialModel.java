@@ -227,8 +227,7 @@ public class DressUpSpecialModel {
                 albumType.isVideo(GetPathType.getInstance().
                         getMediaType(paths.get(0)))) {
             LogUtil.d("OOM3", "上传为视频");
-
-            uploadPathList.add(paths.get(0));
+            uploadPathList.addAll(paths);
             new Thread(() -> uploadFileToHuawei(paths.get(0))).start();
 
         } else {

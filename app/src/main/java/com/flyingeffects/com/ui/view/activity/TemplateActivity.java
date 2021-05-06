@@ -420,8 +420,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
 
         //只是唱歌页面
         if (isToSing || isSpecial) {
-            Log.d("OOM22","isToSing="+isToSing);
-            Log.d("OOM22","isSpecial="+isSpecial);
+            Log.d("OOM22", "isToSing=" + isToSing);
+            Log.d("OOM22", "isSpecial=" + isSpecial);
             findViewById(R.id.ll_progress).setVisibility(View.GONE);
             findViewById(R.id.ll_viewpager_container).setVisibility(View.GONE);
         }
@@ -1187,7 +1187,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                             }
                         });
                     } else if (isSpecial) {
-                        presenter.SaveSpecialTemplate(api_type,nowIsGifTemplate,needAssetsCount);
+                        presenter.SaveSpecialTemplate(api_type, nowIsGifTemplate, needAssetsCount);
                     } else {
                         LogUtil.d(TAG, "renderVideo");
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
@@ -1630,6 +1630,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_edit), getString(R.string.template_bj),
                         getString(R.string.template_music)};
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.FACEGIF)) {
+                titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_bj)};
+            } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.TEMPLATESPECIAL)) {
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_bj)};
             } else {
                 titlesHasBj = new String[]{getString(R.string.template_edit), getString(R.string.template_bj),
