@@ -16,6 +16,8 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActMemeKeepBinding;
+import com.flyingeffects.com.manager.AdConfigs;
+import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.huaweiObs;
@@ -271,6 +273,11 @@ public class MemeKeepActivity extends BaseActivity {
 
     private void showDialog(String path) {
         if (!com.flyingeffects.com.commonlyModel.DoubleClick.getInstance().isFastDoubleClick()) {
+
+            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                AdManager.getInstance().showCpAd(MemeKeepActivity.this, AdConfigs.AD_SCREEN_FOR_keep);
+            }
+
             ShowPraiseModel.keepAlbumCount();
             keepAlbumCount();
             LogUtil.d("showDialog", "showDialog");
