@@ -1043,6 +1043,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private void initViewLayerRelative() {
         ViewGroup.LayoutParams relativeLayoutParams = mBinding.idVviewRealtimeGllayout.getLayoutParams();
+        ViewGroup.LayoutParams relativeLayoutParams2 = mBinding.relativeContentAllContent2.getLayoutParams();
+
         float oriRatio;
         oriRatio = 9f / 16f;
         //保证获得mContainer大小不为0
@@ -1052,8 +1054,14 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             relativeLayoutParams.height = oriHeight;
             mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams);
             mBinding.relativeContentAllContent2.setLayoutParams(relativeLayoutParams);
+            mBinding.relativeContentAllContent2.setGravity(Gravity.CENTER_HORIZONTAL);
             mBinding.relativeContentAllContent.setGravity(Gravity.CENTER_HORIZONTAL);
+            relativeLayoutParams2.width = relativeLayoutParams.width;
+            relativeLayoutParams2.height = relativeLayoutParams.height;
+            mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+            mBinding.llContentPatents.setGravity(Gravity.CENTER_HORIZONTAL);
         });
+
 
         if (!TextUtils.isEmpty(videoPath)) {
             setBJVideoPath(false);

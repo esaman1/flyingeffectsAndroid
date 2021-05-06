@@ -1633,7 +1633,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.FACEGIF)) {
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_bj)};
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.TEMPLATESPECIAL)) {
-                titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_bj)};
+                titlesHasBj = new String[]{getString(R.string.template)};
             } else if (isToSing || nowIsGifTemplate || isSpecial) {
                 LogUtil.d("OOM3", "0000+");
                 titlesHasBj = new String[]{getString(R.string.template_edit), getString(R.string.template_bj)

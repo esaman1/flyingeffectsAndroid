@@ -314,6 +314,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     LogUtil.d("OOM2", "当前位置为" + position);
                     adapter.nowPreviewChooseItem(position);
                     adapter.notifyItemChanged(position);
+                    updateFromToData(allData.get(position));
                     nowItemIsAd = allData.size() > 0 && allData.get(position).getAd() != null;
                     nowChoosePosition = position;
                     //判断当前滑动状态
@@ -853,41 +854,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             nowPraise = data.getIs_praise();
             templateType = data.getTemplate_type();
             isPic = templateItem.getIs_pic();
-            //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
-            if (!TextUtils.isEmpty(templateItem.getPre_url())) {
-                mOldFromTo = FromToTemplate.ISBJ;
-            }
-
-            //2021-4-30 解決bug 列表进入，加载数据后列表类型没有更新的问题
-            String templateType = data.getTemplate_type();
-            //templateType 类型:1=模板,2=背景,3=换脸,4=换背景,5=表情包
-            if (!TextUtils.isEmpty(templateType)) {
-                int api_type = data.getApi_type();
-                if (api_type != 0) {
-                    //只要闪图页面，特殊模板，都走dressUp逻辑
-                    if (!"1".equals(templateType) && !"2".equals(templateType)) {
-                        mOldFromTo = FromToTemplate.SPECIAL;
-                    }
-                    //只要模板页面，特殊模板，都走模板逻辑
-                    if ("1".equals(templateType)) {
-                        mOldFromTo = FromToTemplate.TEMPLATESPECIAL1;
-                    } else if ("5".equals(templateType)) {
-                        //表情包走特效，会进入模板页面
-                        mOldFromTo = FromToTemplate.TEMPLATESPECIAL;
-                    }
-                } else {
-                    if ("3".equals(templateType)) {
-                        //换脸
-                        mOldFromTo = FromToTemplate.DRESSUP;
-                    } else if ("4".equals(templateType)) {
-                        //换背景
-                        mOldFromTo = FromToTemplate.CHOOSEBJ;
-                    } else if ("5".equals(templateType)) {
-                        //表情包
-                        mOldFromTo = FromToTemplate.FACEGIF;
-                    }
-                }
-            }
+            updateFromToData(data);
             //2021-4-30 end 解決bug 列表进入，加载数据后列表类型没有更新的问题
             adapter.setCommentCount(data.getComment());
             mIsWithPlay = templateItem.getIs_with_play();
@@ -899,6 +866,52 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 adapter.notifyItemChanged(nowChoosePosition);
             }
         }
+    }
+
+
+    /**
+     * description ：更新来源界面
+     * creation date: 2021/5/6
+     * user : zhangtongju
+     */
+    private void updateFromToData(NewFragmentTemplateItem data ){
+        //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
+        if (!TextUtils.isEmpty(templateItem.getPre_url())) {
+            mOldFromTo = FromToTemplate.ISBJ;
+        }
+        //2021-4-30 解決bug 列表进入，加载数据后列表类型没有更新的问题
+        String templateType = data.getTemplate_type();
+        //templateType 类型:1=模板,2=背景,3=换脸,4=换背景,5=表情包
+        if (!TextUtils.isEmpty(templateType)) {
+            int api_type = data.getApi_type();
+            if (api_type != 0) {
+                //只要闪图页面，特殊模板，都走dressUp逻辑
+                if (!"1".equals(templateType) && !"2".equals(templateType)) {
+                    mOldFromTo = FromToTemplate.SPECIAL;
+                }
+                //只要模板页面，特殊模板，都走模板逻辑
+                if ("1".equals(templateType)) {
+                    mOldFromTo = FromToTemplate.TEMPLATESPECIAL1;
+                } else if ("5".equals(templateType)) {
+                    //表情包走特效，会进入模板页面
+                    mOldFromTo = FromToTemplate.TEMPLATESPECIAL;
+                }
+            } else {
+                if ("3".equals(templateType)) {
+                    //换脸
+                    mOldFromTo = FromToTemplate.DRESSUP;
+                } else if ("4".equals(templateType)) {
+                    //换背景
+                    mOldFromTo = FromToTemplate.CHOOSEBJ;
+                } else if ("5".equals(templateType)) {
+                    //表情包
+                    mOldFromTo = FromToTemplate.FACEGIF;
+                }
+            }
+        }
+        adapter.SetOldFromTo(mOldFromTo);
+
+
     }
 
 

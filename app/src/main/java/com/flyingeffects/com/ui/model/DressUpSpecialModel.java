@@ -221,37 +221,34 @@ public class DressUpSpecialModel {
 
 
     public void toCompressImg(List<String> paths) {
-
-
-        if (
-                albumType.isVideo(GetPathType.getInstance().
-                        getMediaType(paths.get(0)))) {
+//        if (albumType.isVideo(GetPathType.getInstance().
+//                        getMediaType(paths.get(0)))) {
             LogUtil.d("OOM3", "上传为视频");
             uploadPathList.addAll(paths);
             new Thread(() -> uploadFileToHuawei(paths.get(0))).start();
-
-        } else {
-            LogUtil.d("OOM3", "上传为图片");
-            Observable.just(paths).map(strings -> {
-                try {
-                    return Luban.with(context).load(strings).setFocusAlpha(true).get();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(files -> {
-                huaweiPathList.clear();
-                if (files != null && files.size() > 0) {
-                    uploadPathList = getUploadPath(files);
-                    LogUtil.d("OOM3", "luban成功压缩" + "PATH=" + uploadPathList.get(0));
-                } else {
-                    uploadPathList = paths;
-                    LogUtil.d("OOM3", "luban压缩失败，用原图地址");
-                }
-                new Thread(() -> uploadFileToHuawei(uploadPathList.get(0))).start();
-
-            });
-        }
+//        } else {
+//            Luban.Builder builder=Luban.with(context).ignoreBy(100).setFocusAlpha(true);
+//            LogUtil.d("OOM3", "上传为图片");
+//            Observable.just(paths).map(strings -> {
+//                try {
+//                    return builder.load(strings).get();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    return null;
+//                }
+//            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(files -> {
+//                huaweiPathList.clear();
+//                if (files != null && files.size() > 0) {
+//                    uploadPathList = getUploadPath(files);
+//                    LogUtil.d("OOM3", "luban成功压缩" + "PATH=" + uploadPathList.get(0));
+//                } else {
+//                    uploadPathList = paths;
+//                    LogUtil.d("OOM3", "luban压缩失败，用原图地址");
+//                }
+//                new Thread(() -> uploadFileToHuawei(uploadPathList.get(0))).start();
+//
+//            });
+//        }
     }
 
 

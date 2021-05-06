@@ -61,6 +61,11 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
         this.OldFromTo = OldFromTo;
     }
 
+
+    public void SetOldFromTo(String OldFromTo){
+        this.OldFromTo=OldFromTo;
+    }
+
     @Override
     protected void convert(final BaseViewHolder helper, final NewFragmentTemplateItem item) {
         ad = item.getAd();
@@ -111,6 +116,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
         if (ad == null) {
 
             if (OldFromTo.equals(FromToTemplate.DRESSUP)||OldFromTo.equals(FromToTemplate.CHOOSEBJ)||OldFromTo.equals(FromToTemplate.SPECIAL)) {
+                LogUtil.d("OOM22","DDDD---------");
                 videoPlayer.setVisibility(View.GONE);
                 iv_show_cover.setVisibility(View.VISIBLE);
                 Glide.with(mContext)
