@@ -408,6 +408,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             }
         });
 
+        LogUtil.d("OOM3", "fromTo=" + fromTo);
         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.PICTUREALBUM)) {
             nowIsPhotographAlbum = true;
             findViewById(R.id.ll_Matting).setVisibility(View.GONE);
@@ -1633,6 +1634,10 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_bj)};
             } else if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.TEMPLATESPECIAL)) {
                 titlesHasBj = new String[]{getString(R.string.template), getString(R.string.template_bj)};
+            } else if (isToSing || nowIsGifTemplate || isSpecial) {
+                LogUtil.d("OOM3", "0000+");
+                titlesHasBj = new String[]{getString(R.string.template_edit), getString(R.string.template_bj)
+                };
             } else {
                 titlesHasBj = new String[]{getString(R.string.template_edit), getString(R.string.template_bj),
                         getString(R.string.template_music)};
@@ -2005,6 +2010,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         bundle.putString(INTENT_TEMPLATE_NAME, templateItem.getTitle());
         bundle.putString(INTENT_TEMPLATE_ID, templateItem.getId() + "");
         bundle.putInt(INTENT_IS_SPECIAL, templateItem.getApi_type());
+        LogUtil.d("oom22", "templateItem.getApi_type()=" + templateItem.getApi_type());
         bundle.putString(INTENT_VIDEO_TIME, templateItem.getVideotime());
         bundle.putString(INTENT_TEMPLATE_FILE_PATH, templateFilePath);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

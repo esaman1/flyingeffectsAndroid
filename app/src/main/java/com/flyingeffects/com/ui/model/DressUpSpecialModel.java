@@ -234,7 +234,7 @@ public class DressUpSpecialModel {
             LogUtil.d("OOM3", "上传为图片");
             Observable.just(paths).map(strings -> {
                 try {
-                    return Luban.with(context).load(strings).get();
+                    return Luban.with(context).load(strings).setFocusAlpha(true).get();
                 } catch (IOException e) {
                     e.printStackTrace();
                     return null;
@@ -243,7 +243,7 @@ public class DressUpSpecialModel {
                 huaweiPathList.clear();
                 if (files != null && files.size() > 0) {
                     uploadPathList = getUploadPath(files);
-                    LogUtil.d("OOM3", "luban成功压缩");
+                    LogUtil.d("OOM3", "luban成功压缩" + "PATH=" + uploadPathList.get(0));
                 } else {
                     uploadPathList = paths;
                     LogUtil.d("OOM3", "luban压缩失败，用原图地址");
