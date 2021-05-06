@@ -997,12 +997,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     StatisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
                     mMvpPresenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId() + "", false);
                 } else {
-
-
-                    if(templateItem.getApi_type()!=0){
+                    if(templateItem.getApi_type()!=0&&mOldFromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)){
+                        //搜索特殊模板的情况，这里比较特殊，模板都是直接旋转素材，而不需要现在zip
                         AlbumManager.chooseImageAlbum(this, templateItem.getDefaultnum(), SELECTALBUMFROMDressUp, this, "");
                     }else{
-
                         if (mOldFromTo.equals(FromToTemplate.ISSEARCHBJ) || mOldFromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
                             StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "4_search_make", templateItem.getTitle());
                         }
