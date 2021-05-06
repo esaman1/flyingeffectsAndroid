@@ -729,7 +729,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 bjMp3Duration = Float.parseFloat(templateItem.getVideotime());
                 LogUtil.d("OOM", "bj.mp3=" + TemplateFilePath);
                 bjMp3 = TemplateFilePath + File.separator + "bj.mp3";
-                if (mOldFromTo.equals(FromToTemplate.FACEGIF)) {
+                if (mOldFromTo.equals(FromToTemplate.FACEGIF)||mOldFromTo.equals(FromToTemplate.TEMPLATESPECIAL)) {
                     //闪图表情包不需要跟随音乐拍摄
                     AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "");
                 } else {

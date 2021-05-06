@@ -13,6 +13,7 @@ import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 
 import com.bumptech.glide.Glide;
@@ -339,7 +340,9 @@ public class TemplateMvpModel {
         List strToList1 = new ArrayList(list);
         if(needAssetsCount==1&&strToList1.size()>1){
             strToList1.remove(1);
+            Log.d("OOM22","strToList1="+strToList1.get(0));
         }
+
         DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
             if (nowIsGifTemplate||url.contains("gif")) {
                 Intent intent = new Intent(context, MemeKeepActivity.class);
