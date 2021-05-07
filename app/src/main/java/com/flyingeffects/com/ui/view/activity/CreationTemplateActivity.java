@@ -1182,9 +1182,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 contentParam.width = ViewGroup.LayoutParams.WRAP_CONTENT;
                 contentParam.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                 contentParam.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-
-                //mBinding.relativeContentAllContent.setLayoutParams(contentParam);
                 mBinding.relativeContentAllContent2.setLayoutParams(contentParam);
+
             });
         } else {
             //横屏模式下切换到了竖屏
@@ -1205,12 +1204,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 contentParam.width = ViewGroup.LayoutParams.WRAP_CONTENT;
                 contentParam.height = ViewGroup.LayoutParams.WRAP_CONTENT;
                 contentParam.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-
-                //mBinding.relativeContentAllContent.setLayoutParams(contentParam);
                 mBinding.relativeContentAllContent2.setLayoutParams(contentParam);
+
 
             });
         }
+
+
 
 
         if (mBinding.llGreenBackground.getVisibility() == View.VISIBLE) {

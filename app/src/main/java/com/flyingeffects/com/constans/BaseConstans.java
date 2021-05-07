@@ -344,11 +344,11 @@ public class BaseConstans {
 
 
     public static boolean getIsNewUser() {
-//        if (!isNewUserForAdvertising) {
-//            SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-//            isNewUserForAdvertising = spUtil.getBoolean("isNewUserForAdvertising", false);
-//            return isNewUserForAdvertising;
-//        }
+        if (!isNewUserForAdvertising) {
+            SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+            isNewUserForAdvertising = spUtil.getBoolean("isNewUserForAdvertising", false);
+            return isNewUserForAdvertising;
+        }
         return true;
 
     }
