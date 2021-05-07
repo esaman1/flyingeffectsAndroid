@@ -62,12 +62,13 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
     }
 
 
-    public void SetOldFromTo(String OldFromTo){
-        this.OldFromTo=OldFromTo;
+    public void SetOldFromTo(String OldFromTo) {
+        this.OldFromTo = OldFromTo;
     }
 
     @Override
     protected void convert(final BaseViewHolder helper, final NewFragmentTemplateItem item) {
+
         ad = item.getAd();
         int offset = helper.getLayoutPosition();
         FrameLayout video_layout = helper.getView(R.id.video_layout);
@@ -114,22 +115,25 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
         }
 
         if (ad == null) {
-
-            if (OldFromTo.equals(FromToTemplate.DRESSUP)||OldFromTo.equals(FromToTemplate.CHOOSEBJ)||OldFromTo.equals(FromToTemplate.SPECIAL)) {
-                LogUtil.d("OOM22","DDDD---------");
+            boolean hasVideo=true;
+            LogUtil.d("OOM22", "无广告");
+            if (OldFromTo.equals(FromToTemplate.DRESSUP) || OldFromTo.equals(FromToTemplate.CHOOSEBJ) || OldFromTo.equals(FromToTemplate.SPECIAL)) {
                 videoPlayer.setVisibility(View.GONE);
+                pauseVideo();
+                hasVideo=false;
                 iv_show_cover.setVisibility(View.VISIBLE);
                 Glide.with(mContext)
                         .load(item.getImage())
                         .into(iv_show_cover);
             } else {
+                hasVideo=true;
                 videoPlayer.setVisibility(View.VISIBLE);
                 initVideoPlayer(item, offset);
                 iv_show_cover.setVisibility(View.GONE);
             }
             //无广告的情况
             tv_title_music.setVisibility(View.VISIBLE);
-            videoPlayer.setVisibility(View.VISIBLE);
+//            videoPlayer.setVisibility(View.VISIBLE);
             tv_make.setVisibility(View.VISIBLE);
             iv_zan.setVisibility(View.VISIBLE);
             iv_writer.setVisibility(View.VISIBLE);
@@ -146,14 +150,14 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
             LogUtil.d(TAG, "nowPreviewPosition = " + nowPreviewPosition);
             LogUtil.d(TAG, "offset = " + offset);
 
-            if (nowPreviewPosition == offset) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+            if (nowPreviewPosition == offset&&hasVideo) {
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
                         videoPlayer.startPlayLogic();
                         videoPlayer.onVideoResume();
-                    }
-                }, 200);
+//                    }
+//                }, 200);
                 LogUtil.d(TAG, "startPlayLogic");
                 LogUtil.d(TAG, "nowPreviewPosition = " + nowPreviewPosition);
                 LogUtil.d(TAG, "offset = " + offset);
@@ -204,7 +208,13 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
                 video_layout.removeAllViews();
             }
             video_layout.setVisibility(View.GONE);
+            if (OldFromTo.equals(FromToTemplate.DRESSUP) || OldFromTo.equals(FromToTemplate.CHOOSEBJ) || OldFromTo.equals(FromToTemplate.SPECIAL) || OldFromTo.equals(FromToTemplate.FACEGIF) || OldFromTo.equals(FromToTemplate.TEMPLATESPECIAL)) {
+                ll_describe.setVisibility(View.GONE);
+            } else {
+                ll_describe.setVisibility(View.VISIBLE);
+            }
         } else {
+            LogUtil.d("OOM22", "是广告");
             iv_show_cover.setVisibility(View.GONE);
             pauseVideo();
             //有广告的情况下，显示广告页面
@@ -214,6 +224,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
             tv_make.setVisibility(View.GONE);
             iv_zan.setVisibility(View.GONE);
             iv_writer.setVisibility(View.GONE);
+            ll_describe.setVisibility(View.GONE);
             tv_writer_name.setVisibility(View.GONE);
             tv_title.setVisibility(View.GONE);
             tv_describe.setVisibility(View.GONE);
@@ -223,13 +234,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
                 ViewGroup vp = (ViewGroup) view.getParent();
                 vp.removeAllViews();
             }
-            video_layout.addView(view);
-        }
-
-        if (OldFromTo.equals(FromToTemplate.DRESSUP)||OldFromTo.equals(FromToTemplate.CHOOSEBJ)||OldFromTo.equals(FromToTemplate.SPECIAL)||OldFromTo.equals(FromToTemplate.FACEGIF)||OldFromTo.equals(FromToTemplate.TEMPLATESPECIAL)) {
-            ll_describe.setVisibility(View.GONE);
-        } else {
-            ll_describe.setVisibility(View.VISIBLE);
+           video_layout.addView(view);
         }
     }
 
@@ -350,7 +355,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
 
     public void pauseVideo() {
         LogUtil.d("OOM22", "pauseVideo");
-        if(videoPlayer!=null){
+        if (videoPlayer != null) {
             videoPlayer.onVideoPause();
         }
         GSYVideoManager.onPause();
