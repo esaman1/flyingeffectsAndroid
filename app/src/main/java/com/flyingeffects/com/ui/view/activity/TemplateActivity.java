@@ -34,6 +34,7 @@ import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
@@ -326,8 +327,8 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         if (nowTemplateIsAnim == 2) {
             isToSing = true;
         }
-        presenter = new TemplatePresenter(this, this, fromTo, templateName, templateId);
-        LogUtil.d("OOM3", "initView");
+        presenter = new TemplatePresenter(this, this, fromTo, templateName, templateId,templateItem.getType());
+        LogUtil.d("OOM3", "templateName="+templateName);
 
         if (mOriginalPathList != null && mOriginalPathList.size() > 0) {
             int totalMaterial = needAssetsCount;
@@ -1183,12 +1184,13 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                                 if (nowIsChooseMatting) {
                                     bjPath = imgPath.get(0);
                                 }
-                                VideoFusionModel videoFusionModel = new VideoFusionModel(TemplateActivity.this, path, bjPath, fromTo, templateName, mediaUi2.getOriginalBitmapWidth(), mediaUi2.getOriginalBitmapHeight(), tranX, tranY, scale);
+                                VideoFusionModel videoFusionModel = new VideoFusionModel(TemplateActivity.this, path, bjPath, fromTo, templateName, mediaUi2.getOriginalBitmapWidth(), mediaUi2.getOriginalBitmapHeight(), tranX, tranY, scale, templateItem.getType());
+
                                 videoFusionModel.uploadFileToHuawei(path, templateId);
                             }
                         });
                     } else if (isSpecial) {
-                        presenter.SaveSpecialTemplate(api_type, nowIsGifTemplate, needAssetsCount);
+                        presenter.SaveSpecialTemplate(api_type, nowIsGifTemplate, needAssetsCount,nowIsChooseMatting);
                     } else {
                         LogUtil.d(TAG, "renderVideo");
                         if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {

@@ -93,18 +93,18 @@ public class VideoFusionModel {
     private float TranYPercent;
     private float ScaleTranXPercent;
     private String serverVideo;
+    private String templateType;
 
-
-    public VideoFusionModel(Context context, String serversReturnPath, String originalPath, String fromTo, String title, int DRAWPADWIDTH, int DRAWPADHEIGHT, float TranX, float TranY, float Scale) {
+    public VideoFusionModel(Context context, String serversReturnPath, String originalPath, String fromTo, String title, int DRAWPADWIDTH, int DRAWPADHEIGHT, float TranX, float TranY, float Scale,String templateType) {
         this.originalPath = originalPath;
         this.context = context;
         this.serversReturnPath = serversReturnPath;
-
+        this.templateType=templateType;
         this.fromTo = fromTo;
         this.title = title;
         this.DRAWPADWIDTH = DRAWPADWIDTH;
         this.DRAWPADHEIGHT = DRAWPADHEIGHT;
-
+        this.templateType=templateType;
         this.TranXPercent = TranX;
         FileManager fileManager = new FileManager();
         serverVideo = fileManager.getFileCachePath(context, "FusionVideo");
@@ -156,6 +156,7 @@ public class VideoFusionModel {
                 LogUtil.d("OOM2", "exportPath=" + exportPath);
                 Intent intent = new Intent(context, TemplateAddStickerActivity.class);
                 intent.putExtra("videoPath", exportPath);
+                intent.putExtra("templateType", templateType);
                 intent.putExtra("title", title);
                 intent.putExtra("IsFrom", fromTo);
                 context.startActivity(intent);

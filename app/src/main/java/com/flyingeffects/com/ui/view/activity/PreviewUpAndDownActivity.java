@@ -1083,7 +1083,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void resultFilePath(int tag, List<String> paths, boolean isCancel,
                                boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
         initFaceSdkModel.getHasLoadSdkOk(() -> {
-            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "all_next_step_type_num", templateItem.getTitle());
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "all_next_step_type_num", templateItem.getTemplate_type());
             LogUtil.d("OOM3", "模型也加载完成");
             if (!isCancel && !ondestroy && paths != null && paths.size() > 0) {
                 if (albumFileList.get(0).isClickToCamera()) {
@@ -1135,10 +1135,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         }
                     } else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
                         int api_type = templateItem.getApi_type();
-                        mMvpPresenter.ToDressUpSpecial(paths, api_type, templateId, templateItem.getTitle());
+                        mMvpPresenter.ToDressUpSpecial(paths, api_type, templateId, templateItem.getTitle(),templateItem.getType());
                     }else if (mOldFromTo.equals(FromToTemplate.TEMPLATESPECIAL1)) {
                         int api_type = templateItem.getApi_type();
-                        mMvpPresenter.ToTemplateAddStickerActivity(paths, templateItem.getTitle(), templateId,api_type);
+                        mMvpPresenter.ToTemplateAddStickerActivity(paths, templateItem.getTitle(), templateId,api_type,templateItem.getType());
                     }
 
                     else if (templateItem.getIs_anime() == 1) {

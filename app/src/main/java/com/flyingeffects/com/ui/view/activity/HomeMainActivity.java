@@ -453,10 +453,24 @@ public class HomeMainActivity extends FragmentActivity {
 
         LanSongFileUtil.deleteDefaultDir();
         //清理外部sdk
+//        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+//            for (String s : CATCH_DIRECTORY) {
+//                DataCleanManager.deleteFilesByDirectory(getExternalFilesDir(s));
+//            }
+//        }
+        //清理外部sdk
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            for (String s : CATCH_DIRECTORY) {
-                DataCleanManager.deleteFilesByDirectory(getExternalFilesDir(s));
-            }
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("dynamic"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("runCatch"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("def"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("imageCopy"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("faceFolder"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("faceMattingFolder"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("soundFolder"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("DownVideo"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("toHawei"));
         }
 
     }

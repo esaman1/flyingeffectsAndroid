@@ -119,6 +119,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     private String mIsFrom;
     private String title;
     private String templateId;
+    private String templateType;
 
     @Override
     protected int getLayoutId() {
@@ -133,6 +134,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         LogUtil.d("OOM", "path=" + videoPath);
         mIsFrom = getIntent().getStringExtra("IsFrom");
         templateId=getIntent().getStringExtra("templateId");
+        templateType=getIntent().getStringExtra("templateType");
         presenter = new TemplateAddStickerMvpPresenter(this, this, ll_space, viewLayerRelativeLayout, videoPath, dialogShare, title);
         if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频值
@@ -538,7 +540,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                     StatisticsEventAffair.getInstance().setFlag(this, "12_shoot_finish_save");
                 }
                 presenter.toSaveVideo(0);
-                TemplateKeepStatistics.getInstance().statisticsToSave(templateId,title);
+                TemplateKeepStatistics.getInstance().statisticsToSave(templateId,title,templateType);
 
                 break;
 

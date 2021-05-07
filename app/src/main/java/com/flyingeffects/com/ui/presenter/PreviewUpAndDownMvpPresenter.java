@@ -31,13 +31,13 @@ public class PreviewUpAndDownMvpPresenter extends BasePresenter implements Previ
         previewUpAndDownMvpModel.requestMessageStatistics(type,message_id,template_id);
     }
 
-    public void ToDressUpSpecial(List<String> paths,int api_type,String templateId,String title){
+    public void ToDressUpSpecial(List<String> paths,int api_type,String templateId,String title,String ToDressUpSpecial){
 
-        previewUpAndDownMvpModel.ToDressUpSpecial(paths,api_type,templateId,title);
+        previewUpAndDownMvpModel.ToDressUpSpecial(paths,api_type,templateId,title,ToDressUpSpecial);
     }
 
-    public void ToTemplateAddStickerActivity(List<String> strToList1,String templateName,String templateId,int api_type){
-        previewUpAndDownMvpModel.ToTemplateAddStickerActivity(strToList1,templateName,templateId,api_type);
+    public void ToTemplateAddStickerActivity(List<String> strToList1,String templateName,String templateId,int api_type,String templateType){
+        previewUpAndDownMvpModel.ToTemplateAddStickerActivity(strToList1,templateName,templateId,api_type,templateType);
     }
 
 

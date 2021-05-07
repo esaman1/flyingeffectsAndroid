@@ -19,9 +19,9 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     private TemplateMvpView home_mvpView;
     private TemplateMvpModel home_model;
 
-    public TemplatePresenter(Context context, TemplateMvpView mvp_view, String fromTo, String templateName,String templateId) {
+    public TemplatePresenter(Context context, TemplateMvpView mvp_view, String fromTo, String templateName,String templateId,String templateType) {
         this.home_mvpView = mvp_view;
-        home_model = new TemplateMvpModel(context, this, fromTo, templateName,templateId);
+        home_model = new TemplateMvpModel(context, this, fromTo, templateName,templateId,templateType);
     }
 
     public void intoMattingVideo(String path, String name) {
@@ -74,8 +74,8 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
-    public void SaveSpecialTemplate(int api_type,boolean nowIsGifTemplate,int needAssetsCount){
-        home_model.SaveSpecialTemplate(api_type,nowIsGifTemplate,needAssetsCount);
+    public void SaveSpecialTemplate(int api_type,boolean nowIsGifTemplate,int needAssetsCount, boolean isMatting){
+        home_model.SaveSpecialTemplate(api_type,nowIsGifTemplate,needAssetsCount,isMatting);
     }
 
 

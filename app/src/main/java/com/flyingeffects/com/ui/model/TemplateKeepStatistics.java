@@ -29,8 +29,8 @@ public class TemplateKeepStatistics {
 
 
 
-    public void statisticsToSave(String templateId,String title) {
-        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "all_save_type_num",title);
+    public void statisticsToSave(String templateId,String title,String templateType) {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "all_save_type_num",templateType);
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
         params.put("action_type", 2 + "");

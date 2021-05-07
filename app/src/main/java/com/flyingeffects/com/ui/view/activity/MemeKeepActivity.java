@@ -64,6 +64,7 @@ public class MemeKeepActivity extends BaseActivity {
     private LinearLayout dialogShare;
     private String title;
     private String templateId;
+    private String templateType;
     /**
      * 0  视频 1 gif
      */
@@ -80,6 +81,7 @@ public class MemeKeepActivity extends BaseActivity {
         View rootView = mBinding.getRoot();
         videoPath = getIntent().getStringExtra("videoPath");
         templateId = getIntent().getStringExtra("templateId");
+        templateType=getIntent().getStringExtra("templateType");
         title = getIntent().getStringExtra(title);
         if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(videoPath))) {
             Typematerial = 0;
@@ -135,7 +137,8 @@ public class MemeKeepActivity extends BaseActivity {
         } else if (view == mBinding.ivBack) {
             finish();
         } else if (view == mBinding.llKeep) {
-            TemplateKeepStatistics.getInstance().statisticsToSave(templateId, title);
+            LogUtil.d("OOM22","埋点st_bqb_save"+title);
+            TemplateKeepStatistics.getInstance().statisticsToSave(templateId, title,templateType);
             StatisticsEventAffair.getInstance().setFlag(MemeKeepActivity.this, "st_bqb_save", title);
             //保存到本地
             String keepPath = SaveAlbumPathModel.getInstance().getKeepOutputForGif();

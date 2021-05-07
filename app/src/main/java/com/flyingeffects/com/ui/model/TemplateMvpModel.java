@@ -85,9 +85,10 @@ public class TemplateMvpModel {
     private String saveVideoPath;
     private String templateName;
     private String templateId;
+    private String templateType;
 
 
-    public TemplateMvpModel(Context context, TemplateMvpCallback callback, String fromTo, String templateName, String templateId) {
+    public TemplateMvpModel(Context context, TemplateMvpCallback callback, String fromTo, String templateName, String templateId,String templateType) {
         this.context = context;
         this.callback = callback;
         this.fromTo = fromTo;
@@ -99,6 +100,7 @@ public class TemplateMvpModel {
         backgroundPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "background");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         saveVideoPath = fileManager.getFileCachePath(context, "saveVideoPath");
+        this.templateType=templateType;
         isOnDestroy = false;
     }
 
@@ -333,17 +335,22 @@ public class TemplateMvpModel {
      * creation date: 2021/4/20
      * user : zhangtongju
      */
-    public void SaveSpecialTemplate(int api_type ,boolean nowIsGifTemplate,int needAssetsCount){
+    public void SaveSpecialTemplate(int api_type, boolean nowIsGifTemplate, int needAssetsCount, boolean isMatting) {
         String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
         List<String> list = Arrays.asList(paths);
         List strToList1 = new ArrayList(list);
-        if(needAssetsCount==1&&strToList1.size()>1&&albumType.isImage(GetPathTypeModel.getInstance().getMediaType(paths[0]))){
+        if (needAssetsCount == 1 && strToList1.size() > 1 && albumType.isImage(GetPathTypeModel.getInstance().getMediaType(paths[0]))) {
             //图片去掉mask图层
             strToList1.remove(1);
+        } else if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(paths[0])) && !isMatting) {
+            strToList1.remove(1);
         }
+
         DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
-            if (nowIsGifTemplate||url.contains("gif")) {
+            LogUtil.d("oom22","templateName="+templateName);
+            if (nowIsGifTemplate || url.contains("gif")) {
                 Intent intent = new Intent(context, MemeKeepActivity.class);
+                intent.putExtra("templateType", templateType);
                 intent.putExtra("videoPath", url);
                 intent.putExtra("title", templateName);
                 intent.putExtra("templateId", templateId);
@@ -352,6 +359,7 @@ public class TemplateMvpModel {
             } else {
                 Intent intent = new Intent(context, TemplateAddStickerActivity.class);
                 intent.putExtra("videoPath", url);
+                intent.putExtra("templateType", templateType);
                 intent.putExtra("title", templateName);
                 intent.putExtra("templateId", templateId);
                 intent.putExtra("IsFrom", fromTo);
@@ -378,6 +386,7 @@ public class TemplateMvpModel {
             if (isSucceed && !isOnDestroy) {
                 if (nowIsGifTemplate) {
                     Intent intent = new Intent(context, MemeKeepActivity.class);
+                    intent.putExtra("templateType",templateType);
                     intent.putExtra("videoPath", outputPath);
                     intent.putExtra("title", templateName);
                     intent.putExtra("templateId", templateId);

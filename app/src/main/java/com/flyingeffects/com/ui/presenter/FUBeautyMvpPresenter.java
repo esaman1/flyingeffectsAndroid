@@ -211,6 +211,7 @@ public class FUBeautyMvpPresenter extends BasePresenter implements FUBeautyMvpCa
             Intent intent = new Intent(context, TemplateAddStickerActivity.class);
             intent.putExtra("videoPath", path);
             intent.putExtra("title", "拍摄入口");
+            intent.putExtra("templateType", "-1");
             intent.putExtra("IsFrom", FromToTemplate.SHOOT);
             context.startActivity(intent);
         } else {

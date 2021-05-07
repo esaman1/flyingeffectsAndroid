@@ -1141,7 +1141,7 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2021/4/19
      * user : zhangtongju
      */
-    public void ToDressUpSpecial(List<String> paths, int api_type, String templateId, String title) {
+    public void ToDressUpSpecial(List<String> paths, int api_type, String templateId, String title, String templateType) {
         Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             LogUtil.d("OOM3", "toDressUp");
             DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
@@ -1150,6 +1150,7 @@ public class PreviewUpAndDownMvpModel {
                     if (url.contains("mp4")) {
                         //视频的话进入到gif 页面
                         Intent intent = new Intent(context, MemeKeepActivity.class);
+                        intent.putExtra("templateType", templateType);
                         intent.putExtra("videoPath", url);
                         intent.putExtra("title", title);
                         intent.putExtra("templateId", templateId);
@@ -1176,16 +1177,16 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-
-    public void ToTemplateAddStickerActivity(List<String> strToList1,String templateName,String templateId,int api_type){
+    public void ToTemplateAddStickerActivity(List<String> strToList1, String templateName, String templateId, int api_type, String templateType) {
 
         DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
-                Intent intent = new Intent(context, TemplateAddStickerActivity.class);
-                intent.putExtra("videoPath", url);
-                intent.putExtra("title", templateName);
-                intent.putExtra("templateId", templateId);
-                intent.putExtra("IsFrom", fromTo);
-                context.startActivity(intent);
+            Intent intent = new Intent(context, TemplateAddStickerActivity.class);
+            intent.putExtra("templateType", templateType);
+            intent.putExtra("videoPath", url);
+            intent.putExtra("title", templateName);
+            intent.putExtra("templateId", templateId);
+            intent.putExtra("IsFrom", fromTo);
+            context.startActivity(intent);
         }, templateId);
         dressUpModel.toDressUp(strToList1, api_type);
     }
