@@ -6,7 +6,7 @@ import com.flyingeffects.com.view.StickerView;
 
 public interface ICreationTemplateMvpContract {
 
-    public interface ICreationTemplateMvpPresenter {
+    interface ICreationTemplateMvpPresenter {
 
         void itemClickForStickView(AnimStickerModel stickView);
 

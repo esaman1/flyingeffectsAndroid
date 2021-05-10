@@ -167,6 +167,11 @@ public class LoadingDialog extends Dialog implements LifecycleObserver {
         private void loadAd(LinearLayout llAdContainer) {
             AdManager.getInstance().showImageAd(mContext, AdConfigs.AD_IMAGE_LOADING_DIALOG, llAdContainer, new AdManager.Callback() {
                 @Override
+                public void adShow() {
+
+                }
+
+                @Override
                 public void adClose() {
                     llAdContainer.setVisibility(View.GONE);
                 }

@@ -219,9 +219,17 @@ public class HomeMainActivity extends FragmentActivity {
         task = new TimerTask() {
             @Override
             public void run() {
-                AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, () -> {
-                    if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
-                        checkCommentcheck();
+                AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new AdManager.Callback() {
+                    @Override
+                    public void adShow() {
+
+                    }
+
+                    @Override
+                    public void adClose() {
+                        if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
+                            checkCommentcheck();
+                        }
                     }
                 });
                 destroyTimer();

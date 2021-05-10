@@ -171,10 +171,12 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 是不是点击了加字的tab
      */
     private boolean isClickAddTextTag = false;
+
     /**
      * 素材手动拖动
      */
     boolean mSeekBarViewManualDrag = false;
+
     /**
      * 当前播放的进度
      */

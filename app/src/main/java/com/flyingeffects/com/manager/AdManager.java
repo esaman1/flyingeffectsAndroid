@@ -91,6 +91,36 @@ public class AdManager {
 
     ImageAdManager imageAdManager;
 
+    public void showImageAd(Context context, String id, LinearLayout ll_ad_container) {
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            imageAdManager = new ImageAdManager();
+            imageAdManager.showImageAd(context, id, ll_ad_container, null, new ImageAdCallBack() {
+                @Override
+                public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {
+                    if (adView != null) {
+                        ll_ad_container.removeAllViews();
+                        ll_ad_container.addView(adView);
+                    }
+                }
+
+                @Override
+                public void onImageAdError(String error) {
+                    LogUtil.e("ImageAdError = " + error);
+                }
+
+                @Override
+                public void onImageAdClose() {
+                }
+
+                @Override
+                public boolean onImageAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                    return false;
+                }
+            });
+        }
+    }
+
+
     public void showImageAd(Context context, String id, LinearLayout ll_ad_container, Callback callback) {
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             imageAdManager = new ImageAdManager();
@@ -100,6 +130,7 @@ public class AdManager {
                     if (adView != null) {
                         ll_ad_container.removeAllViews();
                         ll_ad_container.addView(adView);
+                        callback.adShow();
                     }
                 }
 
@@ -204,6 +235,8 @@ public class AdManager {
 
 
     public interface Callback {
+        void adShow();
+
         void adClose();
     }
 

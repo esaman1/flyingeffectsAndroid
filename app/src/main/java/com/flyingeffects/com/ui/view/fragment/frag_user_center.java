@@ -167,11 +167,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
             }
         });
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-            AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, mLLADContent, new AdManager.Callback() {
-                @Override
-                public void adClose() {
-                }
-            });
+            AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, mLLADContent);
             loadImageAd();
         }
 

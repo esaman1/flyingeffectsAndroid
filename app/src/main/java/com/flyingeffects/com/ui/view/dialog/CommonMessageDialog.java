@@ -180,6 +180,7 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
 
             if (mAdStatus == AD_STATUS_BOTTOM) {
                 groupAdDialog = mView.findViewById(R.id.group_ad_dialog);
+                groupAdDialog.setVisibility(View.GONE);
 
                 mView.findViewById(R.id.iv_dialog_ad_close).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -269,6 +270,13 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
 
         private void loadAd(LinearLayout llAdContainer, String id) {
             AdManager.getInstance().showImageAd(mContext, id, llAdContainer, new AdManager.Callback() {
+                @Override
+                public void adShow() {
+                    if (mAdStatus == AD_STATUS_BOTTOM) {
+                        groupAdDialog.setVisibility(View.VISIBLE);
+                    }
+                }
+
                 @Override
                 public void adClose() {
                     if (mAdStatus == AD_STATUS_BOTTOM) {
