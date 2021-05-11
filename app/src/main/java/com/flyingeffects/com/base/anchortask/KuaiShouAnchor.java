@@ -29,8 +29,8 @@ public class KuaiShouAnchor extends AnchorTask {
 
     private void initKuaiShouAd() {
         TurboAgent.init(TurboConfig.TurboConfigBuilder.create(BaseApplication.getInstance())
-                .setAppId("69212")
-                .setAppName("sweetshot")
+                .setAppId("70409")
+                .setAppName("feishan")
                 .setAppChannel(ChannelUtil.getChannel(BaseApplication.getInstance()))
                 .setOAIDProxy(new OAIDProxy() {
                     @Override

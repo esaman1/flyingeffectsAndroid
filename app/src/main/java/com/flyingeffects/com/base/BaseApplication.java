@@ -75,7 +75,7 @@ public class BaseApplication extends MultiDexApplication {
                 .addTask(TaskNameConstants.INIT_EMOJI)
                 .addTask(TaskNameConstants.INIT_ALBUM)
                 .addTask(TaskNameConstants.INIT_FU)
-                //.addTask(TaskNameConstants.INIT_KUAI_SHOU_MONITOR)
+                .addTask(TaskNameConstants.INIT_KUAI_SHOU_MONITOR)
                 .build();
 
         project.start().await(3000);

@@ -96,6 +96,7 @@ public class WelcomeActivity extends BaseActivity {
         if (BaseConstans.isFirstOpenApp()) {
             BaseConstans.setFirstOpenApp(System.currentTimeMillis()); //记录第一次打开app的时间
             BaseConstans.setOpenAppNum(1); //打开app的次数为1
+
         } else {
             int openAppNum = BaseConstans.getOpenAppNum();
             openAppNum++;
