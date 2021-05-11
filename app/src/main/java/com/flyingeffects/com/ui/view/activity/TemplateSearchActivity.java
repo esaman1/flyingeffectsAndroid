@@ -190,6 +190,16 @@ public class TemplateSearchActivity extends BaseActivity {
                 public void adClose() {
 
                 }
+
+                @Override
+                public void onScreenAdShow() {
+
+                }
+
+                @Override
+                public void onScreenAdError() {
+
+                }
             });
         }
         tv_search.setOnClickListener(new View.OnClickListener() {

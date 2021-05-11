@@ -171,6 +171,16 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 @Override
                 public void adClose() {
                 }
+
+                @Override
+                public void onScreenAdShow() {
+
+                }
+
+                @Override
+                public void onScreenAdError() {
+
+                }
             });
             loadImageAd();
         }

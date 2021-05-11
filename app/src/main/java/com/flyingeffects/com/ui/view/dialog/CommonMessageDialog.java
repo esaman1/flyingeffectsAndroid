@@ -277,6 +277,16 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
                         llAdContainer.setVisibility(View.GONE);
                     }
                 }
+
+                @Override
+                public void onScreenAdShow() {
+
+                }
+
+                @Override
+                public void onScreenAdError() {
+
+                }
             });
         }
 
