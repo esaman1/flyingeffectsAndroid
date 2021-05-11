@@ -27,7 +27,9 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.kwai.monitor.log.TurboAgent;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
 import com.orhanobut.hawk.Hawk;
@@ -37,14 +39,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
 
 import rx.Observable;
 
 public class WelcomeActivity extends BaseActivity {
+
     private static final String TAG = "WelcomeActivity";
     private final int BUILD_VERSION = 23;
     private final int PERMISSION_REQUEST_CODE = 1024;
@@ -76,6 +81,9 @@ public class WelcomeActivity extends BaseActivity {
         LogUtil.d(TAG, "Application WelcomeActivity show");
         LogUtil.d("OOM", "WelcomeActivity");
         BaseConstans.setOddNum();
+        //快手集成sdk 应用活跃事件
+        TurboAgent.onAppActive();
+        checkNextDayStay();
         //解决广告bug ,点击图标后广告爆款广告不弹出来
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -102,6 +110,24 @@ public class WelcomeActivity extends BaseActivity {
     }
 
     /**
+     * 快手 记录次日留存和7日留存
+     */
+    private void checkNextDayStay() {
+        Date date = new Date();
+        if (BaseConstans.getFirstUseAppTime() != 0) {
+            long t1 = TimeUtils.millis2Days(date.getTime(), TimeZone.getDefault());
+            long t2 = TimeUtils.millis2Days(BaseConstans.getFirstUseAppTime(), TimeZone.getDefault());
+
+            if (t1 - t2 == 1) {
+                TurboAgent.onNextDayStay();
+            }
+//            else if (t1 - t2 == 6) {
+//                TurboAgent.onWeekStay();
+//            }
+        }
+    }
+
+    /**
      * 权限检测
      */
     @TargetApi(Build.VERSION_CODES.M)
@@ -123,7 +149,7 @@ public class WelcomeActivity extends BaseActivity {
             }
             hasPermission = true;
 
-            LogUtil.d("oom2222", "BaseConstans.getNextIsNewUser()=" + BaseConstans.getNextIsNewUser()+"BaseConstans.getHasAdvertising() ="+BaseConstans.getHasAdvertising() );
+            LogUtil.d("oom2222", "BaseConstans.getNextIsNewUser()=" + BaseConstans.getNextIsNewUser() + "BaseConstans.getHasAdvertising() =" + BaseConstans.getHasAdvertising());
 
             if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
                 showSplashAd();
@@ -192,7 +218,7 @@ public class WelcomeActivity extends BaseActivity {
                 }
                 LogUtil.d("oom2222", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
-                    LogUtil.d("oom2222", "请求开屏广告" );
+                    LogUtil.d("oom2222", "请求开屏广告");
                     showSplashAd();
                 }
             }
@@ -234,6 +260,8 @@ public class WelcomeActivity extends BaseActivity {
             if (agree) {
                 BaseConstans.setFirstClickUseApp();
                 getPermission();
+                Date date = new Date();
+                BaseConstans.setFirstUseAppTime(date.getTime());
             } else {
                 this.finish();
             }
@@ -249,7 +277,7 @@ public class WelcomeActivity extends BaseActivity {
      * 展示开屏广告
      */
     private void showSplashAd() {
-        LogUtil.d("oom2222", "showSplashAd"  );
+        LogUtil.d("oom2222", "showSplashAd");
         Log.d(TAG, "Application start finished");
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
@@ -257,7 +285,7 @@ public class WelcomeActivity extends BaseActivity {
 
                 @Override
                 public void onAdSuccess() {
-                    LogUtil.d("oom2222", "onAdSuccess"  );
+                    LogUtil.d("oom2222", "onAdSuccess");
 
                     isShow = true;
                     StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
@@ -266,7 +294,7 @@ public class WelcomeActivity extends BaseActivity {
 
                 @Override
                 public void onAdError(String errorMsg) {
-                    LogUtil.d("oom2222", "errorMsg="+errorMsg  );
+                    LogUtil.d("oom2222", "errorMsg=" + errorMsg);
                     isShow = false;
                     intoMain();
                     finish();
@@ -274,19 +302,19 @@ public class WelcomeActivity extends BaseActivity {
 
                 @Override
                 public boolean onAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
-                    LogUtil.d("oom2222", "onAdClicked" );
+                    LogUtil.d("oom2222", "onAdClicked");
                     return false;
                 }
 
                 @Override
                 public void onAdTick(long millisUntilFinished) {
-                    LogUtil.d("oom2222", "onAdTick" );
+                    LogUtil.d("oom2222", "onAdTick");
                     mBinding.tvSkip.setText(String.format("跳过 %d", Math.round(millisUntilFinished / 1000f)));
                 }
 
                 @Override
                 public void onAdDismissed() {
-                    LogUtil.d("oom2222", "onAdDismissed" );
+                    LogUtil.d("oom2222", "onAdDismissed");
                     next();
                 }
             });
@@ -396,7 +424,7 @@ public class WelcomeActivity extends BaseActivity {
                         } else if (id == 24) {
                             //首次安装前几次无广告
                             int newUserIsVip = Integer.parseInt(config.getValue());
-                            LogUtil.d("OOM2","newUserIsVip="+newUserIsVip);
+                            LogUtil.d("OOM2", "newUserIsVip=" + newUserIsVip);
                             if (BaseConstans.getOpenAppNum() < newUserIsVip - 1) {
                                 BaseConstans.setNextNewUser(true);
                             } else {
@@ -441,13 +469,13 @@ public class WelcomeActivity extends BaseActivity {
                         } else if (id == 72) {
                             String value = config.getValue();
                             BaseConstans.setHasAdEntrance(value);
-                        }else if(id == 73){
+                        } else if (id == 73) {
                             String value = config.getValue();
                             BaseConstans.setGifCourse(value);
-                        }else if(id == 74){
-                            String video_error_can_save=config.getValue();
+                        } else if (id == 74) {
+                            String video_error_can_save = config.getValue();
                             //1 表示能保存 0 表示不能保存
-                            LogUtil.d("OOM3","video_error_can_save="+video_error_can_save);
+                            LogUtil.d("OOM3", "video_error_can_save=" + video_error_can_save);
                             BaseConstans.setAdShowErrorCanSave(video_error_can_save);
                         }
                     }

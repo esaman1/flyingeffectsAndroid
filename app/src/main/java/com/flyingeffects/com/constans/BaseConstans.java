@@ -527,6 +527,14 @@ public class BaseConstans {
         return spUtil.getString("DouyingTopic", "飞闪视频");
     }
 
+    public static void setFirstUseAppTime(long firstUseAppTime) {
+        SPHelper.getInstance().putLong("firstUseAppTime", firstUseAppTime);
+    }
+
+    public static long getFirstUseAppTime() {
+        return SPHelper.getInstance().getLong("firstUseAppTime", 0);
+    }
+
     /**
      * 设置换装制作页面切换模板按钮加载视频广告的间隔次数
      */

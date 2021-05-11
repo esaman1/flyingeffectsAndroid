@@ -1737,7 +1737,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
     private float percentageH;
 
     public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime, long cutStartTime, long cutEndTime, String title) {
-        mPresenter.dismissStickerFrame();
+        mPresenter.dismissTextStickerFrame();
 
         if (templateId != 0) {
             LogUtil.d("OOM", "toSaveVideo-templateId=" + templateId);
