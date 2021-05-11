@@ -1,75 +1,85 @@
 package com.flyingeffects.com.ui.interfaces.contract;
 
+import com.flyingeffects.com.base.mvpBase.BaseModel;
+import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.base.mvpBase.BaseView;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.view.StickerView;
 
 public interface ICreationTemplateMvpContract {
 
-    interface ICreationTemplateMvpPresenter {
+    abstract class CreationTemplateMvpPresenter extends BasePresenter<ICreationTemplateMvpView, ICreationTemplateMvpModel> {
 
-        void itemClickForStickView(AnimStickerModel stickView);
+        public abstract void itemClickForStickView(AnimStickerModel stickView);
 
-        void hasPlayingComplete();
+        public abstract void hasPlayingComplete();
 
-        void chooseMusicIndex(int index);
+        public abstract void chooseMusicIndex(int index);
 
-        void deleteFirstSticker();
+        public abstract void deleteFirstSticker();
 
-        void hideKeyBord();
+        public abstract void hideKeyBord();
 
-        void stickerOnclickCallback(String title);
+        public abstract void stickerOnclickCallback(String title);
 
-        void animIsComplate();
+        public abstract void animIsComplate();
 
-        void getVideoDuration(long duration);
+        public abstract void getVideoDuration(long duration);
 
-        void needPauseVideo();
+        public abstract void needPauseVideo();
 
-        void getVideoCover(String path,String originalPath);
+        public abstract void getVideoCover(String path, String originalPath);
 
-        void getBgmPath(String path);
+        public abstract void getBgmPath(String path);
 
-        void showRenderVideoTime(int duration);
+        public abstract void showRenderVideoTime(int duration);
 
-        void changFirstVideoSticker(String path);
+        public abstract void changFirstVideoSticker(String path);
 
-        void isFirstAddSuccess();
+        public abstract void isFirstAddSuccess();
 
-        void showCreateTemplateAnim(boolean isShow);
+        public abstract void showCreateTemplateAnim(boolean isShow);
 
-        void showMusicBtn(boolean isShow);
+        public abstract void showMusicBtn(boolean isShow);
 
-        void showTextDialog(String inputText);
+        public abstract void showTextDialog(String inputText);
 
-        void hineTextDialog();
+        public abstract void hineTextDialog();
 
-        void addStickerTimeLine(String id, boolean isText, String text, StickerView stickerView);
+        public abstract void addStickerTimeLine(String id, boolean isText, String text, StickerView stickerView);
 
-        void updateTimeLineSickerText(String text,String id);
+        public abstract void updateTimeLineSickerText(String text, String id);
 
-        void deleteTimeLineSicker(String id);
+        public abstract void deleteTimeLineSicker(String id);
 
-        void showTimeLineSickerArrow(String id);
+        public abstract void showTimeLineSickerArrow(String id);
 
-        void modifyTimeLineSickerPath(String id,String path,StickerView stickerView);
+        public abstract void modifyTimeLineSickerPath(String id, String path, StickerView stickerView);
 
-        void stickerFragmentClose();
+        public abstract void stickerFragmentClose();
 
-        void showLoadingDialog();
+        public abstract void showLoadingDialog();
 
-        void dismissLoadingDialog();
+        public abstract void dismissLoadingDialog();
 
-        void setDialogProgress(String title, int dialogProgress, String content);
+        public abstract void setDialogProgress(String title, int dialogProgress, String content);
 
-        void chooseBack(String title, String path);
+        public abstract void chooseBack(String title, String path);
 
-        void chooseFrame(String path);
+        public abstract void chooseFrame(String path);
 
-        void dismissFrame();
+        public abstract void dismissFrame();
+
+        public abstract void dismissStickerFrame();
+
+        public abstract void setVideoPath(String path);
+
+        public abstract void dismissTextStickerFrame();
+
+        public abstract void buildBottomViewPager(int from);
     }
 
-    public interface ICreationTemplateMvpView extends BaseView {
+    interface ICreationTemplateMvpView extends BaseView {
 
         void itemClickForStickView(AnimStickerModel stickView);
 
@@ -89,7 +99,7 @@ public interface ICreationTemplateMvpContract {
 
         void needPauseVideo();
 
-        void getVideoCover(String path,String originalPath);
+        void getVideoCover(String path, String originalPath);
 
         void getBgmPath(String path);
 
@@ -101,20 +111,19 @@ public interface ICreationTemplateMvpContract {
 
         void showCreateTemplateAnim(boolean isShow);
 
-
         void showMusicBtn(boolean isShow);
 
         void animIsComplate();
 
-        void addStickerTimeLine(String id,boolean isText,String text,StickerView stickerView);
+        void addStickerTimeLine(String id, boolean isText, String text, StickerView stickerView);
 
-        void updateTimeLineSickerText(String text,String id);
+        void updateTimeLineSickerText(String text, String id);
 
         void deleteTimeLineSicker(String id);
 
         void showTimeLineSickerArrow(String id);
 
-        void modifyTimeLineSickerPath(String id,String path,StickerView stickerView);
+        void modifyTimeLineSickerPath(String id, String path, StickerView stickerView);
 
         void stickerFragmentClose();
 
@@ -129,10 +138,16 @@ public interface ICreationTemplateMvpContract {
         void chooseFrame(String path);
 
         void dismissFrame();
+
+        void dismissStickerFrame();
+
+        void dismissTextStickerFrame();
+
+        void buildBottomViewPager(int from);
     }
 
-    public interface ICreationTemplateMvpModel {
-
+    interface ICreationTemplateMvpModel extends BaseModel {
+        void setVideoPath(String path);
 
     }
 

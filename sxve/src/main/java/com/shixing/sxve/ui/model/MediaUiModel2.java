@@ -7,7 +7,6 @@ import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PathMeasure;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.media.ExifInterface;
@@ -17,8 +16,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.AssetDelegate;
-import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.util.AffineTransform;
 import com.shixing.sxve.ui.util.BitmapCompress;
 import com.shixing.sxve.ui.util.PhotoBitmapUtils;
@@ -30,7 +29,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -561,7 +559,7 @@ public class MediaUiModel2 extends MediaUiModel {
             }
 
             //是图片或者第二张图片和第一张一样，说明用户选择了视频没有抠图，那么和图片的逻辑一样的，需要一个白色图片
-            if (albumType.isImage(mimeType) || cartoonPath.equals(mVideoPath)) {
+            if (AlbumType.isImage(mimeType) || cartoonPath.equals(mVideoPath)) {
                 Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
                 Matrix matrix = new Matrix(mMatrix);

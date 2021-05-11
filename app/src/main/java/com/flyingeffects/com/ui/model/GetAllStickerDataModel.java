@@ -8,7 +8,7 @@ import com.flyingeffects.com.enity.AllStickerData;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.utils.ScreenCaptureUtil;
 import com.flyingeffects.com.view.StickerView;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 
 import java.util.ArrayList;
 
@@ -69,7 +69,7 @@ public class GetAllStickerDataModel {
             stickerData.setTranslationy(stickerView.getTranslationY());
             if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
                 String pathType = GetPathTypeModel.getInstance().getMediaType(stickerView.getOriginalPath());
-                stickerData.setVideo(albumType.isVideo(pathType));
+                stickerData.setVideo(AlbumType.isVideo(pathType));
             }
             if (stickerView.getComeFrom()) {
                 //来自相册，不是gif

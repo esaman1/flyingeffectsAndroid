@@ -24,7 +24,7 @@ import com.flyingeffects.com.view.RangeSeekBarForMusicView;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.beans.Thumb;
 import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
@@ -120,7 +120,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     private void toDownVideo(String path) {
         if (!TextUtils.isEmpty(path) && !path.contains("http")) {
             String mimeType = GetPathType.getInstance().getPathType(path);
-            if (albumType.isVideo(mimeType)) {
+            if (AlbumType.isVideo(mimeType)) {
                 LogUtil.d("OOM", "当前的地址是本地视频地址" + path);
                 toSplitMp4(path);
             } else {
@@ -138,7 +138,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             LogUtil.d("OOM", "当前的地址是网络地址" + path);
             String videoName;
             String mimeType = GetPathType.getInstance().getPathType(path);
-            if (albumType.isVideo(mimeType)) {
+            if (AlbumType.isVideo(mimeType)) {
                 LogUtil.d("OOM", "当前的地址是网络视频音频地址" + path);
                 nowMaterialIsVideo = true;
                 videoName = mVideoFolder + File.separator + "downPath.mp4";

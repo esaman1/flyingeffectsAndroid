@@ -13,7 +13,6 @@ import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 
 import com.bumptech.glide.Glide;
@@ -43,9 +42,9 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
 import com.orhanobut.hawk.Hawk;
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
-import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.model.MediaUiModel2;
 import com.shixing.sxve.ui.model.TemplateModel;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -165,7 +164,7 @@ public class TemplateMvpModel {
      */
     public void getMattingVideoCover(String path) {
         //如果是选择视频，那么需要第一针显示为用户
-        if (albumType.isImage(GetPathType.getInstance().getPathType(path))) {
+        if (AlbumType.isImage(GetPathType.getInstance().getPathType(path))) {
             Bitmap mattingMp = BitmapFactory.decodeFile(path);
             callback.showMattingVideoCover(mattingMp, path);
         } else {
@@ -272,7 +271,7 @@ public class TemplateMvpModel {
                 String[] newPaths = new String[paths.length + 1];
                 System.arraycopy(paths, 0, newPaths, 0, paths.length);
                 MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(0).ui;
-                if (albumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))) {
+                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))) {
                     newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixVideo(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
                 } else {
                     newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixImage(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
@@ -339,10 +338,10 @@ public class TemplateMvpModel {
         String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
         List<String> list = Arrays.asList(paths);
         List strToList1 = new ArrayList(list);
-        if (needAssetsCount == 1 && strToList1.size() > 1 && albumType.isImage(GetPathTypeModel.getInstance().getMediaType(paths[0]))) {
+        if (needAssetsCount == 1 && strToList1.size() > 1 && AlbumType.isImage(GetPathTypeModel.getInstance().getMediaType(paths[0]))) {
             //图片去掉mask图层
             strToList1.remove(1);
-        } else if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(paths[0])) && !isMatting) {
+        } else if (AlbumType.isVideo(GetPathTypeModel.getInstance().getMediaType(paths[0])) && !isMatting) {
             strToList1.remove(1);
         }
 

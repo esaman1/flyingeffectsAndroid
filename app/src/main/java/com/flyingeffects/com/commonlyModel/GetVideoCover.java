@@ -10,7 +10,7 @@ import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.LogUtil;
 import com.glidebitmappool.GlideBitmapPool;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class GetVideoCover {
      * user : zhangtongju
      */
     public void getFileCoverForBitmap(String path,getCoverSuccessForBitmap callback) {
-        if (albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
+        if (AlbumType.isVideo(GetPathType.getInstance().getPathType(path))) {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(path);
             callback.getCoverBitmap(retriever.getFrameAtTime(0));

@@ -46,7 +46,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -442,7 +442,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     mattingImage.createHandle(getActivity(), isDone -> {
                         if (isDone) {
                             String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
-                            if (albumType.isVideo(pathType)) {
+                            if (AlbumType.isVideo(pathType)) {
                                 Intent intent = new Intent(getActivity(), VideoCropActivity.class);
                                 intent.putExtra("videoPath", paths.get(0));
                                 intent.putExtra("comeFrom", "");

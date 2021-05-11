@@ -65,7 +65,7 @@ import com.github.penfeizhou.animation.loader.ResourceStreamLoader;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.nineton.ntadsdk.itr.VideoAdCallBack;
 import com.nineton.ntadsdk.manager.VideoAdManager;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.yanzhenjie.album.AlbumFile;
@@ -614,7 +614,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
-        if (!TextUtils.isEmpty(templateItem.getType()) && "1".equals(templateItem.getType()) && BaseConstans.getIncentiveVideo()) {
+        if (!TextUtils.isEmpty(templateItem.getType()) && "1"
+                .equals(templateItem.getType()) && BaseConstans.getIncentiveVideo()) {
             showMessageDialog();
         } else {
             hasLoginToNext();
@@ -631,8 +632,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), tag);
         mAdDialogIsShow = true;
         StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert", "");
+
         int showAd = BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() ?
                 CommonMessageDialog.AD_STATUS_BOTTOM : CommonMessageDialog.AD_STATUS_NONE;
+
         CommonMessageDialog.getBuilder(mContext)
                 .setContentView(R.layout.dialog_common_message_ad_under)
                 .setAdStatus(showAd)
@@ -1187,7 +1190,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                             LogUtil.d("OOM6", "is_pic==0");
                             String path = paths.get(0);
                             String pathType = GetPathTypeModel.getInstance().getMediaType(path);
-                            if (albumType.isImage(pathType)) {
+                            if (AlbumType.isImage(pathType)) {
                                 //选择的时图片
                                 if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
                                     StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "8_SelectImage");
@@ -1255,7 +1258,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     private void chooseAlbumStatistics(List<String> paths) {
         if (paths != null && paths.size() > 0) {
             for (String path : paths) {
-                if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(path))) {
+                if (AlbumType.isImage(GetPathTypeModel.getInstance().getMediaType(path))) {
                     StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "userChooseType", "选择的是图片");
                     LogUtil.d("OOM", "当前选择的是图片");
                 } else {

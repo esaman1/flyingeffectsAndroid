@@ -34,7 +34,7 @@ import com.lansosdk.box.SubLayer;
 import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 
 import java.io.File;
 import java.io.Serializable;
@@ -782,7 +782,7 @@ public class BackgroundDraw {
         for (int i = 0; i < list.size(); i++) {
             AllStickerData item = list.get(i);
             String pathType = GetPathTypeModel.getInstance().getMediaType(item.getPath());
-            if (albumType.isVideo(pathType)) {
+            if (AlbumType.isVideo(pathType)) {
                 if (isMatting) {
                     intoCanvesCount++;
                     addCanversLayer(item, intoCanvesCount);

@@ -1,60 +1,40 @@
 package com.flyingeffects.com.base;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
 
-import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
-import com.bytedance.sdk.open.douyin.DouYinOpenConfig;
-import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
-import com.faceunity.FURenderer;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.anchortask.AnchorTaskCreator;
 import com.flyingeffects.com.base.anchortask.TaskNameConstants;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.isIntoBackground;
-import com.flyingeffects.com.manager.AdConfigs;
-import com.flyingeffects.com.manager.MediaLoader;
-import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
 import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;
 import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.SystemUtil;
-import com.green.hand.library.EmojiManager;
-import com.lansosdk.box.OnLanSongLogOutListener;
-import com.lansosdk.videoeditor.LanSoEditor;
-import com.nineton.ntadsdk.NTAdConfig;
-import com.nineton.ntadsdk.NTAdSDK;
-import com.orhanobut.hawk.Hawk;
+import com.kwai.monitor.log.OAIDProxy;
+import com.kwai.monitor.log.TurboAgent;
+import com.kwai.monitor.log.TurboConfig;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.shixing.sxvideoengine.License;
-import com.shixing.sxvideoengine.SXLog;
-import com.umeng.commonsdk.UMConfigure;
 import com.xj.anchortask.library.AnchorProject;
 import com.xj.anchortask.library.OnProjectExecuteListener;
 import com.xj.anchortask.library.log.LogUtils;
 import com.xj.anchortask.library.monitor.OnGetMonitorRecordCallback;
-import com.yanzhenjie.album.Album;
-import com.yanzhenjie.album.AlbumConfig;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Locale;
 import java.util.Map;
 
-import cn.jpush.android.api.JPushInterface;
-import cn.nt.lib.analytics.NTAnalytics;
 import de.greenrobot.event.EventBus;
 import rx.subjects.PublishSubject;
 
@@ -95,6 +75,7 @@ public class BaseApplication extends MultiDexApplication {
                 .addTask(TaskNameConstants.INIT_EMOJI)
                 .addTask(TaskNameConstants.INIT_ALBUM)
                 .addTask(TaskNameConstants.INIT_FU)
+                //.addTask(TaskNameConstants.INIT_KUAI_SHOU_MONITOR)
                 .build();
 
         project.start().await(3000);
@@ -229,16 +210,14 @@ public class BaseApplication extends MultiDexApplication {
 
 
     static {
-        SmartRefreshLayout.setDefaultRefreshHeaderCreator((context, layout) -> {
-            return new ClassicsHeader(context).setPrimaryColorId(R.color.black);
-        });
+        SmartRefreshLayout.setDefaultRefreshHeaderCreator((context, layout) ->
+                new ClassicsHeader(context).setPrimaryColorId(R.color.black));
     }
 
 
     public static BaseApplication getInstance() {
         return baseApp;
     }
-
 
 }
 

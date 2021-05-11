@@ -30,7 +30,7 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.beans.VideoTrimmerFrameBean;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -417,7 +417,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
             mTvStickerView.setLayoutParams(parCenter);
         }
 
-        if (albumType.isVideo(GetPathType.getInstance().getPathType(resPath))) {
+        if (AlbumType.isVideo(GetPathType.getInstance().getPathType(resPath))) {
             MediaInfo mediaInfo = new MediaInfo(resPath);
             mediaInfo.prepare();
             originalVideoDuration = (long) (mediaInfo.vDuration*1000);
@@ -472,7 +472,7 @@ public class TemplateMaterialItemView extends LinearLayout implements View.OnTou
                     LogUtil.d("初始化frame错误:%s", throwable.getMessage());
                 }
             });
-        } else if (!TextUtils.isEmpty(resPath) && albumType.isImage(GetPathType.getInstance().getPathType(resPath))) {
+        } else if (!TextUtils.isEmpty(resPath) && AlbumType.isImage(GetPathType.getInstance().getPathType(resPath))) {
             for (int i = 0; i < mLlThumbnail.getChildCount(); i++) {
                 View view = mLlThumbnail.getChildAt(i);
                 if (view instanceof ImageView) {

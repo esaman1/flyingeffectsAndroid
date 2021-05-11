@@ -9,8 +9,8 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.webkit.MimeTypeMap;
 
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.AssetDelegate;
-import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.util.FileUtils;
 import com.shixing.sxve.ui.util.Size;
 
@@ -241,10 +241,10 @@ public class TemplateModel {
                 if (!mediaUIModelList.isEmpty() && mediaUIModelList.size() > i && mediaUIModelList.get(i) != null) {
                     AssetModel assetModel = mediaUIModelList.get(i);
 
-                    if (albumType.isImage(mimeType)) {
+                    if (AlbumType.isImage(mimeType)) {
                         Log.d("OOM4", "isImage"+i);
                         ((MediaUiModel) assetModel.ui).setImageAsset(paths.get(i));//, context
-                    } else if (albumType.isVideo(mimeType)) {
+                    } else if (AlbumType.isVideo(mimeType)) {
                         Log.d("OOM4", "isVideo"+i);
                         String VideoPathOrigin = paths.get(i);
                         ((MediaUiModel) assetModel.ui).setVideoPath(VideoPathOrigin, true, 0);//, context
@@ -302,7 +302,7 @@ public class TemplateModel {
         Handler mainHandler = new Handler(Looper.getMainLooper());
         mainHandler.post(() -> {
             //已在主线程中，可以更新UI
-            if (albumType.isImage(finalMimeType)) {
+            if (AlbumType.isImage(finalMimeType)) {
                 media.setImageAsset(path);
             } else {
                 media.setVideoPath(path, true, 0);

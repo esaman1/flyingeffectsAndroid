@@ -186,6 +186,8 @@ dependencies {
     implementation(name: 'open_ad_sdk_3.5.0.4', ext: 'aar')
     //快手
     implementation(name: 'ks_adsdk-3.3.14', ext: 'aar')
+    //快手监控
+    implementation(name: 'monitorsdk-1.0.6', ext: 'aar')
     //oppo
     implementation(name: 'mobad_normal_pub_354_2020_05_19', ext: 'aar')
     // 抖音1

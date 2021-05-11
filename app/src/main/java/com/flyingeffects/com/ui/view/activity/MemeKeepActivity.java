@@ -32,7 +32,7 @@ import com.flyingeffects.com.utils.record.SaveShareDialog;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.lansosdk.videoeditor.VideoEditor;
 import com.orhanobut.hawk.Hawk;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
@@ -83,7 +83,7 @@ public class MemeKeepActivity extends BaseActivity {
         templateId = getIntent().getStringExtra("templateId");
         templateType=getIntent().getStringExtra("templateType");
         title = getIntent().getStringExtra(title);
-        if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(videoPath))) {
+        if (AlbumType.isVideo(GetPathTypeModel.getInstance().getMediaType(videoPath))) {
             Typematerial = 0;
             mediaInfo = new MediaInfo(videoPath);
             mediaInfo.prepare();

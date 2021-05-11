@@ -535,6 +535,16 @@ public class BaseConstans {
         spUtil.putInt("IntervalsNumber", intervalsNumber);
     }
 
+    public static void setOaid(String oaid) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("oaid", oaid);
+    }
+
+    public static String getOaid() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("oaid", "");
+    }
+
 
     /**
      * 获取换装制作页面切换模板按钮加载视频广告的间隔次数

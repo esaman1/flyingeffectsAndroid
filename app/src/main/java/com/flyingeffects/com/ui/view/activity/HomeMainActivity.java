@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bytedance.applog.AppLog;
+import com.bytedance.applog.IOaidObserver;
 import com.bytedance.applog.InitConfig;
 import com.bytedance.applog.util.UriConfig;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
@@ -71,7 +72,9 @@ import com.orhanobut.hawk.Hawk;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
+import com.xj.anchortask.library.log.LogUtils;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -155,6 +158,17 @@ public class HomeMainActivity extends FragmentActivity {
         statisticsUpgradeApp();
         initFaceSdkModel.initFaceSdk();
         initZt();
+        setOaid();
+    }
+
+    private void setOaid() {
+        AppLog.setOaidObserver(new IOaidObserver() {
+            @Override
+            public void onOaidLoaded(@NotNull final IOaidObserver.Oaid oaid) {
+                LogUtils.d(TAG, "oaid = " + oaid.id);
+                BaseConstans.setOaid(oaid.id);
+            }
+        });
     }
 
 
