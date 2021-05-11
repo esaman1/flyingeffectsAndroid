@@ -884,6 +884,7 @@ public class PreviewUpAndDownMvpModel {
             LogUtil.d("OOM", "downProgressDialog != null");
             mLoadingDialog = buildLoadingDialog();
         }
+        LogUtil.d("OOM", "文件不存在");
 
         Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
             DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {

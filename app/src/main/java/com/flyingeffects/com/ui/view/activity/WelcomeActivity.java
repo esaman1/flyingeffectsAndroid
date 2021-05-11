@@ -11,13 +11,14 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActWelcomeBinding;
-import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -25,22 +26,13 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
-import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
-import com.orhanobut.hawk.Hawk;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import androidx.annotation.NonNull;
 
 import rx.Observable;
 
@@ -73,13 +65,10 @@ public class WelcomeActivity extends BaseActivity {
         mBinding = ActWelcomeBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         setContentView(rootView);
-        LogUtil.d(TAG, "Application WelcomeActivity show");
-        LogUtil.d("OOM", "WelcomeActivity");
         BaseConstans.setOddNum();
         //解决广告bug ,点击图标后广告爆款广告不弹出来
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         fromBackstage = getIntent().getBooleanExtra("fromBackstage", false);
         if (!isTaskRoot() && !fromBackstage) {
             finish();
@@ -92,9 +81,9 @@ public class WelcomeActivity extends BaseActivity {
             int openAppNum = BaseConstans.getOpenAppNum();
             openAppNum++;
             BaseConstans.setOpenAppNum(openAppNum); //打开app的次数为1
-            LogUtil.d("OOM", "openAppNum=" + openAppNum);
         }
         gotoPrivacyPolicyActivity();
+        StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_coopen");
     }
 
     @Override
@@ -118,15 +107,16 @@ public class WelcomeActivity extends BaseActivity {
         // 权限都已经有了，那么直接调用SDK
         if (lackedPermission.size() == 0) {
             if (!fromBackstage || BaseConstans.getNextIsNewUser()) {
-                requestConfig();
+//                requestConfig();
                 requestConfigForTemplateList();
             }
             hasPermission = true;
-
-            LogUtil.d("oom2222", "BaseConstans.getNextIsNewUser()=" + BaseConstans.getNextIsNewUser()+"BaseConstans.getHasAdvertising() ="+BaseConstans.getHasAdvertising() );
-
             if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
+                StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_6_requestAd");
                 showSplashAd();
+            } else {
+                noQueryAdReason();
+                StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_6_no_requestAd");
             }
         } else {
             hasPermission = false;
@@ -160,13 +150,28 @@ public class WelcomeActivity extends BaseActivity {
      * user : zhangtongju
      */
     private void gotoNext() {
-        if (!fromBackstage) {
-            requestConfig();
-        }
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_requestPermiss_6_requestAd");
             showSplashAd();
         } else {
+            noQueryAdReason();
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_requestPermiss_6_no_requestAd");
             intoMain();
+        }
+    }
+
+
+    /**
+     * description ：没请求广告的原因
+     * creation date: 2021/5/11
+     * user : zhangtongju
+     */
+    private void noQueryAdReason() {
+        if (BaseConstans.getHasAdvertising() != 1) {
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "后台没配置广告");
+        }
+        if (BaseConstans.getIsNewUser()) {
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "新用户");
         }
     }
 
@@ -185,15 +190,16 @@ public class WelcomeActivity extends BaseActivity {
         mBinding.rlAdContainer.post(() -> {
             if (Build.VERSION.SDK_INT >= BUILD_VERSION) {
                 checkPermission();
+                StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_6");
             } else {
                 hasPermission = true;
-                if (!fromBackstage || BaseConstans.getNextIsNewUser()) {
-                    requestConfig();
-                }
-                LogUtil.d("oom2222", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
+                StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6");
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
-                    LogUtil.d("oom2222", "请求开屏广告" );
+                    StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6_requestAd");
                     showSplashAd();
+                } else {
+                    noQueryAdReason();
+                    StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6_no_requestAd");
                 }
             }
         });
@@ -205,8 +211,6 @@ public class WelcomeActivity extends BaseActivity {
                 overridePendingTransition(R.anim.nt_ad_fade_in, R.anim.nt_ad_fade_out);
             }
         }, BaseConstans.getKaiPingADTimeOut());
-
-        LogUtil.d("oom", "开屏广告的时长为" + BaseConstans.getKaiPingADTimeOut());
     }
 
 
@@ -217,6 +221,7 @@ public class WelcomeActivity extends BaseActivity {
      */
     private void gotoPrivacyPolicyActivity() {
         if (BaseConstans.isFirstClickUseApp()) {
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_privacy_policy");
             Intent intent = new Intent(this, PrivacyPolicyActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivityForResult(intent, 1);
@@ -240,16 +245,11 @@ public class WelcomeActivity extends BaseActivity {
         }
     }
 
-    private void initSplashAd() {
-
-    }
-
 
     /**
      * 展示开屏广告
      */
     private void showSplashAd() {
-        LogUtil.d("oom2222", "showSplashAd"  );
         Log.d(TAG, "Application start finished");
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
@@ -257,16 +257,12 @@ public class WelcomeActivity extends BaseActivity {
 
                 @Override
                 public void onAdSuccess() {
-                    LogUtil.d("oom2222", "onAdSuccess"  );
-
                     isShow = true;
                     StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
-                    Log.d(TAG, "Application start onAdSuccess");
                 }
 
                 @Override
                 public void onAdError(String errorMsg) {
-                    LogUtil.d("oom2222", "errorMsg="+errorMsg  );
                     isShow = false;
                     intoMain();
                     finish();
@@ -274,19 +270,16 @@ public class WelcomeActivity extends BaseActivity {
 
                 @Override
                 public boolean onAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
-                    LogUtil.d("oom2222", "onAdClicked" );
                     return false;
                 }
 
                 @Override
                 public void onAdTick(long millisUntilFinished) {
-                    LogUtil.d("oom2222", "onAdTick" );
                     mBinding.tvSkip.setText(String.format("跳过 %d", Math.round(millisUntilFinished / 1000f)));
                 }
 
                 @Override
                 public void onAdDismissed() {
-                    LogUtil.d("oom2222", "onAdDismissed" );
                     next();
                 }
             });
@@ -353,111 +346,6 @@ public class WelcomeActivity extends BaseActivity {
 
 
     /**
-     * description ：这个配置是请求关于界面的联系我们
-     * creation date: 2020/4/8
-     * user : zhangtongju
-     */
-    private void requestConfig() {
-        HashMap<String, String> params = new HashMap<>();
-        // 启动时间
-        Observable ob = Api.getDefault().configList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<Config>>(WelcomeActivity.this) {
-            @Override
-            protected void onSubError(String message) {
-            }
-
-            @Override
-            protected void onSubNext(List<Config> data) {
-
-                StringBuilder sb = new StringBuilder();
-
-                for (int i = 0; i < data.size(); i++) {
-                    String tet = StringUtil.beanToJSONString(data.get(i));
-                    sb.append(tet);
-                    LogUtil.d("_onNext", "i-" + i + "Config=" + tet);
-                }
-                LogUtil.d("_onNext", "str=" + sb.toString());
-
-                if (data.size() > 0) {
-                    for (int i = 0; i < data.size(); i++) {
-                        Config config = data.get(i);
-                        int id = config.getId();
-                        if (id == 18) {
-                            //弹出微信
-                            BaseConstans.service_wxi = config.getValue();
-                        } else if (id == 20) {
-                            //android 审核数据
-                            String AuditModeJson = config.getValue();
-                            auditModeConfig(AuditModeJson);
-                        } else if (id == 22) {
-                            //获得热更新时长
-                            String outTime = config.getValue();
-                            BaseConstans.showAgainKaipingAd = Integer.parseInt(outTime);
-                        } else if (id == 24) {
-                            //首次安装前几次无广告
-                            int newUserIsVip = Integer.parseInt(config.getValue());
-                            LogUtil.d("OOM2","newUserIsVip="+newUserIsVip);
-                            if (BaseConstans.getOpenAppNum() < newUserIsVip - 1) {
-                                BaseConstans.setNextNewUser(true);
-                            } else {
-                                BaseConstans.setNextNewUser(false);
-                            }
-                            if (BaseConstans.getOpenAppNum() < newUserIsVip) { //新用户没广告
-                                BaseConstans.setIsNewUser(true);
-                            } else {
-                                BaseConstans.setIsNewUser(false);
-                            }
-                        } else if (id == 25) {
-                            //启动APP多少秒后显示插屏广告
-                            int second = Integer.parseInt(config.getValue());
-                            BaseConstans.setInterstitial(second);
-                        } else if (id == 26) {
-                            //开屏广告延迟时间
-                            int second = Integer.parseInt(config.getValue());
-                            BaseConstans.setKaiPingADTimeOut(second);
-                        } else if (id == 27) {
-                            //上传的时候
-                            int second = Integer.parseInt(config.getValue());
-                            BaseConstans.setMaxuploadTime(second);
-                        } else if (id == 32) {
-                            String second = config.getValue();
-                            BaseConstans.setminapp_share_title(second);
-                        } else if (id == 33) {
-                            //feed 自渲染信息流 上线和下限
-                            String second = config.getValue();
-                            BaseConstans.setFeedShowPositionNum(second);
-                        } else if (id == 53) {
-                            //相册加载广告间隔次数
-                            String albumADIntervalNumber = config.getValue();
-                            BaseConstans.setIntervalNumShowAD(Integer.parseInt(albumADIntervalNumber));
-                        } else if (id == 56) {
-                            //自定义模板分享到抖音的话题
-                            String douyingTopic = config.getValue();
-                            BaseConstans.setDouyingTopic(douyingTopic);
-                        } else if (id == 61) {
-                            //换装制作页面切换模板按钮加载视频广告的间隔次数
-                            int dressupIntervalsNumber = Integer.parseInt(config.getValue());
-                            BaseConstans.setDressupIntervalsNumber(dressupIntervalsNumber);
-                        } else if (id == 72) {
-                            String value = config.getValue();
-                            BaseConstans.setHasAdEntrance(value);
-                        }else if(id == 73){
-                            String value = config.getValue();
-                            BaseConstans.setGifCourse(value);
-                        }else if(id == 74){
-                            String video_error_can_save=config.getValue();
-                            //1 表示能保存 0 表示不能保存
-                            LogUtil.d("OOM3","video_error_can_save="+video_error_can_save);
-                            BaseConstans.setAdShowErrorCanSave(video_error_can_save);
-                        }
-                    }
-                }
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
-
-
-    /**
      * description ：这个请求是用来请求模板里面的数据，复制快手或者抖音
      * creation date: 2020/4/8
      * user : zhangtongju
@@ -480,44 +368,6 @@ public class WelcomeActivity extends BaseActivity {
                 }
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
-
-    int isVideoadvertisingId;
-
-    private void auditModeConfig(String str) {
-        LogUtil.d("AuditModeConfig", "AuditModeConfig=" + str);
-        Hawk.put("AuditModeConfig", str);
-        JSONArray jsonArray;
-        try {
-            jsonArray = new JSONArray(str);
-            if (jsonArray.length() > 0) {
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject obArray = jsonArray.getJSONObject(i);
-                    String channel = obArray.getString("channel");
-                    if ("isVideoadvertising".equals(channel)) { //控制了版本号
-                        isVideoadvertisingId = obArray.getInt("id");
-                    }
-                    if (channel.equals(BaseConstans.getChannel())) { //最新版的审核模式
-                        boolean auditOn = obArray.getBoolean("audit_on");
-                        int nowVersion = Integer.parseInt(BaseConstans.getVersionCode());
-                        if (auditOn || nowVersion != isVideoadvertisingId) {
-                            BaseConstans.setHasAdvertising(1);
-                        } else {
-                            BaseConstans.setHasAdvertising(0);
-                        }
-
-                        boolean video_ad_open = obArray.getBoolean("video_ad_open");
-                        BaseConstans.setIncentiveVideo(video_ad_open);
-
-                        boolean save_video_ad = obArray.getBoolean("save_video_ad");
-                        BaseConstans.setSave_video_ad(save_video_ad);
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
     }
 
 

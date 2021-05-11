@@ -501,7 +501,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     Intent intent = new Intent(getActivity(), CreationTemplateActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("paths", tailorPaths.get(0));
-                    bundle.putSerializable("bjTemplateTitle", "");
+                    bundle.putString("bjTemplateTitle", "");
                     bundle.putBoolean("isNeedCut", true);
                     bundle.putString("originalPath", path);
                     bundle.putString("video_path", "");

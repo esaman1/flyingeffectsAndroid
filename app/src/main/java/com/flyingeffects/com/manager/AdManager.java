@@ -67,11 +67,13 @@ public class AdManager {
             screenAdManager.showScreenAd((Activity) context, id, new ScreenAdCallBack() {
                 @Override
                 public void onScreenAdShow() {
+                    callback.onScreenAdShow();
                     LogUtil.d("OOM", "onScreenAdShow");
                 }
 
                 @Override
                 public void onScreenAdError(String errorMsg) {
+                    callback.onScreenAdError();
                     LogUtil.d("OOM", "onScreenAdError=" + errorMsg);
                 }
 
@@ -205,6 +207,8 @@ public class AdManager {
 
     public interface Callback {
         void adClose();
+        void onScreenAdShow();
+        void onScreenAdError();
     }
 
 }

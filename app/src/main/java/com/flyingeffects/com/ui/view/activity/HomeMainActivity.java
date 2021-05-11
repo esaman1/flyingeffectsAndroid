@@ -33,6 +33,7 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.enity.HomeChoosePageListener;
 import com.flyingeffects.com.enity.RequestMessage;
@@ -72,6 +73,7 @@ import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -155,6 +157,7 @@ public class HomeMainActivity extends FragmentActivity {
         statisticsUpgradeApp();
         initFaceSdkModel.initFaceSdk();
         initZt();
+        requestConfig();
     }
 
 
@@ -219,9 +222,24 @@ public class HomeMainActivity extends FragmentActivity {
         task = new TimerTask() {
             @Override
             public void run() {
-                AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, () -> {
-                    if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
-                        checkCommentcheck();
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad" );
+                AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new AdManager.Callback() {
+                    @Override
+                    public void adClose() {
+                        if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
+                            checkCommentcheck();
+                        }
+                    }
+
+                    @Override
+                    public void onScreenAdShow() {
+                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_show" );
+                    }
+
+                    @Override
+                    public void onScreenAdError() {
+                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_error" );
+
                     }
                 });
                 destroyTimer();
@@ -459,7 +477,6 @@ public class HomeMainActivity extends FragmentActivity {
             }
         }
     }
-
 
 
     private final NoDoubleClickListener listener = new NoDoubleClickListener() {
@@ -740,6 +757,152 @@ public class HomeMainActivity extends FragmentActivity {
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    /**
+     * description ：这个配置是请求关于界面的联系我们
+     * creation date: 2020/4/8
+     * user : zhangtongju
+     */
+    private void requestConfig() {
+        HashMap<String, String> params = new HashMap<>();
+        // 启动时间
+        Observable ob = Api.getDefault().configList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<Config>>(HomeMainActivity.this) {
+            @Override
+            protected void onSubError(String message) {
+            }
+
+            @Override
+            protected void onSubNext(List<Config> data) {
+
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 0; i < data.size(); i++) {
+                    String tet = StringUtil.beanToJSONString(data.get(i));
+                    sb.append(tet);
+                    LogUtil.d("_onNext", "i-" + i + "Config=" + tet);
+                }
+                LogUtil.d("_onNext", "str=" + sb.toString());
+
+                if (data.size() > 0) {
+                    for (int i = 0; i < data.size(); i++) {
+                        Config config = data.get(i);
+                        int id = config.getId();
+                        if (id == 18) {
+                            //弹出微信
+                            BaseConstans.service_wxi = config.getValue();
+                        } else if (id == 20) {
+                            //android 审核数据
+                            String AuditModeJson = config.getValue();
+                            auditModeConfig(AuditModeJson);
+                        } else if (id == 22) {
+                            //获得热更新时长
+                            String outTime = config.getValue();
+                            BaseConstans.showAgainKaipingAd = Integer.parseInt(outTime);
+                        } else if (id == 24) {
+                            //首次安装前几次无广告
+                            int newUserIsVip = Integer.parseInt(config.getValue());
+                            LogUtil.d("OOM2", "newUserIsVip=" + newUserIsVip);
+                            if (BaseConstans.getOpenAppNum() < newUserIsVip - 1) {
+                                BaseConstans.setNextNewUser(true);
+                            } else {
+                                BaseConstans.setNextNewUser(false);
+                            }
+                            if (BaseConstans.getOpenAppNum() < newUserIsVip) { //新用户没广告
+                                BaseConstans.setIsNewUser(true);
+                            } else {
+                                BaseConstans.setIsNewUser(false);
+                            }
+                        } else if (id == 25) {
+                            //启动APP多少秒后显示插屏广告
+                            int second = Integer.parseInt(config.getValue());
+                            BaseConstans.setInterstitial(second);
+                        } else if (id == 26) {
+                            //开屏广告延迟时间
+                            int second = Integer.parseInt(config.getValue());
+                            BaseConstans.setKaiPingADTimeOut(second);
+                        } else if (id == 27) {
+                            //上传的时候
+                            int second = Integer.parseInt(config.getValue());
+                            BaseConstans.setMaxuploadTime(second);
+                        } else if (id == 32) {
+                            String second = config.getValue();
+                            BaseConstans.setminapp_share_title(second);
+                        } else if (id == 33) {
+                            //feed 自渲染信息流 上线和下限
+                            String second = config.getValue();
+                            BaseConstans.setFeedShowPositionNum(second);
+                        } else if (id == 53) {
+                            //相册加载广告间隔次数
+                            String albumADIntervalNumber = config.getValue();
+                            BaseConstans.setIntervalNumShowAD(Integer.parseInt(albumADIntervalNumber));
+                        } else if (id == 56) {
+                            //自定义模板分享到抖音的话题
+                            String douyingTopic = config.getValue();
+                            BaseConstans.setDouyingTopic(douyingTopic);
+                        } else if (id == 61) {
+                            //换装制作页面切换模板按钮加载视频广告的间隔次数
+                            int dressupIntervalsNumber = Integer.parseInt(config.getValue());
+                            BaseConstans.setDressupIntervalsNumber(dressupIntervalsNumber);
+                        } else if (id == 72) {
+                            String value = config.getValue();
+                            BaseConstans.setHasAdEntrance(value);
+                        } else if (id == 73) {
+                            String value = config.getValue();
+                            BaseConstans.setGifCourse(value);
+                        } else if (id == 74) {
+                            String video_error_can_save = config.getValue();
+                            //1 表示能保存 0 表示不能保存
+                            LogUtil.d("OOM3", "video_error_can_save=" + video_error_can_save);
+                            BaseConstans.setAdShowErrorCanSave(video_error_can_save);
+                        }else if(id==75){
+                            BaseConstans.setCreateVideoShowAdUserNum(config.getValue());
+
+                        }
+                    }
+                }
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    private void auditModeConfig(String str) {
+        LogUtil.d("AuditModeConfig", "AuditModeConfig=" + str);
+        Hawk.put("AuditModeConfig", str);
+        int isVideoadvertisingId = 0;
+        JSONArray jsonArray;
+        try {
+            jsonArray = new JSONArray(str);
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obArray = jsonArray.getJSONObject(i);
+                    String channel = obArray.getString("channel");
+                    if ("isVideoadvertising".equals(channel)) { //控制了版本号
+                        isVideoadvertisingId = obArray.getInt("id");
+                    }
+                    if (channel.equals(BaseConstans.getChannel())) { //最新版的审核模式
+                        boolean auditOn = obArray.getBoolean("audit_on");
+                        int nowVersion = Integer.parseInt(BaseConstans.getVersionCode());
+                        if (auditOn || nowVersion != isVideoadvertisingId) {
+                            BaseConstans.setHasAdvertising(1);
+                        } else {
+                            BaseConstans.setHasAdvertising(0);
+                        }
+
+                        boolean video_ad_open = obArray.getBoolean("video_ad_open");
+                        BaseConstans.setIncentiveVideo(video_ad_open);
+
+                        boolean save_video_ad = obArray.getBoolean("save_video_ad");
+                        BaseConstans.setSave_video_ad(save_video_ad);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

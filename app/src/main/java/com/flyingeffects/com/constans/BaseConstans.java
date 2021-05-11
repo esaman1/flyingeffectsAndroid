@@ -289,6 +289,17 @@ public class BaseConstans {
     }
 
 
+    public static void setCreateVideoShowAdUserNum(String json) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("createVideoShowAdUserNum", json);
+    }
+
+    public static String getCreateVideoShowAdUserNum() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("createVideoShowAdUserNum", "");
+    }
+
+
     /**
      * description ：激励视频出错的情况下能够得到奖励 1 是可以的，0是不可以
      * creation date: 2021/4/16

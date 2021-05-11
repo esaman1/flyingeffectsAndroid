@@ -220,7 +220,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 换脸-换背景过来时带的背景图
      */
     private String mBackgroundImage;
-    private String mFramePath;
     private String mBackGroundTitle;
 
     @Override
@@ -234,36 +233,22 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mBinding = ActCreationTemplateEditBinding.inflate(getLayoutInflater());
         View view = mBinding.getRoot();
         setContentView(view);
-
         mBinding.tvTopSubmit.setText("下一步");
-
         EventBus.getDefault().register(this);
         mLoadingDialog = buildLoadingDialog();
         getLifecycle().addObserver(mLoadingDialog);
-        LogUtil.d("OOM", "进入到创作页面");
-
         initBundleData();
-
         presenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath, mFrom);
-        LogUtil.d(TAG, "videoPath = " + videoPath);
-
         setOnClickListener();
-
         setDefaultVideoPlayerView();
-
         //数据收集
         presenter.statisticsDuration(videoPath, this);
-
         //是否显示多时间线
         seekBarViewIsShow(true);
-
         setProgressBarListener();
-
         mBinding.materialSeekBarView.setProgressListener(this);
-
         //初始化整体容器，获取高度
         initCreationContainer();
-
         setDefaultBottomVisible();
     }
 
@@ -1209,8 +1194,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
             });
         }
-
-
 
 
         if (mBinding.llGreenBackground.getVisibility() == View.VISIBLE) {

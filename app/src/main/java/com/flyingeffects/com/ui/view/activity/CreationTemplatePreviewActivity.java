@@ -253,16 +253,43 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     StatisticsEventAffair.getInstance().setFlag(this, "8_save");
                 }
                 StimulateControlManage.getInstance().InitRefreshStimulate();
-                if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
-//                    Intent intent = new Intent(CreationTemplatePreviewActivity.this, AdHintActivity.class);
-//                    intent.putExtra("from", "isFormPreviewVideo");
-//                    intent.putExtra("templateTitle", "");
-//                    startActivity(intent);
-                    showMessageDialog();
+                if (TextUtils.isEmpty(templateTitle)) {
+                    //从创作抠像视频入口过来，保存的时候验证当前用户的id最后一位，若为，1，
+                    // 5，9则需要观看激励视频才能保存，其他自动保存，尾数1，5，9 由后台控
+                    // 制  如果设置为0，则不需要请求，设置为11 全开
+                    boolean needWatchAd=false;
+                    String config=BaseConstans.getCreateVideoShowAdUserNum();
+                    LogUtil.d("OOM2","config="+config);
+                    if(config.equals("11")){
+                        needWatchAd=true;
+                    }else{
+                        String[]str=config.split(",");
+                        String id = BaseConstans.GetUserId();
+                        String lastNum =(id.substring(id.length() - 1));
+                        LogUtil.d("OOM2","lastNum="+lastNum);
+                        for (String s : str) {
+                            if (lastNum.equals(s)) {
+                                needWatchAd = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (needWatchAd) {
+                        showMessageDialog();
+                    }else{
+                        // 表示不需要广告
+                        videoPause();
+                        mPresenter.destroyTimer();
+                        mPresenter.toSaveVideo(false, nowUiIsLandscape);
+                    }
                 } else {
-                    videoPause();
-                    mPresenter.destroyTimer();
-                    mPresenter.toSaveVideo(false, nowUiIsLandscape);
+                    if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
+                        showMessageDialog();
+                    } else {
+                        videoPause();
+                        mPresenter.destroyTimer();
+                        mPresenter.toSaveVideo(false, nowUiIsLandscape);
+                    }
                 }
                 break;
             case R.id.rela_parent_content:
@@ -583,7 +610,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
                 @Override
                 public void onRewardVerify() {
-                    
+
                 }
 
                 @Override

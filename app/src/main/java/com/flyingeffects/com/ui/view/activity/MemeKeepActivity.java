@@ -107,11 +107,10 @@ public class MemeKeepActivity extends BaseActivity {
    private  String keepGifName;
     @Override
     protected void initAction() {
-
         String gifPath;
         if (Typematerial == 0) {
             VideoEditor videoEditor = new VideoEditor();
-            gifPath = videoEditor.executeConvertVideoToGif(videoPath, 5, mediaInfo.getWidth() / 2, mediaInfo.getHeight() / 2, 1f);
+            gifPath = videoEditor.executeConvertVideoToGif(videoPath, 15, mediaInfo.getWidth() / 2, mediaInfo.getHeight() / 2, 1f);
             mediaInfo.release();
         }else{
             gifPath=videoPath;
