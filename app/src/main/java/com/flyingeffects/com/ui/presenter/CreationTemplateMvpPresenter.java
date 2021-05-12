@@ -3,6 +3,8 @@ package com.flyingeffects.com.ui.presenter;
 import android.content.Context;
 import android.view.View;
 
+import com.flyingeffects.com.enity.StickerAnim;
+import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.ui.interfaces.contract.ICreationTemplateMvpContract;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
@@ -10,10 +12,9 @@ import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleObserver;
-import androidx.viewpager.widget.ViewPager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -79,6 +80,18 @@ public class CreationTemplateMvpPresenter extends ICreationTemplateMvpContract.C
         creationTemplatemodel.setAddChooseBjPath(path);
     }
 
+    public void setNowChooseMusicId(int id) {
+        creationTemplatemodel.setNowChooseMusicId(id);
+    }
+
+    public void addFragmentList(Fragment fragment) {
+        creationTemplatemodel.addFragmentList(fragment);
+    }
+
+    public void addListForBottom(View view) {
+        creationTemplatemodel.addListForBottom(view);
+    }
+
 
     public void intoOnPause() {
         creationTemplatemodel.intoOnPause();
@@ -104,10 +117,6 @@ public class CreationTemplateMvpPresenter extends ICreationTemplateMvpContract.C
         creationTemplatemodel.showAllAnim(isShow);
     }
 
-
-    public void initBottomLayout(ViewPager viewPager, FragmentManager fragmentManager, int from) {
-        creationTemplatemodel.initBottomLayout(viewPager, fragmentManager, from);
-    }
 
     public void initStickerView(String path, String originalPath) {
         creationTemplatemodel.initStickerView(path, originalPath);
@@ -280,18 +289,8 @@ public class CreationTemplateMvpPresenter extends ICreationTemplateMvpContract.C
     }
 
     @Override
-    public void chooseBack(String title, String path) {
-        creationTemplatemvpView.chooseBack(title, path);
-    }
-
-    @Override
     public void chooseFrame(String path) {
         creationTemplatemvpView.chooseFrame(path);
-    }
-
-    @Override
-    public void dismissFrame() {
-        creationTemplatemvpView.dismissFrame();
     }
 
     @Override
@@ -305,13 +304,92 @@ public class CreationTemplateMvpPresenter extends ICreationTemplateMvpContract.C
     }
 
     @Override
+    public void chooseCheckBox(int i) {
+        creationTemplatemvpView.chooseCheckBox(i);
+    }
+
+    @Override
+    public long getDuration() {
+        return creationTemplatemodel.getDuration();
+    }
+
+    @Override
+    public void returnStickerTypeList(ArrayList<StickerTypeEntity> list) {
+        creationTemplatemvpView.returnStickerTypeList(list);
+    }
+
+    @Override
+    public void getStickerTypeList() {
+        creationTemplatemodel.getStickerTypeList();
+    }
+
+    @Override
+    public void chooseInitMusic() {
+        creationTemplatemodel.chooseInitMusic();
+    }
+
+    @Override
+    public void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
+        creationTemplatemodel.startPlayAnim(position, isClearAllAnim, targetStickerView, intoPosition, isFromPreview);
+    }
+
+    @Override
+    public void modificationSingleAnimItemIsChecked(int i) {
+        creationTemplatemodel.modificationSingleAnimItemIsChecked(i);
+    }
+
+    @Override
+    public List<StickerAnim> getListAllAnim() {
+        return creationTemplatemodel.getListAllAnim();
+    }
+
+    @Override
+    public void chooseNowStickerMaterialMusic() {
+        creationTemplatemodel.chooseNowStickerMaterialMusic();
+    }
+
+    @Override
+    public void chooseTemplateMusic(boolean b) {
+        creationTemplatemodel.chooseTemplateMusic(b);
+    }
+
+    @Override
+    public void chooseAddChooseBjPath() {
+        creationTemplatemodel.chooseAddChooseBjPath();
+    }
+
+    @Override
+    public void closeAllAnim() {
+        creationTemplatemvpView.closeAllAnim();
+    }
+
+    @Override
+    public void stopAllAnim() {
+        creationTemplatemodel.stopAllAnim();
+    }
+
+    @Override
+    public void deleteAllSticker() {
+        creationTemplatemodel.deleteAllSticker();
+    }
+
+    @Override
+    public void addSticker(String stickerPath, String title) {
+        creationTemplatemodel.addSticker(stickerPath,title);
+    }
+
+    @Override
+    public void copyGif(String fileName, String copyName, String title) {
+        creationTemplatemodel.copyGif(fileName,copyName,title);
+    }
+
+    @Override
     public void modifyTimeLineSickerPath(String id, String path, StickerView stickerView) {
         creationTemplatemvpView.modifyTimeLineSickerPath(id, path, stickerView);
     }
 
-    @Override
-    public void buildBottomViewPager(int from) {
-        creationTemplatemvpView.buildBottomViewPager(from);
+    public void clearCheckBox() {
+        creationTemplatemvpView.clearCheckBox();
     }
 
 //    @Override

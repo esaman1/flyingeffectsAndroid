@@ -1,10 +1,19 @@
 package com.flyingeffects.com.ui.interfaces.contract;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
+
+import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.base.mvpBase.BaseModel;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.base.mvpBase.BaseView;
+import com.flyingeffects.com.enity.StickerAnim;
+import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.view.StickerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public interface ICreationTemplateMvpContract {
 
@@ -64,11 +73,8 @@ public interface ICreationTemplateMvpContract {
 
         public abstract void setDialogProgress(String title, int dialogProgress, String content);
 
-        public abstract void chooseBack(String title, String path);
 
         public abstract void chooseFrame(String path);
-
-        public abstract void dismissFrame();
 
         public abstract void dismissStickerFrame();
 
@@ -76,7 +82,37 @@ public interface ICreationTemplateMvpContract {
 
         public abstract void dismissTextStickerFrame();
 
-        public abstract void buildBottomViewPager(int from);
+        public abstract void chooseCheckBox(int i);
+
+        public abstract long getDuration();
+
+        public abstract void returnStickerTypeList(ArrayList<StickerTypeEntity> list);
+
+        public abstract void getStickerTypeList();
+
+        public abstract void chooseInitMusic();
+
+        public abstract void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview);
+
+        public abstract void modificationSingleAnimItemIsChecked(int i);
+
+        public abstract List<StickerAnim> getListAllAnim();
+
+        public abstract void chooseNowStickerMaterialMusic();
+
+        public abstract void chooseTemplateMusic(boolean b);
+
+        public abstract void chooseAddChooseBjPath();
+
+        public abstract void closeAllAnim();
+
+        public abstract void stopAllAnim();
+
+        public abstract void deleteAllSticker();
+
+        public abstract void addSticker(String stickerPath, String title);
+
+        public abstract void copyGif(String fileName, String copyName, String title);
     }
 
     interface ICreationTemplateMvpView extends BaseView {
@@ -133,17 +169,19 @@ public interface ICreationTemplateMvpContract {
 
         void setDialogProgress(String title, int dialogProgress, String content);
 
-        void chooseBack(String title, String path);
-
         void chooseFrame(String path);
-
-        void dismissFrame();
 
         void dismissStickerFrame();
 
         void dismissTextStickerFrame();
 
-        void buildBottomViewPager(int from);
+        void clearCheckBox();
+
+        void chooseCheckBox(int i);
+
+        void returnStickerTypeList(ArrayList<StickerTypeEntity> list);
+
+        void closeAllAnim();
     }
 
     interface ICreationTemplateMvpModel extends BaseModel {

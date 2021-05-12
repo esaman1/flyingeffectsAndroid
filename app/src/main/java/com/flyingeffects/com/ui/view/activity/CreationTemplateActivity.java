@@ -12,22 +12,30 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 
 import com.bumptech.glide.request.target.Target;
+import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.CreationBottomPagerAdapter;
+import com.flyingeffects.com.adapter.TemplateGridViewAnimAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
+import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetPathType;
@@ -36,6 +44,8 @@ import com.flyingeffects.com.databinding.ActCreationTemplateEditBinding;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
+import com.flyingeffects.com.enity.StickerAnim;
+import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
@@ -52,6 +62,10 @@ import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
+import com.flyingeffects.com.ui.view.fragment.CreationBackListFragment;
+import com.flyingeffects.com.ui.view.fragment.CreationBottomFragment;
+import com.flyingeffects.com.ui.view.fragment.CreationFrameFragment;
+import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ScreenCaptureUtil;
 import com.flyingeffects.com.utils.TimeUtils;
@@ -60,7 +74,6 @@ import com.flyingeffects.com.view.drag.CreationTemplateProgressBarView;
 import com.flyingeffects.com.view.drag.TemplateMaterialItemView;
 import com.flyingeffects.com.view.drag.TemplateMaterialSeekBarView;
 import com.flyingeffects.com.view.mine.CreateViewForAddText;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -92,7 +105,7 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 
 
-public class CreationTemplateActivity extends BaseActivity implements ICreationTemplateMvpContract.ICreationTemplateMvpView, TemplateMaterialSeekBarView.SeekBarProgressListener {
+public class CreationTemplateActivity extends BaseActivity implements ICreationTemplateMvpContract.ICreationTemplateMvpView, TemplateMaterialSeekBarView.SeekBarProgressListener, CreationBackListFragment.BackChooseListener, StickerFragment.StickerListener, CreationBottomFragment.FinishListener, CreationFrameFragment.FrameChooseListener {
     private static final String TAG = "CreationTemplate";
 
     public static final String BUNDLE_KEY = "Message";
@@ -130,7 +143,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
      */
     private String originalPath;
     private String imgPath;
-    private CreationTemplateMvpPresenter presenter;
+    private CreationTemplateMvpPresenter mPresenter;
 
     /**
      * 默认背景，也是是否选择了背景的重要判断，
@@ -251,7 +264,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
 
         initBundleData();
 
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath, mFrom);
+        mPresenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath, mFrom);
         LogUtil.d(TAG, "videoPath = " + videoPath);
 
         setOnClickListener();
@@ -259,7 +272,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
         setDefaultVideoPlayerView();
 
         //数据收集
-        presenter.statisticsDuration(videoPath, this);
+        mPresenter.statisticsDuration(videoPath, this);
 
         //是否显示多时间线
         seekBarViewIsShow(true);
@@ -379,7 +392,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                     mBinding.materialSeekBarView.scrollToPosition(progress);
                 }
                 progressBarProgress = progress;
-                presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
                 mBinding.tvCurrentTime.setText(String.format("%ss", TimeUtils.timeParse(progress - mCutStartTime)));
             }
 
@@ -424,13 +437,13 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                     mBinding.materialSeekBarView.scrollToPosition(endTime);
                 }
 
-                presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
             }
 
             @Override
             public void onTouchEnd() {
                 videoToPause();
-                presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
             }
         });
     }
@@ -592,12 +605,12 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
         isPlayComplate = true;
         endTimer();
         isPlaying = false;
-        presenter.showGifAnim(false);
+        mPresenter.showGifAnim(false);
         videoToPause();
         seekToVideo(mCutStartTime);
         seekToMusic(mCutStartTime);
         nowStateIsPlaying(false);
-        presenter.showAllAnim(false);
+        mPresenter.showAllAnim(false);
     }
 
 
@@ -659,9 +672,9 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
 
     @Override
     protected void initAction() {
-        presenter.initStickerView(imgPath, originalPath);
+        mPresenter.initStickerView(imgPath, originalPath);
 
-        presenter.initBottomLayout(mBinding.viewPager, getSupportFragmentManager(), mFrom);
+        initBottomLayout();
 
         //设置预览界面大小
         initViewLayerRelative();
@@ -684,7 +697,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                 }
             }
 
-            presenter.checkedChanged(isChecked);
+            mPresenter.checkedChanged(isChecked);
         });
     }
 
@@ -799,7 +812,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
     private void addText() {
         mBinding.viewPager.setVisibility(View.GONE);
         seekBarViewIsShow(false);
-        presenter.addTextSticker();
+        mPresenter.addTextSticker();
         intoTextStyleDialog("");
         isClickAddTextTag = true;
         if (mFrom == FROM_DRESS_UP_BACK_CODE) {
@@ -847,12 +860,12 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
      */
     private void addSticker() {
         if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
-            presenter.showAllAnim(false);
+            mPresenter.showAllAnim(false);
             if (isPlaying) {
                 videoToPause();//添加贴纸
                 isPlaying = false;
                 endTimer();
-                presenter.showGifAnim(false);
+                mPresenter.showGifAnim(false);
                 nowStateIsPlaying(false);
             }
             if (UiStep.isFromDownBj) {
@@ -872,7 +885,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                     if (AlbumType.isImage(pathType)) {
                         StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage");
                         CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
-                            presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
+                            mPresenter.addNewSticker(tailorPaths.get(0), paths.get(0));
                         });
                         manage.toMatting(paths);
                     } else {
@@ -889,7 +902,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
      * 删除所有文字贴纸
      */
     private void deleteAllText() {
-        presenter.deleteAllTextSticker();
+        mPresenter.deleteAllTextSticker();
         if (mCreateViewForAddText != null) {
             mCreateViewForAddText.hideInputTextDialog();
         }
@@ -930,7 +943,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                 musicStartTime = 0;
             }
 
-            presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutStartTime, mCutEndTime, title);
+            mPresenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutStartTime, mCutEndTime, title);
             seekBarViewIsShow(true);
         }
 
@@ -946,14 +959,14 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                 isIntoPause = false;
                 isPlayComplate = false;
                 videoToPause();//点击播放暂定
-                presenter.showGifAnim(false);
+                mPresenter.showGifAnim(false);
                 isPlaying = false;
                 nowStateIsPlaying(false);
-                presenter.showAllAnim(false);
+                mPresenter.showAllAnim(false);
             } else {
                 StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, " 14_preview_video_bj");
                 WaitingDialog.openPragressDialog(this);
-                new Thread(() -> presenter.showAllAnim(true)).start();
+                new Thread(() -> mPresenter.showAllAnim(true)).start();
             }
             mSeekBarViewManualDrag = false;
         }
@@ -971,12 +984,12 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
             mCreateViewForAddText = new CreateViewForAddText(this, mBinding.vAddText.llAddTextStyle, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type, String title) {
-                    presenter.changeTextStyle(path, type, title);
+                    mPresenter.changeTextStyle(path, type, title);
                 }
 
                 @Override
                 public void setText(String text) {
-                    presenter.changeTextLabe(text);
+                    mPresenter.changeTextLabe(text);
                     if (TextUtils.isEmpty(text)) {
                         if (mCreateViewForAddText != null) {
                             mCreateViewForAddText.hideInputTextDialog();
@@ -997,19 +1010,19 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                 @Override
                 public void setTextColor(String color0, String color1, String title) {
                     LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1);
-                    presenter.changeTextColor(color0, color1, title);
+                    mPresenter.changeTextColor(color0, color1, title);
                 }
 
                 @Override
                 public void isSuccess(String textBjPath, String textFramePath, String frameTitle) {
                     LogUtil.d("OOM4", "textBjPath=" + textBjPath + "textFramePath=" + textFramePath + "frameTitle" + frameTitle);
-                    presenter.changeTextFrame(textBjPath, textFramePath, frameTitle);
+                    mPresenter.changeTextFrame(textBjPath, textFramePath, frameTitle);
                 }
 
                 @Override
                 public void isSuccess(String color0, String color1, String textFramePath, String frameTitle) {
                     LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1 + "textFramePath" + textFramePath + "frameTitle" + frameTitle);
-                    presenter.changeTextFrame(color0, color1, textFramePath, frameTitle);
+                    mPresenter.changeTextFrame(color0, color1, textFramePath, frameTitle);
                 }
             });
             mCreateViewForAddText.showBottomSheetDialog(inputText, "bj_template");
@@ -1036,10 +1049,10 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
     private void videoToPause() {
         LogUtil.d("OOM44", "videoToPause");
         pauseExoPlayer();
-        presenter.intoOnPause();
+        mPresenter.intoOnPause();
         isPlaying = false;
         endTimer();
-        presenter.showGifAnim(false);
+        mPresenter.showGifAnim(false);
         nowStateIsPlaying(false);
     }
 
@@ -1151,7 +1164,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
         } else {
             setPlayerViewSize(nowUiIsLandscape);
         }
-        presenter.initVideoProgressView();
+        mPresenter.initVideoProgressView();
 
         mBinding.progressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -1271,7 +1284,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
         });
 
         new Handler().postDelayed(() -> {
-            presenter.setAllStickerCenter();
+            mPresenter.setAllStickerCenter();
             if (isLandscape) {
                 int height = Math.round(1f * mBinding.llSpace.getWidth() / oriRatio);
                 mBinding.scrollView.scrollTo(0, height / 2 - mBinding.scrollView.getHeight() / 2);
@@ -1410,7 +1423,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
         });
 
         new Handler().postDelayed(() -> {
-            presenter.setAllStickerCenter();
+            mPresenter.setAllStickerCenter();
             if (isLandscape) {
                 int height = Math.round(1f * mBinding.llSpace.getWidth() / oriRatio);
                 mBinding.svBackImage.scrollTo(0, height / 2 - mBinding.svBackImage.getHeight() / 2);
@@ -1422,7 +1435,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
     protected void onPause() {
         videoToPause();//onPause
         isIntoPause = true;
-        presenter.intoOnPause();
+        mPresenter.intoOnPause();
         super.onPause();
     }
 
@@ -1551,7 +1564,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
             isPlayComplate = false;
             LogUtil.d("OOM44", "needPauseVideo");
             videoToPause();//interface needPauseVideo
-            presenter.showGifAnim(false);
+            mPresenter.showGifAnim(false);
             isPlaying = false;
             nowStateIsPlaying(false);
         }
@@ -1559,11 +1572,11 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
 
     @Override
     public void getVideoCover(String path, String originalPath) {
-        presenter.addNewSticker(path, originalPath);
+        mPresenter.addNewSticker(path, originalPath);
         if (TextUtils.isEmpty(videoPath)) {
             //如果还是绿屏。那么需要刷新底部的时长
             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer ->
-                    presenter.initVideoProgressView());
+                    mPresenter.initVideoProgressView());
         }
     }
 
@@ -1617,7 +1630,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
         if (TextUtils.isEmpty(videoPath) || musicChooseIndex == 0) {
             if (TextUtils.isEmpty(videoPath)) {
                 //如果还是绿屏。那么需要刷新底部的时长
-                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> presenter.initVideoProgressView());
+                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> mPresenter.initVideoProgressView());
             }
             //需要重新刷新素材音乐开始时间,结束时间还是上次的
             musicStartTime = 0;
@@ -1723,7 +1736,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
             }
             isPlaying = true;
             startTimer();
-            presenter.showGifAnim(true);
+            mPresenter.showGifAnim(true);
         });
 
     }
@@ -1800,9 +1813,9 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                         isPlayComplate = true;
                         endTimer();
                         isPlaying = false;
-                        presenter.showGifAnim(false);
+                        mPresenter.showGifAnim(false);
                         nowStateIsPlaying(false);
-                        presenter.showAllAnim(false);
+                        mPresenter.showAllAnim(false);
                     } else if (nowTime < mCutStartTime) {
                         nowTime = mCutStartTime;
                     }
@@ -1926,7 +1939,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                 mBinding.relativePlayerView.setVisibility(View.INVISIBLE);
                 mBinding.rlBackImage.setVisibility(View.INVISIBLE);
 
-                presenter.setVideoPath("");
+                mPresenter.setVideoPath("");
                 videoPath = "";
                 showGreenBj(false);
                 imageBjPath = event.getPath();
@@ -1966,8 +1979,8 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
 
                 setPlayerViewSize(nowUiIsLandscape);
                 initExo(videoPath);
-                presenter.setVideoPath(videoPath);
-                presenter.initVideoProgressView();
+                mPresenter.setVideoPath(videoPath);
+                mPresenter.initVideoProgressView();
                 setBJVideoPath(true);
                 musicStartFirstTime = 0;
                 LogUtil.d("OOM44", "333333");
@@ -1986,7 +1999,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
      */
     @Subscribe
     public void onEventMainThread(ChooseVideoAddSticker event) {
-        presenter.getVideoCover(event.getPath());
+        mPresenter.getVideoCover(event.getPath());
     }
 
 
@@ -2026,7 +2039,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
     @Subscribe
     public void onEventMainThread(CutSuccess cutSuccess) {
         String nowChooseBjPath = cutSuccess.getFilePath();
-        presenter.setAddChooseBjPath(nowChooseBjPath);
+        mPresenter.setAddChooseBjPath(nowChooseBjPath);
         musicChooseIndex = 2;
     }
 
@@ -2363,7 +2376,6 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
     /**
      * 取消选择
      */
-    @Override
     public void dismissFrame() {
         mBinding.ivFrameImage.setVisibility(View.INVISIBLE);
         setImageBackSize(nowUiIsLandscape);
@@ -2389,7 +2401,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
         mSeekBarViewManualDrag = manualDrag;
         videoToPause();
         LogUtil.d("OOM4", "progressBarProgress=" + progressBarProgress);
-        presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+        mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
     }
 
     @Override
@@ -2420,12 +2432,12 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                 break;
             }
         }
-        presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+        mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
     }
 
     @Override
     public void currentViewSelected(String id) {
-        presenter.bringStickerFront(id);
+        mPresenter.bringStickerFront(id);
     }
 
     @Override
@@ -2527,14 +2539,13 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
         }
     }
 
-    @Override
-    public void buildBottomViewPager(int from) {
-        if (from == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
-            CreationBottomPagerAdapter adapter = new CreationBottomPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, presenter.getFragmentList());
+    public void buildBottomViewPager() {
+        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+            CreationBottomPagerAdapter adapter = new CreationBottomPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mPresenter.getFragmentList());
             mBinding.viewPager.setAdapter(adapter);
             mBinding.viewPager.setOffscreenPageLimit(3);
         } else {
-            TemplateViewPager templateViewPager = new TemplateViewPager(presenter.getListForInitBottom());
+            TemplateViewPager templateViewPager = new TemplateViewPager(mPresenter.getListForInitBottom());
             mBinding.viewPager.setAdapter(templateViewPager);
         }
     }
@@ -2552,6 +2563,11 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
         });
     }
 
+    /**
+     * 跳转到预览页
+     *
+     * @param textImagePath path
+     */
     private void startPreviewFramePicture(String textImagePath) {
         Intent intent = new Intent(mContext, DressUpPreviewActivity.class);
         intent.putExtra("url", textImagePath);
@@ -2589,7 +2605,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                 })
                 .build().show();
 
-        presenter.intoOnPause();
+        mPresenter.intoOnPause();
     }
 
     @Override
@@ -2646,5 +2662,342 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
     @Override
     public void showError() {
 
+    }
+
+    ImageView check_box_0;
+    ImageView check_box_1;
+    ImageView check_box_2;
+    ImageView check_box_3;
+
+    TextView tv_0;
+    TextView tv_1;
+    TextView tv_2;
+    TextView tv_3;
+
+    /**
+     * 初始化底部弹框
+     */
+    public void initBottomLayout() {
+        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+            initViewForChooseBack();
+            initViewForChooseFrame();
+            initViewForSticker();
+        } else {
+            initViewForSticker();
+            initViewForChooseAnim();
+            initViewForChooseMusic();
+        }
+        buildBottomViewPager();
+    }
+
+
+    /**
+     * 初始化选择背景view
+     */
+    private void initViewForChooseBack() {
+        CreationBottomFragment fragment = new CreationBottomFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", 0);
+        fragment.setArguments(bundle);
+
+        fragment.setFinishListener(this);
+        fragment.setBackChooseListener(this);
+
+        mPresenter.addFragmentList(fragment);
+    }
+
+    /**
+     * 初始化选择相框view
+     */
+    private void initViewForChooseFrame() {
+        CreationBottomFragment fragment = new CreationBottomFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", 1);
+        fragment.setArguments(bundle);
+        fragment.setFinishListener(this);
+        fragment.setFrameChooseListener(this);
+        mPresenter.addFragmentList(fragment);
+    }
+
+    ViewPager stickerViewPager;
+    SlidingTabLayout stickerTab;
+
+    /**
+     * 初始化贴纸列表view
+     */
+    public void initViewForSticker() {
+
+        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+            CreationBottomFragment fragment = new CreationBottomFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt("id", 2);
+            fragment.setArguments(bundle);
+            fragment.setStickerListener(this);
+            fragment.setFinishListener(this);
+            mPresenter.addFragmentList(fragment);
+        } else {
+            View templateThumbView = LayoutInflater.from(mContext).inflate(R.layout.view_template_paster, mBinding.viewPager, false);
+            stickerViewPager = templateThumbView.findViewById(R.id.viewpager_sticker);
+
+            templateThumbView.findViewById(R.id.iv_delete_sticker).setOnClickListener(v -> {
+                clearSticker();
+            });
+
+            templateThumbView.findViewById(R.id.iv_down_sticker).setOnClickListener(v ->
+                    stickerFragmentClose());
+
+            stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
+            mPresenter.getStickerTypeList();
+            mPresenter.addListForBottom(templateThumbView);
+        }
+
+    }
+
+    TemplateGridViewAnimAdapter templateGridViewAnimAdapter;
+
+    /**
+     * 初始化动画列表view
+     */
+    private void initViewForChooseAnim() {
+        View viewForChooseAnim = LayoutInflater.from(mContext)
+                .inflate(R.layout.view_create_template_anim_creation, mBinding.viewPager, false);
+        GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
+        TextView animTab = viewForChooseAnim.findViewById(R.id.tv_name_bj_head);
+        animTab.setText("默认");
+        animTab.setTextSize(17);
+
+        viewForChooseAnim.findViewById(R.id.iv_down_anim).setOnClickListener(v -> mPresenter.stickerFragmentClose());
+        viewForChooseAnim.findViewById(R.id.iv_delete_anim).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.needPauseVideo();
+                mPresenter.startPlayAnim(0, true, null, 0, false);
+                StatisticsEventAffair.getInstance().setFlag(mContext, "9_Animation2");
+                StatisticsEventAffair.getInstance().setFlag(mContext, "9_Animation4");
+            }
+        });
+
+        gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                mPresenter.modificationSingleAnimItemIsChecked(i);
+                templateGridViewAnimAdapter.notifyDataSetChanged();
+                mPresenter.needPauseVideo();
+                WaitingDialog.openPragressDialog(mContext);
+                mPresenter.startPlayAnim(i, false, null, 0, false);
+            }
+        });
+
+        templateGridViewAnimAdapter = new TemplateGridViewAnimAdapter(mPresenter.getListAllAnim(), mContext);
+        gridViewAnim.setAdapter(templateGridViewAnimAdapter);
+
+        mPresenter.addListForBottom(viewForChooseAnim);
+    }
+
+    /**
+     * 初始化选音乐页面
+     */
+    private void initViewForChooseMusic() {
+        //添加音乐
+        View viewForChooseMusic = LayoutInflater.from(mContext).inflate(R.layout.view_choose_music, mBinding.viewPager, false);
+
+        TextView tvAddMusic = viewForChooseMusic.findViewById(R.id.tv_add_music);
+        TextView tvDownMusic = viewForChooseMusic.findViewById(R.id.iv_down_music);
+
+        tvDownMusic.setVisibility(View.VISIBLE);
+        tvDownMusic.setOnClickListener(v ->
+                stickerFragmentClose());
+
+        tvAddMusic.setOnClickListener(view -> {
+            StatisticsEventAffair.getInstance().setFlag(mContext, "15_music_add");
+            Intent intent = new Intent(mContext, ChooseMusicActivity.class);
+            intent.putExtra("needDuration", mPresenter.getDuration());
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            mContext.startActivity(intent);
+        });
+
+        tv_0 = viewForChooseMusic.findViewById(R.id.tv_0);
+        tv_1 = viewForChooseMusic.findViewById(R.id.tv_1);
+        tv_2 = viewForChooseMusic.findViewById(R.id.tv_2);
+        tv_3 = viewForChooseMusic.findViewById(R.id.tv_3);
+
+        check_box_0 = viewForChooseMusic.findViewById(R.id.iv_check_box_0);
+        check_box_1 = viewForChooseMusic.findViewById(R.id.iv_check_box_1);
+        check_box_2 = viewForChooseMusic.findViewById(R.id.iv_check_box_2);
+        check_box_3 = viewForChooseMusic.findViewById(R.id.iv_check_box_3);
+
+        tv_1.setText("背景音乐");
+        tv_2.setText("提取音乐");
+
+        setOnViewClickListener();
+        mPresenter.addListForBottom(viewForChooseMusic);
+
+        mPresenter.chooseInitMusic();
+    }
+
+    @Override
+    public void clearCheckBox() {
+        mPresenter.setNowChooseMusicId(0);
+        check_box_0.setImageResource(R.mipmap.template_btn_unselected);
+        check_box_1.setImageResource(R.mipmap.template_btn_unselected);
+        check_box_2.setImageResource(R.mipmap.template_btn_unselected);
+        check_box_3.setImageResource(R.mipmap.template_btn_unselected);
+    }
+
+    @Override
+    public void chooseCheckBox(int i) {
+        switch (i) {
+            case 0:
+                check_box_0.setImageResource(R.mipmap.template_btn_selected);
+                break;
+            case 1:
+                check_box_1.setImageResource(R.mipmap.template_btn_selected);
+                break;
+            case 2:
+                check_box_2.setImageResource(R.mipmap.template_btn_selected);
+                break;
+            case 3:
+                check_box_3.setImageResource(R.mipmap.template_btn_selected);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void returnStickerTypeList(ArrayList<StickerTypeEntity> list) {
+        List<Fragment> fragments = new ArrayList<>();
+        String[] titles = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            titles[i] = list.get(i).getName();
+            Bundle bundle = new Bundle();
+            bundle.putInt("stickerType", list.get(i).getId());
+            bundle.putInt("from", CreationTemplateActivity.FROM_CREATION_CODE);
+            StickerFragment fragment = new StickerFragment();
+            fragment.setStickerListener(this);
+            fragment.setArguments(bundle);
+            fragments.add(fragment);
+        }
+
+        home_vp_frg_adapter vp_frg_adapter = new home_vp_frg_adapter(getSupportFragmentManager(), fragments);
+
+        stickerViewPager.setOffscreenPageLimit(list.size() - 1);
+        stickerViewPager.setAdapter(vp_frg_adapter);
+        stickerTab.setViewPager(stickerViewPager, titles);
+    }
+
+    private void setOnViewClickListener() {
+
+        View.OnClickListener tvMusicListener = view -> {
+
+            switch (view.getId()) {
+                case R.id.iv_check_box_0:
+                case R.id.tv_0:
+
+                    mPresenter.chooseNowStickerMaterialMusic();
+                    mPresenter.chooseMusicIndex(0);
+                    break;
+
+                case R.id.tv_1:
+                case R.id.iv_check_box_1:
+                    mPresenter.chooseMusicIndex(1);
+                    mPresenter.chooseTemplateMusic(true);
+                    break;
+
+                case R.id.tv_2:
+                case R.id.iv_check_box_2:
+                    mPresenter.chooseMusicIndex(2);
+                    mPresenter.setNowChooseMusicId(3);
+                    mPresenter.chooseAddChooseBjPath();
+                    break;
+
+                case R.id.iv_check_box_3:
+                case R.id.tv_3:
+                    mPresenter.chooseMusicIndex(3);
+                    clearCheckBox();
+                    check_box_3.setImageResource(R.mipmap.template_btn_selected);
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        tv_0.setOnClickListener(tvMusicListener);
+        tv_1.setOnClickListener(tvMusicListener);
+        tv_2.setOnClickListener(tvMusicListener);
+        tv_3.setOnClickListener(tvMusicListener);
+
+        check_box_0.setOnClickListener(tvMusicListener);
+        check_box_1.setOnClickListener(tvMusicListener);
+        check_box_2.setOnClickListener(tvMusicListener);
+        check_box_3.setOnClickListener(tvMusicListener);
+    }
+
+
+    @Override
+    public void addSticker(String stickerPath, String title) {
+        mPresenter.addSticker(stickerPath, title);
+    }
+
+    @Override
+    public void copyGif(String fileName, String copyName, String title) {
+        mPresenter.copyGif(fileName, copyName, title);
+    }
+
+    @Override
+    public void clickItemSelected(int position) {
+        mPresenter.showAllAnim(false);
+        mPresenter.needPauseVideo();
+    }
+
+    @Override
+    public void chooseFrame(String title, String path) {
+        if (TextUtils.isEmpty(path)) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_frame", "无相框");
+            clearImageFrame();
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_frame", title);
+            mPresenter.chooseFrame(path);
+        }
+    }
+
+
+    @Override
+    public void onFinishClicked() {
+        mPresenter.stickerFragmentClose();
+    }
+
+    @Override
+    public void onClearClicked(int id) {
+        if (id == 0) {
+
+        } else if (id == 1) {
+            clearImageFrame();
+        } else {
+            clearSticker();
+        }
+    }
+
+    private void clearSticker() {
+        mPresenter.stopAllAnim();
+        closeAllAnim();
+        mPresenter.deleteAllSticker();
+        if (UiStep.isFromDownBj) {
+            StatisticsEventAffair.getInstance().setFlag(mContext, " 5_mb_bj_Stickeroff");
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(mContext, " 6_customize_bj_Stickeroff");
+        }
+    }
+
+    @Override
+    public void closeAllAnim() {
+        //ArrayList<AllStickerData> list = new ArrayList<>();
+        for (int i = 0; i < mBinding.idVviewRealtimeGllayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) mBinding.idVviewRealtimeGllayout.getChildAt(i);
+            stickerView.pause();
+        }
+    }
+
+    private void clearImageFrame() {
+        dismissFrame();
     }
 }

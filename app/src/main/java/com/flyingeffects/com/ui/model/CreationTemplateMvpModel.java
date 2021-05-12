@@ -112,7 +112,7 @@ import rx.subjects.PublishSubject;
  * param :
  * user : zhangtongju
  */
-public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.ICreationTemplateMvpModel, StickerFragment.StickerListener, CreationBackListFragment.BackChooseListener, CreationFrameFragment.FrameChooseListener, CreationBottomFragment.FinishListener {
+public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.ICreationTemplateMvpModel {
     private static final String TAG = "CreationTemplateMvpMode";
 
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
@@ -120,6 +120,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
     private final Context mContext;
     private List<View> listForInitBottom = new ArrayList<>();
     private List<Fragment> mFragmentList = new ArrayList<>();
+
     private String mVideoPath;
     private ViewLayerRelativeLayout viewLayerRelativeLayout;
     private int nowChooseMusicId = 0;
@@ -133,7 +134,9 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
     private boolean isCheckedMatting = true;
     private int mFrom;
 
-    View.OnClickListener tvMusicListener;
+    public void setNowChooseMusicId(int id) {
+        nowChooseMusicId = id;
+    }
 
     /**
      * 当前添加的音乐路径
@@ -186,6 +189,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
         this.mPresenter = presenter;
         this.mOriginalPath = originalPath;
         this.mVideoPath = mVideoPath;
+
         mFrom = from;
 
         if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
@@ -209,6 +213,10 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
         mAnimCollect = new AnimCollect();
         listAllAnima = mAnimCollect.getAnimList();
 
+    }
+
+    public List<StickerAnim> getListAllAnim() {
+        return listAllAnima;
     }
 
     /**
@@ -289,13 +297,12 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
             }
         } else {
             if (nowChooseMusicId == 2) {
-                clearCheckBox();
+                mPresenter.clearCheckBox();
             }
             this.mVideoPath = null;
             videoInfo = null;
         }
     }
-
 
     public void checkedChanged(boolean isChecked) {
         this.isCheckedMatting = isChecked;
@@ -307,7 +314,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
 
     public void intoOnPause() {
         stopAllAnim();
-        closeAllAnim();
+        mPresenter.closeAllAnim();
         deleteSubLayerSticker();
 //        new Handler().postDelayed(() -> deleteSubLayerSticker(), 200);
     }
@@ -349,9 +356,6 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
     }
 
 
-
-
-
     public void getVideoCover(String path) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(path);
@@ -368,352 +372,25 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
         });
     }
 
-    TemplateGridViewAnimAdapter templateGridViewAnimAdapter;
 
-    private ViewPager mViewPager;
-
-    ImageView check_box_0;
-    ImageView check_box_1;
-    ImageView check_box_2;
-    ImageView check_box_3;
-
-    TextView tv_0;
-    TextView tv_1;
-    TextView tv_2;
-    TextView tv_3;
-
-    public void initBottomLayout(ViewPager viewPager, FragmentManager fragmentManager, int from) {
-        this.mViewPager = viewPager;
-
-        if (from == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
-            initViewForChooseBack();
-            initViewForChooseFrame();
-            initViewForSticker(from, fragmentManager);
-        } else {
-            initViewForSticker(from, fragmentManager);
-            initViewForChooseAnim();
-            initViewForChooseMusic();
-        }
-        mPresenter.buildBottomViewPager(from);
-    }
-
-    public List<View> getListForInitBottom(){
+    public List<View> getListForInitBottom() {
         return listForInitBottom;
     }
 
-    public List<Fragment> getFragmentList(){
+    public List<Fragment> getFragmentList() {
         return mFragmentList;
     }
 
-    /**
-     * 初始化选择相框view
-     */
-    private void initViewForChooseFrame() {
-        CreationBottomFragment fragment = new CreationBottomFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt("id", 1);
-        fragment.setArguments(bundle);
-        fragment.setFinishListener(this);
-        fragment.setFrameChooseListener(this);
+    public void addFragmentList(Fragment fragment) {
         mFragmentList.add(fragment);
     }
 
-    /**
-     * 初始化选择背景view
-     *
-     */
-    private void initViewForChooseBack() {
-
-        CreationBottomFragment fragment = new CreationBottomFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt("id", 0);
-        fragment.setArguments(bundle);
-        fragment.setFinishListener(this);
-        fragment.setBackChooseListener(this);
-        mFragmentList.add(fragment);
-    }
-
-    /**
-     * 初始化贴纸列表view
-     *
-     * @param from
-     * @param fragmentManager
-     */
-    public void initViewForSticker(int from, FragmentManager fragmentManager) {
-
-        if (from == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
-            CreationBottomFragment fragment = new CreationBottomFragment();
-            Bundle bundle = new Bundle();
-            bundle.putInt("id", 2);
-            fragment.setArguments(bundle);
-            fragment.setStickerListener(this);
-            fragment.setFinishListener(this);
-            mFragmentList.add(fragment);
-        } else {
-            View templateThumbView = LayoutInflater.from(mContext).inflate(R.layout.view_template_paster, mViewPager, false);
-            ViewPager stickerViewPager = templateThumbView.findViewById(R.id.viewpager_sticker);
-
-            templateThumbView.findViewById(R.id.iv_delete_sticker).setOnClickListener(v -> {
-                clearSticker();
-            });
-
-            templateThumbView.findViewById(R.id.iv_down_sticker).setOnClickListener(v -> mPresenter.stickerFragmentClose());
-            SlidingTabLayout stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
-            getStickerTypeList(fragmentManager, stickerViewPager, stickerTab);
-            listForInitBottom.add(templateThumbView);
-        }
-
+    public void addListForBottom(View view) {
+        listForInitBottom.add(view);
     }
 
 
-    /**
-     * 初始化选音乐页面
-     */
-    private void initViewForChooseMusic() {
-        //添加音乐
-        View viewForChooseMusic = LayoutInflater.from(mContext).inflate(R.layout.view_choose_music, mViewPager, false);
-        TextView tvAddMusic = viewForChooseMusic.findViewById(R.id.tv_add_music);
-        TextView tvDownMusic = viewForChooseMusic.findViewById(R.id.iv_down_music);
-
-        tvDownMusic.setVisibility(View.VISIBLE);
-        tvDownMusic.setOnClickListener(v ->
-                mPresenter.stickerFragmentClose());
-
-        tvAddMusic.setOnClickListener(view -> {
-            StatisticsEventAffair.getInstance().setFlag(mContext, "15_music_add");
-            Intent intent = new Intent(mContext, ChooseMusicActivity.class);
-            intent.putExtra("needDuration", getDuration());
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            mContext.startActivity(intent);
-        });
-
-        tv_0 = viewForChooseMusic.findViewById(R.id.tv_0);
-        tv_1 = viewForChooseMusic.findViewById(R.id.tv_1);
-        tv_2 = viewForChooseMusic.findViewById(R.id.tv_2);
-        tv_3 = viewForChooseMusic.findViewById(R.id.tv_3);
-
-        check_box_0 = viewForChooseMusic.findViewById(R.id.iv_check_box_0);
-        check_box_1 = viewForChooseMusic.findViewById(R.id.iv_check_box_1);
-        check_box_2 = viewForChooseMusic.findViewById(R.id.iv_check_box_2);
-        check_box_3 = viewForChooseMusic.findViewById(R.id.iv_check_box_3);
-
-        tv_1.setText("背景音乐");
-        tv_2.setText("提取音乐");
-
-        setOnViewClickListener();
-
-        listForInitBottom.add(viewForChooseMusic);
-
-        new Handler().postDelayed(() -> {
-            if (!TextUtils.isEmpty(mVideoPath)) {
-                LogUtil.d("OOM", "当前有背景");
-                //模板音乐
-                nowChooseMusicId = 2;
-                chooseTemplateMusic(true);
-                mPresenter.chooseMusicIndex(1);
-            } else if (AlbumType.isVideo(GetPathType.getInstance().getPathType(mOriginalPath))) {
-                LogUtil.d("OOM", "当前素材是视频");
-                nowChooseMusicId = 1;
-                chooseMaterialMusic(mOriginalPath);
-                mPresenter.chooseMusicIndex(0);
-            }
-        }, 500);
-    }
-
-    /**
-     * 初始化动画列表view
-     */
-    private void initViewForChooseAnim() {
-        View viewForChooseAnim = LayoutInflater.from(mContext).inflate(R.layout.view_create_template_anim_creation, mViewPager, false);
-        GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
-        TextView animTab = viewForChooseAnim.findViewById(R.id.tv_name_bj_head);
-        animTab.setText("默认");
-        animTab.setTextSize(17);
-
-        viewForChooseAnim.findViewById(R.id.iv_down_anim).setOnClickListener(v -> mPresenter.stickerFragmentClose());
-        viewForChooseAnim.findViewById(R.id.iv_delete_anim).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.needPauseVideo();
-                startPlayAnim(0, true, null, 0, false);
-                StatisticsEventAffair.getInstance().setFlag(mContext, "9_Animation2");
-                StatisticsEventAffair.getInstance().setFlag(mContext, "9_Animation4");
-            }
-        });
-
-        gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
-            if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
-                modificationSingleAnimItemIsChecked(i);
-                mPresenter.needPauseVideo();
-                WaitingDialog.openPragressDialog(mContext);
-                startPlayAnim(i, false, null, 0, false);
-            }
-        });
-
-        templateGridViewAnimAdapter = new TemplateGridViewAnimAdapter(listAllAnima, mContext);
-        gridViewAnim.setAdapter(templateGridViewAnimAdapter);
-
-        listForInitBottom.add(viewForChooseAnim);
-    }
-
-
-    private void setOnViewClickListener() {
-
-        tvMusicListener = view -> {
-
-            switch (view.getId()) {
-                case R.id.iv_check_box_0:
-                case R.id.tv_0:
-
-                    chooseMaterialMusic(nowChooseStickerView.getOriginalPath());
-                    mPresenter.chooseMusicIndex(0);
-                    break;
-
-                case R.id.tv_1:
-                case R.id.iv_check_box_1:
-                    mPresenter.chooseMusicIndex(1);
-                    chooseTemplateMusic(true);
-                    break;
-
-                case R.id.tv_2:
-                case R.id.iv_check_box_2:
-                    mPresenter.chooseMusicIndex(2);
-                    nowChooseMusicId = 3;
-                    chooseAddChooseBjPath();
-                    break;
-
-                case R.id.iv_check_box_3:
-                case R.id.tv_3:
-                    mPresenter.chooseMusicIndex(3);
-                    clearCheckBox();
-                    check_box_3.setImageResource(R.mipmap.template_btn_selected);
-                    break;
-                default:
-                    break;
-            }
-        };
-
-        tv_0.setOnClickListener(tvMusicListener);
-        tv_1.setOnClickListener(tvMusicListener);
-        tv_2.setOnClickListener(tvMusicListener);
-        tv_3.setOnClickListener(tvMusicListener);
-
-        check_box_0.setOnClickListener(tvMusicListener);
-        check_box_1.setOnClickListener(tvMusicListener);
-        check_box_2.setOnClickListener(tvMusicListener);
-        check_box_3.setOnClickListener(tvMusicListener);
-    }
-
-
-    private void getStickerTypeList(FragmentManager fragmentManager, ViewPager stickerViewPager, SlidingTabLayout stickerTab) {
-        HashMap<String, String> params = new HashMap<>();
-        // 启动时间
-        Observable ob = Api.getDefault().getStickerTypeList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerTypeEntity>>(mContext) {
-
-            @Override
-            protected void onSubError(String message) {
-                ToastUtil.showToast(message);
-            }
-
-            @Override
-            protected void onSubNext(ArrayList<StickerTypeEntity> list) {
-                List<Fragment> fragments = new ArrayList<>();
-                String[] titles = new String[list.size()];
-                for (int i = 0; i < list.size(); i++) {
-                    titles[i] = list.get(i).getName();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("stickerType", list.get(i).getId());
-                    bundle.putInt("from", CreationTemplateActivity.FROM_CREATION_CODE);
-                    StickerFragment fragment = new StickerFragment();
-                    fragment.setStickerListener(CreationTemplateMvpModel.this);
-                    fragment.setArguments(bundle);
-                    fragments.add(fragment);
-                }
-
-                home_vp_frg_adapter vp_frg_adapter = new home_vp_frg_adapter(fragmentManager, fragments);
-
-                stickerViewPager.setOffscreenPageLimit(list.size() - 1);
-                stickerViewPager.setAdapter(vp_frg_adapter);
-                stickerTab.setViewPager(stickerViewPager, titles);
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY,
-                lifecycleSubject, false, true, true);
-    }
-
-    /**
-     * 请求背景
-     *
-     * @param backViewPager
-     * @param backTab
-     * @param fragmentManager
-     */
-    public void requestBackList(ViewPager backViewPager, SlidingTabLayout backTab, FragmentManager fragmentManager) {
-        HashMap<String, String> params = new HashMap<>();
-        //类型 1模板 2背景 3换脸  4 加上了最新的闪图
-        params.put("type", "4");
-        Observable ob = Api.getDefault().getCategoryList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FirstLevelTypeEntity>>(mContext) {
-            @Override
-            protected void onSubError(String message) {
-                LogUtil.e(TAG, message);
-                ToastUtil.showToast("背景列表加载错误：" + message);
-            }
-
-            @Override
-            protected void onSubNext(List<FirstLevelTypeEntity> data) {
-                String dataStr = StringUtil.beanToJSONString(data);
-                LogUtil.d(TAG, dataStr);
-
-                List<Fragment> fragments = new ArrayList<>();
-
-                for (int i = 0; i < data.size(); i++) {
-                    if ("换背景".equals(data.get(i).getName())) {
-                        List<SecondaryTypeEntity> categoryList = data.get(i).getCategory();
-                        String[] titles = new String[categoryList.size()];
-                        for (int j = 0; j < categoryList.size(); j++) {
-                            titles[j] = categoryList.get(j).getName();
-                            Bundle bundle = new Bundle();
-                            bundle.putString("id", categoryList.get(j).getId());
-                            CreationBackListFragment fragment = new CreationBackListFragment();
-                            fragment.setBackChooseListener(CreationTemplateMvpModel.this);
-                            fragment.setArguments(bundle);
-                            fragments.add(fragment);
-                        }
-
-                        LogUtil.d(TAG, "requestBackList");
-                        home_vp_frg_adapter backFragAdapter = new home_vp_frg_adapter(fragmentManager, fragments);
-                        backViewPager.setAdapter(backFragAdapter);
-                        backTab.setViewPager(backViewPager, titles);
-                    }
-                }
-            }
-        }, "mainData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, true, true, false);
-
-    }
-
-    /**
-     * 请求相框
-     *
-     * @param frameViewPager
-     * @param frameTab
-     * @param fragmentManager
-     */
-    public void requestPhotoFrameList(ViewPager frameViewPager, SlidingTabLayout frameTab, FragmentManager fragmentManager) {
-        List<Fragment> fragments = new ArrayList<>();
-        CreationFrameFragment fragment = new CreationFrameFragment();
-        fragment.setFrameChooseListener(CreationTemplateMvpModel.this);
-        String[] titles = {"相框"};
-        fragments.add(fragment);
-
-        home_vp_frg_adapter vpFrgAdapter = new home_vp_frg_adapter(fragmentManager, fragments);
-
-        frameViewPager.setAdapter(vpFrgAdapter);
-        frameTab.setViewPager(frameViewPager, titles);
-    }
-
-
-    private long getDuration() {
+    public long getDuration() {
         long duration = 0;
         if (!TextUtils.isEmpty(mVideoPath)) {
             duration = videoInfo.getDuration();
@@ -743,10 +420,23 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
     public void chooseMaterialMusic(String path) {
         if (nowChooseStickerView != null) {
             if (AlbumType.isVideo(GetPathType.getInstance().getPathType(path))) {
-                clearCheckBox();
+                mPresenter.clearCheckBox();
                 nowChooseMusicId = 1;
-                check_box_0.setImageResource(R.mipmap.template_btn_selected);
+                mPresenter.chooseCheckBox(0);
                 getVideoVoice(path, soundFolder);
+            } else {
+                ToastUtil.showToast("当前素材不是视频");
+            }
+        }
+    }
+
+    public void chooseNowStickerMaterialMusic() {
+        if (nowChooseStickerView != null) {
+            if (AlbumType.isVideo(GetPathType.getInstance().getPathType(nowChooseStickerView.getOriginalPath()))) {
+                mPresenter.clearCheckBox();
+                nowChooseMusicId = 1;
+                mPresenter.chooseCheckBox(0);
+                getVideoVoice(nowChooseStickerView.getOriginalPath(), soundFolder);
             } else {
                 ToastUtil.showToast("当前素材不是视频");
             }
@@ -758,11 +448,11 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
      * creation date: 2020/9/2
      * user : zhangtongju
      */
-    private void chooseTemplateMusic(boolean isHint) {
+    public void chooseTemplateMusic(boolean isHint) {
         if (!TextUtils.isEmpty(mVideoPath)) {
             nowChooseMusicId = 2;
-            clearCheckBox();
-            check_box_1.setImageResource(R.mipmap.template_btn_selected);
+            mPresenter.clearCheckBox();
+            mPresenter.chooseCheckBox(1);
             videoVoicePath = "";
             mPresenter.getBgmPath("");
         } else {
@@ -773,26 +463,16 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
     }
 
 
-    private void chooseAddChooseBjPath() {
+    public void chooseAddChooseBjPath() {
         if (!TextUtils.isEmpty(addChooseBjPath)) {
-            clearCheckBox();
-            check_box_2.setImageResource(R.mipmap.template_btn_selected);
+            mPresenter.clearCheckBox();
+            mPresenter.chooseCheckBox(2);
             videoVoicePath = addChooseBjPath;
             mPresenter.getBgmPath(addChooseBjPath);
         } else {
             ToastUtil.showToast("没有提取音乐");
         }
     }
-
-
-    private void clearCheckBox() {
-        nowChooseMusicId = 0;
-        check_box_0.setImageResource(R.mipmap.template_btn_unselected);
-        check_box_1.setImageResource(R.mipmap.template_btn_unselected);
-        check_box_2.setImageResource(R.mipmap.template_btn_unselected);
-        check_box_3.setImageResource(R.mipmap.template_btn_unselected);
-    }
-
 
     private int previewCount;
     private int sublayerListPosition;
@@ -807,7 +487,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
      * @param isFromPreview     是否来自播放预览
      *                          user : zhangtongju
      */
-    private synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
+    public synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
         if (!isFromPreview) {
             stopAllAnim();
             deleteSubLayerSticker();
@@ -939,7 +619,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
      */
     private final ArrayList<StickerView> needDeleteList = new ArrayList<>();
 
-    private void deleteAllSticker() {
+    public void deleteAllSticker() {
         needDeleteList.clear();
         if (listForStickerModel != null && listForStickerModel.size() > 0) {
             for (int i = 0; i < listForStickerModel.size(); i++) {
@@ -1028,10 +708,10 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
     private boolean isIntoDragMove = false;
 
     public void addSticker(String path, boolean isFirstAdd, boolean hasReplace, boolean isFromAlbum,
-                            String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim,
-                            int stickerType, String title) {
+                           String originalPath, boolean isCopy, StickerView copyStickerView, boolean isFromShowAnim,
+                           int stickerType, String title) {
         LogUtil.d(TAG, "addSticker stickerType = " + stickerType + " isFromAlbum = " + isFromAlbum);
-        closeAllAnim();
+        mPresenter.closeAllAnim();
         StickerView stickView = new StickerView(mContext, stickerType);
 
         stickView.setId(stickerViewID);
@@ -1235,6 +915,25 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
         });
     }
 
+    public void getStickerTypeList() {
+        HashMap<String, String> params = new HashMap<>();
+        // 启动时间
+        Observable ob = Api.getDefault().getStickerTypeList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ArrayList<StickerTypeEntity>>(mContext) {
+
+                    @Override
+                    protected void onSubError(String message) {
+                        ToastUtil.showToast(message);
+                    }
+
+                    @Override
+                    protected void onSubNext(ArrayList<StickerTypeEntity> list) {
+                        mPresenter.returnStickerTypeList(list);
+                    }
+                }, "cacheKey", ActivityLifeCycleEvent.DESTROY,
+                lifecycleSubject, false, true, true);
+    }
+
     /**
      * stickerView 的点击监听
      *
@@ -1249,7 +948,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
                         if (nowChooseMusicId == 1 || nowChooseMusicId == 3) {
                             mPresenter.getBgmPath("");
                             videoVoicePath = "";
-                            clearCheckBox();
+                            mPresenter.clearCheckBox();
                             chooseTemplateMusic(false);
                         }
                         mPresenter.deleteFirstSticker();
@@ -1322,7 +1021,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
             public void stickerMove() {
                 //停止全部动画
                 stopAllAnim();
-                closeAllAnim();
+                mPresenter.closeAllAnim();
                 deleteSubLayerSticker();
 //                new Handler().postDelayed(() -> deleteSubLayerSticker(), 200);
                 if (stickView.getParent() != null) {
@@ -1430,7 +1129,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
                                 mPresenter.chooseMusicIndex(1);
                                 chooseTemplateMusic(true);
                             } else {
-                                clearCheckBox();
+                                mPresenter.clearCheckBox();
                             }
                         }
                         if (mStickerType == StickerView.CODE_STICKER_TYPE_FLASH_PIC) {
@@ -1575,13 +1274,6 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
         }
     }
 
-    private void closeAllAnim() {
-        //ArrayList<AllStickerData> list = new ArrayList<>();
-        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
-            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-            stickerView.pause();
-        }
-    }
 
     /**
      * description ：复制一个gif出来
@@ -1589,7 +1281,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
      * param :  getResPath 图片地址，path  isFromAubum 是否来自相册 stickerView 原贴纸 OriginalPath 原图地址 isFromShowAnim 是否是因为来自动画分身
      * user : zhangtongju
      */
-    private void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim, String title) {
+    public void copyGif(String getResPath, String path, boolean isFromAubum, StickerView stickerView, String OriginalPath, boolean isFromShowAnim, String title) {
 
         if (stickerView != null && stickerView.getIsTextSticker()) {
             //复制文字贴纸
@@ -1622,11 +1314,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
                             if (stickerView == null) {
                                 addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, null, isFromShowAnim, stickerType, title);
                             } else {
-                                if (stickerView != null) {
-                                    addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, stickerType, stickerView.getDownStickerTitle());
-                                } else {
-                                    addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, stickerType, null);
-                                }
+                                addSticker(finalCopyName, false, false, isFromAubum, getResPath, true, stickerView, isFromShowAnim, stickerType, stickerView.getDownStickerTitle());
                             }
                         }
                     });
@@ -1726,8 +1414,6 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
     }
 
 
-
-
     /**
      * description ：保存视频采用蓝松sdk提供的在保存功能
      * creation date: 2020/3/12
@@ -1743,6 +1429,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
             LogUtil.d("OOM", "toSaveVideo-templateId=" + templateId);
             statisticsToSave(templateId + "");
         }
+
         stopAllAnim();
         this.percentageH = percentageH;
         deleteSubLayerSticker();
@@ -1953,17 +1640,6 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
         }
     }
 
-    private void modificationSingleAnimItemIsChecked(int position) {
-        for (StickerAnim item : listAllAnima) {
-            item.setChecked(false);
-        }
-        StickerAnim item1 = listAllAnima.get(position);
-        item1.setChecked(true);
-        //修改对应的元素
-        listAllAnima.set(position, item1);
-        templateGridViewAnimAdapter.notifyDataSetChanged();
-    }
-
 
     /**
      * description ：增加一个新的
@@ -2007,23 +1683,8 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
 //        }).start();
     }
 
-    @Override
-    public void addSticker(String stickerPath, String title) {
-        addSticker(stickerPath, false, false, false, null, false, null, false, mStickerType, title);
-    }
-
-    @Override
-    public void copyGif(String fileName, String copyName, String title) {
-        copyGif(fileName, copyName, false, null, fileName, false, title);
-    }
-
-    @Override
-    public void clickItemSelected(int position) {
-        showAllAnim(false);
-        mPresenter.needPauseVideo();
-    }
-
     private int dialogProgress;
+
     @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         @Override
@@ -2109,7 +1770,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
      * creation date: 2020/5/27
      * user : zhangtongju
      */
-    private synchronized void stopAllAnim() {
+    public synchronized void stopAllAnim() {
         LogUtil.d("OOM4", "stopAllAnim");
         if (mAnimCollect != null) {
             mAnimCollect.stopAnim();
@@ -2342,52 +2003,42 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
         mPresenter.showMusicBtn(nowChooseStickerView.isFirstAddSticker());
     }
 
-    @Override
-    public void chooseBack(String title, String path) {
-
-        mPresenter.chooseBack(title, path);
+    /**
+     * 初始化时选择的音乐
+     */
+    public void chooseInitMusic() {
+        new Handler().postDelayed(() -> {
+            if (!TextUtils.isEmpty(mVideoPath)) {
+                LogUtil.d("OOM", "当前有背景");
+                //模板音乐
+                setNowChooseMusicId(2);
+                chooseTemplateMusic(true);
+                mPresenter.chooseMusicIndex(1);
+            } else if (AlbumType.isVideo(GetPathType.getInstance().getPathType(mOriginalPath))) {
+                LogUtil.d("OOM", "当前素材是视频");
+                setNowChooseMusicId(1);
+                chooseMaterialMusic(mOriginalPath);
+                mPresenter.chooseMusicIndex(0);
+            }
+        }, 500);
     }
 
-    @Override
-    public void chooseFrame(String title, String path) {
-        if (TextUtils.isEmpty(path)) {
-            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_frame", "无相框");
-            clearImageFrame();
-        } else {
-            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_frame", title);
-            mPresenter.chooseFrame(path);
+    public void modificationSingleAnimItemIsChecked(int position) {
+        for (StickerAnim item : listAllAnima) {
+            item.setChecked(false);
         }
+        StickerAnim item1 = listAllAnima.get(position);
+        item1.setChecked(true);
+        //修改对应的元素
+        listAllAnima.set(position, item1);
     }
 
-    @Override
-    public void onFinishClicked() {
-        mPresenter.stickerFragmentClose();
+    public void addSticker(String stickerPath, String title) {
+        addSticker(stickerPath, false, false, false, null, false, null, false, mStickerType, title);
     }
 
-    @Override
-    public void onClearClicked(int id) {
-        if (id == 0) {
-
-        } else if (id == 1) {
-            clearImageFrame();
-        } else {
-            clearSticker();
-        }
-    }
-
-    private void clearSticker() {
-        stopAllAnim();
-        closeAllAnim();
-        deleteAllSticker();
-        if (UiStep.isFromDownBj) {
-            StatisticsEventAffair.getInstance().setFlag(mContext, " 5_mb_bj_Stickeroff");
-        } else {
-            StatisticsEventAffair.getInstance().setFlag(mContext, " 6_customize_bj_Stickeroff");
-        }
-    }
-
-    private void clearImageFrame() {
-        mPresenter.dismissFrame();
+    public void copyGif(String fileName, String copyName, String title) {
+        copyGif(fileName, copyName, false, null, fileName, false, title);
     }
 }
 
