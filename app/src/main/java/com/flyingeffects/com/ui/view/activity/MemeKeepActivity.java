@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,9 +29,9 @@ import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.utils.VideoConvertGif;
 import com.flyingeffects.com.utils.record.SaveShareDialog;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.lansosdk.videoeditor.VideoEditor;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -107,26 +108,43 @@ public class MemeKeepActivity extends BaseActivity {
    private  String keepGifName;
     @Override
     protected void initAction() {
-        String gifPath;
         if (Typematerial == 0) {
-            VideoEditor videoEditor = new VideoEditor();
-            gifPath = videoEditor.executeConvertVideoToGif(videoPath, 15, mediaInfo.getWidth() / 2, mediaInfo.getHeight() / 2, 1f);
+            VideoConvertGif videoConvertGif=new VideoConvertGif();
+            videoConvertGif.ToExtractFrame(videoPath, new VideoConvertGif.CreateGifCallback() {
+                @Override
+                public void callback(boolean isSuccess, String path) {
+                    if(isSuccess){
+                        showGif(path);
+                    }else{
+                        ToastUtil.showToast(path);
+                    }
+                }
+            });
             mediaInfo.release();
         }else{
-            gifPath=videoPath;
+            showGif(videoPath);
         }
+    }
+
+
+    private void showGif(String gifPath){
         WaitingDialog.closeProgressDialog();
-        File file = new File(gifPath);
-        keepGifName = mGifFolder +File.separator + System.currentTimeMillis() +  "keep.gif";
-        if (file.exists()) {
-            try {
-                FileUtil.copyFile(file,keepGifName);
-                Glide.with(this).load(keepGifName).into(imageView);
-            } catch (IOException e) {
-                e.printStackTrace();
+        if(!TextUtils.isEmpty(gifPath)){
+            File file = new File(gifPath);
+            keepGifName = mGifFolder +File.separator + System.currentTimeMillis() +  "keep.gif";
+            if (file.exists()) {
+                try {
+                    FileUtil.copyFile(file,keepGifName);
+                    Glide.with(this).load(keepGifName).into(imageView);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+            Glide.with(this).load(BaseConstans.getGifCourse()).into(mBinding.ivShowCourse);
+        }else{
+            ToastUtil.showToast("合成失败");
+            finish();
         }
-        Glide.with(this).load(BaseConstans.getGifCourse()).into(mBinding.ivShowCourse);
     }
 
 
@@ -150,6 +168,16 @@ public class MemeKeepActivity extends BaseActivity {
             }
         }
     }
+
+
+
+
+
+
+
+
+
+
 
 
     /**
@@ -262,15 +290,6 @@ public class MemeKeepActivity extends BaseActivity {
     }
 
 
-//    private void showDialog(String path) {
-//        if (!com.flyingeffects.com.commonlyModel.DoubleClick.getInstance().isFastDoubleClick()) {
-//            ShowPraiseModel.keepAlbumCount();
-//            keepAlbumCount();
-//            LogUtil.d("showDialog", "showDialog");
-//            mShareDialog.createDialog("已保存");
-//            mShareDialog.setVideoPath(path);
-//        }
-//    }
 
 
     private void showDialog(String path) {
@@ -284,16 +303,10 @@ public class MemeKeepActivity extends BaseActivity {
             keepAlbumCount();
             LogUtil.d("showDialog", "showDialog");
             AlertDialog.Builder builder = new AlertDialog.Builder(
-                    //去除黑边
                     new ContextThemeWrapper(this, R.style.Theme_Transparent));
             builder.setTitle(this.getString(R.string.notification));
-//            builder.setMessage(context.getString(R.string.have_saved_to_sdcard) +
-//                    "【" + path + context.getString(R.string.folder) + "】");
-
             builder.setMessage("已为你保存到相册,多多分享给友友\n" + "【" + path + this.getString(R.string.folder) + "】"
             );
-
-
             builder.setNegativeButton(this.getString(R.string.got_it), (dialog, which) -> {
                 dialog.dismiss();
             });
@@ -310,6 +323,28 @@ public class MemeKeepActivity extends BaseActivity {
         num++;
         Hawk.put("keepAlbumNum", num);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

@@ -229,7 +229,7 @@ public class BitmapManager {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, out);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
             out.close();
             callback.isSuccess(true);
