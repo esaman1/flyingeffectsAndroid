@@ -82,7 +82,7 @@ public class MemeKeepActivity extends BaseActivity {
         View rootView = mBinding.getRoot();
         videoPath = getIntent().getStringExtra("videoPath");
         templateId = getIntent().getStringExtra("templateId");
-        templateType=getIntent().getStringExtra("templateType");
+        templateType = getIntent().getStringExtra("templateType");
         title = getIntent().getStringExtra(title);
         if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(videoPath))) {
             Typematerial = 0;
@@ -105,43 +105,55 @@ public class MemeKeepActivity extends BaseActivity {
     }
 
 
-   private  String keepGifName;
+    private String keepGifName;
+    private String logoPath;
+
     @Override
     protected void initAction() {
         if (Typematerial == 0) {
-            VideoConvertGif videoConvertGif=new VideoConvertGif();
+            VideoConvertGif videoConvertGif = new VideoConvertGif(this);
             videoConvertGif.ToExtractFrame(videoPath, new VideoConvertGif.CreateGifCallback() {
                 @Override
-                public void callback(boolean isSuccess, String path) {
-                    if(isSuccess){
-                        showGif(path);
-                    }else{
-                        ToastUtil.showToast(path);
-                    }
+                public void callback(boolean isSuccess, String path, String icon) {
+
+                    Observable.just(isSuccess).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
+                        @Override
+                        public void call(Boolean aBoolean) {
+                            if (aBoolean) {
+                                logoPath = icon;
+                                showGif(path);
+                            } else {
+                                ToastUtil.showToast(path);
+                            }
+                        }
+                    });
+
                 }
             });
             mediaInfo.release();
-        }else{
+        } else {
             showGif(videoPath);
         }
     }
 
 
-    private void showGif(String gifPath){
+    private void showGif(String gifPath) {
+
+
         WaitingDialog.closeProgressDialog();
-        if(!TextUtils.isEmpty(gifPath)){
+        if (!TextUtils.isEmpty(gifPath)) {
             File file = new File(gifPath);
-            keepGifName = mGifFolder +File.separator + System.currentTimeMillis() +  "keep.gif";
+            keepGifName = mGifFolder + File.separator + System.currentTimeMillis() + "keep.gif";
             if (file.exists()) {
                 try {
-                    FileUtil.copyFile(file,keepGifName);
+                    FileUtil.copyFile(file, keepGifName);
                     Glide.with(this).load(keepGifName).into(imageView);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             Glide.with(this).load(BaseConstans.getGifCourse()).into(mBinding.ivShowCourse);
-        }else{
+        } else {
             ToastUtil.showToast("合成失败");
             finish();
         }
@@ -154,8 +166,8 @@ public class MemeKeepActivity extends BaseActivity {
         } else if (view == mBinding.ivBack) {
             finish();
         } else if (view == mBinding.llKeep) {
-            LogUtil.d("OOM22","埋点st_bqb_save"+title);
-            TemplateKeepStatistics.getInstance().statisticsToSave(templateId, title,templateType);
+            LogUtil.d("OOM22", "埋点st_bqb_save" + title);
+            TemplateKeepStatistics.getInstance().statisticsToSave(templateId, title, templateType);
             StatisticsEventAffair.getInstance().setFlag(MemeKeepActivity.this, "st_bqb_save", title);
             //保存到本地
             String keepPath = SaveAlbumPathModel.getInstance().getKeepOutputForGif();
@@ -168,16 +180,6 @@ public class MemeKeepActivity extends BaseActivity {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
 
 
     /**
@@ -281,15 +283,15 @@ public class MemeKeepActivity extends BaseActivity {
         Observable.just(needGifPath).observeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             new Handler().post(() -> {
                 UMEmoji emoji = new UMEmoji(MemeKeepActivity.this, s);
-                emoji.setThumb(new UMImage(MemeKeepActivity.this, R.mipmap.logo));
+                String ss="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2483784393,127887195&fm=26&gp=0.jpg";
+                emoji.setThumb(new UMImage(MemeKeepActivity.this, logoPath));
+                LogUtil.d("OOM2", "logoPath=" + logoPath);
                 new ShareAction(MemeKeepActivity.this)
                         .withMedia(emoji).setPlatform(SHARE_MEDIA.WEIXIN)
                         .setCallback(shareListener).share();
             });
         });
     }
-
-
 
 
     private void showDialog(String path) {
@@ -323,28 +325,6 @@ public class MemeKeepActivity extends BaseActivity {
         num++;
         Hawk.put("keepAlbumNum", num);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

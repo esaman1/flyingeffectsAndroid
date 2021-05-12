@@ -1,6 +1,7 @@
 package com.flyingeffects.com.utils;
 
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
@@ -9,10 +10,13 @@ import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.manager.BitmapManager;
+import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.huaweiObs;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ExtractVideoFrame;
 import com.lansosdk.videoeditor.MediaInfo;
+import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.utils.AnimatedGifEncoder;
 
 import java.io.ByteArrayOutputStream;
@@ -20,6 +24,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /**
@@ -30,11 +38,15 @@ import java.util.List;
 public class VideoConvertGif {
     private ExtractVideoFrame mExtractFrame;
     private String extractFrameFolder;
+    private String gifCatch;
     private int frameCount;
+    private Context context;
 
-    public VideoConvertGif() {
+    public VideoConvertGif(Context context) {
+        this.context = context;
         FileManager fileManager = new FileManager();
         extractFrameFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "ExtractFrame");
+        gifCatch = fileManager.getFileCachePath(BaseApplication.getInstance(), "GifCatch");
     }
 
 
@@ -58,15 +70,15 @@ public class VideoConvertGif {
                     mExtractFrame.setBitmapWH(mInfo.vWidth / 3, mInfo.vHeight / 3);
                 }
             }
-            int getAllFrame = mInfo.vTotalFrames;
-            LogUtil.d("OOM2", "视频的总帧数为" + getAllFrame);
-            float allFrameF = getAllFrame * 3 / (float) 4;
-            LogUtil.d("OOM2", "提取数量为" + allFrameF);
-            int allFrame = (int) allFrameF;
+            int allFrame = mInfo.vTotalFrames;
             //设置提取多少帧
             mExtractFrame.setExtractSomeFrame(allFrame);
             mExtractFrame.setOnExtractCompletedListener(v -> {
-                createGif(callback);
+                try {
+                    createGif(callback);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
             mExtractFrame.setOnExtractProgressListener((bmp, ptsUS) -> {
                 frameCount++;
@@ -86,20 +98,25 @@ public class VideoConvertGif {
     /**
      * 生成gif图
      */
-    private void createGif(CreateGifCallback callback) {
+    private void createGif(CreateGifCallback callback) throws IOException {
         List<File> getMattingList = FileManager.listFileSortByModifyTime(extractFrameFolder);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         AnimatedGifEncoder localAnimatedGifEncoder = new AnimatedGifEncoder();
         localAnimatedGifEncoder.start(baos);//start
         localAnimatedGifEncoder.setRepeat(0);//设置生成gif的开始播放时间。0为立即开始播放
         localAnimatedGifEncoder.setDelay(0);
+        localAnimatedGifEncoder.setFrameRate(20);
         for (int i = 0; i < getMattingList.size(); i++) {
             localAnimatedGifEncoder.addFrame(BitmapFactory.decodeFile(getMattingList.get(i).getPath()));
         }
         localAnimatedGifEncoder.finish();//finish
         File file = new File(Environment.getExternalStorageDirectory().getPath() + "/GIFMakerDemo");
         if (!file.exists()) file.mkdir();
-        String path = Environment.getExternalStorageDirectory().getPath() + "/GIFMakerDemo/show.gif";
+        String path = gifCatch+"/show.gif";
+        String path2 = gifCatch+"/show.jpg";
+        File fileFrom=new File(extractFrameFolder + File.separator + frameCount + ".jpg");
+        FileUtil.copyFile(fileFrom ,path2);
+
         LogUtil.d("OOM2", "createGif: ---->" + path);
         try {
             FileOutputStream fos = new FileOutputStream(path);
@@ -108,17 +125,13 @@ public class VideoConvertGif {
             fos.flush();
             baos.close();
             fos.close();
-            File extractFrameF = new File(extractFrameFolder);
-//            if (extractFrameF.exists()) {
-//               boolean isSuccess= extractFrameF.delete();
-//               LogUtil.d("OOM2","删除文件夹是否成功"+isSuccess);
-//            }
-            if (callback != null) {
-                callback.callback(true, path);
-            }
+            DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("ExtractFrame"));
+            uploadDressUpImage(path2,callback,path);
+
+//            compressGif(path, path2, callback);
         } catch (IOException e) {
             if (callback != null) {
-                callback.callback(false, e.getMessage());
+                callback.callback(false, e.getMessage(),"");
             }
             e.printStackTrace();
         }
@@ -131,8 +144,59 @@ public class VideoConvertGif {
      * user : zhangtongju
      */
     public interface CreateGifCallback {
-        void callback(boolean isSuccess, String path);
+        void callback(boolean isSuccess, String path,String iconPath);
     }
+
+
+
+
+
+
+    private String needGifPath;
+    private void uploadDressUpImage(String path,CreateGifCallback callback,String orginPath) {
+        new Thread(() -> {
+            String type = path.substring(path.length() - 4);
+            String nowTime = StringUtil.getCurrentTimeymd();
+            String copyPath = "media/android/upGif/" + nowTime + "/" + System.currentTimeMillis() + type;
+            needGifPath = "http://cdn.flying.flyingeffect.com/" + copyPath;
+            uploadHuawei(path, copyPath,callback,orginPath);
+        }).start();
+    }
+
+    /**
+     * description ：上传到华为
+     * creation date: 2021/4/14
+     * user : zhangtongju
+     */
+    private void uploadHuawei(String path, String copyPath,CreateGifCallback callback,String  orginPath) {
+        LogUtil.d("OOM2", "needGifPath=" + needGifPath);
+        huaweiObs.getInstance().uploadFileToHawei(path, copyPath, new huaweiObs.Callback() {
+            @Override
+            public void isSuccess(String str) {
+                Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        if (callback != null) {
+                            callback.callback(true, orginPath,needGifPath);
+                        }
+
+                    }
+                });
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
