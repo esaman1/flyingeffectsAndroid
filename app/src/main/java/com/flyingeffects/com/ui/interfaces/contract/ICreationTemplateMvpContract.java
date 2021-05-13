@@ -67,8 +67,6 @@ public interface ICreationTemplateMvpContract {
 
         public abstract void stickerFragmentClose();
 
-        public abstract void showLoadingDialog();
-
         public abstract void dismissLoadingDialog();
 
         public abstract void setDialogProgress(String title, int dialogProgress, String content);
@@ -92,7 +90,7 @@ public interface ICreationTemplateMvpContract {
 
         public abstract void chooseInitMusic();
 
-        public abstract void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview);
+        public abstract void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView,  boolean isFromPreview);
 
         public abstract void modificationSingleAnimItemIsChecked(int i);
 
@@ -113,6 +111,8 @@ public interface ICreationTemplateMvpContract {
         public abstract void addSticker(String stickerPath, String title);
 
         public abstract void copyGif(String fileName, String copyName, String title);
+
+        public abstract void showLoading();
     }
 
     interface ICreationTemplateMvpView extends BaseView {
@@ -162,8 +162,6 @@ public interface ICreationTemplateMvpContract {
         void modifyTimeLineSickerPath(String id, String path, StickerView stickerView);
 
         void stickerFragmentClose();
-
-        void showLoadingDialog();
 
         void dismissLoadingDialog();
 

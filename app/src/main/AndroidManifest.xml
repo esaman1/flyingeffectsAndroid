@@ -237,6 +237,7 @@
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 
         <activity
