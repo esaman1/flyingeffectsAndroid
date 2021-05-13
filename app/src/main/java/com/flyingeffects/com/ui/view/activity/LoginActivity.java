@@ -78,6 +78,8 @@ import rx.Observable;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
+    private Context mContext;
+
     @BindView(R.id.shanyan_login_relative)
     RelativeLayout shanyan_login_relative;
     @BindView(R.id.password)
@@ -96,7 +98,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 //    private static final String WEIXIN = "wx";
 //    private static final String QQ = "qq";
 
-
+    boolean isOnDestroy = false;
     /**
      * 0 ，发送验证码，1 登录
      */
@@ -105,15 +107,78 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     //当前页面类型 0是老板ui ,1 是新版ui
     private int nowPageType = 1;
-    private Context mContext;
+
 
     @Override
     protected int getLayoutId() {
         return R.layout.act_login;
     }
 
+    @Override
+    protected void initView() {
+        mContext = LoginActivity.this;
+        isOnDestroy = false;
 
-    boolean isOnDestroy = false;
+        EventBus.getDefault().register(this);
+        clearUmData();
+        WaitingDialog.openPragressDialog(this);
+        OneKeyLoginManager.getInstance().setLoadingVisibility(false);
+        OneKeyLoginManager.getInstance().setAuthThemeConfig(ShanyanConfigUtils.getCJSConfig(getApplicationContext()), ShanyanConfigUtils.getCJSConfig(getApplicationContext()));
+        openLoginActivity();
+
+        SpannableStringBuilder strBuilder = initTipsBuilder();
+
+        tv_xy.setMovementMethod(LinkMovementMethod.getInstance());
+        tv_xy.setText(strBuilder);
+    }
+
+    private SpannableStringBuilder initTipsBuilder() {
+        String tips = "登录表示你同意《服务条款》和《隐私政策》";
+        SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(tips);
+        ClickableSpan clickableSpanOne = new ClickableSpan() {
+            @Override
+            public void onClick(@NotNull View view) {
+                if (NetworkUtils.isNetworkAvailable(LoginActivity.this)) {
+                    Intent intent = new Intent(LoginActivity.this, webViewActivity.class);
+                    intent.putExtra("webUrl", BaseConstans.PROTOCOL);
+                    startActivity(intent);
+                } else {
+                    ToastUtil.showToast("网络连接失败！");
+                }
+            }
+
+            @Override
+            public void updateDrawState(TextPaint paint) {
+                paint.setColor(Color.parseColor("#0092FE"));
+                // 设置下划线 true显示、false不显示
+                paint.setUnderlineText(false);
+            }
+        };
+
+        ClickableSpan clickableSpanTwo = new ClickableSpan() {
+            @Override
+            public void onClick(@NotNull View view) {
+                if (NetworkUtils.isNetworkAvailable(LoginActivity.this)) {
+                    Intent intent = new Intent(LoginActivity.this, webViewActivity.class);
+                    intent.putExtra("webUrl", BaseConstans.PRIVACYPOLICY);
+                    startActivity(intent);
+                } else {
+                    ToastUtil.showToast("网络连接失败！");
+                }
+            }
+
+            @Override
+            public void updateDrawState(TextPaint paint) {
+                paint.setColor(Color.parseColor("#0092FE"));
+                // 设置下划线 true显示、false不显示
+                paint.setUnderlineText(false);
+            }
+        };
+        spannableBuilder.setSpan(clickableSpanOne, 8, 12, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableBuilder.setSpan(clickableSpanTwo, 15, 19, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableBuilder;
+    }
+
 
     @Override
     public void onDestroy() {
@@ -161,8 +226,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             if (1011 == code) {
 //                isOpenAuth = false;
                 Log.e("OOM", "用户点击授权页返回： _code==" + code + "   _result==" + result);
-                LoginActivity.this.finish();
-                return;
+                finish();
             } else if (1000 == code) {
                 Log.e("VVV", "用户点击登录获取token成功： _code==" + code + "   _result==" + result);
                 try {
@@ -176,7 +240,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 Log.e("VVV", "用户点击登录获取token失败： _code==" + code + "   _result==" + result);
 //                    ToastUtil.showToast("用户点击登录获取token失败： _code==" + code + "   _result==" + result);
 //                    relative_normal.setVisibility(View.VISIBLE);
-                LoginActivity.this.finish();
+                finish();
             }
 
         });
@@ -214,11 +278,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 endTimer();
-                if (TextUtils.isEmpty(editTextPassword.getText().toString())) {
-                    nextStep(false);
-                } else {
-                    nextStep(true);
-                }
+                nextStep(!TextUtils.isEmpty(editTextPassword.getText().toString()));
             }
 
             @Override
@@ -237,7 +297,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private void nextStep(boolean isLogin) {
         if (isLogin) {
             tv_login.setText("登录");
-            tv_login.setBackground(getResources().getDrawable(R.drawable.login_button));
+            tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
             nowProgressType = 1;
         } else {
             tv_login.setText("获得验证码");
@@ -261,63 +321,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
     }
 
-    @Override
-    protected void initView() {
-        mContext = LoginActivity.this;
-        isOnDestroy = false;
-        EventBus.getDefault().register(this);
-        clearUmData();
-        WaitingDialog.openPragressDialog(this);
-        OneKeyLoginManager.getInstance().setLoadingVisibility(false);
-        OneKeyLoginManager.getInstance().setAuthThemeConfig(ShanyanConfigUtils.getCJSConfig(getApplicationContext()), ShanyanConfigUtils.getCJSConfig(getApplicationContext()));
-        openLoginActivity();
-
-        String tips = "登录表示你同意《服务条款》和《隐私政策》";
-        SpannableStringBuilder spannableBuilder = new SpannableStringBuilder(tips);
-        ClickableSpan clickableSpanOne = new ClickableSpan() {
-            @Override
-            public void onClick(@NotNull View view) {
-                if (NetworkUtils.isNetworkAvailable(LoginActivity.this)) {
-                    Intent intent = new Intent(LoginActivity.this, webViewActivity.class);
-                    intent.putExtra("webUrl", BaseConstans.PROTOCOL);
-                    startActivity(intent);
-                } else {
-                    ToastUtil.showToast("网络连接失败！");
-                }
-            }
-
-            @Override
-            public void updateDrawState(TextPaint paint) {
-                paint.setColor(Color.parseColor("#0092FE"));
-                // 设置下划线 true显示、false不显示
-                paint.setUnderlineText(false);
-            }
-        };
-
-        ClickableSpan clickableSpanTwo = new ClickableSpan() {
-            @Override
-            public void onClick(@NotNull View view) {
-                if (NetworkUtils.isNetworkAvailable(LoginActivity.this)) {
-                    Intent intent = new Intent(LoginActivity.this, webViewActivity.class);
-                    intent.putExtra("webUrl", BaseConstans.PRIVACYPOLICY);
-                    startActivity(intent);
-                } else {
-                    ToastUtil.showToast("网络连接失败！");
-                }
-            }
-
-            @Override
-            public void updateDrawState(TextPaint paint) {
-                paint.setColor(Color.parseColor("#0092FE"));
-                // 设置下划线 true显示、false不显示
-                paint.setUnderlineText(false);
-            }
-        };
-        spannableBuilder.setSpan(clickableSpanOne, 8, 12, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableBuilder.setSpan(clickableSpanTwo, 15, 19, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        tv_xy.setMovementMethod(LinkMovementMethod.getInstance());
-        tv_xy.setText(spannableBuilder);
-    }
 
     private void clearUmData() {
         UMShareAPI.get(mContext).deleteOauth(this, SHARE_MEDIA.WEIXIN, authListener);
@@ -351,13 +354,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     }
                 } else {
                     tv_login.setEnabled(true);
-                    tv_login.setBackground(getResources().getDrawable(R.drawable.login_button));
+                    tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
                     requestLogin();
                 }
                 break;
 
             case R.id.iv_close:
-                LoginActivity.this.finish();
+                finish();
                 break;
 
             case R.id.ll_weixin:
@@ -490,7 +493,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         WaitingDialog.closeProgressDialog();
                         EventBus.getDefault().post(new LoginToAttentionUserEvent());
                         EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
-                        LoginActivity.this.finish();
+                        finish();
                     }
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
@@ -526,7 +529,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private void startTimer() {
         isCanSendMsg = false;
         tv_login.setEnabled(false);
-        tv_login.setBackground(getResources().getDrawable(R.drawable.login_button_forbidden));
+        tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button_forbidden));
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -567,10 +570,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         isCanSendMsg = true;
         tv_login.setEnabled(true);
-        tv_login.setBackground(ContextCompat.getDrawable(mContext,R.drawable.login_button));
+        tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
     }
-
-
 
 
     public void wxLogin() {

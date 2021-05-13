@@ -176,6 +176,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
      * 获得背景视频音乐
      */
     private String bgmPath;
+
     private SimpleExoPlayer exoPlayer;
     /**
      * 背景音乐播放器
@@ -199,6 +200,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
      * 当前播放的进度
      */
     private long mCutStartTime;
+
     /**
      * 整个视频的结束时间
      */
@@ -210,6 +212,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
      * 背景音乐播放的开始位置
      */
     private long musicStartTime = 0;
+
     /**
      * 背景音乐第一个素材播放的开始位置
      */
@@ -240,7 +243,6 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
      * 换脸-换背景过来时带的背景图
      */
     private String mBackgroundImage;
-    private String mFramePath;
     private String mBackGroundTitle;
 
     @Override
@@ -387,6 +389,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                 if (isDrag) {
                     mSeekBarViewManualDrag = false;
                 }
+
                 if (!mSeekBarViewManualDrag) {
                     mBinding.materialSeekBarView.dragScrollView = false;
                     mBinding.materialSeekBarView.scrollToPosition(progress);
@@ -479,8 +482,10 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
             retriever.setDataSource(videoPath);
             String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
             String height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+
             int w = Integer.parseInt(width);
             int h = Integer.parseInt(height);
+
             LogUtil.d(TAG, "video width = " + width + " video height = " + height);
             return w > h;
         } catch (Exception e) {
@@ -2069,11 +2074,14 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                 stickerView.setShowStickerStartTime(mCutStartTime);
                 stickerView.setShowStickerEndTime(mCutEndTime);
                 //是绿幕视频并且添加的素材是视频 遍历出所有素材的最长时长  为当前主轨道的时长
-                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath())) && TextUtils.isEmpty(videoPath)) {
+                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))
+                        && TextUtils.isEmpty(videoPath)) {
+
                     MediaInfo mediaInfo = new MediaInfo(stickerView.getOriginalPath());
                     mediaInfo.prepare();
                     long videoDuration = (long) (mediaInfo.vDuration * 1000);
                     mediaInfo.release();
+
                     boolean modify = false;
                     //循环得到最长的视频时长
                     long maxVideoDuration = 0;
@@ -2085,10 +2093,12 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                             }
                         }
                     }
+
                     if (videoDuration > maxVideoDuration) {
                         modify = true;
                         oldMaxVideoDuration = videoDuration;
                     }
+
                     if (modify) {
                         modificationDuration(videoDuration);
                         mBinding.materialSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
@@ -2112,6 +2122,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                     mainMediaInfo.prepare();
                     long videoDuration = (long) (mainMediaInfo.vDuration * 1000);
                     mainMediaInfo.release();
+
                     MediaInfo materialMediaInfo = new MediaInfo(stickerView.getOriginalPath());
                     materialMediaInfo.prepare();
                     long materialDuration = (long) (materialMediaInfo.vDuration * 1000);
@@ -2184,7 +2195,6 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                                 }
                             }
                             mBinding.tvTotal.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
-
                         }
                         oldMaxVideoDuration = materialDuration;
                         mBinding.materialSeekBarView.setCutEndTime(mCutEndTime);
@@ -2293,11 +2303,6 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
         }
     }
 
-    @Override
-    public void showLoadingDialog() {
-        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_bj");
-        mLoadingDialog.show();
-    }
 
     @Override
     public void dismissLoadingDialog() {
@@ -2646,7 +2651,8 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
 
     @Override
     public void showLoading() {
-
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_bj");
+        mLoadingDialog.show();
     }
 
     @Override
@@ -2771,7 +2777,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
             @Override
             public void onClick(View v) {
                 mPresenter.needPauseVideo();
-                mPresenter.startPlayAnim(0, true, null, 0, false);
+                mPresenter.startPlayAnim(0, true, null, false);
                 StatisticsEventAffair.getInstance().setFlag(mContext, "9_Animation2");
                 StatisticsEventAffair.getInstance().setFlag(mContext, "9_Animation4");
             }
@@ -2783,7 +2789,7 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
                 templateGridViewAnimAdapter.notifyDataSetChanged();
                 mPresenter.needPauseVideo();
                 WaitingDialog.openPragressDialog(mContext);
-                mPresenter.startPlayAnim(i, false, null, 0, false);
+                mPresenter.startPlayAnim(i, false, null,  false);
             }
         });
 

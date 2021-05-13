@@ -487,7 +487,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
      * @param isFromPreview     是否来自播放预览
      *                          user : zhangtongju
      */
-    public synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
+    public synchronized void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, boolean isFromPreview) {
         if (!isFromPreview) {
             stopAllAnim();
             deleteSubLayerSticker();
@@ -532,6 +532,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
                         } else {
                             copyGif(targetStickerView.getResPath(), targetStickerView.getResPath(), targetStickerView.getComeFrom(), targetStickerView, targetStickerView.getOriginalPath(), true, targetStickerView.getDownStickerTitle());
                         }
+
                         if (x == mAnimCollect.getAnimNeedSubLayerCount(listAllAnima.get(position).getAnimType())) {
                             LogUtil.d("OOM", "sublayerListPosition" + sublayerListPosition);
                             ArrayList<StickerView> list = new ArrayList<>(nowChooseSubLayerAnimList);
@@ -561,7 +562,9 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
      * creation date: 2020/6/3
      * user : zhangtongju
      */
-    private void delayedToStartAnim(StartAnimModel startAnimModel, AnimType animType, StickerView finalTargetStickerView, final int position, boolean isFromPreview) {
+    private void delayedToStartAnim(StartAnimModel startAnimModel, AnimType animType,
+                                    StickerView finalTargetStickerView, final int position,
+                                    boolean isFromPreview) {
 
         new Handler().postDelayed(() -> {
             //如果是gif 那么开启gif动画
@@ -1511,11 +1514,11 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
                         }
                     }
                     if (cutVideoPathList.size() == 0) {
-                        mPresenter.showLoadingDialog();
+                        mPresenter.showLoading();
                         //都不是视频的情况下，就直接渲染
                         backgroundDraw.toSaveVideo(listAllSticker, isMatting, nowUiIsLandscape, percentageH);
                     } else {
-                        mPresenter.showLoadingDialog();
+                        mPresenter.showLoading();
                         cutList.clear();
                         if (videoInfo != null) {
                             cutVideo(cutVideoPathList.get(0), videoInfo.getDuration(), cutVideoPathList.get(0).getDuration(), nowUiIsLandscape);
@@ -1748,7 +1751,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
                                 hasAnimCount++;
                                 hasAnim = true;
                                 int type = mAnimCollect.getAnimid(stickerView.getChooseAnimId());
-                                startPlayAnim(type, false, stickerView, i, true);
+                                startPlayAnim(type, false, stickerView, true);
                             }
                         }
                         if (i == listForStickerModel.size() - 1) {
@@ -1804,7 +1807,7 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
                         @Override
                         public void call(Integer integer) {
                             destroyTimer();
-                            startPlayAnim(mAnimCollect.getAnimid(stickView.getChooseAnimId()), false, null, 0, false);
+                            startPlayAnim(mAnimCollect.getAnimid(stickView.getChooseAnimId()), false, null,  false);
                         }
                     });
 
@@ -1847,11 +1850,23 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (!isCheckedMatting) {
-                        stickerView.changeImage(stickerView.getOriginalPath(), false);
-                    } else {
-                        stickerView.changeImage(stickerView.getClipPath(), false);
+                    if (mFrom == CreationTemplateActivity.FROM_CREATION_CODE){
+                        if (isCheckedMatting) {
+                            stickerView.changeImage(stickerView.getClipPath(), false);
+                        } else {
+                            stickerView.changeImage(stickerView.getOriginalPath(), false);
+                        }
                     }
+
+                    //                    if (isCheckedMatting && stickerView.isMirror()) {
+                    //                        stickerView.changeImage(stickerView.getClipMirrorPath(), false);
+                    //                    } else if (isCheckedMatting && !stickerView.isMirror()) {
+                    //                        stickerView.changeImage(stickerView.getClipPath(), false);
+                    //                    } else if (!isCheckedMatting && stickerView.isMirror()) {
+                    //                        stickerView.changeImage(stickerView.getOriginalMirrorPath(), false);
+                    //                    } else if(!isCheckedMatting && !stickerView.isMirror()) {
+                    //                        stickerView.changeImage(stickerView.getOriginalPath(), false);
+                    //                    }
                 }
             }, 500);
 

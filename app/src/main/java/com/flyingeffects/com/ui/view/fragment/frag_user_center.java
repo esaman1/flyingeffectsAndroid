@@ -334,8 +334,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                 }
-
-
                 break;
             default:
                 break;

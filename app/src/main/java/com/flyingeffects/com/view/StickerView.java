@@ -1981,7 +1981,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                             .apply(options)
                             .into(getTarger());
 
-
                     if (mStickerType == CODE_STICKER_TYPE_FLASH_PIC && isFromAlbum) {
 
                         if (TextUtils.isEmpty(mClipMirrorPath)) {
@@ -1992,7 +1991,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
                             loadOriginalMirrorRes(originalPath);
                         }
                     }
-
                     recyclerBitmap();
                 }
             });

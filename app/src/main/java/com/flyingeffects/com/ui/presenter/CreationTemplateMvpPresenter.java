@@ -273,10 +273,6 @@ public class CreationTemplateMvpPresenter extends ICreationTemplateMvpContract.C
         creationTemplatemvpView.stickerFragmentClose();
     }
 
-    @Override
-    public void showLoadingDialog() {
-        creationTemplatemvpView.showLoadingDialog();
-    }
 
     @Override
     public void dismissLoadingDialog() {
@@ -329,8 +325,8 @@ public class CreationTemplateMvpPresenter extends ICreationTemplateMvpContract.C
     }
 
     @Override
-    public void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
-        creationTemplatemodel.startPlayAnim(position, isClearAllAnim, targetStickerView, intoPosition, isFromPreview);
+    public void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, boolean isFromPreview) {
+        creationTemplatemodel.startPlayAnim(position, isClearAllAnim, targetStickerView, isFromPreview);
     }
 
     @Override
@@ -375,12 +371,17 @@ public class CreationTemplateMvpPresenter extends ICreationTemplateMvpContract.C
 
     @Override
     public void addSticker(String stickerPath, String title) {
-        creationTemplatemodel.addSticker(stickerPath,title);
+        creationTemplatemodel.addSticker(stickerPath, title);
     }
 
     @Override
     public void copyGif(String fileName, String copyName, String title) {
-        creationTemplatemodel.copyGif(fileName,copyName,title);
+        creationTemplatemodel.copyGif(fileName, copyName, title);
+    }
+
+    @Override
+    public void showLoading() {
+        creationTemplatemvpView.showLoading();
     }
 
     @Override
