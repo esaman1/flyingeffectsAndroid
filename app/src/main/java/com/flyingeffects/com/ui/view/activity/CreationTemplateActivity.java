@@ -44,7 +44,6 @@ import com.flyingeffects.com.databinding.ActCreationTemplateEditBinding;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
-import com.flyingeffects.com.enity.StickerAnim;
 import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.AdConfigs;
@@ -240,7 +239,6 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
      * 换脸-换背景过来时带的背景图
      */
     private String mBackgroundImage;
-    private String mFramePath;
     private String mBackGroundTitle;
 
     @Override
