@@ -164,6 +164,13 @@ public class HomeMainActivity extends FragmentActivity {
         setOaid();
     }
 
+
+
+
+
+
+
+
     private void setOaid() {
         AppLog.setOaidObserver(new IOaidObserver() {
             @Override

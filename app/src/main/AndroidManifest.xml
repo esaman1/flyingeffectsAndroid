@@ -4,6 +4,9 @@
     package="com.flyingeffects.com">
 
 
+    <!--华硕设备必须  腾讯sdk需要支持的 -->
+    <uses-permission android:name="com.asus.msa.SupplementaryDID.ACCESS" />
+
     <!--悬浮窗权限-->
     <!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
     <uses-permission android:name="android.permission.FLASHLIGHT" /><!--压力测试 -->

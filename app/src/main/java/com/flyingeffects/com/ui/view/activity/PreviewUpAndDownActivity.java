@@ -1418,8 +1418,15 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             BaseConstans.TemplateHasWatchingAd = false;
             if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                 VideoAdManager videoAdManager = new VideoAdManager();
-                videoAdManager.showVideoAd(this, TextUtils.equals(mOldFromTo, FromToTemplate.DRESSUP) ?
-                        AdConfigs.AD_DRESSUP_video : AdConfigs.AD_stimulate_video, new VideoAdCallBack() {
+                String adId;
+                if(TextUtils.equals(mOldFromTo, FromToTemplate.DRESSUP)){
+                    adId= AdConfigs.AD_DRESSUP_video;
+                }else if(TextUtils.equals(mOldFromTo, FromToTemplate.ISBJ)){
+                    adId= AdConfigs.AD_stimulate_video_bj;
+                }else{
+                    adId= AdConfigs.AD_stimulate_video;
+                }
+                videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
                     @Override
                     public void onVideoAdSuccess() {
                         StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_sucess");
