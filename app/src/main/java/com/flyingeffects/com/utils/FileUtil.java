@@ -9,7 +9,10 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.manager.FileManager;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -202,7 +205,7 @@ public class FileUtil {
 
     /**
      * @detail 搜索sdcard文件
-     * */
+     */
     public static List<String> search(File file, String[] ext) {
         List<String> list = new ArrayList<String>();
         if (file != null) {
@@ -492,7 +495,7 @@ public class FileUtil {
     }
 
 
-    public static void copyFile(File fromFile, String toFile,copySucceed callback) throws IOException {
+    public static void copyFile(File fromFile, String toFile, copySucceed callback) throws IOException {
 
         FileInputStream from = null;
         FileOutputStream to = null;
@@ -524,7 +527,7 @@ public class FileUtil {
         }
     }
 
-    public interface  copySucceed{
+    public interface copySucceed {
         void isSucceed();
     }
 
@@ -623,7 +626,7 @@ public class FileUtil {
      * @return
      */
     public static boolean write(File file, String content, boolean append) {
-        if (file == null ||content==null|| "".equals(content)) {
+        if (file == null || content == null || "".equals(content)) {
             return false;
         }
         if (!file.exists()) {
@@ -655,7 +658,7 @@ public class FileUtil {
      * @return
      */
     public static String getFileName(String path) {
-        if (path==null|| "".equals(path)) {
+        if (path == null || "".equals(path)) {
             return null;
         }
         File f = new File(path);
@@ -670,7 +673,7 @@ public class FileUtil {
      * @param file
      * @param startLine
      * @param lineCount
-     * @return 读到文字的list,如果list.size<lineCount则说明读到文件末尾了
+     * @return 读到文字的list, 如果list.size<lineCount则说明读到文件末尾了
      */
     public static List<String> readFile(File file, int startLine, int lineCount) {
         if (file == null || startLine < 1 || lineCount < 1) {
@@ -838,8 +841,9 @@ public class FileUtil {
     }
 
     /**
-     *  将图片从本地读到内存时,进行压缩 ,即图片从File形式变为Bitmap形式
-     *  特点: 通过设置采样率, 减少图片的像素, 达到对内存中的Bitmap进行压缩
+     * 将图片从本地读到内存时,进行压缩 ,即图片从File形式变为Bitmap形式
+     * 特点: 通过设置采样率, 减少图片的像素, 达到对内存中的Bitmap进行压缩
+     *
      * @param srcPath
      * @return
      */
@@ -875,12 +879,10 @@ public class FileUtil {
     }
 
     /**
-     *   指定分辨率和清晰度的图片压缩
+     * 指定分辨率和清晰度的图片压缩
      */
-    public void transImage(String fromFile, String toFile, int width, int height, int quality)
-    {
-        try
-        {
+    public void transImage(String fromFile, String toFile, int width, int height, int quality) {
+        try {
             Bitmap bitmap = BitmapFactory.decodeFile(fromFile);
             int bitmapWidth = bitmap.getWidth();
             int bitmapHeight = bitmap.getHeight();
@@ -894,28 +896,23 @@ public class FileUtil {
             // save file
             File myCaptureFile = new File(toFile);
             FileOutputStream out = new FileOutputStream(myCaptureFile);
-            if(resizeBitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)){
+            if (resizeBitmap.compress(Bitmap.CompressFormat.JPEG, quality, out)) {
                 out.flush();
                 out.close();
             }
-            if(!bitmap.isRecycled()){
+            if (!bitmap.isRecycled()) {
                 bitmap.recycle();//记得释放资源，否则会内存溢出
             }
-            if(!resizeBitmap.isRecycled()){
+            if (!resizeBitmap.isRecycled()) {
                 resizeBitmap.recycle();
             }
 
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
-
 
 
     public static String getFrameTempPath() {
@@ -1009,12 +1006,19 @@ public class FileUtil {
         return file.delete();
     }
 
-    /**bitmap保存到本地**/
+    /**
+     * bitmap保存到本地
+     **/
     public static String saveBitmap(Bitmap bitmapToSave, String fileName) {
+
+
         if (bitmapToSave == null) {
             return null;
         }
-        File mediaStorageDir = new File("/sdcard/DCIM/facePP/");
+
+        FileManager fileManager = new FileManager();
+        String mGifFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "facePP");
+        File mediaStorageDir = new File(mGifFolder);
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
                 return null;

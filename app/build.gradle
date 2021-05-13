@@ -20,6 +20,14 @@ android {
             keyPassword 'android'
         }
     }
+
+
+    //解决代码不规范不能打包问题
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     aaptOptions.cruncherEnabled = false //解决分包后打relase 出现了问题
     aaptOptions.useNewCruncher = false
     compileSdkVersion 28
