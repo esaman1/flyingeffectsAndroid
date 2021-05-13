@@ -185,22 +185,6 @@ public class TemplateSearchActivity extends BaseActivity {
         });
 
         if( BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
-            AdManager.getInstance().showImageAd(this, AdConfigs.AD_IMAGE, ll_ad_content, new AdManager.Callback() {
-                @Override
-                public void adClose() {
-
-                }
-
-                @Override
-                public void onScreenAdShow() {
-
-                }
-
-                @Override
-                public void onScreenAdError() {
-
-                }
-            });
             AdManager.getInstance().showImageAd(this, AdConfigs.AD_IMAGE, ll_ad_content);
         }
         tv_search.setOnClickListener(new View.OnClickListener() {

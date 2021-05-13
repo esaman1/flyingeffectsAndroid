@@ -284,8 +284,11 @@ public class MemeKeepActivity extends BaseActivity {
             new Handler().post(() -> {
                 UMEmoji emoji = new UMEmoji(MemeKeepActivity.this, s);
                 String ss="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2483784393,127887195&fm=26&gp=0.jpg";
-                emoji.setThumb(new UMImage(MemeKeepActivity.this, logoPath));
-                LogUtil.d("OOM2", "logoPath=" + logoPath);
+                if(!TextUtils.isEmpty(logoPath)){
+                    emoji.setThumb(new UMImage(MemeKeepActivity.this, logoPath));
+                }else{
+                    emoji.setThumb(new UMImage(MemeKeepActivity.this, R.mipmap.logo));
+                }
                 new ShareAction(MemeKeepActivity.this)
                         .withMedia(emoji).setPlatform(SHARE_MEDIA.WEIXIN)
                         .setCallback(shareListener).share();

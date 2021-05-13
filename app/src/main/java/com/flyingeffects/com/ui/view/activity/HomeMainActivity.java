@@ -239,6 +239,11 @@ public class HomeMainActivity extends FragmentActivity {
                 StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad" );
                 AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new AdManager.Callback() {
                     @Override
+                    public void adShow() {
+
+                    }
+
+                    @Override
                     public void adClose() {
                         if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
                             checkCommentcheck();
