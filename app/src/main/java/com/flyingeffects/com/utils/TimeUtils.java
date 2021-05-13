@@ -3,6 +3,7 @@ package com.flyingeffects.com.utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class TimeUtils {
     /**
@@ -189,5 +190,9 @@ public class TimeUtils {
         SimpleDateFormat format = new SimpleDateFormat(yearTimeFormat);
         return format.format(new Date(time));
 
+    }
+
+    public static long millis2Days(long millis, TimeZone timeZone) {
+        return (((long) timeZone.getOffset(millis)) + millis) / 86400000;
     }
 }

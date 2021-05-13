@@ -55,7 +55,7 @@ import com.qq.e.ads.nativ.NativeUnifiedADData;
 import com.qq.e.ads.nativ.widget.NativeAdContainer;
 import com.qq.e.comm.constants.AdPatternType;
 import com.qq.e.comm.util.AdError;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
@@ -203,7 +203,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
                                         }
                                         // EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
                                         String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
-                                        if (albumType.isImage(pathType)) {
+                                        if (AlbumType.isImage(pathType)) {
                                             EventBus.getDefault().post(new DownVideoPath(paths.get(0)));
                                         } else {
                                             //如果选择的视频

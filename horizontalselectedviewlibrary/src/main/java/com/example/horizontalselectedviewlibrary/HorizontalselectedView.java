@@ -1,6 +1,7 @@
 package com.example.horizontalselectedviewlibrary;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -88,15 +89,17 @@ public class HorizontalselectedView extends View {
      * @param attrs
      */
     private void initAttrs(AttributeSet attrs) {
-        TintTypedArray tta = TintTypedArray.obtainStyledAttributes(getContext(), attrs,
+        TypedArray tta = getContext().obtainStyledAttributes(attrs,
                 R.styleable.HorizontalselectedView);
+//        TintTypedArray tta = TintTypedArray.obtainStyledAttributes(getContext(), attrs,
+//                R.styleable.HorizontalselectedView);
         //两种字体颜色和字体大小
         seeSize = tta.getInteger(R.styleable.HorizontalselectedView_HorizontalselectedViewSeesize, 5);
         selectedTextSize = tta.getFloat(R.styleable.HorizontalselectedView_HorizontalselectedViewSelectedTextSize, 50);
         selectedColor = tta.getColor(R.styleable.HorizontalselectedView_HorizontalselectedViewSelectedTextColor, context.getResources().getColor(android.R.color.black));
         textSize = tta.getFloat(R.styleable.HorizontalselectedView_HorizontalselectedViewTextSize, 50);
         textColor = tta.getColor(R.styleable.HorizontalselectedView_HorizontalselectedViewTextColor, context.getResources().getColor(android.R.color.darker_gray));
-
+        tta.recycle();
     }
 
     @Override

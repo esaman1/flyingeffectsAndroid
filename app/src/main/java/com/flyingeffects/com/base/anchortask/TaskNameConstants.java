@@ -15,4 +15,5 @@ public class TaskNameConstants {
     public static final String INIT_EMOJI = "initEMoji";
     public static final String INIT_ALBUM = "initAlbum";
     public static final String INIT_FU = "initFu";
+    public static final String INIT_KUAI_SHOU_MONITOR = "initKuaiShouMonitor";
 }

@@ -7,7 +7,6 @@
     android:paddingStart="15dp"
     android:paddingEnd="15dp">
 
-
     <TextView
         android:layout_width="wrap_content"
         android:textColor="@color/capture_btn_blue"
@@ -93,7 +92,6 @@
                         android:text="模板音乐"
                         android:textColor="#ffffff"
                         android:textSize="14sp" />
-
 
 <!--                    <CheckBox-->
 <!--                        android:clickable="false"-->
@@ -197,12 +195,7 @@
 
             </LinearLayout>
 
-
-
         </LinearLayout>
-
-
-
 
         <TextView
             android:id="@+id/tv_add_music"

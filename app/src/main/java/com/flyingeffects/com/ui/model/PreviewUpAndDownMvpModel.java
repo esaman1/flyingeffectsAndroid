@@ -63,7 +63,7 @@ import com.flyingeffects.com.utils.screenUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
@@ -280,7 +280,7 @@ public class PreviewUpAndDownMvpModel {
                     downVideo(path, imagePath, id, true, false);
                     dismissDialog();
                 } else {
-                    if (albumType.isImage(pathType)) {
+                    if (AlbumType.isImage(pathType)) {
                         Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
                             @Override
                             public void call(Bitmap bitmap) {
@@ -932,9 +932,9 @@ public class PreviewUpAndDownMvpModel {
     private void saveToAlbum(String path) {
         String albumPath;
         String pathType = GetPathTypeModel.getInstance().getMediaType(path);
-        if (albumType.isImage(pathType)) {
+        if (AlbumType.isImage(pathType)) {
             albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForImage();
-        } else if (albumType.isVideo(pathType)) {
+        } else if (AlbumType.isVideo(pathType)) {
             albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
         } else {
             albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForGif();

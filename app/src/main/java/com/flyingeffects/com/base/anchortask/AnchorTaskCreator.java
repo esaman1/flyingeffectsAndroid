@@ -37,7 +37,10 @@ public class AnchorTaskCreator implements IAnchorTaskCreator {
             return new AlbumAnchor();
         } else if (TaskNameConstants.INIT_FU.equals(s)) {
             return new FuAnchor();
+        } else if (TaskNameConstants.INIT_KUAI_SHOU_MONITOR.equals(s)) {
+            return new KuaiShouAnchor();
+        }else {
+            return null;
         }
-        return null;
     }
 }

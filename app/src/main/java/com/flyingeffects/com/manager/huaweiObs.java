@@ -8,7 +8,7 @@ import com.obs.services.ObsClient;
 import com.obs.services.exception.ObsException;
 import com.obs.services.model.HeaderResponse;
 import com.obs.services.model.ObjectMetadata;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class huaweiObs {
             // 创建ObsClient实例
             obsClient = new ObsClient(ak, sk, endPoint);
             HeaderResponse response;
-            if (albumType.isVideo(GetPathType.getInstance().getPathType(filePath))) {
+            if (AlbumType.isVideo(GetPathType.getInstance().getPathType(filePath))) {
                 ObjectMetadata metadata = new ObjectMetadata();
                 metadata.setContentType("video/mp4");
                 // 调用接口进行操作，例如上传对象，其中localfile为待上传的本地文件路径，需要指定到具体的文件名

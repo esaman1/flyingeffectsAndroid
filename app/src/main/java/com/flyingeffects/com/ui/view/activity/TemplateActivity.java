@@ -34,7 +34,6 @@ import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.TabEntity;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.AnimForViewShowAndHide;
@@ -58,9 +57,9 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.EmptyControlVideo;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.flyingeffects.com.view.NoSlidingViewPager;
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
-import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.model.GroupModel;
 import com.shixing.sxve.ui.model.MediaUiModel;
 import com.shixing.sxve.ui.model.MediaUiModel2;
@@ -346,7 +345,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
         }
 
         if (templateItem.getIs_pic() != 1) {
-            if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime) && albumType.isVideo(GetPathType.getInstance().
+            if (!TextUtils.isEmpty(videoTime) && !"0".equals(videoTime) && AlbumType.isVideo(GetPathType.getInstance().
                     getMediaType(imgPath.get(0)))) {
                 nowTemplateIsMattingVideo = 1;
                 //不需要抠图就不需要扣第一帧页面
@@ -382,7 +381,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 mTemplateModel.resetUi();
                 if (!isChecked) {
                     nowIsChooseMatting = false;
-                    if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
+                    if (nowTemplateIsMattingVideo == 1 && !AlbumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
                         if (mOriginalPathList != null && mOriginalPathList.size() != 0) {
                             changeMaterialCallbackForVideo(null, mOriginalPathList.get(0),
                                     false);
@@ -473,7 +472,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private void chooseChecked() {
         nowIsChooseMatting = true;
         //选中状态
-        if (nowTemplateIsMattingVideo == 1 && !albumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
+        if (nowTemplateIsMattingVideo == 1 && !AlbumType.isImage(GetPathType.getInstance().getPathType(imgPath.get(0)))) {
             handler.sendEmptyMessage(1);
             new Thread(() -> presenter.intoMattingVideo(imgPath.get(0), templateName)).start();
         } else {
@@ -631,7 +630,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             String[] newPaths = new String[paths.length + 1];
             System.arraycopy(paths, 0, newPaths, 0, paths.length);
             MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(0).ui;
-            if (albumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))) {
+            if (AlbumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))) {
                 newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixVideo(Objects.requireNonNull(getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
             } else {
                 newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixImage(Objects.requireNonNull(getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
@@ -1411,7 +1410,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
             public void run() {
                 lastChooseFilePath = path;
                 String mimeType = GetPathType.getInstance().getMediaType(path);
-                if (albumType.isImage(mimeType)) {
+                if (AlbumType.isImage(mimeType)) {
                     if (mOriginalPathList == null || mOriginalPathList.size() == 0) {
                         if (nowTemplateIsMattingVideo == 1) {
                             mattingImage(path);
@@ -1583,7 +1582,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
     private void chooseMaterialMusic() {
         clearCheckBox();
         String path = imgPath.get(0);
-        if (albumType.isVideo(GetPathTypeModel.getInstance().getMediaType(path))) {
+        if (AlbumType.isVideo(GetPathTypeModel.getInstance().getMediaType(path))) {
             presenter.getBjMusic(primitivePath);
             changeMusic();
             cb_0.setImageResource(R.mipmap.template_btn_selected);
@@ -1826,7 +1825,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                     if (TextUtils.isEmpty(mTemplateModel.getBackgroundPath())) {
                         chooseTemplateMusic();
                         ToastUtil.showToast("背景音乐为默认模板音乐");
-                    } else if (!albumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))) {
+                    } else if (!AlbumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))) {
                         ToastUtil.showToast("没有背景音乐");
                     } else {
                         clearCheckBox();
@@ -1928,7 +1927,7 @@ public class TemplateActivity extends BaseActivity implements TemplateMvpView, A
                 ToastUtil.showToast("选择了默认背景");
                 mTemplateModel.setHasBg("", false);
             } else {
-                if (albumType.isVideo(GetPathType.getInstance().getPathType(videoBjPath))) {
+                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(videoBjPath))) {
                     mTemplateModel.setHasBg(videoBjPath, true);
                     LogUtil.d("OOM", "当前选择的位置为" + nowChooseMusic);
                     LogUtil.d("OOM", "videoBjPath=" + videoBjPath);

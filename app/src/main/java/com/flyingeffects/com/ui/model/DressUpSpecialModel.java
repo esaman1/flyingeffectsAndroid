@@ -9,11 +9,9 @@ import android.util.Log;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
-import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DressUpSpecial;
-import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -28,7 +26,6 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.google.gson.Gson;
-import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
@@ -43,7 +40,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
-import top.zibin.luban.Luban;
 
 
 /**
@@ -221,7 +217,7 @@ public class DressUpSpecialModel {
 
 
     public void toCompressImg(List<String> paths) {
-//        if (albumType.isVideo(GetPathType.getInstance().
+//        if (AlbumType.isVideo(GetPathType.getInstance().
 //                        getMediaType(paths.get(0)))) {
             LogUtil.d("OOM3", "上传为视频");
             uploadPathList.addAll(paths);

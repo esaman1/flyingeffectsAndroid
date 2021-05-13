@@ -26,13 +26,19 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
+import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.kwai.monitor.log.TurboAgent;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 import rx.Observable;
 
@@ -66,6 +72,9 @@ public class WelcomeActivity extends BaseActivity {
         View rootView = mBinding.getRoot();
         setContentView(rootView);
         BaseConstans.setOddNum();
+        //快手集成sdk 应用活跃事件
+        TurboAgent.onAppActive();
+        checkNextDayStay();
         //解决广告bug ,点击图标后广告爆款广告不弹出来
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -88,6 +97,24 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
+    }
+
+    /**
+     * 快手 记录次日留存和7日留存
+     */
+    private void checkNextDayStay() {
+        Date date = new Date();
+        if (BaseConstans.getFirstUseAppTime() != 0) {
+            long t1 = TimeUtils.millis2Days(date.getTime(), TimeZone.getDefault());
+            long t2 = TimeUtils.millis2Days(BaseConstans.getFirstUseAppTime(), TimeZone.getDefault());
+
+            if (t1 - t2 == 1) {
+                TurboAgent.onNextDayStay();
+            }
+//            else if (t1 - t2 == 6) {
+//                TurboAgent.onWeekStay();
+//            }
+        }
     }
 
     /**
@@ -239,6 +266,8 @@ public class WelcomeActivity extends BaseActivity {
             if (agree) {
                 BaseConstans.setFirstClickUseApp();
                 getPermission();
+                Date date = new Date();
+                BaseConstans.setFirstUseAppTime(date.getTime());
             } else {
                 this.finish();
             }

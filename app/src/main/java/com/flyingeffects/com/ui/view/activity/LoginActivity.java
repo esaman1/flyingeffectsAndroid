@@ -24,6 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -45,6 +47,7 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.VideoUtils;
 import com.flyingeffects.com.view.MyVideoView;
+import com.kwai.monitor.log.TurboAgent;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.UMAuthListener;
@@ -74,6 +77,7 @@ import rx.Observable;
  */
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
+
     @BindView(R.id.shanyan_login_relative)
     RelativeLayout shanyan_login_relative;
     @BindView(R.id.password)
@@ -563,8 +567,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         isCanSendMsg = true;
         tv_login.setEnabled(true);
-        tv_login.setBackground(getResources().getDrawable(R.drawable.login_button));
+        tv_login.setBackground(ContextCompat.getDrawable(mContext,R.drawable.login_button));
     }
+
+
 
 
     public void wxLogin() {

@@ -66,7 +66,7 @@ import com.flyingeffects.com.view.lansongCommendView.StickerItemOnDragListener;
 import com.flyingeffects.com.view.lansongCommendView.StickerItemOnitemclick;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.orhanobut.hawk.Hawk;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
@@ -196,7 +196,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
                 StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
                 if (!TextUtils.isEmpty(stickerView.getOriginalPath())) {
-                    if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
+                    if (AlbumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))) {
                         VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(stickerView.getOriginalPath());
                         LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
                         perSticker.add(materialVideoInfo.getDuration());
@@ -206,7 +206,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         } else {
             //只有第一次初始化的时候，可能为0.因为viewLayerRelativeLayout还没加载进入数据，所有就需要手动加上
             if (!TextUtils.isEmpty(originalPath)) {
-                if (albumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
+                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(originalPath))) {
                     VideoInfo materialVideoInfo = getVideoInfo.getInstance().getRingDuring(originalPath);
                     LogUtil.d("OOM", "materialVideoInfo.getDuration()=" + materialVideoInfo.getDuration());
                     perSticker.add(materialVideoInfo.getDuration());
@@ -836,7 +836,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                     //copy
                     copyGif(stickView.getResPath(), path, stickView.getComeFrom(), stickView, stickView.getOriginalPath(), false, title);
                     if (!TextUtils.isEmpty(stickView.getOriginalPath())) {
-                        if (albumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
+                        if (AlbumType.isVideo(GetPathType.getInstance().getMediaType(stickView.getOriginalPath()))) {
                             if (UiStep.isFromDownBj) {
                                 StatisticsEventAffair.getInstance().setFlag(context, "7_plusone");
                             } else {
@@ -881,7 +881,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
                         //切換素材
                         AlbumManager.chooseAlbum(context, 1, 0, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
                             if (!isCancel) {
-                                if (albumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))) {
+                                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(paths.get(0)))) {
                                     GetVideoCover getVideoCover = new GetVideoCover(context);
                                     getVideoCover.getCover(paths.get(0), path1 -> {
                                         Observable.just(path1).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
@@ -1002,7 +1002,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         if (isFromAubum) {
             stickView.setClipPath(path);
             stickView.setOriginalPath(originalPath);
-            if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
+            if (AlbumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
                 stickView.setNowMaterialIsVideo(true);
             } else {
                 stickView.setNowMaterialIsVideo(false);
@@ -1014,7 +1014,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         if (isFirstAdd) {
             nowChooseStickerView = stickView;
             stickView.setFirstAddSticker(true);
-//            if (albumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
+//            if (AlbumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
 //                LogUtil.d("OOM", "mVideoPath=" + mVideoPath);
 //                if (!TextUtils.isEmpty(mVideoPath)) {
 //                    LogUtil.d("OOM", "默认是有背景");

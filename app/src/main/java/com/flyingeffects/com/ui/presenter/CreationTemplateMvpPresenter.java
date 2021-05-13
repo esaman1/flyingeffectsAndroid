@@ -1,39 +1,40 @@
 package com.flyingeffects.com.ui.presenter;
 
 import android.content.Context;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.view.View;
 
-import com.flyingeffects.com.base.mvpBase.BasePresenter;
-import com.flyingeffects.com.ui.interfaces.model.CreationTemplateMvpCallback;
-import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
+import com.flyingeffects.com.enity.StickerAnim;
+import com.flyingeffects.com.enity.StickerTypeEntity;
+import com.flyingeffects.com.ui.interfaces.contract.ICreationTemplateMvpContract;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-import com.lansosdk.videoeditor.DrawPadView2;
 
-import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleObserver;
-import androidx.viewpager.widget.ViewPager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 自由创作页面presenter
  *
  * @author Coca Cola
  */
-public class CreationTemplateMvpPresenter extends BasePresenter implements CreationTemplateMvpCallback, LifecycleObserver {
+public class CreationTemplateMvpPresenter extends ICreationTemplateMvpContract.CreationTemplateMvpPresenter implements LifecycleObserver {
 
-    private CreationTemplateMvpView creationTemplatemvpView;
-    private CreationTemplateMvpModel creationTemplatemodel;
+    private final ICreationTemplateMvpContract.ICreationTemplateMvpView creationTemplatemvpView;
+    private final CreationTemplateMvpModel creationTemplatemodel;
 
-    public CreationTemplateMvpPresenter(Context context, CreationTemplateMvpView mvp_view, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath,int from) {
+    public CreationTemplateMvpPresenter(Context context, ICreationTemplateMvpContract.ICreationTemplateMvpView mvp_view, String mVideoPath, ViewLayerRelativeLayout viewLayerRelativeLayout, String originalPath, int from) {
         this.creationTemplatemvpView = mvp_view;
         creationTemplatemodel = new CreationTemplateMvpModel(context, this, mVideoPath, viewLayerRelativeLayout, originalPath, from);
     }
 
-    public void setmVideoPath(String path) {
-        creationTemplatemodel.setmVideoPath(path);
+    @Override
+    public void setVideoPath(String path) {
+        creationTemplatemodel.setVideoPath(path);
     }
 
 
@@ -41,21 +42,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.changeTextStyle(path, type, title);
     }
 
-    public void onclickRelativeLayout() {
-        creationTemplatemodel.onclickRelativeLayout();
-    }
-
-
-    public void keepPicture(RelativeLayout relativeLayout, ImageView iv, String TemplateId) {
-
-        creationTemplatemodel.keepPicture(relativeLayout, iv, TemplateId);
-    }
-
-
     public void getNowPlayingTime(long nowProgressTime, long totalTime) {
         creationTemplatemodel.getNowPlayingTime(nowProgressTime, totalTime);
     }
-
 
     public void changeTextLabe(String str) {
         creationTemplatemodel.changeTextLabe(str);
@@ -66,9 +55,6 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.changeTextColor(color0, color1, title);
     }
 
-    public void isEndTimer() {
-        creationTemplatemodel.isEndTimer();
-    }
 
     public void changeTextFrame(String textBjPath, String textFramePath, String frameTitle) {
         creationTemplatemodel.changeTextFrame(textBjPath, textFramePath, frameTitle);
@@ -81,7 +67,9 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
 
 
     public void addTextSticker() {
-        creationTemplatemodel.addTextSticker();
+        creationTemplatemodel.addSticker("", false, false, false,
+                "", false, null, false,
+                StickerView.CODE_STICKER_TYPE_TEXT, null);
     }
 
     public void checkedChanged(boolean isChecked) {
@@ -92,20 +80,30 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.setAddChooseBjPath(path);
     }
 
+    public void setNowChooseMusicId(int id) {
+        creationTemplatemodel.setNowChooseMusicId(id);
+    }
+
+    public void addFragmentList(Fragment fragment) {
+        creationTemplatemodel.addFragmentList(fragment);
+    }
+
+    public void addListForBottom(View view) {
+        creationTemplatemodel.addListForBottom(view);
+    }
+
 
     public void intoOnPause() {
         creationTemplatemodel.intoOnPause();
     }
 
-
     public void getVideoCover(String path) {
-        creationTemplatemodel.GetVideoCover(path);
+        creationTemplatemodel.getVideoCover(path);
     }
 
     public void addNewSticker(String path, String originalPath) {
         creationTemplatemodel.addNewSticker(path, originalPath);
     }
-
 
     public void setAllStickerCenter() {
         creationTemplatemodel.setAllStickerCenter();
@@ -115,18 +113,10 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemodel.showGifAnim(isShow);
     }
 
-    public void showAllAnim(boolean isSHow) {
-        creationTemplatemodel.showAllAnim(isSHow);
+    public void showAllAnim(boolean isShow) {
+        creationTemplatemodel.showAllAnim(isShow);
     }
 
-    public void chooseAnim(int pageNum) {
-        creationTemplatemodel.chooseAnim(pageNum);
-    }
-
-
-    public void initBottomLayout(ViewPager viewPager, FragmentManager fragmentManager, int from) {
-        creationTemplatemodel.initBottomLayout(viewPager, fragmentManager, from);
-    }
 
     public void initStickerView(String path, String originalPath) {
         creationTemplatemodel.initStickerView(path, originalPath);
@@ -144,6 +134,29 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     public void statisticsDuration(String path, Context context) {
         creationTemplatemodel.statisticsDuration(path, context);
     }
+
+    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime,
+                            long cutStartTime, long cutEndTime, String title) {
+        creationTemplatemodel.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, cutStartTime, cutEndTime, title);
+    }
+
+
+    public void deleteAllTextSticker() {
+        creationTemplatemodel.deleteAllTextSticker();
+    }
+
+    public void bringStickerFront(String id) {
+        creationTemplatemodel.bringStickerFront(id);
+    }
+
+    public List<View> getListForInitBottom() {
+        return creationTemplatemodel.getListForInitBottom();
+    }
+
+    public List<Fragment> getFragmentList() {
+        return creationTemplatemodel.getFragmentList();
+    }
+
 
     @Override
     public void itemClickForStickView(AnimStickerModel stickView) {
@@ -276,18 +289,98 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
     }
 
     @Override
-    public void chooseBack(String title, String path) {
-        creationTemplatemvpView.chooseBack(title, path);
-    }
-
-    @Override
     public void chooseFrame(String path) {
         creationTemplatemvpView.chooseFrame(path);
     }
 
     @Override
-    public void dismissFrame() {
-        creationTemplatemvpView.dismissFrame();
+    public void dismissStickerFrame() {
+        creationTemplatemvpView.dismissStickerFrame();
+    }
+
+    @Override
+    public void dismissTextStickerFrame() {
+        creationTemplatemvpView.dismissTextStickerFrame();
+    }
+
+    @Override
+    public void chooseCheckBox(int i) {
+        creationTemplatemvpView.chooseCheckBox(i);
+    }
+
+    @Override
+    public long getDuration() {
+        return creationTemplatemodel.getDuration();
+    }
+
+    @Override
+    public void returnStickerTypeList(ArrayList<StickerTypeEntity> list) {
+        creationTemplatemvpView.returnStickerTypeList(list);
+    }
+
+    @Override
+    public void getStickerTypeList() {
+        creationTemplatemodel.getStickerTypeList();
+    }
+
+    @Override
+    public void chooseInitMusic() {
+        creationTemplatemodel.chooseInitMusic();
+    }
+
+    @Override
+    public void startPlayAnim(int position, boolean isClearAllAnim, StickerView targetStickerView, int intoPosition, boolean isFromPreview) {
+        creationTemplatemodel.startPlayAnim(position, isClearAllAnim, targetStickerView, intoPosition, isFromPreview);
+    }
+
+    @Override
+    public void modificationSingleAnimItemIsChecked(int i) {
+        creationTemplatemodel.modificationSingleAnimItemIsChecked(i);
+    }
+
+    @Override
+    public List<StickerAnim> getListAllAnim() {
+        return creationTemplatemodel.getListAllAnim();
+    }
+
+    @Override
+    public void chooseNowStickerMaterialMusic() {
+        creationTemplatemodel.chooseNowStickerMaterialMusic();
+    }
+
+    @Override
+    public void chooseTemplateMusic(boolean b) {
+        creationTemplatemodel.chooseTemplateMusic(b);
+    }
+
+    @Override
+    public void chooseAddChooseBjPath() {
+        creationTemplatemodel.chooseAddChooseBjPath();
+    }
+
+    @Override
+    public void closeAllAnim() {
+        creationTemplatemvpView.closeAllAnim();
+    }
+
+    @Override
+    public void stopAllAnim() {
+        creationTemplatemodel.stopAllAnim();
+    }
+
+    @Override
+    public void deleteAllSticker() {
+        creationTemplatemodel.deleteAllSticker();
+    }
+
+    @Override
+    public void addSticker(String stickerPath, String title) {
+        creationTemplatemodel.addSticker(stickerPath,title);
+    }
+
+    @Override
+    public void copyGif(String fileName, String copyName, String title) {
+        creationTemplatemodel.copyGif(fileName,copyName,title);
     }
 
     @Override
@@ -295,18 +388,13 @@ public class CreationTemplateMvpPresenter extends BasePresenter implements Creat
         creationTemplatemvpView.modifyTimeLineSickerPath(id, path, stickerView);
     }
 
-    public void toSaveVideo(String imageBjPath, boolean nowUiIsLandscape, float percentageH, int templateId, long musicStartTime, long musicEndTime,
-                            long cutStartTime, long cutEndTime, String title) {
-        creationTemplatemodel.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, cutStartTime, cutEndTime, title);
+    public void clearCheckBox() {
+        creationTemplatemvpView.clearCheckBox();
     }
 
-
-    public void deleteAllTextSticker() {
-        creationTemplatemodel.deleteAllTextSticker();
-    }
-
-    public void bringStickerFront(String id) {
-        creationTemplatemodel.bringStickerFront(id);
-    }
+//    @Override
+//    public BaseModel createModel() {
+//        return new CreationTemplateMvpModel(context, this, mVideoPath, viewLayerRelativeLayout, originalPath, from);;
+//    }
 
 }

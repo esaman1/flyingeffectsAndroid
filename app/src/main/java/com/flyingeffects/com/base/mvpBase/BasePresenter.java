@@ -1,11 +1,16 @@
 package com.flyingeffects.com.base.mvpBase;
 
-public class BasePresenter<V extends BaseView> {
+public abstract class BasePresenter<V extends BaseView, M extends BaseModel> {
 
     /**
      * 绑定的view
      */
     private V mvpView;
+    private M mvpModel;
+
+    public BasePresenter() {
+        //mvpModel = createModel();
+    }
 
     /**
      * 绑定view，一般在初始化中调用该方法
@@ -35,5 +40,7 @@ public class BasePresenter<V extends BaseView> {
     public V getView() {
         return mvpView;
     }
+
+    //public abstract M createModel();
 
 }

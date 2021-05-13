@@ -538,12 +538,30 @@ public class BaseConstans {
         return spUtil.getString("DouyingTopic", "飞闪视频");
     }
 
+    public static void setFirstUseAppTime(long firstUseAppTime) {
+        SPHelper.getInstance().putLong("firstUseAppTime", firstUseAppTime);
+    }
+
+    public static long getFirstUseAppTime() {
+        return SPHelper.getInstance().getLong("firstUseAppTime", 0);
+    }
+
     /**
      * 设置换装制作页面切换模板按钮加载视频广告的间隔次数
      */
     public static void setDressupIntervalsNumber(int intervalsNumber) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("IntervalsNumber", intervalsNumber);
+    }
+
+    public static void setOaid(String oaid) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("oaid", oaid);
+    }
+
+    public static String getOaid() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("oaid", "");
     }
 
 

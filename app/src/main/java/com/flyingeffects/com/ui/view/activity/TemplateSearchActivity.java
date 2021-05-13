@@ -201,6 +201,7 @@ public class TemplateSearchActivity extends BaseActivity {
 
                 }
             });
+            AdManager.getInstance().showImageAd(this, AdConfigs.AD_IMAGE, ll_ad_content);
         }
         tv_search.setOnClickListener(new View.OnClickListener() {
             @Override

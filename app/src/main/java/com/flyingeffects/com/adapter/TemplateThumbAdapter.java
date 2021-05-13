@@ -4,11 +4,8 @@ import android.content.Context;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -19,10 +16,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.enity.TemplateThumbItem;
 import com.flyingeffects.com.manager.GlideRoundTransform;
-import com.flyingeffects.com.utils.LogUtil;
-import com.shixing.sxve.ui.albumType;
-
-import org.w3c.dom.Text;
+import com.shixing.sxve.ui.AlbumType;
 
 import java.util.List;
 
@@ -57,7 +51,7 @@ public class TemplateThumbAdapter extends BaseItemDraggableAdapter<TemplateThumb
             tv_compile.setVisibility(View.GONE);
         }
         if (item.getPathUrl() != null && !"".equals(item.getPathUrl())) {
-            if (albumType.isImage(GetPathType.getInstance().getPathType(item.getPathUrl()))) {
+            if (AlbumType.isImage(GetPathType.getInstance().getPathType(item.getPathUrl()))) {
                 tv_compile.setText("图片");
             }else{
                 tv_compile.setText("编辑");
