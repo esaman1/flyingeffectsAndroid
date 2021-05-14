@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
@@ -19,9 +20,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -31,7 +30,9 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.databinding.ActLoginBinding;
 import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
+import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.LoginToAttentionUserEvent;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.WxLogin;
@@ -47,7 +48,6 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.VideoUtils;
 import com.flyingeffects.com.view.MyVideoView;
-import com.kwai.monitor.log.TurboAgent;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.UMAuthListener;
@@ -64,8 +64,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import cn.nt.lib.analytics.NTAnalytics;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
@@ -76,27 +74,14 @@ import rx.Observable;
  * on 2017/8/9.
  */
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity {
+    private static final int TOTAL_TIME = 60;
 
     private Context mContext;
 
-    @BindView(R.id.shanyan_login_relative)
-    RelativeLayout shanyan_login_relative;
-    @BindView(R.id.password)
-    EditText editTextPassword;
-    @BindView(R.id.username)
-    EditText editTextUsername;
     private boolean isCanSendMsg = true;
-    @BindView(R.id.tv_login)
-    TextView tv_login;
-    @BindView(R.id.tv_xy)
-    TextView tv_xy;
-    @BindView(R.id.relative_normal)
-    RelativeLayout relative_normal;
-    //    private boolean isOpenAuth = false;
+
     MyVideoView videoView;
-//    private static final String WEIXIN = "wx";
-//    private static final String QQ = "qq";
 
     boolean isOnDestroy = false;
     /**
@@ -107,17 +92,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     //当前页面类型 0是老板ui ,1 是新版ui
     private int nowPageType = 1;
+    private ActLoginBinding mBinding;
+
+    private CountDownTimer mTimer;
+    private int mTime = TOTAL_TIME;
 
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_login;
+        return 0;
     }
 
     @Override
     protected void initView() {
         mContext = LoginActivity.this;
         isOnDestroy = false;
+
+        mBinding = ActLoginBinding.inflate(getLayoutInflater());
+        View rootView = mBinding.getRoot();
+        setContentView(rootView);
 
         EventBus.getDefault().register(this);
         clearUmData();
@@ -128,8 +121,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         SpannableStringBuilder strBuilder = initTipsBuilder();
 
-        tv_xy.setMovementMethod(LinkMovementMethod.getInstance());
-        tv_xy.setText(strBuilder);
+        mBinding.tvXy.setMovementMethod(LinkMovementMethod.getInstance());
+        mBinding.tvXy.setText(strBuilder);
+
+        setOnclickListener();
+    }
+
+    private void setOnclickListener() {
+        mBinding.tvLogin.setOnClickListener(this::onViewClick);
+        mBinding.ivClose.setOnClickListener(this::onViewClick);
+        mBinding.llWeixin.setOnClickListener(this::onViewClick);
     }
 
     private SpannableStringBuilder initTipsBuilder() {
@@ -184,10 +185,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onDestroy() {
         super.onDestroy();
         isOnDestroy = true;
-        if (null != shanyan_login_relative) {
-            shanyan_login_relative.removeAllViews();
-        }
 
+        mBinding.shanyanLoginRelative.removeAllViews();
+
+        endTimer();
         if (null != videoView) {
             videoView.setOnCompletionListener(null);
             videoView.setOnPreparedListener(null);
@@ -198,7 +199,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-    private void dissMissShanYanUi() {
+    private void disMissShanYanUi() {
         OneKeyLoginManager.getInstance().finishAuthActivity();
         OneKeyLoginManager.getInstance().removeAllListener();
     }
@@ -213,14 +214,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 Log.e("VVV", "拉起授权页成功： _code==" + code + "   _result==" + result);
                 videoView = new MyVideoView(getApplicationContext());
                 RelativeLayout.LayoutParams mLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-                shanyan_login_relative.addView(videoView, 0, mLayoutParams);
+                mBinding.shanyanLoginRelative.addView(videoView, 0, mLayoutParams);
                 VideoUtils.startBgVideo(videoView, getApplicationContext(), "android.resource://" + LoginActivity.this.getPackageName() + "/" + R.raw.login_video);
             } else {
                 nowPageType = 0;
                 //拉起授权页失败
                 Log.e("VVV", "拉起授权页失败： _code==" + code + "   _result==" + result);
-                relative_normal.setVisibility(View.VISIBLE);
-                dissMissShanYanUi();
+                mBinding.relativeNormal.setVisibility(View.VISIBLE);
+                disMissShanYanUi();
             }
         }, (code, result) -> {
             if (1011 == code) {
@@ -248,13 +249,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected void initAction() {
-        editTextPassword.addTextChangedListener(new TextWatcher() {
+        mBinding.password.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String strPassword = editTextPassword.getText().toString().trim();
+                String strPassword = mBinding.password.getText().toString().trim();
                 if (!"".equals(strPassword)) {
                     nextStep(true);
-                    tv_login.setEnabled(true);
+                    mBinding.tvLogin.setEnabled(true);
                     endTimer();
                 } else {
                     nextStep(false);
@@ -269,16 +270,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable editable) {
                 nextStep(true);
-                tv_login.setEnabled(true);
+                mBinding.tvLogin.setEnabled(true);
                 endTimer();
             }
         });
 
-        editTextUsername.addTextChangedListener(new TextWatcher() {
+        mBinding.username.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 endTimer();
-                nextStep(!TextUtils.isEmpty(editTextPassword.getText().toString()));
+                nextStep(!TextUtils.isEmpty(mBinding.password.getText().toString()));
             }
 
             @Override
@@ -288,7 +289,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             public void afterTextChanged(Editable editable) {
-                tv_login.setEnabled(true);
+                mBinding.tvLogin.setEnabled(true);
             }
         });
     }
@@ -296,11 +297,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void nextStep(boolean isLogin) {
         if (isLogin) {
-            tv_login.setText("登录");
-            tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
+            mBinding.tvLogin.setText("登录");
+            mBinding.tvLogin.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
             nowProgressType = 1;
         } else {
-            tv_login.setText("获得验证码");
+            mBinding.tvLogin.setText("获得验证码");
             nowProgressType = 0;
         }
     }
@@ -330,66 +331,57 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void requestLogin() {
 
-        if ("".equals(editTextUsername.getText().toString())) {
+        if ("".equals(mBinding.username.getText().toString())) {
             ToastUtil.showToast("请输入手机号");
             return;
         }
 
-        if ("".equals(editTextPassword.getText().toString())) {
+        if ("".equals(mBinding.password.getText().toString())) {
             ToastUtil.showToast("请输入验证码");
             return;
         }
-        requestLogin(editTextUsername.getText().toString().trim(), editTextPassword.getText().toString().trim());
+        requestLogin(mBinding.username.getText().toString().trim(), mBinding.password.getText().toString().trim());
     }
 
 
-    @Override
-    @OnClick({R.id.tv_login, R.id.iv_close, R.id.ll_weixin})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_login:
-                if (nowProgressType == 0) {
-                    if (isCanSendMsg) {
-                        toRequestSms();
-                    }
-                } else {
-                    tv_login.setEnabled(true);
-                    tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
-                    requestLogin();
-                }
-                break;
 
-            case R.id.iv_close:
-                finish();
-                break;
-
-            case R.id.ll_weixin:
-                if (!isWeixinAvilible(this)) {
-                    ToastUtil.showToast("您还未安装微信");
-                } else {
-                    if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
-                        wxLogin();
-                    }
+    public void onViewClick(View view) {
+        if (view == mBinding.tvLogin){
+            if (nowProgressType == 0) {
+                if (isCanSendMsg) {
+                    toRequestSms();
                 }
-                break;
-            default:
-                break;
+            } else {
+                mBinding.tvLogin.setEnabled(true);
+                mBinding.tvLogin.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
+                requestLogin();
+            }
+        }else if (view == mBinding.ivClose){
+            finish();
+        }else if (view == mBinding.llWeixin){
+            if (!isWeiXinAvailable(this)) {
+                ToastUtil.showToast("您还未安装微信");
+            } else {
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
+                    wxLogin();
+                }
+            }
         }
     }
 
 
     private void toRequestSms() {
-        if (TextUtils.isEmpty(editTextUsername.getText().toString())) {
+        if (TextUtils.isEmpty(mBinding.username.getText().toString())) {
             Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (!StringUtil.isPhone(editTextUsername.getText().toString())) {
+        if (!StringUtil.isPhone(mBinding.username.getText().toString())) {
             Toast.makeText(this, "请输入正确手机号", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        requestSms(editTextUsername.getText().toString().trim());
+        requestSms(mBinding.username.getText().toString().trim());
     }
 
 
@@ -397,7 +389,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         HashMap<String, String> params = new HashMap<>();
         params.put("phone", strEditTextUsername);
         // 启动时间
-        Observable ob = Api.getDefault().toSms(BaseConstans.getRequestHead(params));
+        Observable<HttpResult<Object>> ob = Api.getDefault().toSms(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(LoginActivity.this) {
             @Override
             protected void onSubError(String message) {
@@ -416,9 +408,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void changeFocus() {
-        editTextPassword.requestFocus();
-        editTextPassword.setFocusable(true);
-        editTextPassword.setFocusableInTouchMode(true);
+        mBinding.password.requestFocus();
+        mBinding.password.setFocusable(true);
+        mBinding.password.setFocusableInTouchMode(true);
     }
 
     private void requestLogin(String editTextUsername, String password) {
@@ -429,7 +421,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         params.put("center_imei", NTAnalytics.getIMEI());
         // 启动时间
         LogUtil.d("OOM", StringUtil.beanToJSONString(params));
-        Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
+        Observable<HttpResult<UserInfo>> ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
             @Override
             protected void onSubError(String message) {
@@ -469,15 +461,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             params.put("center_imei", NTAnalytics.getIMEI());
             params.put("unionid", unionid);
             // 启动时间
-            Observable ob = Api.getDefault().toLoginSms(BaseConstans.getRequestHead(params));
+            Observable<HttpResult<UserInfo>> ob = Api.getDefault().toLoginSms(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
                 @Override
                 protected void onSubError(String message) {
                     if (!isOnDestroy) {
                         WaitingDialog.closeProgressDialog();
                         ToastUtil.showToast(message);
-//                        dissMissShanYanUi();
-//                        LoginActivity.this.finish();
                     }
                 }
 
@@ -485,11 +475,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 protected void onSubNext(UserInfo data) {
                     if (!isOnDestroy) {
                         Hawk.put("UserInfo", data);
-                        String str = StringUtil.beanToJSONString(data);
+                        //String str = StringUtil.beanToJSONString(data);
                         LogUtil.d("OOM", "setToken=" + data.getToken());
                         BaseConstans.SetUserToken(data.getToken());
                         BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
-                        dissMissShanYanUi();
+                        disMissShanYanUi();
                         WaitingDialog.closeProgressDialog();
                         EventBus.getDefault().post(new LoginToAttentionUserEvent());
                         EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
@@ -502,75 +492,60 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
 
-    private Timer timer;
-    private TimerTask task;
-    private int total_Time = 60;
-    @SuppressLint("HandlerLeak")
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 1:
-                    total_Time = total_Time - 1;
-                    tv_login.setText((String.format(getResources().getString(R.string.remainTime), total_Time)));
-                    if (total_Time == 0) {
-                        total_Time = 60;
-                        endTimer();
-                    }
-                    break;
-            }
-        }
-    };
+
+
 
     /***
      * 倒计时60s
      */
     private void startTimer() {
         isCanSendMsg = false;
-        tv_login.setEnabled(false);
-        tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button_forbidden));
-        if (timer != null) {
-            timer.purge();
-            timer.cancel();
-            timer = null;
+        mBinding.tvLogin.setEnabled(false);
+        mBinding.tvLogin.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button_forbidden));
+
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
         }
-        if (task != null) {
-            task.cancel();
-            task = null;
-        }
-        timer = new Timer();
-        task = new TimerTask() {
+        mTimer = new CountDownTimer(TOTAL_TIME * 1000, 1000) {
             @Override
-            public void run() {
-                Message msg = new Message();
-                msg.what = 1;
-                handler.sendMessage(msg);
+            public void onTick(long millisUntilFinished) {
+                if (isFinishing()) {
+                    return;
+                }
+                mTime = mTime - 1;
+                mBinding.tvLogin.setText((String.format(getResources().getString(R.string.remainTime), mTime)));
+                if (mTime == 0) {
+                    mTime = TOTAL_TIME;
+                    endTimer();
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                endTimer();
             }
         };
-        timer.schedule(task, 0, 1000);
+        //调用 CountDownTimer 对象的 start() 方法开始倒计时，也不涉及到线程处理
+        mTimer.start();
     }
 
     /**
      * 关闭timer 和task
      */
     private void endTimer() {
-        if (timer != null) {
-            timer.purge();
-            timer.cancel();
-            timer = null;
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
         }
-        if (task != null) {
-            task.cancel();
-            task = null;
-        }
+
         if (nowProgressType == 0) {
-            tv_login.setText("获取短信验证码");
+            mBinding.tvLogin.setText("获取短信验证码");
         }
 
         isCanSendMsg = true;
-        tv_login.setEnabled(true);
-        tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
+        mBinding.tvLogin.setEnabled(true);
+        mBinding.tvLogin.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
     }
 
 
@@ -637,7 +612,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Subscribe
     public void onEventMainThread(WxLogin event) {
         if ("wxLogin".equals(event.getTag())) {
-            if (!isWeixinAvilible(this)) {
+            if (!isWeiXinAvailable(this)) {
                 ToastUtil.showToast("您还未安装微信");
             } else {
                 if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
@@ -653,9 +628,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      * param :
      * user : zhangtongju
      */
-    public boolean isWeixinAvilible(Context context) {
-        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
+    public boolean isWeiXinAvailable(Context context) {
+        // 获取packagemanager
+        final PackageManager packageManager = context.getPackageManager();
+        // 获取所有已安装程序的包信息
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
         if (pinfo != null) {
             for (int i = 0; i < pinfo.size(); i++) {
                 String pn = pinfo.get(i).packageName;
@@ -666,6 +643,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
         return false;
     }
+
+
 
 
 }
