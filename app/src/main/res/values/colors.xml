@@ -9,7 +9,7 @@
     <color name="green">#7DCC86</color>
     <color name="line_color">#F5F5F8</color>
     <color name="seekbar_background">#FEE131</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#46AAFF</color>
     <color name="dark_gray">#AAAAAA</color>
     <color name="home_navigation_dark_gray">#5C595C</color>
     <color name="theme_toast">#112339</color>
@@ -21,6 +21,12 @@
     <color name="video_detail_black">#828A9A</color>
     <color name="home_item_select">#009cFF</color>
     <color name="white">#FFFFFF</color>
+    <color name="color_80_black">#cc000000</color>
+    <color name="color_10_white">#1affffff</color>
+    <color name="color_50_white">#80ffffff</color>
+    <color name="color_60_white">#99ffffff</color>
+    <color name="color_80_white">#ccffffff</color>
+    <color name="color_48_black">#7a000000</color>
     <color name="capture_btn_blue">#5496FF</color>
     <color name="baseBackground">#FBFBFB</color>
     <color name="cityBaseColor">#F0F4FD</color>
@@ -85,7 +91,7 @@
 
 
     <!--home-->
-    <color name="home_base_balk_color">#181818</color>
+    <color name="home_base_black_color">#181818</color>
     <color name="home_base_blue_color">#5496FF</color>
 
 
@@ -100,5 +106,9 @@
     <color name="color_sign_out_make_sure_font">#333333</color>
     <color name="color_main_menu_back">#101010</color>
 
+    <color name="color_close_gray">#787878</color>
+
+    <color name="color_progress_track">#E7E7E7</color>
+    <color name="color_progress">#53b0ff</color>
 
 </resources>

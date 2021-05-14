@@ -9,8 +9,8 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.webkit.MimeTypeMap;
 
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.AssetDelegate;
-import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.util.FileUtils;
 import com.shixing.sxve.ui.util.Size;
 
@@ -42,7 +42,7 @@ public class TemplateModel {
     private AssetModel bgModel;
 
     @WorkerThread
-    public TemplateModel(String templateFolder, AssetDelegate delegate, Context context, int nowTemplateIsAnim,int nowTemplateIsMattingVideo) throws IOException, JSONException {
+    public TemplateModel(String templateFolder, AssetDelegate delegate, Context context, int nowTemplateIsAnim,int nowTemplateIsMattingVideo,boolean isToSing) throws IOException, JSONException {
         File folder = new File(templateFolder);
         File configFile = new File(folder, CONFIG_FILE_NAME);
         if (!configFile.exists()) {
@@ -79,12 +79,12 @@ public class TemplateModel {
                 //可以替换背景功能
                 if (!TextUtils.isEmpty(ui_extra) && ui_extra.equals("BG")) {
                     HasBj = true;
-                    bgModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,null,fps,nowTemplateIsAnim);
+                    bgModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,null,fps,nowTemplateIsAnim,isToSing);
                     int group = bgModel.ui.group;
                     if (groupSize < group)
                         groupSize = group; //得到最大的group 的值，group 就是位置，但这里最大值是没包括背景的
                 } else {
-                    AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,temSize, fps,nowTemplateIsAnim);
+                    AssetModel assetModel = new AssetModel(folder.getPath(), asset, delegate, uiVersionMajor,temSize, fps,nowTemplateIsAnim,isToSing);
                     mAssets.add(assetModel);
 
                     //单独针对mask 图层
@@ -241,10 +241,10 @@ public class TemplateModel {
                 if (!mediaUIModelList.isEmpty() && mediaUIModelList.size() > i && mediaUIModelList.get(i) != null) {
                     AssetModel assetModel = mediaUIModelList.get(i);
 
-                    if (albumType.isImage(mimeType)) {
+                    if (AlbumType.isImage(mimeType)) {
                         Log.d("OOM4", "isImage"+i);
                         ((MediaUiModel) assetModel.ui).setImageAsset(paths.get(i));//, context
-                    } else if (albumType.isVideo(mimeType)) {
+                    } else if (AlbumType.isVideo(mimeType)) {
                         Log.d("OOM4", "isVideo"+i);
                         String VideoPathOrigin = paths.get(i);
                         ((MediaUiModel) assetModel.ui).setVideoPath(VideoPathOrigin, true, 0);//, context
@@ -302,7 +302,7 @@ public class TemplateModel {
         Handler mainHandler = new Handler(Looper.getMainLooper());
         mainHandler.post(() -> {
             //已在主线程中，可以更新UI
-            if (albumType.isImage(finalMimeType)) {
+            if (AlbumType.isImage(finalMimeType)) {
                 media.setImageAsset(path);
             } else {
                 media.setVideoPath(path, true, 0);

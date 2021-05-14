@@ -6,54 +6,47 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
 
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.Config;
+import com.flyingeffects.com.databinding.ActWelcomeBinding;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.kwai.monitor.log.TurboAgent;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
-import com.nineton.ntadsdk.view.NTSkipView;
-import com.orhanobut.hawk.Hawk;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
-import androidx.annotation.NonNull;
-
-import butterknife.BindView;
 import rx.Observable;
 
 public class WelcomeActivity extends BaseActivity {
-
+    private static final String TAG = "WelcomeActivity";
     private final int BUILD_VERSION = 23;
     private final int PERMISSION_REQUEST_CODE = 1024;
     private static final int RESULT_CODE = 3;
-    @BindView(R.id.rl_ad_container)
-    FrameLayout rlAdContainer;
-
-    private NTSkipView tvSkip;
 
     private boolean isShow = false;
 
@@ -65,17 +58,23 @@ public class WelcomeActivity extends BaseActivity {
     public boolean canJump = false;
 
     private boolean hasPermission = false;
+    private ActWelcomeBinding mBinding;
 
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_welcome;
+        return 0;
     }
 
     @Override
     protected void initView() {
-        LogUtil.d("OOM", "WelcomeActivity");
+        mBinding = ActWelcomeBinding.inflate(getLayoutInflater());
+        View rootView = mBinding.getRoot();
+        setContentView(rootView);
         BaseConstans.setOddNum();
+        //快手集成sdk 应用活跃事件
+        TurboAgent.onAppActive();
+        checkNextDayStay();
         //解决广告bug ,点击图标后广告爆款广告不弹出来
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -84,9 +83,6 @@ public class WelcomeActivity extends BaseActivity {
             finish();
             return;
         }
-        tvSkip = findViewById(R.id.tv_skip);
-//        if (!fromBackstage) {
-        //记录是不是新用户
         if (BaseConstans.isFirstOpenApp()) {
             BaseConstans.setFirstOpenApp(System.currentTimeMillis()); //记录第一次打开app的时间
             BaseConstans.setOpenAppNum(1); //打开app的次数为1
@@ -94,15 +90,31 @@ public class WelcomeActivity extends BaseActivity {
             int openAppNum = BaseConstans.getOpenAppNum();
             openAppNum++;
             BaseConstans.setOpenAppNum(openAppNum); //打开app的次数为1
-            LogUtil.d("OOM", "openAppNum=" + openAppNum);
         }
-//        }
-
         gotoPrivacyPolicyActivity();
+        StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_coopen");
     }
 
     @Override
     protected void initAction() {
+    }
+
+    /**
+     * 快手 记录次日留存和7日留存
+     */
+    private void checkNextDayStay() {
+        Date date = new Date();
+        if (BaseConstans.getFirstUseAppTime() != 0) {
+            long t1 = TimeUtils.millis2Days(date.getTime(), TimeZone.getDefault());
+            long t2 = TimeUtils.millis2Days(BaseConstans.getFirstUseAppTime(), TimeZone.getDefault());
+
+            if (t1 - t2 == 1) {
+                TurboAgent.onNextDayStay();
+            }
+//            else if (t1 - t2 == 6) {
+//                TurboAgent.onWeekStay();
+//            }
+        }
     }
 
     /**
@@ -122,15 +134,16 @@ public class WelcomeActivity extends BaseActivity {
         // 权限都已经有了，那么直接调用SDK
         if (lackedPermission.size() == 0) {
             if (!fromBackstage || BaseConstans.getNextIsNewUser()) {
-                requestConfig();
+//                requestConfig();
                 requestConfigForTemplateList();
             }
             hasPermission = true;
-
-            LogUtil.d("oom", "BaseConstans.getNextIsNewUser()=" + BaseConstans.getNextIsNewUser());
-
             if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
+                StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_6_requestAd");
                 showSplashAd();
+            } else {
+                noQueryAdReason();
+                StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_6_no_requestAd");
             }
         } else {
             hasPermission = false;
@@ -147,24 +160,48 @@ public class WelcomeActivity extends BaseActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE && hasAllPermissionsGranted(grantResults)) {
             hasPermission = true;
-            if (!fromBackstage) {
-                requestConfig();
-            }
-            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                showSplashAd();
-            } else {
-                intoMain();
-            }
+            gotoNext();
         } else {
             hasPermission = false;
             // 如果用户没有授权，那么应该说明意图，引导用户去设置里面授权。
             ToastUtil.showToast(this.getString(R.string.Permissions_repulse));
             new Handler().postDelayed(() -> {
-                PermissionUtil.gotoPermission(WelcomeActivity.this);
-                finish();
-            }, 3000);
+                gotoNext();
+            }, 0);
         }
     }
+
+    /**
+     * description ：显示开屏广告还是进入主页 ,没有权限也能请求
+     * creation date: 2021/3/10
+     * user : zhangtongju
+     */
+    private void gotoNext() {
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_requestPermiss_6_requestAd");
+            showSplashAd();
+        } else {
+            noQueryAdReason();
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_requestPermiss_6_no_requestAd");
+            intoMain();
+        }
+    }
+
+
+    /**
+     * description ：没请求广告的原因
+     * creation date: 2021/5/11
+     * user : zhangtongju
+     */
+    private void noQueryAdReason() {
+        if (BaseConstans.getHasAdvertising() != 1) {
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "后台没配置广告");
+        }
+        if (BaseConstans.getIsNewUser()) {
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "新用户");
+        }
+    }
+
 
     private boolean hasAllPermissionsGranted(int[] grantResults) {
         for (int grantResult : grantResults) {
@@ -177,28 +214,30 @@ public class WelcomeActivity extends BaseActivity {
 
 
     private void getPermission() {
-        rlAdContainer.post(() -> {
+        mBinding.rlAdContainer.post(() -> {
             if (Build.VERSION.SDK_INT >= BUILD_VERSION) {
                 checkPermission();
+                StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_6");
             } else {
                 hasPermission = true;
-                if (!fromBackstage || BaseConstans.getNextIsNewUser()) {
-                    requestConfig();
-                }
-                LogUtil.d("oom", "BaseConstans.getHasAdvertising()=" + BaseConstans.getHasAdvertising());
+                StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6");
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
+                    StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6_requestAd");
                     showSplashAd();
+                } else {
+                    noQueryAdReason();
+                    StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6_no_requestAd");
                 }
             }
         });
-        rlAdContainer.postDelayed(() -> {
+
+        mBinding.rlAdContainer.postDelayed(() -> {
             if (!isShow && hasPermission) {
                 intoMain();
                 finish();
                 overridePendingTransition(R.anim.nt_ad_fade_in, R.anim.nt_ad_fade_out);
             }
         }, BaseConstans.getKaiPingADTimeOut());
-        LogUtil.d("oom", "开屏广告的时长为" + BaseConstans.getKaiPingADTimeOut());
     }
 
 
@@ -209,7 +248,8 @@ public class WelcomeActivity extends BaseActivity {
      */
     private void gotoPrivacyPolicyActivity() {
         if (BaseConstans.isFirstClickUseApp()) {
-            Intent intent = new Intent(this, privacyPolicyActivity.class);
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_privacy_policy");
+            Intent intent = new Intent(this, PrivacyPolicyActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivityForResult(intent, 1);
         } else {
@@ -226,6 +266,8 @@ public class WelcomeActivity extends BaseActivity {
             if (agree) {
                 BaseConstans.setFirstClickUseApp();
                 getPermission();
+                Date date = new Date();
+                BaseConstans.setFirstUseAppTime(date.getTime());
             } else {
                 this.finish();
             }
@@ -237,13 +279,15 @@ public class WelcomeActivity extends BaseActivity {
      * 展示开屏广告
      */
     private void showSplashAd() {
+        Log.d(TAG, "Application start finished");
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
-            statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
-            NTAdSDK.getInstance().showSplashAd(this, rlAdContainer, tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
+            NTAdSDK.getInstance().showSplashAd(this, mBinding.rlAdContainer, mBinding.tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
+
                 @Override
                 public void onAdSuccess() {
                     isShow = true;
-                    statisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
+                    StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
                 }
 
                 @Override
@@ -260,7 +304,7 @@ public class WelcomeActivity extends BaseActivity {
 
                 @Override
                 public void onAdTick(long millisUntilFinished) {
-                    tvSkip.setText(String.format("跳过 %d", Math.round(millisUntilFinished / 1000f)));
+                    mBinding.tvSkip.setText(String.format("跳过 %d", Math.round(millisUntilFinished / 1000f)));
                 }
 
                 @Override
@@ -270,10 +314,7 @@ public class WelcomeActivity extends BaseActivity {
             });
 
         }
-
-
     }
-
 
     /**
      * 设置一个变量来控制当前开屏页面是否可以跳转，当开屏广告为普链类广告时，点击会打开一个广告落地页，此时开发者还不能打开自己的App主页。当从广告落地页返回以后，
@@ -334,99 +375,6 @@ public class WelcomeActivity extends BaseActivity {
 
 
     /**
-     * description ：这个配置是请求关于界面的联系我们
-     * creation date: 2020/4/8
-     * user : zhangtongju
-     */
-    private void requestConfig() {
-        HashMap<String, String> params = new HashMap<>();
-        // 启动时间
-        Observable ob = Api.getDefault().configList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<Config>>(WelcomeActivity.this) {
-            @Override
-            protected void onSubError(String message) {
-            }
-
-            @Override
-            protected void onSubNext(List<Config> data) {
-
-                StringBuilder sb = new StringBuilder();
-
-                for (int i = 0; i < data.size(); i++) {
-                    String tet = StringUtil.beanToJSONString(data.get(i));
-                    sb.append(tet);
-                    LogUtil.d("_onNext", "i-" + i + "Config=" + tet);
-                }
-                LogUtil.d("_onNext", "str=" + sb.toString());
-
-                if (data.size() > 0) {
-                    for (int i = 0; i < data.size(); i++) {
-                        Config config = data.get(i);
-                        int id = config.getId();
-                        if (id == 18) {
-                            //弹出微信
-                            BaseConstans.service_wxi = config.getValue();
-                        } else if (id == 20) {
-                            //android 审核数据
-                            String AuditModeJson = config.getValue();
-                            AuditModeConfig(AuditModeJson);
-                        } else if (id == 22) {
-                            //获得热更新时长
-                            String outTime = config.getValue();
-                            BaseConstans.showAgainKaipingAd = Integer.parseInt(outTime);
-                        } else if (id == 24) {
-                            //首次安装前几次无广告
-                            int newUserIsVip = Integer.parseInt(config.getValue());
-                            if (BaseConstans.getOpenAppNum() < newUserIsVip - 1) {
-                                BaseConstans.setNextNewUser(true);
-                            } else {
-                                BaseConstans.setNextNewUser(false);
-                            }
-                            if (BaseConstans.getOpenAppNum() < newUserIsVip) { //新用户没广告
-                                BaseConstans.setIsNewUser(true);
-                            } else {
-                                BaseConstans.setIsNewUser(false);
-                            }
-                        } else if (id == 25) {
-                            //启动APP多少秒后显示插屏广告
-                            int second = Integer.parseInt(config.getValue());
-                            BaseConstans.setInterstitial(second);
-                        } else if (id == 26) {
-                            //开屏广告延迟时间
-                            int second = Integer.parseInt(config.getValue());
-                            BaseConstans.setKaiPingADTimeOut(second);
-                        } else if (id == 27) {
-                            //上传的时候
-                            int second = Integer.parseInt(config.getValue());
-                            BaseConstans.setMaxuploadTime(second);
-                        } else if (id == 32) {
-                            String second = config.getValue();
-                            BaseConstans.setminapp_share_title(second);
-                        } else if (id == 33) {
-                            //feed 自渲染信息流 上线和下限
-                            String second = config.getValue();
-                            BaseConstans.setFeedShowPositionNum(second);
-                        } else if (id == 53) {
-                            //相册加载广告间隔次数
-                            String albumADIntervalNumber = config.getValue();
-                            BaseConstans.setIntervalNumShowAD(Integer.parseInt(albumADIntervalNumber));
-                        } else if (id == 56) {
-                            //自定义模板分享到抖音的话题
-                            String douyingTopic = config.getValue();
-                            BaseConstans.setDouyingTopic(douyingTopic);
-                        } else if (id == 61) {
-                            //换装制作页面切换模板按钮加载视频广告的间隔次数
-                            int dressupIntervalsNumber = Integer.parseInt(config.getValue());
-                            BaseConstans.setDressupIntervalsNumber(dressupIntervalsNumber);
-                        }
-                    }
-                }
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
-
-
-    /**
      * description ：这个请求是用来请求模板里面的数据，复制快手或者抖音
      * creation date: 2020/4/8
      * user : zhangtongju
@@ -437,6 +385,7 @@ public class WelcomeActivity extends BaseActivity {
         // 启动时间
         Observable ob = Api.getDefault().configListForTemplateList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<ConfigForTemplateList>(WelcomeActivity.this) {
+
             @Override
             protected void onSubError(String message) {
             }
@@ -446,49 +395,8 @@ public class WelcomeActivity extends BaseActivity {
                 if (data != null) {
                     BaseConstans.configList = data;
                 }
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
-    }
-
-
-    int isVideoadvertisingId;
-
-    private void AuditModeConfig(String str) {
-        LogUtil.d("AuditModeConfig", "AuditModeConfig=" + str);
-        Hawk.put("AuditModeConfig", str);
-        JSONArray jsonArray;
-        try {
-            jsonArray = new JSONArray(str);
-            if (jsonArray.length() > 0) {
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject obArray = jsonArray.getJSONObject(i);
-                    String Channel = obArray.getString("channel");
-                    if ("isVideoadvertising".equals(Channel)) { //控制了版本号
-                        isVideoadvertisingId = obArray.getInt("id");
-                    }
-                    if (Channel.equals(BaseConstans.getChannel())) { //最新版的审核模式
-                        boolean audit_on = obArray.getBoolean("audit_on");
-                        int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
-                        if (audit_on || NowVersion != isVideoadvertisingId) {
-                            BaseConstans.setHasAdvertising(1);
-                        } else {
-                            BaseConstans.setHasAdvertising(0);
-                        }
-
-                        boolean video_ad_open = obArray.getBoolean("video_ad_open");
-                        BaseConstans.setIncentiveVideo(video_ad_open);
-
-
-                        boolean save_video_ad = obArray.getBoolean("save_video_ad");
-                        BaseConstans.setSave_video_ad(save_video_ad);
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
     }
 
 

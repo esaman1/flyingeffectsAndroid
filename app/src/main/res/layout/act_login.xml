@@ -2,10 +2,10 @@
     android:id="@+id/shanyan_login_relative"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/home_base_balk_color">
+    android:background="@color/home_base_black_color">
 
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

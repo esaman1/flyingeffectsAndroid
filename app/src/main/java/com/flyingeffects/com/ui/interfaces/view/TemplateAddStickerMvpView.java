@@ -9,4 +9,5 @@ public interface TemplateAddStickerMvpView {
     void hideTextDialog();
     void hideKeyBord();
     void stickerOnclickCallback(String str);
+    void showAdCallback();
 }

@@ -1,18 +1,14 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
-import android.os.Handler;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.utils.EquipmentUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.RomUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.megvii.facepp.multi.sdk.BodySegmentApi;
 import com.megvii.facepp.multi.sdk.FaceppApi;
-import com.megvii.facepp.multi.sdk.segment.SegmentResult;
-import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.util.Timer;
@@ -36,11 +32,11 @@ public class initFaceSdkModel {
 //            long str = System.currentTimeMillis();
             LogUtil.d("OO3", "result=" + result);
             if (result == FaceppApi.MG_RETCODE_OK) {
-                if (RomUtil.isEmui()) {
+                if (RomUtil.isEmui()|| "M2006C3LC".equals(EquipmentUtil.getSystemModel())) {
                     //如果是华为设备，则初始化华为推送
-                    BodySegmentApi.getInstance().initBodySegment(1, BodySegmentApi.SEGMENT_MODE_FAST, 3);//初始化人体抠像
+                    BodySegmentApi.getInstance().initBodySegment(1, BodySegmentApi.SEGMENT_MODE_FAST, BodySegmentApi.CPU_FORCED);//初始化人体抠像
                 } else {
-                    BodySegmentApi.getInstance().initBodySegment(1, BodySegmentApi.SEGMENT_MODE_FAST, 0);//初始化人体抠像
+                    BodySegmentApi.getInstance().initBodySegment(1, BodySegmentApi.SEGMENT_MODE_FAST, BodySegmentApi.PRIMARY_CL_SECONDARY_GL);//初始化人体抠像
                 }
                 LogUtil.d("OO3", "模型加载完成");
 //                long str2 = System.currentTimeMillis();
@@ -61,17 +57,15 @@ public class initFaceSdkModel {
     }
 
 
-    private static Context mcontext;
-
     public static void getHasLoadSdkOk(isAddSuccessCallback successCallback, Context context) {
-        mcontext = context;
+
         callback = successCallback;
         if (hasLoadSdkOk) {
             Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                 @Override
                 public void call(Integer integer) {
                     if (waitingDialog_progress != null) {
-                        waitingDialog_progress.closePragressDialog();
+                        waitingDialog_progress.closeProgressDialog();
                     }
 
                 }
@@ -82,7 +76,7 @@ public class initFaceSdkModel {
             Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                 @Override
                 public void call(Integer integer) {
-                    waitingDialog_progress = new WaitingDialog_progress(mcontext);
+                    waitingDialog_progress = new WaitingDialog_progress(context);
                     waitingDialog_progress.openProgressDialog("抠像速度升级中...");
                 }
             });
@@ -110,7 +104,7 @@ public class initFaceSdkModel {
             public void run() {
                 if (hasLoadSdkOk) {
                     if (waitingDialog_progress != null) {
-                        waitingDialog_progress.closePragressDialog();
+                        waitingDialog_progress.closeProgressDialog();
                     }
 
                     destroyTimer();
@@ -143,12 +137,8 @@ public class initFaceSdkModel {
         }
     }
 
-
     public interface isAddSuccessCallback {
-
         void isSuccess();
-
     }
-
 
 }

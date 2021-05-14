@@ -19,96 +19,94 @@ import com.shixing.sxve.R;
  */
 public class WaitingDialog_progress {
 
-    private Dialog loadingDialog;
-    Context context;
+    private Dialog mLoadingDialog;
+    Context mContext;
+
+    private TextView mTvProgress;
 
     public WaitingDialog_progress(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
 
     /**
      * 打开Loading
      */
-    public void openProgressDialog(
-    ) {
-        if (loadingDialog != null) {
-            loadingDialog.dismiss();
-            loadingDialog = null;
+    public void openProgressDialog() {
+        if (mLoadingDialog != null) {
+            mLoadingDialog.dismiss();
+            mLoadingDialog = null;
         }
-        loadingDialog = createLoadingDialog(context);
-        if (loadingDialog != null) {
-                loadingDialog.show();
+        mLoadingDialog = createLoadingDialog(mContext);
+        if (mLoadingDialog != null) {
+                mLoadingDialog.show();
         }
     }
-
 
     /**
      * 打开Loading
      */
-    public void openProgressDialog(String title
-    ) {
-        if (loadingDialog != null) {
-            loadingDialog.dismiss();
-            loadingDialog = null;
+    public void openProgressDialog(String title) {
+        if (mLoadingDialog != null) {
+            mLoadingDialog.dismiss();
+            mLoadingDialog = null;
         }
-        loadingDialog = createLoadingDialog(context,title);
-        if (loadingDialog != null) {
-            loadingDialog.show();
+        mLoadingDialog = createLoadingDialog(mContext,title);
+        if (mLoadingDialog != null) {
+            mLoadingDialog.show();
         }
     }
-
-    private TextView tv_progress;
 
     private Dialog createLoadingDialog(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View v = inflater.inflate(R.layout.waitdialog, null, false);// 得到加载view
+        // 得到加载view
+        View v = inflater.inflate(R.layout.waitdialog, null, false);
         RelativeLayout layout = v.findViewById(R.id.loading);
-        tv_progress = v.findViewById(R.id.tv_show_alert);
-        loadingDialog = new Dialog(context, R.style.loading_dialog);// 创建自定义样式dialog
-        loadingDialog.setContentView(layout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));// 设置布局
-        loadingDialog.setCanceledOnTouchOutside(false);
-        loadingDialog.setCancelable(false);
-        return loadingDialog;
+        mTvProgress = v.findViewById(R.id.tv_show_alert);
+        // 创建自定义样式dialog
+        mLoadingDialog = new Dialog(context, R.style.loading_dialog);
+        // 设置布局
+        mLoadingDialog.setContentView(layout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+        mLoadingDialog.setCanceledOnTouchOutside(false);
+        mLoadingDialog.setCancelable(false);
+        return mLoadingDialog;
     }
-
-
 
     private Dialog createLoadingDialog(Context context,String title) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View v = inflater.inflate(R.layout.waitdialog, null, false);// 得到加载view
+        // 得到加载view
+        View v = inflater.inflate(R.layout.waitdialog, null, false);
         RelativeLayout layout = v.findViewById(R.id.loading);
-        tv_progress = v.findViewById(R.id.tv_show_alert);
-        tv_progress.setText(title);
-        loadingDialog = new Dialog(context, R.style.loading_dialog);// 创建自定义样式dialog
-        loadingDialog.setContentView(layout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));// 设置布局
-        loadingDialog.setCanceledOnTouchOutside(false);
-        loadingDialog.setCancelable(false);
-        return loadingDialog;
+        mTvProgress = v.findViewById(R.id.tv_show_alert);
+        mTvProgress.setText(title);
+        // 创建自定义样式dialog
+        mLoadingDialog = new Dialog(context, R.style.loading_dialog);
+        // 设置布局
+        mLoadingDialog.setContentView(layout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+        mLoadingDialog.setCanceledOnTouchOutside(false);
+        mLoadingDialog.setCancelable(false);
+        return mLoadingDialog;
     }
-
-
 
     public void setProgress(String progress) {
-        if (tv_progress != null) {
-            tv_progress.setText(progress);
+        if (mTvProgress != null) {
+            mTvProgress.setText(progress);
         }
     }
-
 
     /**
      * 关闭Loading
      */
-    public void closePragressDialog() {
+    public void closeProgressDialog() {
         try {
-            if (context != null) {
-                if (tv_progress != null) {
-                    tv_progress = null;
+            if (mContext != null) {
+                if (mTvProgress != null) {
+                    mTvProgress = null;
                 }
-                if (loadingDialog != null && loadingDialog.isShowing()) {
-                    loadingDialog.dismiss();
-                    loadingDialog = null;
+                if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+                    mLoadingDialog.dismiss();
+                    mLoadingDialog = null;
                 }
             }
         } catch (Exception e) {

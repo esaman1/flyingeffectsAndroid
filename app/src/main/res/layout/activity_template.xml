@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/home_base_black_color">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/iv_top_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:contentDescription="@string/app_name"
+            android:padding="10dp"
+            android:src="@mipmap/back"
+            android:visibility="visible" />
+
+
+        <LinearLayout
+            android:id="@+id/ll_Matting"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="智能抠像"
+                android:textColor="@color/white" />
+
+            <com.suke.widget.SwitchButton
+                android:id="@+id/switch_button"
+                android:layout_width="40dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="9dp"
+                app:sb_border_width="@dimen/dp_2"
+                app:sb_button_color="@color/home_base_blue_color"
+                app:sb_checked="true"
+                app:sb_checked_color="@color/base_black"
+                app:sb_checkline_color="@color/base_black"
+                app:sb_show_indicator="false"
+                app:sb_uncheckcircle_radius="@dimen/dp_0"
+                app:sb_uncheckcircle_width="0dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_top_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_16sp_size" />
+
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/Real_time_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/home_base_black_color"
+        android:visibility="invisible">
+
+        <com.shixing.sxvideoengine.SXPlayerSurfaceView
+            android:id="@+id/player_surface_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/edit_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="5dp" />
+
+
+    <com.flyingeffects.com.view.EmptyControlVideo
+        android:id="@+id/video_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="70dp"
+        android:layout_marginBottom="40dp"
+        android:visibility="gone" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_progress"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_above="@+id/relayout_bottom"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/iv_play"
+            android:layout_width="26dp"
+            android:layout_height="29dp"
+            android:layout_marginStart="13dp"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/iv_play" />
+
+
+        <TextView
+            android:id="@+id/tv_start_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="13dp"
+            android:text="00:00"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="13dp">
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:layout_toLeftOf="@+id/tv_end_time"
+                android:max="100"
+                android:maxHeight="2dp"
+                android:progress="0"
+                android:progressDrawable="@drawable/bg_adjust_seek_bar"
+                android:thumb="@drawable/seek_bar_thumb" />
+
+
+            <TextView
+                android:id="@+id/tv_end_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="20dp"
+                android:text="00:00"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/relayout_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="120dp"
+            android:layout_marginBottom="33dp" />
+
+        <LinearLayout
+            android:id="@+id/ll_viewpager_container"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:background="#000000"
+            android:orientation="vertical">
+
+            <com.flyingeffects.com.view.NoSlidingViewPager
+                android:id="@+id/template_viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#606074" />
+
+            <com.flyco.tablayout.CommonTabLayout
+                android:id="@+id/template_tablayout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="40dp"
+                android:layout_weight="1"
+                app:tl_iconVisible="false"
+                app:tl_indicator_color="@color/white"
+                app:tl_indicator_corner_radius="1.5dp"
+                app:tl_indicator_height="3dp"
+                app:tl_indicator_width="30dp"
+                app:tl_textSelectColor="@color/white"
+                app:tl_textsize="16sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.shixing.sxve.ui.view.TextAssetEditLayout
+        android:id="@+id/text_edit_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+</RelativeLayout>

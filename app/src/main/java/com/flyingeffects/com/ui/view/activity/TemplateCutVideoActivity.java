@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;
 import com.flyingeffects.com.ui.model.videoCutDurationForVideoOneDo;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
@@ -33,7 +35,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -69,12 +70,11 @@ public class TemplateCutVideoActivity extends BaseActivity {
     @BindView(R.id.list_thumb)
     RecyclerView list_thumb;
 
-    private WaitingDialogProgressNowAnim progressNowAnim;
+    private LoadingDialog mLoadingDialog;
 
     private TimelineAdapterForCutVideo mTimelineAdapter;
 
     private boolean nowIsPhotographAlbum;
-
 
     @BindView(R.id.relative_select_duration)
     RelativeLayout relative_select_duration;
@@ -134,6 +134,8 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
     private boolean nowActivityIsDestroy = false;
+    private Context mContext;
+
 
     @Override
     protected int getLayoutId() {
@@ -142,12 +144,17 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        mContext = TemplateCutVideoActivity.this;
         isIntoOnpause = false;
-        progressNowAnim = new WaitingDialogProgressNowAnim(this);
+        mLoadingDialog = buildLoadingDialog();
+        getLifecycle().addObserver(mLoadingDialog);
+
         DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
         videoPath = getIntent().getStringExtra("videoPath");
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
         templateName = getIntent().getStringExtra("templateName");
+        LogUtil.d(TAG, "videoPath = " + videoPath);
+        LogUtil.d(TAG, "needDuration = " + needDuration);
         isFrom = getIntent().getIntExtra("isFrom", 0);
         LogUtil.d(TAG, "isFrom = " + isFrom);
         nowIsPhotographAlbum = getIntent().getBooleanExtra("nowIsPhotographAlbum", false);
@@ -161,6 +168,15 @@ public class TemplateCutVideoActivity extends BaseActivity {
         }
     }
 
+    private LoadingDialog buildLoadingDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(mContext)
+                .setHasAd(true)
+                .setTitle("飞闪预览处理中")
+                .setMessage("请耐心等待，不要离开")
+                .build();
+        return dialog;
+    }
+
     @Override
     protected void initAction() {
         initThumbList();
@@ -170,6 +186,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
     private void startVideo() {
+
     }
 
 
@@ -194,7 +211,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
                         if (!isIntoOnpause) {
                             videoPlay();
                         }
-
                         break;
                     case Player.STATE_ENDED:
                         LogUtil.d("OOM2", "STATE_ENDED");
@@ -277,7 +293,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                     videoStop();
                     endTimer();
                     if (!nowActivityIsDestroy) {
-                        progressNowAnim.openProgressDialog();
+                        showLoadingDialog();
                     }
                     ktStart(true);
                 }
@@ -287,7 +303,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
                     videoStop();
                     endTimer();
                     if (!nowActivityIsDestroy) {
-                        progressNowAnim.openProgressDialog();
+                        showLoadingDialog();
                     }
                     ktStart(false);
                 }
@@ -295,16 +311,20 @@ public class TemplateCutVideoActivity extends BaseActivity {
         }
     }
 
+    private void showLoadingDialog() {
+        mLoadingDialog.show();
+    }
+
     private void ktStart(boolean isKt) {
         LogUtil.d("OOM", "needDuration" + needDuration);
         long duration = (long) (needDuration * 1000);
-        new Thread(() -> videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, false, duration, videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
+        new Thread(() -> videoCutDurationForVideoOneDo.getInstance().cutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, false, duration, videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                 if (!nowActivityIsDestroy) {
-                    progressNowAnim.setProgress("正在裁剪中" + progress + "%");
+                    mLoadingDialog.setTitleStr("正在裁剪中");
+                    mLoadingDialog.setProgress(progress);
                 }
-
             }
 
             @Override
@@ -316,13 +336,13 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
                         Observable.just(isSuccess).subscribeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> new Handler().postDelayed(() -> {
                             if (!nowActivityIsDestroy) {
-                                progressNowAnim.closePragressDialog();
+                                dismissLoadingDialog();
                             }
                         }, 500));
 
                     } else {
                         if (!nowActivityIsDestroy) {
-                            progressNowAnim.closePragressDialog();
+                            dismissLoadingDialog();
                         }
                         LogUtil.d("OOM", "MattingVideoEnityisFrom=" + isFrom);
                         EventBus.getDefault().post(new MattingVideoEnity(null, path, path, isFrom));
@@ -332,6 +352,10 @@ public class TemplateCutVideoActivity extends BaseActivity {
             }
         })).start();
 
+    }
+
+    private void dismissLoadingDialog() {
+        mLoadingDialog.dismiss();
     }
 
 
@@ -420,6 +444,7 @@ public class TemplateCutVideoActivity extends BaseActivity {
         int thumbCount = (int) (listWidth * (duration / mTemplateDuration / thumbWidth));
 //        int thumbCount = (int) (listWidth * (duration / mTemplateDuration) / thumbWidth);
         thumbCount = thumbCount > 0 ? thumbCount : 0;
+        LogUtil.d("OOM2", "thumbCount=" + thumbCount);
         //每帧所占的时间
         final int interval = (int) (duration / thumbCount * 1000);
         int[] mTimeUs = new int[thumbCount];

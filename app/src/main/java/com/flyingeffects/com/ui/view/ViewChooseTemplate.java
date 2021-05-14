@@ -1,7 +1,6 @@
 package com.flyingeffects.com.ui.view;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,12 +11,12 @@ import com.flyingeffects.com.adapter.ChooseTemplateAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.TemplateDown;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -38,13 +37,13 @@ public class ViewChooseTemplate {
     private RecyclerView recyclerView;
     private Context context;
     private ChooseTemplateAdapter templateThumbAdapter;
-    private List<new_fag_template_item> list = new ArrayList<>();
+    private List<NewFragmentTemplateItem> list = new ArrayList<>();
     private int changeTemplatePosition;
 
-    public ViewChooseTemplate(Context context, View templateThumb,int changeTemplatePosition, Callback callback) {
+    public ViewChooseTemplate(Context context, View templateThumb, int changeTemplatePosition, Callback callback) {
         this.context = context;
         this.callback = callback;
-        this.changeTemplatePosition=changeTemplatePosition;
+        this.changeTemplatePosition = changeTemplatePosition;
         initAllView(templateThumb);
         requestPictureAlbumData();
     }
@@ -59,19 +58,19 @@ public class ViewChooseTemplate {
 
 
         templateThumbAdapter.setOnItemClickListener((adapter, view, position) -> {
-            if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)&&context!=null){
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000) && context != null) {
                 WaitingDialog.openPragressDialog(context);
-                new_fag_template_item items=list.get(position);
-                TemplateDown templateDown=new TemplateDown(new TemplateDown.DownFileCallback() {
+                NewFragmentTemplateItem items = list.get(position);
+                TemplateDown templateDown = new TemplateDown(new TemplateDown.DownFileCallback() {
                     @Override
                     public void isSuccess(String filePath) {
                         Observable.just(filePath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                             @Override
                             public void call(String s) {
-                                WaitingDialog.closePragressDialog();
-                                statisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click",list.get(position).getTitle());
-                                if(callback!=null){
-                                    callback.onItemClick(position,filePath,items);
+                                WaitingDialog.closeProgressDialog();
+                                StatisticsEventAffair.getInstance().setFlag(context, "21_yj_mb_click", list.get(position).getTitle());
+                                if (callback != null) {
+                                    callback.onItemClick(position, filePath, items);
                                 }
                             }
                         });
@@ -94,19 +93,20 @@ public class ViewChooseTemplate {
         params.put("page", "1");
         params.put("pageSize", "10");
         Observable ob = Api.getDefault().photoList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
+
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(context) {
             @Override
             protected void onSubError(String message) {
                 ToastUtil.showToast(message);
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
-                String test= StringUtil.beanToJSONString(data);
-                LogUtil.d("OOM2",test);
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
+                String test = StringUtil.beanToJSONString(data);
+                LogUtil.d("OOM2", test);
                 list.clear();
                 list.addAll(data);
-                new_fag_template_item items=list.get(changeTemplatePosition);
+                NewFragmentTemplateItem items = list.get(changeTemplatePosition);
                 items.setCheckItem(true);
                 templateThumbAdapter.notifyDataSetChanged();
             }
@@ -118,7 +118,7 @@ public class ViewChooseTemplate {
 
     public interface Callback {
 
-        void onItemClick(int position,String  filePath, new_fag_template_item item);
+        void onItemClick(int position, String filePath, NewFragmentTemplateItem item);
 
         void isNeedToCutVideo(int position);
 

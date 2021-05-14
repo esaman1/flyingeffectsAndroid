@@ -4,7 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.flyingeffects.com.base.BaseApplication;
+
 public class SPHelper {
+
+    public static final String FILE_NAME = "fileName";
 
 
     /**
@@ -17,6 +21,15 @@ public class SPHelper {
     public SPHelper(Context context, String fileName) {
         preferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
         editor = preferences.edit();
+    }
+
+    private SPHelper() {
+        preferences = BaseApplication.getInstance().getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        editor = preferences.edit();
+    }
+
+    public static SPHelper getInstance() {
+        return new SPHelper();
     }
 
 

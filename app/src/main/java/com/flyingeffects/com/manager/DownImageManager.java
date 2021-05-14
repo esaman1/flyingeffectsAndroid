@@ -2,6 +2,9 @@ package com.flyingeffects.com.manager;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
@@ -23,7 +26,6 @@ public class DownImageManager {
     private List<String> hasDownList = new ArrayList<>();
     private int downSuccessNum;
     private keepImageToLocalState callback;
-    private File keepUunCatchPath;
 
     public DownImageManager(Context context, ArrayList<String> listForMatting, keepImageToLocalState callback) {
         this.context = context;
@@ -31,8 +33,6 @@ public class DownImageManager {
         this.callback = callback;
         downSuccessNum = 0;
         hasDownList.clear();
-        FileManager fileManager = new FileManager();
-        keepUunCatchPath = new File(fileManager.getFileCachePath(context, "runCatch/"));
     }
 
 
@@ -89,27 +89,27 @@ public class DownImageManager {
 //    }
 
 
-//    /**
-//     * string转成bitmap
-//     *
-//     * @param st
-//     */
-//    public static Bitmap convertStringToIcon(String st) {
-//        // OutputStream out;
-//        Bitmap bitmap = null;
-//        try {
-//            // out = new FileOutputStream("/sdcard/aa.jpg");
-//            byte[] bitmapArray;
-//            bitmapArray = Base64.decode(st, Base64.DEFAULT);
-//            bitmap =
-//                    BitmapFactory.decodeByteArray(bitmapArray, 0,
-//                            bitmapArray.length);
-//            // bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-//            return bitmap;
-//        } catch (Exception e) {
-//            return null;
-//        }
-//    }
+    /**
+     * string转成bitmap
+     *
+     * @param st
+     */
+    public static Bitmap convertStringToIcon(String st) {
+        // OutputStream out;
+        Bitmap bitmap = null;
+        try {
+            // out = new FileOutputStream("/sdcard/aa.jpg");
+            byte[] bitmapArray;
+            bitmapArray = Base64.decode(st, Base64.DEFAULT);
+            bitmap =
+                    BitmapFactory.decodeByteArray(bitmapArray, 0,
+                            bitmapArray.length);
+            // bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            return bitmap;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
 
     public interface keepImageToLocalState {

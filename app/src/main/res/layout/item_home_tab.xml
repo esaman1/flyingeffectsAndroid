@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_tab_item_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/selector_home_tab_text_color"
+        android:textSize="@dimen/sp_16" />
+
+    <View
+        android:id="@+id/v_tab_item_indicator"
+        android:layout_width="@dimen/dp_8"
+        android:layout_height="@dimen/dp_3"
+        android:layout_marginTop="@dimen/dp_2"
+        android:background="@drawable/selector_home_tab_indicator" />
+
+</LinearLayout>

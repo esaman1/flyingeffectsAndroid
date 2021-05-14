@@ -5,18 +5,16 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.faceUtil.ConUtil;
 import com.flyingeffects.com.utils.faceUtil.SegResultHandleUtils;
 import com.megvii.facepp.multi.sdk.BodySegmentApi;
 import com.megvii.facepp.multi.sdk.FacePPImage;
-import com.megvii.facepp.multi.sdk.segment.SegmentResult;
 import com.megvii.facepp.multi.sdk.utils.ImageTransformUtils;
 import com.shixing.sxve.ui.util.PhotoBitmapUtils;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,7 +35,7 @@ public class MattingImage {
                 WaitingDialog.openPragressDialog(context, "正在上传中...");
             }, 200);
         } else {
-            WaitingDialog.closePragressDialog();
+            WaitingDialog.closeProgressDialog();
             callback.isDone(true);
         }
     }
@@ -56,19 +54,19 @@ public class MattingImage {
     private void updateDuration(float duration, Context context) {
         LogUtil.d("OOM", "initMattingDuration=" + duration);
         if (duration <= 10000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于10秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于10秒");
         } else if (duration <= 20000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于20秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于20秒");
         } else if (duration <= 30000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于30秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于30秒");
         } else if (duration <= 40000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于40秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于40秒");
         } else if (duration <= 50000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于50秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于50秒");
         } else if (duration <= 60000) {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于60秒");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "小于60秒");
         } else {
-            statisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "大于1分钟");
+            StatisticsEventAffair.getInstance().setFlag(context, "initMattingDuration", "大于1分钟");
         }
     }
 
@@ -252,11 +250,9 @@ public class MattingImage {
         void isSuccess(boolean isSuccess, Bitmap bp);
     }
 
-
     public interface mattingStatusForMultiple {
         void isSuccess(boolean isSuccess, byte[] bytes);
     }
-
 
     /*
      * 获取位图的YUV数据
@@ -309,12 +305,12 @@ public class MattingImage {
                 // if (v > 255)
                 // v = 255;
                 // 调整
-                y = y < 16 ? 16 : (y > 255 ? 255 : y);
-                u = u < 0 ? 0 : (u > 255 ? 255 : u);
-                v = v < 0 ? 0 : (v > 255 ? 255 : v);
+                y = y < 16 ? 16 : (Math.min(y, 255));
+                u = u < 0 ? 0 : (Math.min(u, 255));
+                v = v < 0 ? 0 : (Math.min(v, 255));
                 // 赋值
                 yuv[i * width + j] = (byte) y;
-                yuv[len + (i >> 1) * width + (j & ~1) + 0] = (byte) u;
+                yuv[len + (i >> 1) * width + (j & ~1)] = (byte) u;
                 yuv[len + +(i >> 1) * width + (j & ~1) + 1] = (byte) v;
             }
         }

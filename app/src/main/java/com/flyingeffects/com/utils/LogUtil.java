@@ -9,7 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LogUtil {
-
+    private static final String TAG = "flyingEffect";
     private static LogUtil instance;
 
 
@@ -20,13 +20,19 @@ public class LogUtil {
         return instance;
     }
 
-    public  enum LogLevel {
+    public enum LogLevel {
         DEBUG_LEVEL, // 调试级别 日志
         RELEASE_LEVEL; // 发布级别 日志
     }
 
     public static void d(String TAG, String msg) {
-        if (logLevel == LogLevel.DEBUG_LEVEL) {
+        if (BaseConstans.DEBUG) {
+            Log.d(TAG, msg);
+        }
+    }
+
+    public static void d(String msg) {
+        if (BaseConstans.DEBUG) {
             Log.d(TAG, msg);
         }
     }
@@ -47,14 +53,14 @@ public class LogUtil {
 
     public static void e(String TAG, String msg) {
 
-        if (logLevel == LogLevel.DEBUG_LEVEL) {
+        if (BaseConstans.DEBUG) {
             Log.e(TAG, msg);
         }
     }
 
     public static void e(String msg) {
-        if (logLevel == LogLevel.DEBUG_LEVEL) {
-            Log.e("error", msg);
+        if (BaseConstans.DEBUG) {
+            Log.e(TAG, msg);
         }
     }
 
@@ -112,20 +118,19 @@ public class LogUtil {
 
 
     // 日志级别
-    private static LogLevel logLevel = BaseConstans.PRODUCTION?LogLevel.RELEASE_LEVEL:LogLevel.DEBUG_LEVEL;
+ private static LogLevel logLevel = BaseConstans.PRODUCTION ? LogLevel.RELEASE_LEVEL : LogLevel.DEBUG_LEVEL;
+//  private static LogLevel logLevel = LogLevel.RELEASE_LEVEL ;
 
+    static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-
-
-     static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
-     static void printLine(String tag, boolean isTop) {
+    static void printLine(String tag, boolean isTop) {
         if (isTop) {
             Log.d(tag, "╔═══════════════════════════════════════════════════════════════════════════════════════");
         } else {
             Log.d(tag, "╚═══════════════════════════════════════════════════════════════════════════════════════");
         }
     }
+
     public static void printJson(String tag, String msg, String headString) {
         String message;
         try {

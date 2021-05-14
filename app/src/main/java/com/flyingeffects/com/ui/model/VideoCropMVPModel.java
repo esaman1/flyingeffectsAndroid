@@ -6,9 +6,11 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Vibrator;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -19,8 +21,9 @@ import android.widget.RelativeLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.VideoTimelineAdapter;
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.VideoCropMVPCallback;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -122,8 +125,8 @@ public class VideoCropMVPModel {
     }
 
 
-    public void hasFinishCrop(){
-        if(!isOnDestroy){
+    public void hasFinishCrop() {
+        if (!isOnDestroy) {
             toCloseDialog();
         }
     }
@@ -311,9 +314,9 @@ public class VideoCropMVPModel {
         long nowTime = System.currentTimeMillis();
         if (nowTime - mLastZoomTime > TIME_INTERVAL) {
             mLastZoomTime = nowTime;
-            statisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom", "手动卡点_片头缩放");
+            StatisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom", "手动卡点_片头缩放");
             if (62 <= progress && progress <= 63) {
-                statisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom_dy", "手动卡点_片头缩放_抖音");
+                StatisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom_dy", "手动卡点_片头缩放_抖音");
             }
         }
         if (backgroundLayer != null) {
@@ -625,6 +628,9 @@ public class VideoCropMVPModel {
         if (drawPadView != null && drawPadView.isRunning()) {
             drawPadView.pausePreview();
         }
+        if (mLoadingDialog != null) {
+            mLoadingDialog.onPause();
+        }
     }
 
     public void onResume() {
@@ -634,6 +640,9 @@ public class VideoCropMVPModel {
         if (drawPadView != null) {
             drawPadView.resumePreview();
         }
+        if (mLoadingDialog != null) {
+            mLoadingDialog.onResume();
+        }
     }
 
 
@@ -641,17 +650,15 @@ public class VideoCropMVPModel {
     private static final long minCropDurationMs = 2 * 1000;
     private boolean isSaving = false;
     private boolean is4kVideo = false;
-   private WaitingDialog_progress dialog;
+    private LoadingDialog mLoadingDialog;
 
     public void saveVideo(boolean needCut) {
         if (!fullyInitiated || isSaving) {
             ToastUtil.showToast("还在加载请稍等");
             return;
         }
+        mLoadingDialog = buildLoadingDialog();
 
-
-        dialog = new WaitingDialog_progress(mContext);
-        dialog.openProgressDialog();
         MediaInfo videoInfo = new MediaInfo(videoPath);
         MediaInfo.checkFile(videoPath);
         if (!videoInfo.prepare()) {
@@ -681,19 +688,20 @@ public class VideoCropMVPModel {
                 if (progress > 100) {
                     progress = 100;
                 }
-                if (dialog != null && !isOnDestroy) {
+                if (!isOnDestroy) {
                     if (needCut) {
-                        dialog.setProgress("飞闪正在视频抠像中~" + progress + "%" + "\n" +
-                                "上传清晰人物最佳");
+                        mLoadingDialog.setTitleStr("飞闪正在视频抠像中~");
+                        mLoadingDialog.setContentStr("上传清晰人物最佳");
+                        mLoadingDialog.setProgress(progress);
                     } else {
-                        dialog.setProgress(progress + "%");
+                        mLoadingDialog.setProgress(progress);
                     }
                 }
             }
 
             @Override
             public void isSuccess(boolean isSuccess, String path) {
-                LogUtil.d("OOM","裁剪后导出的地址为"+path);
+                LogUtil.d("OOM", "裁剪后导出的地址为" + path);
                 isSaving = false;
                 if (path == null) {
                     ToastUtil.showToast(mContext.getString(R.string.render_error));
@@ -752,9 +760,19 @@ public class VideoCropMVPModel {
 
     private void toCloseDialog() {
         if (!isOnDestroy) {
-            dialog.closePragressDialog();
+            mLoadingDialog.dismiss();
         }
     }
 
+    private LoadingDialog buildLoadingDialog() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_cutout_mb");
+        LoadingDialog dialog = LoadingDialog.getBuilder(mContext)
+                .setHasAd(true)
+                .setTitle("飞闪预览处理中")
+                .setMessage("请耐心等待，不要离开")
+                .build();
+        dialog.show();
+        return dialog;
+    }
 
 }

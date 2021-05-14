@@ -17,9 +17,10 @@ import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.TemplateAddStickerMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
+import com.flyingeffects.com.ui.model.TemplateKeepStatistics;
 import com.flyingeffects.com.ui.presenter.TemplateAddStickerMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
@@ -108,7 +109,6 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @BindView(R.id.viewPager)
     ViewPager viewPager;
 
-
     @BindView(R.id.ll_add_text_style)
     LinearLayout ll_add_text_style;
     @BindView(R.id.dialog_share)
@@ -116,8 +116,10 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     private boolean isShowPreviewAd = false;
 
-    private String IsFrom;
+    private String mIsFrom;
     private String title;
+    private String templateId;
+    private String templateType;
 
     @Override
     protected int getLayoutId() {
@@ -128,10 +130,12 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     protected void initView() {
         EventBus.getDefault().register(this);
         videoPath = getIntent().getStringExtra("videoPath");
-        title=getIntent().getStringExtra("title");
+        title = getIntent().getStringExtra("title");
         LogUtil.d("OOM", "path=" + videoPath);
-        IsFrom = getIntent().getStringExtra("IsFrom");
-        presenter = new TemplateAddStickerMvpPresenter(this, this, ll_space, viewLayerRelativeLayout, videoPath,dialogShare,title);
+        mIsFrom = getIntent().getStringExtra("IsFrom");
+        templateId=getIntent().getStringExtra("templateId");
+        templateType=getIntent().getStringExtra("templateType");
+        presenter = new TemplateAddStickerMvpPresenter(this, this, ll_space, viewLayerRelativeLayout, videoPath, dialogShare, title);
         if (!TextUtils.isEmpty(videoPath)) {
             //有视频的时候，初始化视频值
             presenter.setPlayerViewSize(playerView, scrollView, viewLayerRelativeLayout);
@@ -306,7 +310,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     @Override
     public void animIsComplate() {
 
-        WaitingDialog.closePragressDialog();
+        WaitingDialog.closeProgressDialog();
         if (!isOnDestroy) {
             Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
                 nowStateIsPlaying(true);
@@ -468,6 +472,59 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
     }
 
     @Override
+    public void showAdCallback() {
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            VideoAdManager videoAdManager = new VideoAdManager();
+            String adId;
+            if (BaseConstans.getOddNum()) {
+                adId = AdConfigs.AD_save_video;
+            } else {
+                adId = AdConfigs.AD_save_video2;
+            }
+            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
+                @Override
+                public void onVideoAdSuccess() {
+                    StatisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_sucess");
+                    LogUtil.d("OOM", "onVideoAdSuccess");
+                }
+
+                @Override
+                public void onVideoAdError(String s) {
+                    StatisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_fail");
+                    LogUtil.d("OOM", "onVideoAdError" + s);
+                    presenter.alertAlbumUpdate(false);
+                }
+
+                @Override
+                public void onVideoAdClose() {
+
+                }
+
+                @Override
+                public void onRewardVerify() {
+                    presenter.alertAlbumUpdate(true);
+                }
+
+                @Override
+                public void onVideoAdSkip() {
+                    LogUtil.d("OOM", "onVideoAdSkip");
+                }
+
+                @Override
+                public void onVideoAdComplete() {
+                }
+
+                @Override
+                public void onVideoAdClicked() {
+                    LogUtil.d("OOM", "onVideoAdClicked");
+                }
+            });
+        } else {
+            presenter.alertAlbumUpdate(true);
+        }
+    }
+
+    @Override
     @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_top_back, R.id.tv_add_text, R.id.iv_delete_all_text})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -476,11 +533,15 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                     videoToPause();
                     endTimer();
                 }
-                if (!TextUtils.isEmpty("IsFrom") && IsFrom.equals(FromToTemplate.PICTUREALBUM)) {
-                    LogUtil.d("OOM","保存的模板名字为"+title);
-                    statisticsEventAffair.getInstance().setFlag(this, "21_yj_save",title );
+                if (!TextUtils.isEmpty("IsFrom") && mIsFrom.equals(FromToTemplate.PICTUREALBUM)) {
+                    LogUtil.d("OOM", "保存的模板名字为" + title);
+                    StatisticsEventAffair.getInstance().setFlag(this, "21_yj_save", title);
+                } else if (!TextUtils.isEmpty("IsFrom") && mIsFrom.equals(FromToTemplate.SHOOT)) {
+                    StatisticsEventAffair.getInstance().setFlag(this, "12_shoot_finish_save");
                 }
                 presenter.toSaveVideo(0);
+                TemplateKeepStatistics.getInstance().statisticsToSave(templateId,title,templateType);
+
                 break;
 
             case R.id.ll_play:
@@ -494,7 +555,6 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 }
                 break;
 
-
             case R.id.iv_top_back:
                 this.finish();
                 break;
@@ -504,7 +564,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
                 presenter.addTextSticker();
                 intoTextStyleDialog("");
-                statisticsEventAffair.getInstance().setFlag(this, "20_mb_text");
+                StatisticsEventAffair.getInstance().setFlag(this, "20_mb_text");
                 break;
 
 
@@ -512,6 +572,12 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
                 break;
         }
     }
+
+
+
+
+
+
 
     CreateViewForAddText createViewForAddText;
 
@@ -584,50 +650,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @Subscribe
     public void onEventMainThread(showAdCallback event) {
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-            VideoAdManager videoAdManager = new VideoAdManager();
-            String adId;
-            if (BaseConstans.getOddNum()) {
-                adId = AdConfigs.AD_save_video;
-            } else {
-                adId = AdConfigs.AD_save_video2;
-            }
-            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
-                @Override
-                public void onVideoAdSuccess() {
-                    statisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_sucess");
-                    LogUtil.d("OOM", "onVideoAdSuccess");
-                }
 
-                @Override
-                public void onVideoAdError(String s) {
-                    statisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_fail");
-                    LogUtil.d("OOM", "onVideoAdError" + s);
-                    presenter.alertAlbumUpdate(false);
-                }
-
-                @Override
-                public void onVideoAdClose() {
-                    presenter.alertAlbumUpdate(true);
-                }
-
-                @Override
-                public void onVideoAdSkip() {
-                    LogUtil.d("OOM", "onVideoAdSkip");
-                }
-
-                @Override
-                public void onVideoAdComplete() {
-                }
-
-                @Override
-                public void onVideoAdClicked() {
-                    LogUtil.d("OOM", "onVideoAdClicked");
-                }
-            });
-        } else {
-            presenter.alertAlbumUpdate(true);
-        }
     }
 
 

@@ -23,7 +23,7 @@ import java.util.List;
  **/
 public class StickersRecyclerAdapter extends BaseQuickAdapter<Integer, BaseViewHolder> {
 
-    public final static String TAG = "main_recycler_adapter";
+    public final static String TAG = "MainRecyclerAdapter";
     private  int mWidth;
     private int mHeight;
     private Context context;

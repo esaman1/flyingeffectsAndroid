@@ -1,5 +1,8 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
@@ -8,6 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -15,16 +20,21 @@ import com.example.horizontalselectedviewlibrary.HorizontalselectedView;
 import com.faceunity.FURenderer;
 import com.faceunity.entity.Effect;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.base.FUBaseActivity;
 import com.flyingeffects.com.enity.CreateCutCallback;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.isIntoBackground;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.FUBeautyMvpView;
 import com.flyingeffects.com.ui.presenter.FUBeautyMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.view.MarqueTextView;
+
+import java.util.ArrayList;
 
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -38,7 +48,7 @@ import rx.functions.Action1;
  * user : zhangtongju
  */
 public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView {
-
+    private Context mContext;
     private FUBeautyMvpPresenter presenter;
     private HorizontalselectedView horizontalselectedView;
     private LottieAnimationView lottieAnimationView;
@@ -51,6 +61,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     private LinearLayout ll_stage_property;
     private ConstraintLayout constraintLayout;
     private ImageView iv_close;
+    private final ArrayList<String> deniedPermission = new ArrayList<>();
     /**
      * 来自哪个界面  0  默认为主页点击+号页面   1 默认为跟随相机拍摄页面
      */
@@ -62,31 +73,35 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * 防点击，用来录屏完成后，程序处理中，防止持续点击
      */
     private boolean isCanClick = true;
+    private LinearLayout ll_bottom;
 
 
     @Override
     protected void onCreate() {
+        mContext = FUBeautyActivity.this;
         fuBeautyActivity = this;
+        iv_close = findViewById(R.id.iv_close);
+        constraintLayout = findViewById(R.id.constraintLayout);
         isFrom = getIntent().getIntExtra("isFrom", 0);
         long duration = getIntent().getLongExtra("duration", 0);
+        duration=duration+1000;
         LogUtil.d("OOM2", "duration=" + duration);
         String musicPath = getIntent().getStringExtra("musicPath");
         String title = getIntent().getStringExtra("title");
         String videoBjPath = getIntent().getStringExtra("videoPath");
         int defaultnum = getIntent().getIntExtra("defaultnum", 0);
         String TemplateFilePath = getIntent().getStringExtra("TemplateFilePath");
-        String OldfromTo = getIntent().getStringExtra("OldfromTo");
+        String oldFromTo = getIntent().getStringExtra("OldfromTo");
         createDownVideoPath = getIntent().getStringExtra("createDownVideoPath");
-        iv_close = findViewById(R.id.iv_close);
-        new_fag_template_item templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
+        NewFragmentTemplateItem templateItem = (NewFragmentTemplateItem) getIntent().getSerializableExtra("templateItem");
         horizontalselectedView = findViewById(R.id.horizontalselectedView);
-        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView, isFrom, duration, musicPath, templateItem, TemplateFilePath, OldfromTo, defaultnum, videoBjPath);
-        constraintLayout = findViewById(R.id.constraintLayout);
+        presenter = new FUBeautyMvpPresenter(this, this, horizontalselectedView, isFrom, duration, musicPath, templateItem, TemplateFilePath, oldFromTo, defaultnum, videoBjPath);
         findViewById(R.id.ll_album).setVisibility(View.INVISIBLE);
         relative_choose_music = findViewById(R.id.relative_choose_music);
         relative_choose_music.setOnClickListener(listener);
         iv_close.setOnClickListener(listener);
         tv_chooseMusic = findViewById(R.id.tv_chooseMusic);
+        ll_bottom=findViewById(R.id.ll_bottom);
         relative_click = findViewById(R.id.relative_click);
         tv_show_shoot_time = findViewById(R.id.tv_show_shoot_time);
         iv_count_down = findViewById(R.id.iv_count_down);
@@ -107,7 +122,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             SetNowChooseMusic(musicPath, musicPath);
             presenter.SetNowChooseMusic(musicPath, musicPath);
         }
+
         presenter.showBottomSheetDialog(getSupportFragmentManager(), relative_content);
+
     }
 
 
@@ -132,40 +149,43 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 .build();
     }
 
-
     View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.relative_choose_music:
+                    if (isFrom == 0) {
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_music");
+                    } else {
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_Shoot_music");
+                    }
                     presenter.IntoChooseMusic();
                     break;
                 case R.id.iv_close:
-
-
-
                     finish();
                     break;
-
                 case R.id.animation_view:
                 case R.id.animation_view_progress:
-                    LogUtil.d("OOM2","isCanClick="+isCanClick);
+                    LogUtil.d("OOM2", "isCanClick=" + isCanClick);
                     if (isCanClick) {
                         clickBtn();
                     }
-
                     break;
                 case R.id.iv_count_down:
                     //倒计时功能
-                    presenter.clickCountDown(iv_count_down);
+                    presenter.clickCountDown(iv_count_down, isFrom);
                     break;
                 case R.id.iv_rolling_over:
-
-                    SwitchCamera();
-
+                    switchCamera();
+                    if (isFrom == 0) {
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_turn");
+                    } else {
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_shoot_turn");
+                    }
                     break;
                 case R.id.ll_stage_property:
                     //道具
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_shoot_dj");
                     relative_content.setVisibility(View.VISIBLE);
                     showSticker(true);
                     break;
@@ -182,16 +202,27 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                 isCanClick = false;
                 LogUtil.d("OOM", "直接录制结束");
                 presenter.stopRecord();
+                ShowRecordingBtn(true);
                 animation_view_progress.setProgress(0);
                 lottieAnimationView.setProgress(0);
                 isRecording = false;
                 tv_count_down.setVisibility(View.GONE);
                 tv_count_down.setText("");
                 stopRecording();
+                if (isFrom == 0) {
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_Shoot_finish");
+                } else {
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_shoot_finish");
+                }
                 isRecordingState(false);
             } else {
                 LogUtil.d("OOM", "开始录制");
                 isRecording = true;
+                if (isFrom == 0) {
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_Shoot_start");
+                } else {
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "12_mb_shoot_start");
+                }
                 presenter.StartCountDown();
                 tv_count_down.setVisibility(View.VISIBLE);
                 lottieAnimationView.setMaxProgress(20 / (float) 47);
@@ -202,6 +233,21 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
+    /**
+     * description ：显示底部按钮，为了解决录制时间过短，不显示的问题
+     * creation date: 2021/3/18
+     * user : zhangtongju
+     */
+    public void ShowRecordingBtn(boolean  isShow){
+        if(isShow){
+            ll_bottom.setVisibility(View.VISIBLE);
+            horizontalselectedView.setVisibility(View.VISIBLE);
+        }else{
+            ll_bottom.setVisibility(View.GONE);
+            horizontalselectedView.setVisibility(View.GONE);
+        }
+
+    }
 
 
     /**
@@ -220,8 +266,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         presenter.SetNowChooseMusic(nowChooseBjPath, nowOriginal);
         if (isFrom == 0) {
             LogUtil.d("OOM2", "nowChooseBjPath=" + nowChooseBjPath);
-            presenter.SetDefaultTime(nowChooseBjPath);
-            horizontalselectedView.SetChoosePosition(0);
+            presenter.setDefaultTime(nowChooseBjPath);
+            horizontalselectedView.setChoosePosition(0);
         }
     }
 
@@ -254,6 +300,7 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
                         //录屏倒计时
                         animation_view_progress.setProgress(progress);
                     } else {
+                        ShowRecordingBtn(false);
                         isCanClick = false;
                         LogUtil.d("OOM22", "录屏完成，触发结束");
                         isRecording = false;
@@ -272,16 +319,8 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
     }
 
 
-    /**
-     * description ：当前是否选择的无限
-     * creation date: 2021/2/1
-     * user : zhangtongju
-     */
-    private boolean isInfinite;
-
     @Override
     public void nowChooseRecordIsInfinite(boolean isInfinite) {
-        this.isInfinite = isInfinite;
         LogUtil.d("OOM", "isInfinite=" + isInfinite);
     }
 
@@ -307,11 +346,58 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * user : zhangtongju
      */
     @Override
-    public void ClearSticker() {
+    public void clearSticker() {
         Effect effectNone = new Effect("none", R.drawable.ic_delete_all, "", 1, Effect.EFFECT_TYPE_NONE, 0);
         mFURenderer.onEffectSelected(effectNone);
     }
 
+    @Override
+    public void finishAct() {
+        this.finish();
+    }
+
+    /**
+     * 处理权限
+     *
+     * @param requestCode  请求码
+     * @param permissions  权限组
+     * @param grantResults 授权结果
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 0) {
+            deniedPermission.clear();
+            for (int i = 0; i < permissions.length; i++) {
+                String permission = permissions[i];
+                int result = grantResults[i];
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    deniedPermission.add(permission);
+                }
+            }
+            if (!deniedPermission.isEmpty()) {
+                new AlertDialog.Builder(this)
+                        .setMessage("应用为了录制视频，必须要获取摄像，存储和录音权限，否则会导致功能异常！")
+                        .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                            dialog.dismiss();
+                            finish();
+                        })
+                        .setPositiveButton("去授权", (dialog, which) -> {
+                            PermissionUtil.gotoPermission(mContext);
+                            dialog.dismiss();
+                            finish();
+                        })
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                dialog.dismiss();
+                                finish();
+                            }
+                        }).create()
+                        .show();
+            }
+        }
+    }
 
     /**
      * description ：开始录制
@@ -342,7 +428,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         }
         return true;
     }
-
 
     /**
      * description ：录屏和非录屏ui状态切换
@@ -376,7 +461,6 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
             }
         });
 
-
     }
 
 
@@ -385,10 +469,9 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
      * creation date: 2021/2/20
      * user : zhangtongju
      */
-    public void ToNextPage(String path) {
-        presenter.ToNextPage(path);
+    public void toNextPage(String path) {
+        presenter.toNextPage(path);
     }
-
 
     /**
      * description ：显示贴纸页面当前页面给的反馈
@@ -432,14 +515,13 @@ public class FUBeautyActivity extends FUBaseActivity implements FUBeautyMvpView 
         presenter.intoCreationTemplateActivity(event.getCoverPath(), createDownVideoPath, event.getOriginalPath(), event.isNeedCut());
     }
 
-
     /**
      * description ：可点击状态回调
      * creation date: 2021/2/26
      * user : zhangtongju
      */
-    public void ChangeClicKState(){
-        isCanClick=true;
+    public void changeClickState() {
+        isCanClick = true;
     }
 
 }

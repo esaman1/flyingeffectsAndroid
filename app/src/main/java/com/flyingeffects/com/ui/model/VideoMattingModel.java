@@ -10,17 +10,16 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
-import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.LruCacheManage;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.ThreadJudgeManage;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
@@ -69,8 +68,7 @@ public class VideoMattingModel {
     private Context context;
 
     private VideoInfo videoInfo;
-    private WaitingDialogProgressNowAnim dialog;
-
+    private LoadingDialog mLoadingDialog;
 
     private MattingSuccess callback;
 
@@ -90,12 +88,21 @@ public class VideoMattingModel {
         faceMattingFolder = fileManager.getFileCachePath(BaseApplication.getInstance(), "faceMattingFolder");
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         LogUtil.d("OOM", "faceMattingFolder=" + faceMattingFolder);
-        if (!nowActivityIsOnDestroy&&context!=null) {
-            dialog = new WaitingDialogProgressNowAnim(context);
-            dialog.openProgressDialog();
+
+        if (!nowActivityIsOnDestroy && context != null) {
+            mLoadingDialog = buildProgressDialog();
+            mLoadingDialog.show();
         }
         helper = new LruCacheManage();
 
+    }
+
+    private LoadingDialog buildProgressDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(context)
+                .setHasAd(true)
+                .setTitle("生成中...")
+                .build();
+        return dialog;
     }
 
 
@@ -153,8 +160,6 @@ public class VideoMattingModel {
 //            boolean isMainThread = ThreadJudgeManage.isMainThread();
 //            LogUtil.d("OOM", "当前线程运行在主线程吗？" + isMainThread);
             Observable.just(0).subscribeOn(Schedulers.io()).subscribe(integer -> addFrameCompoundVideoNoMatting());
-
-
         });
 
         //设置处理进度监听.
@@ -212,7 +217,7 @@ public class VideoMattingModel {
                 execute.removeAllLayer();
                 execute.release();
                 if (!nowActivityIsOnDestroy) {
-                    dialog.closePragressDialog();
+                    mLoadingDialog.dismiss();
                 }
 //                test(cacheCutVideoPath + "/noMatting.mp4",exportPath);
                 String albumPath = cacheCutVideoPath + "/Matting.mp4";
@@ -225,7 +230,7 @@ public class VideoMattingModel {
                     String ss = TimeUtils.timeParse(time);
                     LogUtil.d("OOM", "总共扣视频需要了" + ss);
                     //    requestLoginForSdk(ss);
-                    statisticsEventAffair.getInstance().setFlag(context, "mattingVideoTime", templateName);
+                    StatisticsEventAffair.getInstance().setFlag(context, "mattingVideoTime", templateName);
                     if (callback != null) {
                         callback.isSuccess(true, albumPath, cacheCutVideoPath + "/noMatting.mp4");
                     }
@@ -392,9 +397,7 @@ public class VideoMattingModel {
         }
     }
 
-
     private MattingImage mattingImage = new MattingImage();
-
 
     private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
         String fileName = faceMattingFolder + File.separator + frameCount + ".png";
@@ -423,18 +426,29 @@ public class VideoMattingModel {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+
             if (!nowActivityIsOnDestroy) {
+                String title;
+                String content;
                 if (progress <= 25) {
-                    dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "请耐心等待 不要离开");
+                    title = "飞闪视频抠像中";
+                    content = "请耐心等待 不要离开";
                 } else if (progress <= 40) {
-                    dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "快了，友友稍等片刻");
+                    title = "飞闪视频抠像中";
+                    content = "快了，友友稍等片刻";
                 } else if (progress <= 60) {
-                    dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "抠像太强大，即将生成");
+                    title = "飞闪视频抠像中";
+                    content = "抠像太强大，即将生成";
                 } else if (progress <= 80) {
-                    dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "马上就好，不要离开");
+                    title = "飞闪视频抠像中";
+                    content = "马上就好，不要离开";
                 } else {
-                    dialog.setProgress("飞闪视频抠像中" + progress + "%\n" + "最后合成中，请稍后");
+                    title = "飞闪视频抠像中";
+                    content = "最后合成中，请稍后";
                 }
+                mLoadingDialog.setTitleStr(title);
+                mLoadingDialog.setContentStr(content);
+                mLoadingDialog.setProgress(progress);
             }
         }
     };

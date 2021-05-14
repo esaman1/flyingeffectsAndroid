@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -18,14 +17,15 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -49,7 +49,7 @@ public class frag_user_upload_bj extends BaseFragment {
 
     private Upload_bj_list_adapter adapter;
 
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
     @BindView(R.id.smart_refresh_layout_collect)
     SmartRefreshLayout smartRefreshLayout;
     private int perPageCount = 10;
@@ -67,7 +67,7 @@ public class frag_user_upload_bj extends BaseFragment {
     @BindView(R.id.tv_hint_collect)
     TextView tv_hint;
 
-    ArrayList<new_fag_template_item> listData = new ArrayList<>();
+    ArrayList<NewFragmentTemplateItem> listData = new ArrayList<>();
 
     private int selectPage = 1;
 
@@ -106,7 +106,7 @@ public class frag_user_upload_bj extends BaseFragment {
         String str = StringUtil.beanToJSONString(params);
         LogUtil.d("OOM", "请求的参数为" + str);
         Observable ob = Api.getDefault().uploadList(BaseConstans.getRequestHead(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(getActivity()) {
             @Override
             protected void onSubError(String message) {
                 finishData();
@@ -114,12 +114,12 @@ public class frag_user_upload_bj extends BaseFragment {
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
                 LogUtil.d("OOM", StringUtil.beanToJSONString(data));
                 finishData();
                 if (isRefresh) {
                     listData.clear();
-                    new_fag_template_item item = new new_fag_template_item();
+                    NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                     item.setTitle("test");
                     listData.add(item);
                 }
@@ -136,7 +136,7 @@ public class frag_user_upload_bj extends BaseFragment {
     }
 
 
-    private void showData(ArrayList<new_fag_template_item> listData) {
+    private void showData(ArrayList<NewFragmentTemplateItem> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);
@@ -205,16 +205,9 @@ public class frag_user_upload_bj extends BaseFragment {
 
     private void initRecycler() {
         adapter = new Upload_bj_list_adapter(R.layout.list_upload_bj_item, allData, getActivity(), (id) -> {
-            statisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj");
-            new AlertDialog.Builder(mContext)
-                    .setMessage("确定要删除这个背景吗？")
-                    .setNegativeButton("取消", (dialog, which) -> {
-                        dialog.dismiss();
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj3");
-                    })
-                    .setPositiveButton("确定", (dialog, which) -> {
-                        requestDelete(id);
-                    }).create().show();
+            StatisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj");
+            showDeleteDialog(id);
+
         });
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -245,8 +238,29 @@ public class frag_user_upload_bj extends BaseFragment {
         });
     }
 
+    private void showDeleteDialog(String id) {
+        CommonMessageDialog.getBuilder(mContext)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_NONE)
+                .setPositiveButton("确定")
+                .setNegativeButton("取消")
+                .setTitle("确定要删除这个背景吗？")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        requestDelete(id);
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj3");
+                    }
+                }).build().show();
+    }
+
     private void requestDelete(String id) {
-        statisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj2");
+        StatisticsEventAffair.getInstance().setFlag(getActivity(), "9_deletebj2");
         HashMap<String, String> params = new HashMap<>();
         params.put("id", id);
         Observable ob = Api.getDefault().deleteBackground(BaseConstans.getRequestHead(params));
@@ -267,7 +281,7 @@ public class frag_user_upload_bj extends BaseFragment {
             }
 
 //            @Override
-//            protected void _onNext(List<new_fag_template_item> data) {
+//            protected void _onNext(List<NewFragmentTemplateItem> data) {
 //
 //                isRefresh = true;
 //                selectPage = 1;
@@ -280,7 +294,7 @@ public class frag_user_upload_bj extends BaseFragment {
 //    @Subscribe
 //    public void onEventMainThread(uploadMaterialEvent event) {
 //        uploadPathList
-//        new_fag_template_item item = new new_fag_template_item();
+//        NewFragmentTemplateItem item = new NewFragmentTemplateItem();
 //        item.setTitle("test");
 //        item.setImage(event.getUploadPathList().get(3));
 //        item.setTitle(event.getNickName());

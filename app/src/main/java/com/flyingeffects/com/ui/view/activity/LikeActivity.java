@@ -17,12 +17,11 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.MineCommentEnity;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.model.FromToTemplate;
-import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -60,7 +59,7 @@ public class LikeActivity extends BaseActivity {
     //1 来自消息评论页面
     int from ;
 
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
     @Override
     protected int getLayoutId() {
         return R.layout.act_like;
@@ -113,14 +112,14 @@ public class LikeActivity extends BaseActivity {
             params.put("template_id", templateId);
             // 启动时间
             Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
-            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(this) {
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<NewFragmentTemplateItem>(this) {
                 @Override
                 protected void onSubError(String message) {
                     LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
                 }
 
                 @Override
-                protected void onSubNext(new_fag_template_item data) {
+                protected void onSubNext(NewFragmentTemplateItem data) {
                     allData.clear();
                     Intent intent =new Intent(LikeActivity.this,PreviewUpAndDownActivity.class);
                     String type = data.getTemplate_type();
@@ -198,7 +197,7 @@ public class LikeActivity extends BaseActivity {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
                 listData.addAll(data);
-                isShowData(listData);
+                adapter.notifyDataSetChanged();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
     }
@@ -217,15 +216,6 @@ public class LikeActivity extends BaseActivity {
             selectPage++;
             requestCommentList(false);
         });
-    }
-    private boolean isFirstData = true;
-    public void isShowData(List<MineCommentEnity> data) {
-            adapter.notifyDataSetChanged();
-            if (isFirstData) {
-                BackgroundExecutor.execute(() -> {
-                    isFirstData = false;
-                });
-            }
     }
 
     private void finishData() {

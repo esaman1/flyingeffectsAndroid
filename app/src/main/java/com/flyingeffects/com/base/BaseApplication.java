@@ -1,47 +1,35 @@
 package com.flyingeffects.com.base;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
-import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
 
-import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
-import com.bytedance.sdk.open.douyin.DouYinOpenConfig;
-import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
-import com.faceunity.FURenderer;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.base.anchortask.AnchorTaskCreator;
+import com.flyingeffects.com.base.anchortask.TaskNameConstants;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.isIntoBackground;
-import com.flyingeffects.com.manager.AdConfigs;
-import com.flyingeffects.com.manager.MediaLoader;
-import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
 import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;
 import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.SystemUtil;
-import com.green.hand.library.EmojiManager;
-import com.lansosdk.box.OnLanSongLogOutListener;
-import com.lansosdk.videoeditor.LanSoEditor;
-import com.nineton.ntadsdk.NTAdConfig;
-import com.nineton.ntadsdk.NTAdSDK;
-import com.orhanobut.hawk.Hawk;
-import com.scwang.smartrefresh.header.MaterialHeader;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.shixing.sxvideoengine.License;
-import com.shixing.sxvideoengine.SXLog;
-import com.umeng.commonsdk.UMConfigure;
-import com.yanzhenjie.album.Album;
-import com.yanzhenjie.album.AlbumConfig;
+import com.xj.anchortask.library.AnchorProject;
+import com.xj.anchortask.library.OnProjectExecuteListener;
+import com.xj.anchortask.library.log.LogUtils;
+import com.xj.anchortask.library.monitor.OnGetMonitorRecordCallback;
 
-import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import cn.jpush.android.api.JPushInterface;
-import cn.nt.lib.analytics.NTAnalytics;
+import java.util.ArrayList;
+import java.util.Map;
+
 import de.greenrobot.event.EventBus;
 import rx.subjects.PublishSubject;
 
@@ -51,8 +39,10 @@ import rx.subjects.PublishSubject;
  */
 
 public class BaseApplication extends MultiDexApplication {
+    private static final String TAG = "BaseApplication";
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private static BaseApplication baseApp;
+    private ArrayList<Activity> list = new ArrayList<>();
     private boolean isActive = true;
     /**
      * 默认从APP退到后台值为true
@@ -62,74 +52,77 @@ public class BaseApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "Application start");
         baseApp = this;
-        //分包支持
-        MultiDex.install(this);
-        initLansong();
-        Hawk.init(this).build();
-        initLicense();
-        initYouMeng();
-        initJPush();
-        initZt();
-        //闪验SDK初始化（建议放在Application的onCreate方法中执行）
-        initShanyanSDK(this);
-        initByteDanceShare();
-        keepCrash();
-        initNTAdSDK();
-        registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
-        TTAdManagerHolder.init(this);
-        EmojiManager.init(this);
-        initAlbum();
-        FURenderer.initFURenderer(this);
-    }
+        @NotNull AnchorProject project = new AnchorProject.Builder().setContext(this)
+                .setLogLevel(LogUtils.LogLevel.DEBUG)
+                .setAnchorTaskCreator(new AnchorTaskCreator())
+                .addTask(TaskNameConstants.INIT_YOU_MENG)
+                .addTask(TaskNameConstants.MULTI_DEX)
+                .addTask(TaskNameConstants.INIT_LAN_SONG)
+                .addTask(TaskNameConstants.INIT_HAWK)
+                .addTask(TaskNameConstants.INIT_VE)
+                .addTask(TaskNameConstants.INIT_JPUSH)
+                .addTask(TaskNameConstants.INIT_ZT)
+                .addTask(TaskNameConstants.INIT_SHAN_YAN)
+                .addTask(TaskNameConstants.INIT_BYTE_DANCE_SHARE)
+                .addTask(TaskNameConstants.INIT_AD_SDK)
+                .addTask(TaskNameConstants.INIT_TTAD)
+                .addTask(TaskNameConstants.INIT_EMOJI)
+                .addTask(TaskNameConstants.INIT_ALBUM)
+                .addTask(TaskNameConstants.INIT_FU)
+                .addTask(TaskNameConstants.INIT_KUAI_SHOU_MONITOR)
+                .build();
 
+        project.start().await(3000);
 
-    private void initAlbum() {
-        Album.initialize(AlbumConfig.newBuilder(this)
-                .setAlbumLoader(new MediaLoader())
-                .setLocale(Locale.getDefault())
-                .build()
-        );
-    }
-
-
-    private void initNTAdSDK() {
-        NTAdSDK.init(this
-                , new NTAdConfig.Builder()
-                        .appName("飞闪")
-                        .appVersion(SystemUtil.getVersionName(this))
-                        .appId("61074cddf23c0a8dd2b7e00996057e78")
-                        .appChannel(ChannelUtil.getChannel(this))
-                        .TTAppKey(AdConfigs.APP_ID_CSJ)
-                        .KSAppKey("517200002")
-                        .KaiJiaAppKey("68662a49")
-                        .GDTAppKey(AdConfigs.APP_ID_GDT)
-                        .isDebug(false)
-                        .build());
-    }
-
-
-    /**
-     * description ：闪验
-     * creation date: 2020/4/7
-     * user : zhangtongju
-     */
-    private void initShanyanSDK(Context context) {
-        OneKeyLoginManager.getInstance().init(context, "SSjHAvIf", (code, result) -> {
-            //闪验SDK初始化结果回调
-            LogUtil.d("OOM", "初始化： code==" + code + "   result==" + result);
-        });
-    }
-
-    private void initLansong() {
-        LanSoEditor.initSDK(getApplicationContext(), "jiu_LanSongSDK_android5.key");
-        LanSoEditor.setSDKLogOutListener(new OnLanSongLogOutListener() {
+        project.addListener(new OnProjectExecuteListener() {
             @Override
-            public void onLogOut(int i, String s) {
-                LogUtil.d("lansong", "蓝松具体错误信息为" + s);
+            public void onProjectStart() {
+                Log.d(TAG, "Application project start");
+            }
+
+            @Override
+            public void onTaskFinish(@NotNull String s) {
+                Log.d(TAG, "Application project task finish : " + s);
+            }
+
+            @Override
+            public void onProjectFinish() {
+                Log.d(TAG, "Application project finish");
             }
         });
+
+        project.setOnGetMonitorRecordCallback(new OnGetMonitorRecordCallback() {
+            @Override
+            public void onGetTaskExecuteRecord(@Nullable Map<String, Long> map) {
+
+            }
+
+            @Override
+            public void onGetProjectExecuteTime(long l) {
+
+            }
+        });
+
+        registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
+        Log.d(TAG, "Application onCreate end");
+
+
     }
+
+
+//    /**
+//     * description ：设置系统字体不跟随用户的改变而改变
+//     * creation date: 2021/4/2
+//     * user : zhangtongju
+//     */
+//    private void setSystemFont() {
+//        Resources res = super.getResources();
+//        Configuration config = new Configuration();
+//        config.setToDefaults();
+//        res.updateConfiguration(config, res.getDisplayMetrics());
+//    }
 
 
     /***
@@ -141,50 +134,10 @@ public class BaseApplication extends MultiDexApplication {
         }
     }
 
-    /**
-     * 中台
-     */
-    private void initZt() {
-//        NTAnalytics.setDebug(true);
-        NTAnalytics.init(this, "87", "vQlTNPzHOzBYHzkg", ChannelUtil.getChannel(this));
-    }
-
-
-    public void initJPush() {
-        JPushInterface.setDebugMode(true);    // 设置开启日志,发布时请关闭日志
-        JPushInterface.init(this);
-    }
-
-    private void initYouMeng() {
-
-        UMConfigure.preInit(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this));
-
-    }
-
-    /**
-     * 初始化抖音分享
-     */
-    private void initByteDanceShare() {
-        //抖音分享
-        DouYinOpenApiFactory.init(new DouYinOpenConfig(BaseConstans.DOUYINSHARE_CLIENTKEY));
-    }
-
-    /**
-     * description ：註冊VE
-     * date: ：2019/5/8 16:51
-     * author: 张同举 @邮箱 jutongzhang@sina.com
-     */
-    public void initLicense() {
-        String licenseID = "nnogIjD3C8du/T2PWYvFbMkJxM2Vw8FpkCs9RqiwjjrEgeMlo2PBMaoHwffFV7bS6O48q0I/8qI4epo2acEbZyiXD1Im4oUNERrPhVtu2nNSnXyjUGr9dLmrYazM4YmNE/A9T6ir5gt3XEs7IjfWfsFAdP+uvPvoKEzu8/pZLRQacEoaYzl1w04Wkn0t0aXWu3l92WacTnKG2JFyCSzPwUgZiqh2Z8xbQdpRYL22HYqMAkhHeNO5Vix3sYRWtKfm59U3wgWtXoU+1gmAICjM1WDRlgyg80Os1BRSzkp9TG7sb7QJUzFdLvo2cpfhnFyBfRBvoykvllQZaPmbC73J+FB8X4zyN1ZESuYOdfoKvYZ3i0S68Rk0izoqbarUpUnkTUUNViGopPKKUXSaufSd+ZxWOxnqjIdyx4a2OhE4vbY=";
-        License l = License.init(licenseID);
-
-        boolean isValid = l.isValid();
-        SXLog.showInLogcat();
-        LogUtil.d("OOM", "isValid=" + isValid);
-    }
 
     private long onStopTime;
     private int activityAount = 0;
+
     ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacks() {
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -252,17 +205,20 @@ public class BaseApplication extends MultiDexApplication {
         }
     }
 
+
     static {
-        SmartRefreshLayout.setDefaultRefreshHeaderCreator((context, layout) -> {
-//            layout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.white);
-            return new MaterialHeader(context).setColorSchemeResources(R.color.theme_toast, R.color.blue_0b84d3);
-        });
+        SmartRefreshLayout.setDefaultRefreshHeaderCreator((context, layout) ->
+                new ClassicsHeader(context).setPrimaryColorId(R.color.black));
     }
 
 
     public static BaseApplication getInstance() {
         return baseApp;
     }
+
+
+
+
 
 
 }

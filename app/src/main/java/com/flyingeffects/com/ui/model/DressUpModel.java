@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.HumanMerageResult;
@@ -190,17 +189,17 @@ public class DressUpModel {
 
             @Override
             public void isDone() {
-                progress.closePragressDialog();
+                progress.closeProgressDialog();
             }
         });
     }
 
 
-    public void RequestDressUp(String uploadPath, String template_id) {
+    public void requestDressUp(String uploadPath, String templateId) {
         progress = new WaitingDialog_progress(context);
         progress.openProgressDialog("正在换装中...");
 
-        requestDressUpCallback(uploadPath, template_id);
+        requestDressUpCallback(uploadPath, templateId);
     }
 
 
@@ -209,10 +208,10 @@ public class DressUpModel {
      * creation date: 2020/12/4
      * user : zhangtongju
      */
-    private void requestDressUpCallback(String path, String template_id) {
+    private void requestDressUpCallback(String path, String templateId) {
         HashMap<String, String> params = new HashMap<>();
         params.put("image", path);
-        params.put("template_id", template_id);
+        params.put("template_id", templateId);
 
 //        params.put("request_id", request_id);
         Observable ob = Api.getDefault().humanMerageResult(BaseConstans.getRequestHead(params));
@@ -222,7 +221,7 @@ public class DressUpModel {
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "message=" + message);
                 ToastUtil.showToast(message);
-                progress.closePragressDialog();
+                progress.closeProgressDialog();
                 if (calculagraph != null) {
                     calculagraph.destroyTimer();
                 }
@@ -283,7 +282,6 @@ public class DressUpModel {
                                 }
                             }
                         });
-
                     }
 
                     @Override
@@ -330,7 +328,7 @@ public class DressUpModel {
                         if (callback != null) {
                             callback.isSuccess(listForKeepPath);
                             callback = null;
-                            progress.closePragressDialog();
+                            progress.closeProgressDialog();
                         }
                     } else {
                         LogUtil.d("OOM3", "list.size()=" + listForKeepPath.size() + "paths.size()=" + allSize);
@@ -344,7 +342,7 @@ public class DressUpModel {
     private MattingImage mattingImage;
 
     private void toKeepFace(Bitmap path, int allSize) {
-        mattingImage.mattingImageForMultiple2(path,  (isSuccess, bp) -> {
+        mattingImage.mattingImageForMultiple2(path, (isSuccess, bp) -> {
             downSuccessNum++;
             LogUtil.d("OOM", "正在抠图" + downSuccessNum);
             String fileName = mCatchFolder + File.separator + UUID.randomUUID() + ".png";
@@ -357,7 +355,7 @@ public class DressUpModel {
                 if (callback != null) {
                     callback.isSuccess(listForKeepPath);
                     callback = null;
-                    progress.closePragressDialog();
+                    progress.closeProgressDialog();
                 }
             } else {
                 LogUtil.d("OOM3", "list.size()=" + listForKeepPath.size() + "paths.size()=" + allSize);
@@ -365,6 +363,5 @@ public class DressUpModel {
 
         });
     }
-
 
 }

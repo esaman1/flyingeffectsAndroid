@@ -24,8 +24,9 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.VideoTimelineAdapter;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.UploadMaterialMVPCallback;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -43,7 +44,6 @@ import com.lansosdk.box.VideoLayer;
 import com.lansosdk.box.onDrawPadCompletedListener;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,7 +89,7 @@ public class UploadMaterialMVPModel {
     public void initDrawpad(DrawPadView2 drawPadView, String path) {
         this.drawPadView = drawPadView;
         this.videoPath = path;
-        mediaInfo=new MediaInfo(videoPath);
+        mediaInfo = new MediaInfo(videoPath);
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(videoPath);
         String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
@@ -336,9 +336,9 @@ public class UploadMaterialMVPModel {
         long nowTime = System.currentTimeMillis();
         if (nowTime - mLastZoomTime > TIME_INTERVAL) {
             mLastZoomTime = nowTime;
-            statisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom", "手动卡点_片头缩放");
+            StatisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom", "手动卡点_片头缩放");
             if (62 <= progress && progress <= 63) {
-                statisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom_dy", "手动卡点_片头缩放_抖音");
+                StatisticsEventAffair.getInstance().setFlag(mContext, "2_Titles_zoom_dy", "手动卡点_片头缩放_抖音");
             }
         }
         if (backgroundLayer != null) {
@@ -661,22 +661,31 @@ public class UploadMaterialMVPModel {
 //        }
     }
 
+    private LoadingDialog buildLoadingDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(mContext)
+                .setHasAd(false)
+                .setTitle("生成中...")
+                .build();
+        dialog.show();
+        return dialog;
+    }
+
 
     private static final long maxCropDurationMs = BaseConstans.getMaxuploadTime() * 1000;
     private static final long minCropDurationMs = 2 * 1000;
     private boolean isSaving = false;
     private boolean is4kVideo = false;
-    private WaitingDialog_progress dialog;
+    private LoadingDialog mLoadingDialog;
     private MediaInfo videoInfo;
+
     public void saveVideo(boolean needCut) {
         if (!fullyInitiated || isSaving) {
             ToastUtil.showToast("还在加载请稍等");
             return;
         }
 
-        dialog = new WaitingDialog_progress(mContext);
-        dialog.openProgressDialog();
-        videoInfo   = new MediaInfo(videoPath);
+        mLoadingDialog = buildLoadingDialog();
+        videoInfo = new MediaInfo(videoPath);
 
         MediaInfo.checkFile(videoPath);
         if (!videoInfo.prepare()) {
@@ -685,7 +694,7 @@ public class UploadMaterialMVPModel {
         long cropDurationMs = (long) (getDuration() * (cropEndRatio - cropStartRatio));
         //裁剪时长限制
         if (cropDurationMs > maxCropDurationMs) {
-            dialog.closePragressDialog();
+            mLoadingDialog.dismiss();
             ToastUtil.showToast("时长超过1分钟，请重新选择");
             return;
         } else if (cropDurationMs < minCropDurationMs) {
@@ -698,35 +707,36 @@ public class UploadMaterialMVPModel {
         }
         onPause();
         isSaving = true;
-        int videoHeight=videoInfo.getHeight();
+        int videoHeight = videoInfo.getHeight();
 
-        int videoWidth=videoInfo.getWidth();
-        boolean isLandscape=videoWidth>videoHeight;
-        LogUtil.d("OOM2","videoWidth="+videoWidth);
-        LogUtil.d("OOM2","videoHeight="+videoHeight);
+        int videoWidth = videoInfo.getWidth();
+        boolean isLandscape = videoWidth > videoHeight;
+        LogUtil.d("OOM2", "videoWidth=" + videoWidth);
+        LogUtil.d("OOM2", "videoHeight=" + videoHeight);
 //        long durationUs = getDuration() * 1000;
         long durationUs = getDuration();
         getUserChooseDuration(cropStartRatio, cropEndRatio);
-        long duration= Math.round(cropEndRatio * durationUs) - Math.round(cropStartRatio * durationUs) ;
+        long duration = Math.round(cropEndRatio * durationUs) - Math.round(cropStartRatio * durationUs);
 
-        LogUtil.d("OOM2","duration="+duration+"mediaInfo.getDurationUs()="+mediaInfo.getDurationUs()+"getVideoTrackDurationUs"+mediaInfo.getVideoTrackDurationUs());
+        LogUtil.d("OOM2", "duration=" + duration + "mediaInfo.getDurationUs()=" + mediaInfo.getDurationUs() + "getVideoTrackDurationUs" + mediaInfo.getVideoTrackDurationUs());
 //        if(duration>mediaInfo.getDurationUs()){
 //            duration=mediaInfo.getDurationUs();
 //        }
-        long startDurtion=Math.round(cropStartRatio * durationUs);
-        LogUtil.d("OOM2","duration="+duration+"startDurtion="+startDurtion);
-        videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext, false, duration, videoPath, startDurtion, new videoCutDurationForVideoOneDo.isSuccess() {
+        long startDurtion = Math.round(cropStartRatio * durationUs);
+        LogUtil.d("OOM2", "duration=" + duration + "startDurtion=" + startDurtion);
+        videoCutDurationForVideoOneDo.getInstance().cutVideoForDrawPadAllExecute2(mContext, false, duration, videoPath, startDurtion, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
             public void progresss(int progress) {
                 if (progress > 100) {
                     progress = 100;
                 }
-                if (dialog != null && !isOnDestroy) {
+                if (mLoadingDialog != null && !isOnDestroy) {
                     if (needCut) {
-                        dialog.setProgress("飞闪正在视频抠像中~" + progress + "%" + "\n" +
-                                "上传清晰人物最佳");
+                        mLoadingDialog.setTitleStr("飞闪正在视频抠像中~");
+                        mLoadingDialog.setContentStr("上传清晰人物最佳");
+                        mLoadingDialog.setProgress(progress);
                     } else {
-                        dialog.setProgress(progress + "%");
+                        mLoadingDialog.setProgress(progress);
                     }
                 }
             }
@@ -745,7 +755,7 @@ public class UploadMaterialMVPModel {
                         String tempPath = getTempVideoPath(mContext) + video.getName();
                         try {
                             FileUtil.copyFile(video, tempPath);
-                            callback.finishCrop(tempPath,isLandscape);
+                            callback.finishCrop(tempPath, isLandscape);
                             videoInfo.release();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -790,7 +800,7 @@ public class UploadMaterialMVPModel {
 
     private void toCloseDialog() {
         if (!isOnDestroy) {
-            dialog.closePragressDialog();
+            mLoadingDialog.dismiss();
         }
     }
 

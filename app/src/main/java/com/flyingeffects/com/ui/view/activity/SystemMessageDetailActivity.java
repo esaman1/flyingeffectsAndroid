@@ -3,26 +3,24 @@ package com.flyingeffects.com.ui.view.activity;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.SystemMessageDetailAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ListForUpAndDown;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
 import com.flyingeffects.com.enity.SystemMessageDetailEnity;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -82,7 +80,7 @@ public class SystemMessageDetailActivity extends BaseActivity {
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (view.getId()){
                 case R.id.tv_make:
-                    statisticsEventAffair.getInstance().setFlag(this, "12_system_click",dataList.get(position).getContent());
+                    StatisticsEventAffair.getInstance().setFlag(this, "12_system_click",dataList.get(position).getContent());
                     requestTemplateDetail(dataList.get(position).getTemplate_id());
                     requestMessageStatistics("3",dataList.get(position).getId(),dataList.get(position).getTemplate_id());
                     break;
@@ -102,7 +100,7 @@ public class SystemMessageDetailActivity extends BaseActivity {
     }
 
 
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
     public void requestTemplateDetail(String templateId) {
         if (!TextUtils.isEmpty(templateId)) {
             HashMap<String, String> params = new HashMap<>();
@@ -110,14 +108,14 @@ public class SystemMessageDetailActivity extends BaseActivity {
 
             // 启动时间
             Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
-            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(this) {
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<NewFragmentTemplateItem>(this) {
                 @Override
                 protected void onSubError(String message) {
                     LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
                 }
 
                 @Override
-                protected void onSubNext(new_fag_template_item data) {
+                protected void onSubNext(NewFragmentTemplateItem data) {
                     allData.clear();
                     Intent intent =new Intent(SystemMessageDetailActivity.this,PreviewUpAndDownActivity.class);
                     String type = data.getTemplate_type();
@@ -143,7 +141,7 @@ public class SystemMessageDetailActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-        statisticsEventAffair.getInstance().setFlag(this, "12_system_screen");
+        StatisticsEventAffair.getInstance().setFlag(this, "12_system_screen");
 
     }
 
@@ -230,11 +228,6 @@ public class SystemMessageDetailActivity extends BaseActivity {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
-
-
-
-
-
 
     private void finishData() {
         smartRefreshLayout.finishRefresh();

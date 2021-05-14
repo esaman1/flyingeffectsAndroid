@@ -125,12 +125,12 @@
 
 
 
-    <!--广点通-->
-    <include layout="@layout/item_ad_unified" />
+<!--    &lt;!&ndash;广点通&ndash;&gt;-->
+<!--    <include layout="@layout/item_ad_unified" />-->
 
 
-    <!--穿山甲-->
-    <include layout="@layout/csj_ad_container" />
+<!--    &lt;!&ndash;穿山甲&ndash;&gt;-->
+<!--    <include layout="@layout/csj_ad_container" />-->
 
 
 

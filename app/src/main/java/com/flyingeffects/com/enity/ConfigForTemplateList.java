@@ -3,9 +3,8 @@ package com.flyingeffects.com.enity;
 import java.io.Serializable;
 
 public class ConfigForTemplateList implements Serializable {
-    
 
-private String id;
+    private String id;
 
     public String getId() {
         return id;
@@ -38,7 +37,6 @@ private String id;
     public void setDescription(String description) {
         this.description = description;
     }
-
 
 
     public String getCopydata() {
@@ -90,8 +88,8 @@ private String id;
     }
 
     private String title;
-        private String content;
-        private String description;
+    private String content;
+    private String description;
 
     public int getType() {
         return type;
@@ -102,10 +100,10 @@ private String id;
     }
 
     private int type;
-        private String copydata;
-        private String kuaishouurl;
-        private String douyinurl;
-        private String thirdline;
-        private String secondline;
-        private String firstline="";
+    private String copydata;
+    private String kuaishouurl;
+    private String douyinurl;
+    private String thirdline;
+    private String secondline;
+    private String firstline = "";
 }

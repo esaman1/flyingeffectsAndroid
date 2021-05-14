@@ -16,8 +16,8 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.FragmentHasSlide;
-import com.flyingeffects.com.ui.view.fragment.frag_choose_music_extract_audio;
-import com.flyingeffects.com.ui.view.fragment.frag_choose_music_recent_updates;
+import com.flyingeffects.com.ui.view.fragment.ExtractAudioChooseMusicFragment;
+import com.flyingeffects.com.ui.view.fragment.RecentUpdateMusicFragment;
 import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.ArrayList;
@@ -33,7 +33,11 @@ import de.greenrobot.event.Subscribe;
  * user : zhangtongju
  */
 public class ChooseMusicActivity extends BaseActivity {
+    public static String IS_FROM = "isFrom";
 
+    public static int IS_FROM_SHOOT = 0;
+    public static int IS_FROM_MB_SHOOT = 1;
+    public static int IS_FROM_OTHERS = 2;
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
@@ -46,12 +50,15 @@ public class ChooseMusicActivity extends BaseActivity {
     @BindView(R.id.relative_top)
     RelativeLayout relative_top;
 
-    /**如果时长为0，就表示无限裁剪，这里新添加一个功能，可以拖动裁剪*/
+    /**
+     * 如果时长为0，就表示无限裁剪，这里新添加一个功能，可以拖动裁剪
+     */
     private long needDuration;
 
 
-    private boolean isFromShoot=false;
+    private boolean isFromShoot = false;
 
+    private int isFrom = IS_FROM_SHOOT;
 
 
     @Override
@@ -62,51 +69,56 @@ public class ChooseMusicActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        needDuration=getIntent().getLongExtra("needDuration",10000);
-        isFromShoot=getIntent().getBooleanExtra("isFromShoot",false);
-        LogUtil.d("OOM2","当前需要的音乐时长为"+needDuration);
+        needDuration = getIntent().getLongExtra("needDuration", 10000);
+        isFromShoot = getIntent().getBooleanExtra("isFromShoot", false);
+        isFrom = getIntent().getIntExtra(ChooseMusicActivity.IS_FROM, 0);
+        LogUtil.d("OOM2", "当前需要的音乐时长为" + needDuration);
         ArrayList<Fragment> list = new ArrayList<>();
-        String[] titles = {"最近更新","本地音频","视频提取","收藏音乐"};
+        String[] titles = {"最近更新", "本地音频", "视频提取", "收藏音乐"};
 
-        frag_choose_music_recent_updates fragment = new frag_choose_music_recent_updates();
+        RecentUpdateMusicFragment fragment = new RecentUpdateMusicFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("id",0);
-        bundle.putBoolean("isFromShoot",isFromShoot);
-        bundle.putSerializable("needDuration",needDuration);
+        bundle.putSerializable("id", 0);
+        bundle.putBoolean("isFromShoot", isFromShoot);
+        bundle.putInt(ChooseMusicActivity.IS_FROM, isFrom);
+        bundle.putSerializable("needDuration", needDuration);
         fragment.setArguments(bundle);
         list.add(fragment);
 
-        frag_choose_music_recent_updates fragment_1 = new frag_choose_music_recent_updates();
-        Bundle bundle_1 = new Bundle();
-        bundle_1.putSerializable("id",1);
-        bundle.putBoolean("isFromShoot",isFromShoot);
-        bundle_1.putSerializable("needDuration",needDuration);
-        fragment_1.setArguments(bundle_1);
-        list.add(fragment_1);
+        RecentUpdateMusicFragment fragment1 = new RecentUpdateMusicFragment();
+        Bundle bundle1 = new Bundle();
+        bundle1.putSerializable("id", 1);
+        bundle.putBoolean("isFromShoot", isFromShoot);
+        bundle.putInt(ChooseMusicActivity.IS_FROM, isFrom);
+        bundle1.putSerializable("needDuration", needDuration);
+        fragment1.setArguments(bundle1);
+        list.add(fragment1);
 
-        frag_choose_music_extract_audio fragment_local_music = new frag_choose_music_extract_audio();
-        Bundle bundle_local_music = new Bundle();
-        bundle_local_music.putSerializable("needDuration",needDuration);
-        fragment_local_music.setArguments(bundle_local_music);
-        bundle.putBoolean("isFromShoot",isFromShoot);
-        list.add(fragment_local_music);
+        ExtractAudioChooseMusicFragment fragmentLocalMusic = new ExtractAudioChooseMusicFragment();
+        Bundle bundleLocalMusic = new Bundle();
+        bundleLocalMusic.putSerializable("needDuration", needDuration);
+        fragmentLocalMusic.setArguments(bundleLocalMusic);
+        bundle.putInt(ChooseMusicActivity.IS_FROM, isFrom);
+        bundle.putBoolean("isFromShoot", isFromShoot);
+        list.add(fragmentLocalMusic);
 
-
-        frag_choose_music_recent_updates fragment_2 = new frag_choose_music_recent_updates();
-        Bundle bundle_2 = new Bundle();
-        bundle_2.putSerializable("id",2);
-        bundle_2.putSerializable("needDuration",needDuration);
-        bundle.putBoolean("isFromShoot",isFromShoot);
-        fragment_2.setArguments(bundle_2);
-        list.add(fragment_2);
-
-
+        RecentUpdateMusicFragment fragment2 = new RecentUpdateMusicFragment();
+        Bundle bundle2 = new Bundle();
+        bundle2.putSerializable("id", 2);
+        bundle2.putSerializable("needDuration", needDuration);
+        bundle.putInt(ChooseMusicActivity.IS_FROM, isFrom);
+        bundle.putBoolean("isFromShoot", isFromShoot);
+        fragment2.setArguments(bundle2);
+        list.add(fragment2);
 
         relative_top.setOnClickListener(view -> {
-            Intent intent=new Intent(ChooseMusicActivity.this,searchMusicActivity.class);
-            intent.putExtra("needDuration",needDuration);
+            Intent intent = new Intent(ChooseMusicActivity.this, SearchMusicActivity.class);
+            intent.putExtra("needDuration", needDuration);
+            intent.putExtra(ChooseMusicActivity.IS_FROM, isFrom);
+            bundle.putBoolean("isFromShoot", isFromShoot);
             startActivity(intent);
         });
+
         manager = getSupportFragmentManager();
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         viewpager.setAdapter(adapter);
@@ -123,7 +135,6 @@ public class ChooseMusicActivity extends BaseActivity {
 
             @Override
             public void onPageScrollStateChanged(int i) {
-
 
             }
         });
@@ -143,7 +154,6 @@ public class ChooseMusicActivity extends BaseActivity {
         findViewById(R.id.iv_top_back).setOnClickListener(view -> finish());
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -155,14 +165,9 @@ public class ChooseMusicActivity extends BaseActivity {
 
     }
 
-
-
-
     @Subscribe
-    public void onEventMainThread( CutSuccess cutSuccess) {
-            this.finish();
+    public void onEventMainThread(CutSuccess cutSuccess) {
+        this.finish();
     }
-
-
 
 }

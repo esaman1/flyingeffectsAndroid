@@ -5,8 +5,7 @@ import android.util.AttributeSet;
 import android.widget.ScrollView;
 
 //com.flyingeffects.com.view.MyScrollView
-public class MyScrollView extends ScrollView
-         {
+public class MyScrollView extends ScrollView {
 
     private OnScrollListener listener;
 
@@ -36,7 +35,6 @@ public class MyScrollView extends ScrollView
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
         if (listener != null) {
-
             //这里我只传了垂直滑动的距离
             listener.onScroll(t);
         }

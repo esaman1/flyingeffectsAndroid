@@ -100,7 +100,7 @@ public class ShanyanConfigUtils {
                 .setAppPrivacyColor(Color.parseColor("#ffffff"), Color.parseColor("#60C4FC"))    //	设置隐私条款名称颜色(基础文字颜色，协议文字颜色)
                 .setPrivacyText("同意", "和", "、", "、", "并授权手机号")
                 .setPrivacyOffsetBottomY(20)//设置隐私条款相对于屏幕下边缘y偏
-                .setPrivacyState(true)
+                .setPrivacyState(false)
                 .setPrivacyTextSize(10)
                 .setPrivacyOffsetX(26)
                 .setSloganHidden(true)

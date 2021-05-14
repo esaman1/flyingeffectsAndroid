@@ -229,7 +229,7 @@ public class CompressionCuttingManage {
 
         UpdateFileUtils.uploadFile(listFile, "http://flying.nineton.cn/api/picture/picturesHumanList?filenum=" + pathNum + "&template_id=" + templateId+"&version="+BaseConstans.getVersionCode(), (code, str) -> {
             LogUtil.d("OOM", "uploadFileCallBack=" + str);
-            WaitingDialog.closePragressDialog();
+            WaitingDialog.closeProgressDialog();
             Gson gson = new Gson();
             DownImg downIng = gson.fromJson(str, DownImg.class);
             if (downIng != null && downIng.getCode() == 1) {
@@ -248,7 +248,7 @@ public class CompressionCuttingManage {
                 downImageManager.downImage(listForMatting.get(0));
             } else {
                 //失败
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
                 callback.imgList(localImagePaths);
             }
         });

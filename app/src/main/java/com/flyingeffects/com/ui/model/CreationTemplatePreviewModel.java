@@ -15,6 +15,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplatePreviewMvpCallback;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
@@ -25,7 +26,6 @@ import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.flyingeffects.com.view.beans.Thumb;
 import com.flyingeffects.com.view.interfaces.OnProgressVideoListener;
 import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -164,7 +164,7 @@ public class CreationTemplatePreviewModel {
     }
 
 
-    public void ToInitTimer() {
+    public void toInitTimer() {
         initTimer(updateCursorIntervalMs);
     }
 
@@ -346,6 +346,15 @@ public class CreationTemplatePreviewModel {
     }
 
 
+    private LoadingDialog buildProgressDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(mContext)
+                .setHasAd(false)
+                .setTitle("生成中...")
+                .build();
+        dialog.show();
+        return dialog;
+    }
+
     /**
      * description ：保存在本地，如果用戶沒有裁剪，那么就不需要重新裁剪，否则就重新裁剪过
      * creation date: 2020/6/28
@@ -361,20 +370,19 @@ public class CreationTemplatePreviewModel {
             allDuration=realityDuration*1000;
 //            float test=(cropEndRatio-cropStartRatio)*allDuration/(float)1000/(float)1000;
 //            ToastUtil.showToast("裁剪时长为："+test);
-            WaitingDialog_progress dialog = new WaitingDialog_progress(mContext);
-            dialog.openProgressDialog();
+            LoadingDialog loadingDialog = buildProgressDialog();
             //需要裁剪
 
             long duration= (long) ((cropEndRatio-cropStartRatio)*allDuration/1000);
             long startDurtion= (long) ((cropStartRatio*allDuration)/1000);
 
-            videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(mContext,nowUiIsLandscape,duration,videoPath, startDurtion, new videoCutDurationForVideoOneDo.isSuccess() {
+            videoCutDurationForVideoOneDo.getInstance().cutVideoForDrawPadAllExecute2(mContext,nowUiIsLandscape,duration,videoPath, startDurtion, new videoCutDurationForVideoOneDo.isSuccess() {
                 @Override
                 public void progresss(int progress) {
                     if (progress > 100) {
                         progress = 100;
                     }
-                    dialog.setProgress(progress + "%");
+                    loadingDialog.setProgress(progress);
                 }
 
                 @Override
@@ -383,7 +391,7 @@ public class CreationTemplatePreviewModel {
                         ToastUtil.showToast(mContext.getString(R.string.render_error));
                         return;
                     }
-                    dialog.closePragressDialog();
+                    loadingDialog.dismiss();
                     callback.isSaveToAlbum(path, hasShowStimulateAd);
                     LogUtil.d("OOM", "裁剪后导出的地址为111" + path);
                 }

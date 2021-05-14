@@ -25,23 +25,22 @@ public class WaitingDialog {
     /**
      * 打开Loading
      */
-   static Context mContext;
-    public static void openPragressDialog(Context context
-    ) {
-        mContext=context;
+    static Context mContext;
+
+    public static void openPragressDialog(Context context) {
+        mContext = context;
         if (loadingDialog != null) {
-            WaitingDialog.closePragressDialog();
+            WaitingDialog.closeProgressDialog();
         }
         loadingDialog = createLoadingDialog(context, "", true);
-        if (loadingDialog != null&&context!=null) {
+        if (loadingDialog != null && context != null) {
             loadingDialog.show();
         }
     }
 
-    public static void openPragressDialog(Context context, String alert
-    ) {
+    public static void openPragressDialog(Context context, String alert) {
         if (loadingDialog != null) {
-            WaitingDialog.closePragressDialog();
+            WaitingDialog.closeProgressDialog();
         }
         loadingDialog = createLoadingDialog(context, alert, false);
         if (loadingDialog != null) {
@@ -51,15 +50,18 @@ public class WaitingDialog {
 
     private static Dialog createLoadingDialog(Context context, String alert, boolean cancelable) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View v = inflater.inflate(R.layout.waitdialog, null, false);// 得到加载view
+        // 得到加载view
+        View v = inflater.inflate(R.layout.waitdialog, null, false);
         if (!TextUtils.isEmpty(alert)) {
-            TextView tv_alert = v.findViewById(R.id.tv_show_alert);
-            tv_alert.setText(alert);
+            TextView tvAlert = v.findViewById(R.id.tv_show_alert);
+            tvAlert.setText(alert);
         }
         RelativeLayout layout = v.findViewById(R.id.loading);
-        loadingDialog = new Dialog(context, R.style.loading_dialog);// 创建自定义样式dialog
+        // 创建自定义样式dialog
+        loadingDialog = new Dialog(context, R.style.loading_dialog);
+        // 设置布局
         loadingDialog.setContentView(layout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));// 设置布局
+                LinearLayout.LayoutParams.MATCH_PARENT));
         loadingDialog.setCanceledOnTouchOutside(false);
         loadingDialog.setCancelable(cancelable);
         return loadingDialog;
@@ -69,9 +71,9 @@ public class WaitingDialog {
     /**
      * 关闭Loading
      */
-    public static void closePragressDialog() {
-        Log.d("OOM4","closePragressDialog");
-        if (loadingDialog != null && loadingDialog.isShowing()&&mContext!=null) {
+    public static void closeProgressDialog() {
+        Log.d("OOM4", "closeProgressDialog");
+        if (loadingDialog != null && loadingDialog.isShowing() && mContext != null) {
             loadingDialog.dismiss();
             loadingDialog = null;
         }

@@ -2,6 +2,8 @@ package com.flyingeffects.com.manager;
 
 import android.util.Log;
 
+import com.flyingeffects.com.utils.LogUtil;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -21,13 +23,12 @@ public class DownloadVideoManage {
     private final String TAG = "DownloadVideoManage";
     private downloadSuccess callback;
 
-
     public DownloadVideoManage(downloadSuccess callback) {
         this.callback = callback;
     }
 
-
-    public void DownloadVideo(String path, String fileName) {
+    public void downloadVideo(String path, String fileName) {
+        LogUtil.d("OOM", "准备下载视频");
         try {
             URL url = new URL(path);
             // 打开连接
@@ -55,12 +56,10 @@ public class DownloadVideoManage {
         }
     }
 
-
     public interface downloadSuccess {
 
         void isSuccess(boolean isSuccess);
 
     }
-
 
 }

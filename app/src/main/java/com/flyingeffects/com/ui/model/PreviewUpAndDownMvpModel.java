@@ -28,11 +28,10 @@ import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
-import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -43,14 +42,18 @@ import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.GifManager;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.TTAdManagerHolder;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
 import com.flyingeffects.com.manager.mediaManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
+import com.flyingeffects.com.ui.view.activity.MemeKeepActivity;
 import com.flyingeffects.com.ui.view.activity.ReportActivity;
+import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NetworkUtils;
@@ -60,8 +63,8 @@ import com.flyingeffects.com.utils.screenUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -82,7 +85,6 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -94,13 +96,14 @@ public class PreviewUpAndDownMvpModel {
      */
     private static int sIsRefresh = 0;
     private PreviewUpAndDownMvpCallback callback;
+
     private Context context;
     private int selectPage = 1;
     private String mVideoFolder;
     private String mRunCatchFolder;
     private int perPageCount = 10;
     private SmartRefreshLayout smartRefreshLayout;
-    private List<new_fag_template_item> allData;
+    private List<NewFragmentTemplateItem> allData;
     private String fromTo;
     private String category_id, tc_id;
     private TTAdNative mTTAdNative;
@@ -109,7 +112,7 @@ public class PreviewUpAndDownMvpModel {
     private String searchText = "";
     private boolean isCanLoadMore;
 
-    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<new_fag_template_item> allData, int nowSelectPage, String fromTo, String category_id, String toUserID, String searchText, boolean isCanLoadMore, String tc_id) {
+    public PreviewUpAndDownMvpModel(Context context, PreviewUpAndDownMvpCallback callback, List<NewFragmentTemplateItem> allData, int nowSelectPage, String fromTo, String category_id, String toUserID, String searchText, boolean isCanLoadMore, String tc_id) {
         this.context = context;
         this.isCanLoadMore = isCanLoadMore;
         this.selectPage = nowSelectPage;
@@ -129,7 +132,6 @@ public class PreviewUpAndDownMvpModel {
         TTAdManagerHolder.get().requestPermissionIfNecessary(context);
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
     }
-
 
     public void initSmartRefreshLayout(SmartRefreshLayout smartRefreshLayout) {
         this.smartRefreshLayout = smartRefreshLayout;
@@ -156,7 +158,7 @@ public class PreviewUpAndDownMvpModel {
     }
 
 
-    public void GetBackgroundMusic(String videoPath) {
+    public void getBackgroundMusic(String videoPath) {
         mediaManager manager = new mediaManager(context);
         manager.splitMp4(videoPath, new File(soundFolder), new mediaManager.splitMp4Callback() {
             @Override
@@ -187,43 +189,56 @@ public class PreviewUpAndDownMvpModel {
             // 启动时间
             Observable ob = Api.getDefault().templateLInfo(BaseConstans.getRequestHead(params));
             LogUtil.d("OOM", StringUtil.beanToJSONString(params));
-            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<new_fag_template_item>(context) {
-                @Override
-                protected void onSubError(String message) {
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<NewFragmentTemplateItem>(context) {
+                        @Override
+                        protected void onSubError(String message) {
 //                ToastUtil.showToast(message);
-                    LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
-                }
+                            LogUtil.d("OOM", "requestTemplateDetail-error=" + message);
+                        }
 
-                @Override
-                protected void onSubNext(new_fag_template_item data) {
-                    callback.getTemplateLInfo(data);
-                }
-            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+                        @Override
+                        protected void onSubNext(NewFragmentTemplateItem data) {
+                            callback.getTemplateLInfo(data);
+                        }
+                    }, "cacheKey", ActivityLifeCycleEvent.DESTROY,
+                    lifecycleSubject, false, true, false);
 
         }
     }
 
 
-    private WaitingDialog_progress downProgressDialog;
+    private LoadingDialog mLoadingDialog;
     private BottomSheetDialog bottomSheetDialog;
 
     private boolean nowHasCollect;
-    private ImageView iv_collect;
+    private ImageView mIvCollect;
 
-    public void showBottomSheetDialog(String path, String imagePath, String id, new_fag_template_item fag_template_item, String fromTo) {
+
+    private LoadingDialog buildLoadingDialog() {
+        LoadingDialog dialog = LoadingDialog.getBuilder(context)
+                .setHasAd(false)
+                .setTitle("生成中...")
+                .build();
+        dialog.show();
+        return dialog;
+    }
+
+    public void showBottomSheetDialog(String path, String imagePath, String id, NewFragmentTemplateItem fag_template_item, String fromTo) {
         bottomSheetDialog = new BottomSheetDialog(context, R.style.gaussianDialog);
         View view = LayoutInflater.from(context).inflate(R.layout.preview_bottom_sheet_dialog, null);
         bottomSheetDialog.setContentView(view);
         LinearLayout ll_collect = view.findViewById(R.id.ll_collect);
-        iv_collect = view.findViewById(R.id.iv_collect);
+        mIvCollect = view.findViewById(R.id.iv_collect);
         if (BaseConstans.hasLogin() && fag_template_item.getIs_collection() == 1) {
             nowHasCollect = true;
             //表示收藏
-            iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
+            mIvCollect.setImageResource(R.mipmap.new_version_collect_ed);
         } else {
             nowHasCollect = false;
-            iv_collect.setImageResource(R.mipmap.new_version_collect);
+            mIvCollect.setImageResource(R.mipmap.new_version_collect);
         }
+
+
         ll_collect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -235,59 +250,83 @@ public class PreviewUpAndDownMvpModel {
                 }
             }
         });
-        LinearLayout iv_download = view.findViewById(R.id.ll_download);
-        iv_download.setOnClickListener(view12 -> {
 
+        LinearLayout ivDownload = view.findViewById(R.id.ll_download);
+//        if (!TextUtils.isEmpty(fromTo) && fromTo.equals(FromToTemplate.SPECIAL)) {
+//            ivDownload.setVisibility(View.INVISIBLE);
+//        }
+
+        ivDownload.setOnClickListener(view12 -> {
             if (BaseConstans.hasLogin()) {
                 if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "11_yj_save1");
+                    StatisticsEventAffair.getInstance().setFlag(context, "11_yj_save1");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
+                    StatisticsEventAffair.getInstance().setFlag(context, "10_bj_csave1");
                 }
                 templateBehaviorStatistics(3, id);
 
-                statisticsEventAffair.getInstance().setFlag(context, "save_back_template");
-                downProgressDialog = new WaitingDialog_progress(context);
-                downProgressDialog.openProgressDialog();
-                //换装保存的是图片
-                if (TextUtils.equals(FromToTemplate.DRESSUP, fromTo)) {
-                    Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
-                        @Override
-                        public void call(Bitmap bitmap) {
-                            downProgressDialog.closePragressDialog();
-                            LogUtil.d("OOM3", "整合bitmap");
-                            String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
-                            BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, new BitmapManager.saveToFileCallback() {
-                                @Override
-                                public void isSuccess(boolean isSuccess) {
-                                    saveToAlbum(fileName);
-                                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                                        AdManager.getInstance().showCpAd(context, AdConfigs.AD_PREVIEW_SCREEN_AD_ID);
-                                    }
-                                }
-                            });
-                        }
-                    });
-                } else {
+                StatisticsEventAffair.getInstance().setFlag(context, "save_back_template");
+                mLoadingDialog = buildLoadingDialog();
+                LogUtil.d("OOM2", "needImagePath=" + fag_template_item.getImage());
+
+
+                String image = fag_template_item.getImage();
+                String pathType = GetPathTypeModel.getInstance().getMediaType(image);
+
+
+                if (!TextUtils.isEmpty(path)) {
+                    //表示是视频
                     //保存的是视频
-                    DownVideo(path, imagePath, id, true, false);
+                    downVideo(path, imagePath, id, true, false);
                     dismissDialog();
+                } else {
+                    if (AlbumType.isImage(pathType)) {
+                        Observable.just(fag_template_item.getImage()).map(needImagePath -> BitmapManager.getInstance().GetBitmapForHttp(needImagePath)).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+                            @Override
+                            public void call(Bitmap bitmap) {
+                                mLoadingDialog.dismiss();
+                                LogUtil.d("OOM3", "整合bitmap");
+                                String fileName = mRunCatchFolder + File.separator + UUID.randomUUID() + ".png";
+                                BitmapManager.getInstance().saveBitmapToPath(bitmap, fileName, new BitmapManager.saveToFileCallback() {
+                                    @Override
+                                    public void isSuccess(boolean isSuccess) {
+                                        saveToAlbum(fileName);
+                                        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                                            AdManager.getInstance().showCpAd(context, AdConfigs.AD_PREVIEW_SCREEN_AD_ID);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        //保存的是gif
+                        GifManager gifManager = new GifManager(context, new GifManager.downGifCallback() {
+                            @Override
+                            public void downSuccess(String path) {
+                                ToastUtil.showToast("下載成功");
+                            }
+                        });
+                        gifManager.toDownGif(image);
+
+                    }
                 }
+
+
             } else {
                 Intent intent = new Intent(context, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 context.startActivity(intent);
             }
         });
-        LinearLayout ll_friend_circle = view.findViewById(R.id.ll_friend_circle);
-        ll_friend_circle.setOnClickListener(new View.OnClickListener() {
+        LinearLayout llFriendCircle = view.findViewById(R.id.ll_friend_circle);
+        llFriendCircle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "11_yjj_WeChat");
+                    StatisticsEventAffair.getInstance().setFlag(context, "11_yjj_WeChat");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_WeChat");
+                    StatisticsEventAffair.getInstance().setFlag(context, "10_bj_WeChat");
                 }
                 templateBehaviorStatistics(2, id);
 
@@ -304,33 +343,31 @@ public class PreviewUpAndDownMvpModel {
 
 
         //分享小程序飞给好友
-        LinearLayout ll_share_wx = view.findViewById(R.id.ll_share_wx);
-        ll_share_wx.setOnClickListener(new View.OnClickListener() {
+        LinearLayout llShareWx = view.findViewById(R.id.ll_share_wx);
+        llShareWx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "11_yj_circle");
+                    StatisticsEventAffair.getInstance().setFlag(context, "11_yj_circle");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_circle");
+                    StatisticsEventAffair.getInstance().setFlag(context, "10_bj_circle");
                 }
                 templateBehaviorStatistics(1, id);
                 shareToApplet(fag_template_item);
             }
         });
 
-        LinearLayout ll_report = view.findViewById(R.id.ll_report);
-        ll_report.setOnClickListener(new View.OnClickListener() {
+        LinearLayout llReport = view.findViewById(R.id.ll_report);
+        llReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if (fromTo.equals(FromToTemplate.ISTEMPLATE)) {
-                    statisticsEventAffair.getInstance().setFlag(context, "11_yj_Report");
+                    StatisticsEventAffair.getInstance().setFlag(context, "11_yj_Report");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(context, "10_bj_Report");
+                    StatisticsEventAffair.getInstance().setFlag(context, "10_bj_Report");
                 }
-
-
                 Intent intent = new Intent(context, ReportActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(intent);
@@ -338,16 +375,15 @@ public class PreviewUpAndDownMvpModel {
         });
 
 
-        TextView tv_cancle = view.findViewById(R.id.tv_cancle);
-        tv_cancle.setOnClickListener(view1 -> {
+        TextView tvCancel = view.findViewById(R.id.tv_cancle);
+        tvCancel.setOnClickListener(view1 -> {
             bottomSheetDialog.dismiss();
-
-
         });
         bottomSheetDialog.setCancelable(true);
         bottomSheetDialog.setCanceledOnTouchOutside(true);
         View parent = (View) view.getParent();     //处理高度显示完全  https://www.jianshu.com/p/38af0cf77352
         parent.setBackgroundResource(android.R.color.transparent);
+
         BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
         view.measure(0, 0);
         behavior.setPeekHeight(view.getMeasuredHeight());
@@ -356,6 +392,7 @@ public class PreviewUpAndDownMvpModel {
         parent.setLayoutParams(params);
         bottomSheetDialog.show();
     }
+
 
     /**
      * 模板操作行为统计
@@ -391,7 +428,7 @@ public class PreviewUpAndDownMvpModel {
      * creation date: 2020/7/1
      * user : zhangtongju
      */
-    private void shareToApplet(new_fag_template_item fag_template_item) {
+    private void shareToApplet(NewFragmentTemplateItem fag_template_item) {
         UMImage image = new UMImage(context, fag_template_item.getImage());//分享图标
         String url = "pages/background/background?path=detail&from_path=app&id=" + fag_template_item.getId();
         LogUtil.d("OOM", "小程序的地址为" + url);
@@ -456,13 +493,13 @@ public class PreviewUpAndDownMvpModel {
      */
     private String getShareWeiXinCircleText(String id) {
         String str = "http://www.flyingeffect.com/index/index/share?id=" + id + "&";
-        HashMap params = BaseConstans.getRequestHead(new HashMap<>());
-        String str_params = params.toString();
-        str_params = str_params.replace("{", "");
-        str_params = str_params.replace("}", "");
-        str_params = str_params.replaceAll(",", "&");
-        str_params = str_params.trim();
-        return str + str_params;
+        HashMap<String, String> params = BaseConstans.getRequestHead(new HashMap<>());
+        String strParams = params.toString();
+        strParams = strParams.replace("{", "");
+        strParams = strParams.replace("}", "");
+        strParams = strParams.replaceAll(",", "&");
+        strParams = strParams.trim();
+        return str + strParams;
     }
 
 
@@ -494,7 +531,7 @@ public class PreviewUpAndDownMvpModel {
             public void onError(int code, String message) {
 //                Log.d(TAG, message);
 //                showToast(message);
-                statisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_error");
+                StatisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_error");
                 LogUtil.d("OOM", "loadFeedAd+code=" + code + ";message=" + message);
             }
 
@@ -504,7 +541,7 @@ public class PreviewUpAndDownMvpModel {
                     LogUtil.d("OOM", "on FeedAdLoaded: ad is null!");
                     return;
                 }
-                statisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_success");
+                StatisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_success");
 
                 LogUtil.d("OOM", "success" + ads.size());
 //                for (int i = 0; i < 5; i++) {
@@ -517,7 +554,7 @@ public class PreviewUpAndDownMvpModel {
                     ad.setVideoAdListener(new TTNativeExpressAd.ExpressVideoAdListener() {
                         @Override
                         public void onVideoLoad() {
-                            statisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_show");
+                            StatisticsEventAffair.getInstance().setFlag(context, "draw_ad_request_show");
                         }
 
                         @Override
@@ -581,7 +618,6 @@ public class PreviewUpAndDownMvpModel {
                     });
                     ad.render();
                 }
-
                 callback.resultAd(ads);
             }
         });
@@ -597,7 +633,7 @@ public class PreviewUpAndDownMvpModel {
     private void requestFagData() {
         Observable ob = null;
         HashMap<String, String> params = new HashMap<>();
-        LogUtil.d("templateId", "templateId=" + category_id);
+        LogUtil.d("templateId", "fromTo=" + fromTo);
         if (!TextUtils.isEmpty(category_id)) {
             params.put("category_id", category_id);
         }
@@ -636,6 +672,7 @@ public class PreviewUpAndDownMvpModel {
                 ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
                 break;
             case FromToTemplate.ISTEMPLATE:
+            case FromToTemplate.TEMPLATESPECIAL:
                 params.put("template_type", "1");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
@@ -660,20 +697,22 @@ public class PreviewUpAndDownMvpModel {
                 params.put("template_type", "1");
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
                 break;
-
+            case FromToTemplate.CHOOSEBJ:
+            case FromToTemplate.FACEGIF:
+            case FromToTemplate.SPECIAL:
             case FromToTemplate.DRESSUP:
                 params.put("template_type", "3");
-                ob = Api.getDefault().getMeargeTemplate(BaseConstans.getRequestHead(params));
+                ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
                 break;
-
-
             default:
+                params.put("template_type", "3");
+                ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
                 break;
         }
 
         String str = StringUtil.beanToJSONString(params);
         LogUtil.d("OOM3", "总请求的参数为------" + str);
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(context) {
             @Override
             protected void onSubError(String message) {
                 LogUtil.d("OOM3", "下一页数据请求" + message);
@@ -682,7 +721,7 @@ public class PreviewUpAndDownMvpModel {
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM3", "下一页数据请求" + str);
                 finishData();
@@ -697,17 +736,17 @@ public class PreviewUpAndDownMvpModel {
                 if (data.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
-                List<new_fag_template_item> needData = getFiltration(data);
+                List<NewFragmentTemplateItem> needData = getFiltration(data);
                 allData.addAll(needData);
                 callback.showNewData(allData, isRefresh);
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
-    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData) {
-        List<new_fag_template_item> needData = new ArrayList<>();
+    public List<NewFragmentTemplateItem> getFiltration(List<NewFragmentTemplateItem> allData) {
+        List<NewFragmentTemplateItem> needData = new ArrayList<>();
         for (int i = 0; i < allData.size(); i++) {
-            new_fag_template_item item = allData.get(i);
+            NewFragmentTemplateItem item = allData.get(i);
             if (item.getIs_ad_recommend() == 0) {
                 needData.add(item);
             }
@@ -715,12 +754,10 @@ public class PreviewUpAndDownMvpModel {
         return needData;
     }
 
-
     private void finishData() {
         smartRefreshLayout.finishRefresh();
         smartRefreshLayout.finishLoadMore();
     }
-
 
     public void isOnLoadMore() {
 
@@ -759,13 +796,12 @@ public class PreviewUpAndDownMvpModel {
                 nowHasCollect = !nowHasCollect;
                 callback.collectionResult(nowHasCollect);
                 if (nowHasCollect) {
-                    iv_collect.setImageResource(R.mipmap.new_version_collect_ed);
+                    mIvCollect.setImageResource(R.mipmap.new_version_collect_ed);
                     templateBehaviorStatistics(4, templateId);
                 } else {
-                    iv_collect.setImageResource(R.mipmap.new_version_collect);
+                    mIvCollect.setImageResource(R.mipmap.new_version_collect);
                 }
                 EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
-
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
 
@@ -778,11 +814,11 @@ public class PreviewUpAndDownMvpModel {
      * param : template_type 1 muban  2背景
      * user : zhangtongju
      */
-    public void ZanTemplate(String templateId, String title, String template_type) {
+    public void zanTemplate(String templateId, String title, String templateType) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
 //        params.put("token", BaseConstans.GetUserToken());
-        params.put("type", template_type);
+        params.put("type", templateType);
         // 启动时间
         Observable ob = Api.getDefault().addPraise(BaseConstans.getRequestHead(params));
 
@@ -799,7 +835,7 @@ public class PreviewUpAndDownMvpModel {
             protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "collectTemplate=" + str);
-                callback.ZanResult();
+                callback.zanResult();
             }
 
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -824,19 +860,18 @@ public class PreviewUpAndDownMvpModel {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
-
-    public void DownVideo(String path, String imagePath, String id, boolean keepAlbum, boolean isFromAgainChooseBj) {
+    public void downVideo(String path, String imagePath, String id, boolean keepAlbum, boolean isFromAgainChooseBj) {
         String videoName = mVideoFolder + File.separator + id + "synthetic.mp4";
         File file = new File(videoName);
         if (file.exists()) {
-            if (downProgressDialog != null) {
-                downProgressDialog.closePragressDialog();
+            if (mLoadingDialog != null) {
+                mLoadingDialog.dismiss();
             }
             if (!keepAlbum) {
                 //文件已存在，直接回传path
                 callback.downVideoSuccess(videoName, imagePath);
             } else {
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
                 saveToAlbum(videoName);
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_DOWNLOAD);
@@ -845,40 +880,41 @@ public class PreviewUpAndDownMvpModel {
             return;
         }
 
-        if (downProgressDialog == null) {
+        if (mLoadingDialog == null) {
             LogUtil.d("OOM", "downProgressDialog != null");
-            downProgressDialog = new WaitingDialog_progress(context);
-            downProgressDialog.openProgressDialog();
+            mLoadingDialog = buildLoadingDialog();
         }
+        LogUtil.d("OOM", "文件不存在");
 
         Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
             DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                 @Override
                 public void call(String s1) {
                     VideoInfo info = getVideoInfo.getInstance().getRingDuring(s1);
-                    videoCutDurationForVideoOneDo.getInstance().CutVideoForDrawPadAllExecute2(context, false, info.getDuration(), videoName, 0, new videoCutDurationForVideoOneDo.isSuccess() {
+                    videoCutDurationForVideoOneDo.getInstance().cutVideoForDrawPadAllExecute2(context, false, info.getDuration(), videoName, 0, new videoCutDurationForVideoOneDo.isSuccess() {
                         @Override
                         public void progresss(int progress) {
                             LogUtil.d("oom", "下载时候后重新裁剪进度为=" + progress);
-                            if (downProgressDialog != null) {
+                            if (mLoadingDialog != null) {
                                 if (isFromAgainChooseBj) {
-                                    downProgressDialog.setProgress("正在生成中" + progress + "%");
+                                    mLoadingDialog.setTitleStr("正在生成中");
                                 } else {
-                                    downProgressDialog.setProgress("下载进度为" + progress + "%");
+                                    mLoadingDialog.setTitleStr("下载中");
                                 }
+                                mLoadingDialog.setProgress(progress);
                             }
                         }
 
                         @Override
                         public void isSuccess(boolean isSuccess, String path1) {
-                            if (downProgressDialog != null) {
-                                downProgressDialog.closePragressDialog();
-                                downProgressDialog = null;
+                            if (mLoadingDialog != null) {
+                                mLoadingDialog.dismiss();
+                                mLoadingDialog = null;
                             }
                             if (!keepAlbum) {
                                 callback.downVideoSuccess(path1, imagePath);//下载成功后的回调
                             } else {
-                                WaitingDialog.closePragressDialog();
+                                WaitingDialog.closeProgressDialog();
                                 saveToAlbum(path1);
                                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                                     AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_DOWNLOAD);
@@ -888,17 +924,20 @@ public class PreviewUpAndDownMvpModel {
                     });
                 }
             }));
-            manage.DownloadVideo(path, videoName);
+            manage.downloadVideo(path, videoName);
         });
     }
 
 
     private void saveToAlbum(String path) {
         String albumPath;
-        if(TextUtils.equals(FromToTemplate.DRESSUP, fromTo)){
+        String pathType = GetPathTypeModel.getInstance().getMediaType(path);
+        if (AlbumType.isImage(pathType)) {
             albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForImage();
-        }else{
+        } else if (AlbumType.isVideo(pathType)) {
             albumPath = SaveAlbumPathModel.getInstance().getKeepOutput();
+        } else {
+            albumPath = SaveAlbumPathModel.getInstance().getKeepOutputForGif();
         }
         try {
             FileUtil.copyFile(new File(path), albumPath);
@@ -910,7 +949,6 @@ public class PreviewUpAndDownMvpModel {
             e.printStackTrace();
         }
     }
-
 
     private void showKeepSuccessDialog(String path) {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
@@ -1024,8 +1062,6 @@ public class PreviewUpAndDownMvpModel {
                         Observable.just(e).subscribeOn(AndroidSchedulers.mainThread()).subscribe(e1 -> new Handler().post(() -> ToastUtil.showToast("下载异常，请重试")));
                         LogUtil.d("onVideoAdError", "Exception=" + e.getMessage());
                         callback.showDownProgress(100);
-//                        ToastUtil.showToast(e.getMessage());
-//                        Toast.makeText(context,e.getMessage(),Toast.LENGTH_LONG).show();
                     }
                     super.run();
                 }
@@ -1042,27 +1078,24 @@ public class PreviewUpAndDownMvpModel {
      * user : zhangtongju
      */
     public void toDressUp(String path, String templateId, String templateTitle) {
-        Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer integer) {
-                LogUtil.d("OOM3", "toDressUp");
-                DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
-                    @Override
-                    public void isSuccess(List<String> paths) {
-                        LogUtil.d("OOM3", "跳转到换装页面");
-                        if(paths!=null){
-                            Intent intent = new Intent(context, DressUpPreviewActivity.class);
-                            intent.putExtra("url", paths.get(0));
-                            intent.putExtra("template_id", templateId);
-                            intent.putExtra("localImage", path);
-                            intent.putExtra("templateTitle", templateTitle);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                            context.startActivity(intent);
-                        }
+        Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            LogUtil.d("OOM3", "toDressUp");
+            DressUpModel dressUpModel = new DressUpModel(context, new DressUpModel.DressUpCallback() {
+                @Override
+                public void isSuccess(List<String> paths) {
+                    LogUtil.d("OOM3", "跳转到换装页面");
+                    if (paths != null) {
+                        Intent intent = new Intent(context, DressUpPreviewActivity.class);
+                        intent.putExtra("url", paths.get(0));
+                        intent.putExtra("template_id", templateId);
+                        intent.putExtra("localImage", path);
+                        intent.putExtra("templateTitle", templateTitle);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        context.startActivity(intent);
                     }
-                },false);
-                dressUpModel.toDressUp(path, templateId);
-            }
+                }
+            }, false);
+            dressUpModel.toDressUp(path, templateId);
         });
     }
 
@@ -1073,16 +1106,7 @@ public class PreviewUpAndDownMvpModel {
      * user : zhangtongju
      */
     public void GetDressUpPath(List<String> paths) {
-        callback.GetDressUpPathResult(paths);
-    }
-
-
-    private ArrayList<String> getDressUpdate(List<HumanMerageResult> paths) {
-        ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < paths.size(); i++) {
-            list.add(paths.get(i).getResult_image());
-        }
-        return list;
+        callback.getDressUpPathResult(paths);
     }
 
 
@@ -1108,6 +1132,64 @@ public class PreviewUpAndDownMvpModel {
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    /**
+     * description ：进行特殊模板的操作，可能为视频
+     * paths 选择的图片
+     * api_type特殊模板类型
+     * creation date: 2021/4/19
+     * user : zhangtongju
+     */
+    public void ToDressUpSpecial(List<String> paths, int api_type, String templateId, String title, String templateType) {
+        Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
+            LogUtil.d("OOM3", "toDressUp");
+            DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
+                LogUtil.d("OOM3", "DressUpSpecialModel=" + url);
+                if (!TextUtils.isEmpty(url)) {
+                    if (url.contains("mp4")) {
+                        //视频的话进入到gif 页面
+                        Intent intent = new Intent(context, MemeKeepActivity.class);
+                        intent.putExtra("templateType", templateType);
+                        intent.putExtra("videoPath", url);
+                        intent.putExtra("title", title);
+                        intent.putExtra("templateId", templateId);
+                        intent.putExtra("IsFrom", fromTo);
+                        context.startActivity(intent);
+
+                    } else {
+                        //进入到类似于换装页面
+                        Intent intent = new Intent(context, DressUpPreviewActivity.class);
+                        intent.putExtra("url", url);
+                        intent.putExtra("template_id", templateId);
+                        intent.putExtra("localImage", url);
+                        intent.putExtra("isSpecial", true);
+                        intent.putExtra("templateTitle", "");
+                        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        context.startActivity(intent);
+                    }
+                }
+
+            }, templateId);
+            dressUpModel.toDressUp(paths, api_type);
+        });
+
+    }
+
+
+    public void ToTemplateAddStickerActivity(List<String> strToList1, String templateName, String templateId, int api_type, String templateType) {
+
+        DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
+            Intent intent = new Intent(context, TemplateAddStickerActivity.class);
+            intent.putExtra("templateType", templateType);
+            intent.putExtra("videoPath", url);
+            intent.putExtra("title", templateName);
+            intent.putExtra("templateId", templateId);
+            intent.putExtra("IsFrom", fromTo);
+            context.startActivity(intent);
+        }, templateId);
+        dressUpModel.toDressUp(strToList1, api_type);
     }
 
 

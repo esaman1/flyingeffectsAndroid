@@ -4,6 +4,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
+import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.http.Url;
@@ -30,6 +31,7 @@ public class BaseConstans {
      */
     public static final String DOUYINSHARE_CLIENTKEY = "awikd2g333hd0ien";
 
+
     /**
      * 是否开启华为渠道适配
      */
@@ -41,6 +43,10 @@ public class BaseConstans {
     public static final boolean UserFaceSdk = true;
     //    public static final boolean isTitokChannel=true;
     public static final int THREADCOUNT = 4;
+    /**
+     * 信息流广告插入的位置
+     */
+    public static final int NOWADSHOWPOSITION = 5;
     public static boolean hasCreatingSegJni = true;
     public static String titok;
     public static String kuaishou;
@@ -48,6 +54,7 @@ public class BaseConstans {
      * 是否是正式环境
      */
     public static final boolean PRODUCTION = true;
+    public static final boolean DEBUG = BuildConfig.DEBUG;
     private static String channel = "";
     private static String versionCode = "";
     private static String uuid = "";
@@ -72,7 +79,7 @@ public class BaseConstans {
     public static final String FILE_PATH;
     public static final String FRAME_TEMP_PATH;
 
-    public static HashMap getRequestHead(HashMap<String, String> map) {
+    public static HashMap<String, String> getRequestHead(HashMap<String, String> map) {
         String nowTimestamp = getTimestamp() + "";
         map.put("app_id", "10000");
         map.put("platform", "android");
@@ -85,6 +92,7 @@ public class BaseConstans {
         map.put("uuid", GetUserUuid());
         map.put("token", GetUserToken());
         map.put("sign", getSine(nowTimestamp, map));
+
         return map;
     }
 
@@ -250,6 +258,66 @@ public class BaseConstans {
 
 
     /**
+     * description ：设置入口
+     * creation date: 2021/3/12
+     * user : zhangtongju
+     */
+    public static void setHasAdEntrance(String json) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("AdEntrance", json);
+    }
+
+
+    /**
+     * gif 教程配置说明图片地址
+     */
+    public static void setGifCourse(String json) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("GIFCOURSE", json);
+    }
+
+
+    public static String getGifCourse() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("GIFCOURSE", "");
+    }
+
+
+    public static void setAdShowErrorCanSave(String json) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("AdShowErrorCanSave", json);
+    }
+
+
+    public static void setCreateVideoShowAdUserNum(String json) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("createVideoShowAdUserNum", json);
+    }
+
+    public static String getCreateVideoShowAdUserNum() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("createVideoShowAdUserNum", "");
+    }
+
+
+    /**
+     * description ：激励视频出错的情况下能够得到奖励 1 是可以的，0是不可以
+     * creation date: 2021/4/16
+     * user : zhangtongju
+     */
+    public static String getAdShowErrorCanSave() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("AdShowErrorCanSave", "1");
+    }
+
+
+    public static String getHasAdEntrance() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("AdEntrance", "");
+    }
+
+
+    /**
      * description :保存的时候是否显示激励视频
      * creation date: 2020/6/11
      * user : zhangtongju
@@ -287,16 +355,12 @@ public class BaseConstans {
 
 
     public static boolean getIsNewUser() {
-//        if(isTitokChannel){
-//            return false;
-//        }else{
         if (!isNewUserForAdvertising) {
             SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
             isNewUserForAdvertising = spUtil.getBoolean("isNewUserForAdvertising", false);
             return isNewUserForAdvertising;
         }
         return true;
-//        }
 
     }
 
@@ -474,12 +538,30 @@ public class BaseConstans {
         return spUtil.getString("DouyingTopic", "飞闪视频");
     }
 
+    public static void setFirstUseAppTime(long firstUseAppTime) {
+        SPHelper.getInstance().putLong("firstUseAppTime", firstUseAppTime);
+    }
+
+    public static long getFirstUseAppTime() {
+        return SPHelper.getInstance().getLong("firstUseAppTime", 0);
+    }
+
     /**
      * 设置换装制作页面切换模板按钮加载视频广告的间隔次数
      */
     public static void setDressupIntervalsNumber(int intervalsNumber) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putInt("IntervalsNumber", intervalsNumber);
+    }
+
+    public static void setOaid(String oaid) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putString("oaid", oaid);
+    }
+
+    public static String getOaid() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getString("oaid", "");
     }
 
 

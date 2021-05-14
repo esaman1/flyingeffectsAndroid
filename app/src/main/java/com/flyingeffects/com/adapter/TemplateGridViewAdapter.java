@@ -58,7 +58,7 @@ public class TemplateGridViewAdapter extends BaseAdapter {
             holder.image = view.findViewById(R.id.iv_icon);
             holder.tv_name = view.findViewById(R.id.tv_name);
             holder.iv_download = view.findViewById(R.id.iv_download);
-                    holder.tv_checked=view.findViewById(R.id.tv_checked);
+            holder.tv_checked = view.findViewById(R.id.tv_checked);
             view.setTag(holder);
         } else {
             holder = (ViewHold) view.getTag();
@@ -66,17 +66,23 @@ public class TemplateGridViewAdapter extends BaseAdapter {
 
         StickerList stickerList = list.get(position);
         if (stickerList.isClearSticker()) {
+
             Glide.with(context)
                     .load(R.mipmap.sticker_clear)
                     .into(holder.image);
+
             holder.tv_name.setText("默认");
+
         } else {
+
             Glide.with(context)
                     .load(list.get(position).getThumbnailimage())
                     .apply(RequestOptions.bitmapTransform(new GlideRoundTransform(context, 3)))
                     .into(holder.image);
+
             holder.tv_name.setText(list.get(position).getTitle());
-            if (stickerList.isChecked() ) {
+
+            if (stickerList.isChecked()) {
                 holder.tv_checked.setVisibility(View.VISIBLE);
             } else {
                 holder.tv_checked.setVisibility(View.GONE);
@@ -87,7 +93,7 @@ public class TemplateGridViewAdapter extends BaseAdapter {
     }
 
 
-    class ViewHold {
+    static class ViewHold {
         ImageView image;
         TextView tv_name;
         ImageView iv_download;

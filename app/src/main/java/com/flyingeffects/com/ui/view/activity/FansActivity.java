@@ -32,7 +32,7 @@ import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
 /**
- * description ：点赞页面
+ * description ：粉丝
  * creation date: 2020/7/29
  * user : zhangtongju
  */
@@ -45,8 +45,7 @@ public class FansActivity extends BaseActivity {
     private Fans_adapter adapter;
     private String to_user_id;
     private List<fansEnity> fansList = new ArrayList<>();
-    //0 表示我的页面 1 表示消息
-    private int from;
+
 
     @BindView(R.id.smart_refresh_layout_bj)
     SmartRefreshLayout smartRefreshLayout;
@@ -66,20 +65,20 @@ public class FansActivity extends BaseActivity {
         ((TextView) findViewById(R.id.tv_top_title)).setText("粉丝");
         findViewById(R.id.iv_top_back).setOnClickListener(this);
         to_user_id = getIntent().getStringExtra("to_user_id");
-        from = getIntent().getIntExtra("from", 0);
         ShowData();
         initSmartRefreshLayout();
+        requestMessageCount();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (BaseConstans.hasLogin()) {
-            requestMessageCount();
-        } else {
 
-            ToastUtil.showToast(getResources().getString(R.string.need_login));
+        if(BaseConstans.hasLogin()){
+            selectPage=1;
+            isRefresh=true;
+            requestMessageCount();
         }
     }
 
@@ -95,13 +94,8 @@ public class FansActivity extends BaseActivity {
         params.put("type", "1");
         params.put("page", selectPage + "");
         params.put("pageSize", "10");
-        Observable ob;
-        if (from == 0) {
-            ob = Api.getDefault().followerList(BaseConstans.getRequestHead(params));
-        } else {
-            ob = Api.getDefault().getFollowList(BaseConstans.getRequestHead(params));
-        }
-        LogUtil.d("OOM2",StringUtil.beanToJSONString(params));
+        Observable ob = Api.getDefault().followerList(BaseConstans.getRequestHead(params));
+        LogUtil.d("OOM2", StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<fansEnity>>(FansActivity.this) {
             @Override
             protected void onSubError(String message) {
@@ -110,7 +104,6 @@ public class FansActivity extends BaseActivity {
 
             @Override
             protected void onSubNext(List<fansEnity> data) {
-
                 finishData();
                 if (isRefresh) {
                     fansList.clear();
@@ -132,9 +125,6 @@ public class FansActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-        if (from == 1 && !BaseConstans.hasLogin()) {
-            goActivity(LoginActivity.class);
-        }
     }
 
 
@@ -149,16 +139,7 @@ public class FansActivity extends BaseActivity {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (view.getId()) {
                     case R.id.tv_follow:
-
-                        if (from == 0) {
-                            //我的页面
-                            requestFocus(fansList.get(position).getId());
-                        } else {
-                            //消息的粉丝
-                            requestFocus(fansList.get(position).getUser_id());
-                        }
-
-
+                        requestFocus(fansList.get(position).getId(),fansList.get(position).getIs_has_follow(),position);
                         break;
 
                     default:
@@ -171,11 +152,7 @@ public class FansActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(FansActivity.this, UserHomepageActivity.class);
-                if (from == 0) {
-                    intent.putExtra("toUserId", fansList.get(position).getId());
-                } else {
-                    intent.putExtra("toUserId", fansList.get(position).getUser_id());
-                }
+                intent.putExtra("toUserId", fansList.get(position).getId());
                 startActivity(intent);
             }
         });
@@ -188,7 +165,9 @@ public class FansActivity extends BaseActivity {
      * creation date: 2020/7/30
      * user : zhangtongju
      */
-    private void requestFocus(String to_user_id) {
+    private int hasFollow;
+    private void requestFocus(String to_user_id,int follow,int position) {
+        hasFollow=follow;
         HashMap<String, String> params = new HashMap<>();
         params.put("to_user_id", to_user_id);
 
@@ -203,7 +182,16 @@ public class FansActivity extends BaseActivity {
             @Override
             protected void onSubNext(Object data) {
                 LogUtil.d("OOM", StringUtil.beanToJSONString(data));
-                requestMessageCount();
+                if(hasFollow==0){
+                    hasFollow=1;
+                }else{
+                    hasFollow=0;
+                }
+
+                fansEnity fansE=fansList.get(position);
+                fansE.setIs_has_follow(hasFollow);
+                fansList.set(position,fansE);
+                adapter.notifyItemChanged(position);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
@@ -211,11 +199,6 @@ public class FansActivity extends BaseActivity {
 
     @Subscribe
     public void onEventMainThread(AttentionChange event) {
-        if (from == 1) {
-            isRefresh = true;
-            selectPage = 1;
-            requestMessageCount();
-        }
 
     }
 
@@ -232,7 +215,6 @@ public class FansActivity extends BaseActivity {
             requestMessageCount();
         });
     }
-
 
 
 }

@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,6 +11,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -31,8 +40,8 @@ import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DoubleClick;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.huaweiObs;
-import com.flyingeffects.com.manager.statisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
@@ -45,11 +54,16 @@ import com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.UCropOption;
+import com.flyingeffects.com.view.MarqueTextView;
 import com.google.android.material.appbar.AppBarLayout;
 import com.lansosdk.videoeditor.LanSongFileUtil;
+import com.nineton.ntadsdk.bean.AdInfoBean;
+import com.nineton.ntadsdk.itr.ImageAdCallBack;
+import com.nineton.ntadsdk.manager.ImageAdManager;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.yalantis.ucrop.UCrop;
@@ -61,10 +75,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -79,10 +89,11 @@ import rx.functions.Action1;
  * 时间：2018/4/24
  **/
 
-public class frag_user_center extends BaseFragment implements AlbumChooseCallback, AppBarLayout.OnOffsetChangedListener  {
+public class frag_user_center extends BaseFragment implements AlbumChooseCallback, AppBarLayout.OnOffsetChangedListener {
     public final static int SELECTALBUMFROMUSETCENTERBJ = 1;
+    private static final int CODE_PEELING = 10;
 
-    private String[] titles = {"我上传的背景", "喜欢", "模板收藏"};
+    private String[] titles = {"我上传的作品", "喜欢", "模板收藏"};
 
     @BindView(R.id.viewpager)
     ViewPager viewpager;
@@ -95,7 +106,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     @BindView(R.id.tv_id)
     TextView tv_id;
     @BindView(R.id.tv_name)
-    TextView tv_name;
+    MarqueTextView tv_name;
     @BindView(R.id.fans_count)
     TextView fans_count;
     @BindView(R.id.attention_count)
@@ -105,7 +116,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     @BindView(R.id.im_user_skin)
     ImageView imSkin;
     @BindView(R.id.tv_Introduction)
-    TextView tvIntroduction;
+    MarqueTextView tvIntroduction;
     @BindView(R.id.im_edit)
     ImageView imEdit;
     @BindView(R.id.tv_edit_information)
@@ -132,11 +143,11 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     AppBarLayout appbar;
     @BindView(R.id.ll_ad_content)
     LinearLayout mLLADContent;
-
-
+    @BindView(R.id.ll_ad_entrance)
+    LinearLayout ll_ad_entrance;
 
     private UCrop.Options options;
-    String systemMessageId ="";
+    String systemMessageId = "";
 
 
     @Override
@@ -147,33 +158,29 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @Override
     protected void initView() {
-        EventBus.getDefault().register(this);
         options = UCropOption.getInstance().getUcropOption();
         iv_about.setOnClickListener(view -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
                 Intent intent = new Intent(getActivity(), AboutActivity.class);
                 startActivity(intent);
             }
         });
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-            AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, mLLADContent, new AdManager.Callback() {
-                @Override
-                public void adClose() {
-                }
-            });
+            AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, mLLADContent);
+            loadImageAd();
         }
+
     }
 
     @Override
     protected void initAction() {
-       initTabData();
+        initTabData();
     }
 
     @Override
     protected void initData() {
         appbar.addOnOffsetChangedListener(this);
-
     }
 
     @Override
@@ -208,6 +215,10 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 mTVGoLogin.setVisibility(View.VISIBLE);
                 mLLNoLoginInfo.setVisibility(View.VISIBLE);
             }
+
+            if(imageAdManager!=null){
+                imageAdManager.adResume();
+            }
         }
         super.onResume();
     }
@@ -216,6 +227,9 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     @Override
     public void onPause() {
         super.onPause();
+        if(imageAdManager!=null){
+            imageAdManager.adPause();
+        }
     }
 
     private void initTabData() {
@@ -232,7 +246,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         fag_like.setArguments(bundle1);
         list.add(fag_like);
 
-
         frag_user_collect fag_0 = new frag_user_collect();
         Bundle bundle2 = new Bundle();
         bundle2.putSerializable("template_type", "1");
@@ -244,8 +257,8 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     }
 
 
-    @OnClick({R.id.ll_icon_zan, R.id.ll_comment,R.id.ll_private_message,R.id.ll_attention_count,
-            R.id.ll_video_count, R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data,R.id.tv_go_login})
+    @OnClick({R.id.ll_icon_zan, R.id.ll_comment, R.id.ll_private_message, R.id.ll_attention_count,
+            R.id.ll_video_count, R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data, R.id.tv_go_login})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_icon_zan:
@@ -261,7 +274,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 break;
             case R.id.ll_comment:
                 if (BaseConstans.hasLogin()) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "12_comment");
+                    StatisticsEventAffair.getInstance().setFlag(getActivity(), "12_comment");
                     Intent intentComment = new Intent(getActivity(), LikeActivity.class);
                     intentComment.putExtra("from", 1);
                     intentComment.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -271,7 +284,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 }
                 break;
             case R.id.ll_private_message:
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
                 if (BaseConstans.hasLogin()) {
                     if (!TextUtils.isEmpty(systemMessageId)) {
                         Intent intent = new Intent(getActivity(), SystemMessageDetailActivity.class);
@@ -311,16 +324,13 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 }
                 break;
             case R.id.iv_Peeling:
-
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    statisticsEventAffair.getInstance().setFlag(getActivity(), "3_background");
-                    AlbumManager.chooseImageAlbum(getContext(), 1, SELECTALBUMFROMUSETCENTERBJ, this, "");
-                }
+                ActivityCompat.requestPermissions(getActivity(), PERMISSION_STORAGE, CODE_PEELING);
+                //toPeeling();
                 break;
             case R.id.tv_edit_information:
             case R.id.ll_edit_data:
                 if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "3_Information");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "3_Information");
                     Intent intent = new Intent(getActivity(), EditInformationActivity.class);
                     startActivity(intent);
                 }
@@ -334,7 +344,13 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 break;
             default:
                 break;
+        }
+    }
 
+    private void toPeeling() {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            StatisticsEventAffair.getInstance().setFlag(getActivity(), "3_background");
+            AlbumManager.chooseImageAlbum(getContext(), 1, SELECTALBUMFROMUSETCENTERBJ, this, "");
         }
     }
 
@@ -429,7 +445,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     }
 
     @Override
-    public void resultFilePath(int tag, List<String> paths, boolean isCancel,boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
+    public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
         if (!isCancel && paths != null && paths.size() > 0) {
             try {
                 File srcFile = new File(paths.get(0));
@@ -476,7 +492,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     Observable.just(path).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                         @Override
                         public void call(String s) {
-                            WaitingDialog.closePragressDialog();
+                            WaitingDialog.closeProgressDialog();
                             uploadUserSkin(s);
                         }
                     });
@@ -526,7 +542,6 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         int followNum = Integer.parseInt(follow_num);
         if (followNum == 0) {
             mTVCommentCountAdd.setVisibility(View.GONE);
-
         } else {
             mTVCommentCountAdd.setVisibility(View.VISIBLE);
             mTVCommentCountAdd.setText(followNum + "");
@@ -539,13 +554,13 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
             mTVZan.setVisibility(View.VISIBLE);
             mTVZan.setText(praiseNum + "");
         }
-        String comment_num = data.getComment_num();
-        int commentNum = Integer.parseInt(comment_num);
-        if (commentNum == 0) {
+        String commentNum = data.getComment_num();
+        int commentNumInt = Integer.parseInt(commentNum);
+        if (commentNumInt == 0) {
             mTVCommentCount.setVisibility(View.GONE);
         } else {
             mTVCommentCount.setVisibility(View.VISIBLE);
-            mTVCommentCount.setText(commentNum + "");
+            mTVCommentCount.setText(commentNumInt + "");
         }
     }
 
@@ -568,20 +583,83 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        if(imageAdManager!=null){
+            imageAdManager.adDestroy();
+        }
     }
-
 
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
         int offset = Math.abs(verticalOffset);
         int total = appBarLayout.getTotalScrollRange();
-        LogUtil.d("OOM2","offset="+offset+"total="+total);
-//        if (offset < total ) {
-//            tv_top_name.setVisibility(View.GONE);
-//        } else {
-//            tv_top_name.setVisibility(View.VISIBLE);
-//        }
+        LogUtil.d("OOM2", "offset=" + offset + "total=" + total);
+    }
+
+
+    /**
+     * 加载图片广告
+     */
+    ImageAdManager imageAdManager;
+    private void loadImageAd() {
+        imageAdManager = new ImageAdManager();
+        imageAdManager.showImageAd(getActivity(), AdConfigs.APP_FUDONG, ll_ad_entrance, null, new ImageAdCallBack() {
+            @Override
+            public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {
+                if (adView != null) {
+                    ll_ad_entrance.removeAllViews();
+                    ll_ad_entrance.addView(adView);
+                }
+            }
+
+            @Override
+            public void onImageAdError(String error) {
+                LogUtil.e("ImageAdError = " + error);
+            }
+
+            @Override
+            public void onImageAdClose() {
+
+            }
+
+            @Override
+            public boolean onImageAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ArrayList<String> deniedPermission = new ArrayList<>();
+        deniedPermission.clear();
+        for (int i = 0; i < permissions.length; i++) {
+            String permission = permissions[i];
+            int result = grantResults[i];
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                deniedPermission.add(permission);
+            }
+        }
+        if (deniedPermission.isEmpty()) {
+            if (requestCode == CODE_PEELING) {
+                toPeeling();
+            } else {
+
+
+            }
+        } else {
+            new AlertDialog.Builder(getActivity())
+                    .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
+                    .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .setPositiveButton("去授权", (dialog, which) -> {
+                        PermissionUtil.gotoPermission(getActivity());
+                        dialog.dismiss();
+                    }).create()
+                    .show();
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
@@ -9,71 +10,92 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import com.bumptech.glide.Glide;
+
+import com.bumptech.glide.request.target.Target;
+import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
+import com.flyingeffects.com.adapter.CreationBottomPagerAdapter;
+import com.flyingeffects.com.adapter.TemplateGridViewAnimAdapter;
+import com.flyingeffects.com.adapter.TemplateViewPager;
+import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.constans.UiStep;
+import com.flyingeffects.com.databinding.ActCreationTemplateEditBinding;
 import com.flyingeffects.com.enity.ChooseVideoAddSticker;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.DownVideoPath;
+import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.interfaces.view.CreationTemplateMvpView;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
+import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
+import com.flyingeffects.com.ui.interfaces.contract.ICreationTemplateMvpContract;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
 import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.presenter.CreationTemplateMvpPresenter;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
+import com.flyingeffects.com.ui.view.fragment.CreationBackListFragment;
+import com.flyingeffects.com.ui.view.fragment.CreationBottomFragment;
+import com.flyingeffects.com.ui.view.fragment.CreationFrameFragment;
+import com.flyingeffects.com.ui.view.fragment.StickerFragment;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.ScreenCaptureUtil;
 import com.flyingeffects.com.utils.TimeUtils;
-import com.flyingeffects.com.view.MyScrollView;
-import com.flyingeffects.com.view.NoSlidingViewPager;
 import com.flyingeffects.com.view.StickerView;
 import com.flyingeffects.com.view.drag.CreationTemplateProgressBarView;
 import com.flyingeffects.com.view.drag.TemplateMaterialItemView;
 import com.flyingeffects.com.view.drag.TemplateMaterialSeekBarView;
 import com.flyingeffects.com.view.mine.CreateViewForAddText;
-import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.lansosdk.box.ViewLayerRelativeLayout;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.suke.widget.SwitchButton;
+import com.yanzhenjie.album.AlbumFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
-import androidx.appcompat.app.AlertDialog;
-import butterknife.BindView;
-import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 /**
  * description ：用户创作页面,里面主要用了langSong 的工具类，对视频进行贴纸的功能
@@ -82,62 +104,46 @@ import rx.functions.Action1;
  */
 
 
-public class CreationTemplateActivity extends BaseActivity implements CreationTemplateMvpView, TemplateMaterialSeekBarView.SeekBarProgressListener
-        , ViewTreeObserver.OnGlobalLayoutListener {
+public class CreationTemplateActivity extends BaseActivity implements ICreationTemplateMvpContract.ICreationTemplateMvpView, TemplateMaterialSeekBarView.SeekBarProgressListener, CreationBackListFragment.BackChooseListener, StickerFragment.StickerListener, CreationBottomFragment.FinishListener, CreationFrameFragment.FrameChooseListener {
     private static final String TAG = "CreationTemplate";
 
-    @BindView(R.id.rl_creation_container)
-    RelativeLayout mRLContainer;
-    @BindView(R.id.viewPager)
-    NoSlidingViewPager viewPager;
-    @BindView(R.id.ll_progress)
-    LinearLayout mLlProgress;
-    @BindView(R.id.material_SeekBarView)
-    TemplateMaterialSeekBarView mSeekBarView;
-    @BindView(R.id.rl_seek_bar)
-    RelativeLayout mRlSeekBar;
-    @BindView(R.id.progressBarView)
-    CreationTemplateProgressBarView mProgressBarView;
-    /**
-     * 蓝松规定的容器
-     */
-    @BindView(R.id.id_vview_realtime_gllayout)
-    ViewLayerRelativeLayout viewLayerRelativeLayout;
+    public static final String BUNDLE_KEY = "Message";
+    public static final String BUNDLE_KEY_FROM = "from";
+    public static final String BUNDLE_KEY_PATHS = "paths";
+    public static final String BUNDLE_KEY_VIDEO_PATH = "video_path";
+    public static final String BUNDLE_KEY_ORIGINAL_PATH = "originalPath";
+    public static final String BUNDLE_KEY_NEED_CUT = "isNeedCut";
+    public static final String BUNDLE_KEY_TITLE = "bjTemplateTitle";
+    public static final String BUNDLE_KEY_TEMPLATE_ID = "templateId";
+    public static final String BUNDLE_KEY_IS_LANDSCAPE = "isLandscape";
+    public static final String BUNDLE_KEY_BACKGROUND_IMAGE = "backgroundImage";
 
-    @BindView(R.id.ll_space)
-    LinearLayout ll_space;
-    @BindView(R.id.tv_music)
-    TextView tv_music;
-    @BindView(R.id.ll_add_text_style)
-    LinearLayout ll_add_text_style;
-    @BindView(R.id.iv_play)
-    ImageView ivPlay;
-    @BindView(R.id.switch_button)
-    SwitchButton switchButton;
-    @BindView(R.id.tv_total)
-    TextView tv_total;
-    @BindView(R.id.iv_green_background)
-    ImageView iv_green_background;
-    @BindView(R.id.ll_green_background)
-    RelativeLayout ll_green_background;
-    @BindView(R.id.scrollView)
-    MyScrollView scrollView;
-    @BindView(R.id.exo_player)
-    PlayerView playerView;
-    @BindView(R.id.tv_current_time)
-    TextView mTvCurrentTime;
+    public static final int FROM_CREATION_CODE = 0;
+    public static final int FROM_DRESS_UP_BACK_CODE = 1;
+
+    private Context mContext;
+
+    private CreateViewForAddText mCreateViewForAddText;
+
+    private LoadingDialog mLoadingDialog;
+
+    private boolean nowUiIsLandscape = false;
 
     private boolean isEndDestroy = false;
 
     private int templateId;
     private boolean isIntoPause = false;
     public final static int SELECTALBUM = 0;
+
+    private ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener;
+
     /**
      * 源视频地址
      */
     private String originalPath;
     private String imgPath;
-    private CreationTemplateMvpPresenter presenter;
+    private CreationTemplateMvpPresenter mPresenter;
+
     /**
      * 默认背景，也是是否选择了背景的重要判断，
      */
@@ -147,16 +153,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 默认图片背景，""表示绿幕
      */
     private String imageBjPath;
+
     /**
      * 当前预览状态，是否在播放中
      */
     private boolean isPlaying = false;
+
     /**
      * 是否初始化过播放器
      */
     private boolean isInitVideoLayer = false;
     private long allVideoDuration;
     private boolean isPlayComplate = false;
+
     /**
      * 只有背景模板才有，自定义的话这个值为""
      */
@@ -166,6 +175,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 获得背景视频音乐
      */
     private String bgmPath;
+
     private SimpleExoPlayer exoPlayer;
     /**
      * 背景音乐播放器
@@ -179,24 +189,29 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * 是不是点击了加字的tab
      */
     private boolean isClickAddTextTag = false;
+
     /**
      * 素材手动拖动
      */
     boolean mSeekBarViewManualDrag = false;
+
     /**
      * 当前播放的进度
      */
     private long mCutStartTime;
+
     /**
      * 整个视频的结束时间
      */
     private long mCutEndTime;
 
     private long progressBarProgress;
+
     /**
      * 背景音乐播放的开始位置
      */
     private long musicStartTime = 0;
+
     /**
      * 背景音乐第一个素材播放的开始位置
      */
@@ -206,13 +221,28 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     private long musicEndFirstTime = 0;
 
-
     /**
      * 背景音乐播放的结束位置
      */
     private long musicEndTime;
 
     private int musicChooseIndex = 0;
+
+    private int initHeight = 0;//屏幕初始高度
+    private int currentHeight;//调用onGlobalLayout()后，当前屏幕高度
+    private int firstFlag = 0;//虚拟导航栏状态的**首次**变化情况
+    private int status = 0;//虚拟导航栏状态的变化情况
+    private int mFrom;
+
+    private MediaSource mediaSource;
+
+    private ActCreationTemplateEditBinding mBinding;
+
+    /**
+     * 换脸-换背景过来时带的背景图
+     */
+    private String mBackgroundImage;
+    private String mBackGroundTitle;
     /**屏幕初始高度*/
     private int initHeight = 0;
     /**调用onGlobalLayout()后，当前屏幕高度*/
@@ -224,57 +254,134 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_creation_template_edit;
+        return 0;
     }
+
 
 
     @Override
     protected void initView() {
+        mContext = CreationTemplateActivity.this;
+        mBinding = ActCreationTemplateEditBinding.inflate(getLayoutInflater());
+        View view = mBinding.getRoot();
+        setContentView(view);
+
+        mBinding.tvTopSubmit.setText("下一步");
+
         EventBus.getDefault().register(this);
+        mLoadingDialog = buildLoadingDialog();
+        getLifecycle().addObserver(mLoadingDialog);
         LogUtil.d("OOM", "进入到创作页面");
-        ((TextView) findViewById(R.id.tv_top_submit)).setText("下一步");
-        Intent intent = getIntent();
-        Bundle bundle = intent.getBundleExtra("Message");
-        if (bundle != null) {
-            imgPath = bundle.getString("paths");
-            videoPath = bundle.getString("video_path");
-            originalPath = bundle.getString("originalPath");
-            isNeedCut = bundle.getBoolean("isNeedCut");
-            title = bundle.getString("bjTemplateTitle");
-            templateId = bundle.getInt("templateId");
-            nowUiIsLandscape = bundle.getBoolean("isLandscape", false);
-            LogUtil.d("OOM2", "nowUiIsLandscape=" + nowUiIsLandscape);
-        }
-        presenter = new CreationTemplateMvpPresenter(this, this, videoPath, viewLayerRelativeLayout, originalPath, null);
+
+        initBundleData();
+
+        mPresenter = new CreationTemplateMvpPresenter(this, this, videoPath, mBinding.idVviewRealtimeGllayout, originalPath, mFrom);
         LogUtil.d(TAG, "videoPath = " + videoPath);
 
-        if (!TextUtils.isEmpty(videoPath)) {
-            //有视频的时候，初始化视频
-            //todo 改变默认横竖屏，需知视频宽高比 待验证
-            try {
-                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(videoPath);
-                String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-                String height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
-                int w = Integer.parseInt(width);
-                int h = Integer.parseInt(height);
-                LogUtil.d(TAG, "video width = " + width + " video height = " + height);
-                setPlayerViewSize(w > h);
-            } catch (Exception e) {
-                LogUtil.d("e", e.getMessage());
-                setPlayerViewSize(false);
-            }
-            initExo(videoPath);
-        } else {
-            showGreenBj(true);
-        }
-        presenter.statisticsDuration(videoPath, this);
+        setOnClickListener();
 
-        if (nowUiIsLandscape) {
-            new Handler().postDelayed(() -> setPlayerViewSize(nowUiIsLandscape), 500);
-        }
+        setDefaultVideoPlayerView();
+
+        //数据收集
+        mPresenter.statisticsDuration(videoPath, this);
+
+        //是否显示多时间线
         seekBarViewIsShow(true);
-        mProgressBarView.setProgressListener(new CreationTemplateProgressBarView.SeekBarProgressListener() {
+
+        setProgressBarListener();
+
+        mBinding.materialSeekBarView.setProgressListener(this);
+
+        //初始化整体容器，获取高度
+        initCreationContainer();
+
+        setDefaultBottomVisible();
+    }
+
+    /**
+     * 根据不同来源显示不同UI
+     */
+    private void setDefaultBottomVisible() {
+        if (mFrom == FROM_DRESS_UP_BACK_CODE) {
+            mBinding.tvMusic.setVisibility(View.GONE);
+            mBinding.tvAnim.setVisibility(View.GONE);
+            mBinding.tvFrame.setVisibility(View.VISIBLE);
+            mBinding.rlBackImage.setVisibility(View.VISIBLE);
+            mBinding.relativePlayerView.setVisibility(View.GONE);
+            mBinding.llProgress.setVisibility(View.GONE);
+            mBinding.ivChangeUi.setVisibility(View.GONE);
+            mBinding.tvCurrentTime.setVisibility(View.GONE);
+            mBinding.tvTotal.setVisibility(View.GONE);
+            mBinding.rlSeekBar.setVisibility(View.GONE);
+            mBinding.viewPager.setVisibility(View.GONE);
+            mBinding.llGreenBackground.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 初始化整体容器，获取高度
+     */
+    private void initCreationContainer() {
+        mBinding.rlCreationContainer.post(() ->
+                initHeight = mBinding.rlCreationContainer.getHeight());
+
+        mGlobalLayoutListener = () -> {
+            //如果为0，说明获取高度失败，跳出
+            if (initHeight == 0) {
+                return;
+            }
+
+            currentHeight = mBinding.rlCreationContainer.getHeight();
+            if (initHeight > currentHeight) {
+                //初始高度大于当前高度，说明虚拟导航栏由隐藏变为显示
+                //此时，首次变化firstFlag设置为-1，说明首次进入时无导航栏
+                status = -1;
+                firstFlag = -1;
+            } else if (initHeight < currentHeight) {
+                //初始高度小于当前高度，说明虚拟导航栏由显示变为隐藏
+                //此时，首次变化firstFlag设置为1，说明首次进入时有导航栏
+                status = 1;
+                firstFlag = 1;
+            } else {
+                //虚拟导航栏状态未改变
+                //此时，status设置为0
+                status = 0;
+            }
+            //当虚拟导航栏状态发生改变时
+            if (status != 0) {
+                //虚拟导航栏由隐藏变为显示，首次进入时无导航栏
+                if (firstFlag == -1) {
+                    //由隐藏变为显示，H需减去48dp；由显示变为隐藏，即回复初始状态，H不变
+                    if (status < 0) {
+                        if (mCreateViewForAddText != null) {
+                            mCreateViewForAddText.setShowHeight(-1,
+                                    Math.max(initHeight, currentHeight) - Math.min(initHeight, currentHeight));
+                        }
+                    }
+                }
+                //虚拟导航栏由显示变为隐藏，首次进入时有导航栏
+                if (firstFlag == 1) {
+                    //由显示变为隐藏，
+                    if (status > 0) {
+                        if (mCreateViewForAddText != null) {
+                            mCreateViewForAddText.setShowHeight(1, 0);
+                        }
+                    }
+                }
+            }
+            //当前高度currentHeight作为下一次变化前的初始高度initHeight
+            initHeight = currentHeight;
+        };
+
+        mBinding.rlCreationContainer.getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
+    }
+
+
+    /**
+     * 进度条监听
+     */
+    private void setProgressBarListener() {
+        mBinding.progressBarView.setProgressListener(new CreationTemplateProgressBarView.SeekBarProgressListener() {
             @Override
             public void progress(long progress, boolean isDrag) {
                 LogUtil.d("OOM4", "mProgressBarViewProgress=" + progress);
@@ -291,34 +398,41 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 if (isDrag) {
                     mSeekBarViewManualDrag = false;
                 }
+
                 if (!mSeekBarViewManualDrag) {
-                    mSeekBarView.dragScrollView = false;
-                    mSeekBarView.scrollToPosition(progress);
+                    mBinding.materialSeekBarView.dragScrollView = false;
+                    mBinding.materialSeekBarView.scrollToPosition(progress);
                 }
                 progressBarProgress = progress;
-                presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
-                mTvCurrentTime.setText(TimeUtils.timeParse(progress - mCutStartTime) + "s");
+                mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+                mBinding.tvCurrentTime.setText(String.format("%ss", TimeUtils.timeParse(progress - mCutStartTime)));
             }
 
             @Override
             public void cutInterval(long starTime, long endTime, boolean isDirection) {
+
                 if (starTime < mCutStartTime) {
-                    mTvCurrentTime.setText(TimeUtils.timeParse(0) + "s");
+                    mBinding.tvCurrentTime.setText(String.format("%ss", TimeUtils.timeParse(0)));
                     mCutStartTime = starTime;
                 } else {
                     mCutStartTime = starTime;
-                    mTvCurrentTime.setText(TimeUtils.timeParse(progressBarProgress - mCutStartTime) + "s");
+                    mBinding.tvCurrentTime.setText(String.format("%ss", TimeUtils.timeParse(progressBarProgress - mCutStartTime)));
                 }
+
                 mCutEndTime = endTime;
 
-                tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
-                mSeekBarView.setCutStartAndEndTime(starTime, endTime);
+                mBinding.tvTotal.setText(String.format("%ss", TimeUtils.timeParse(mCutEndTime - mCutStartTime)));
+                mBinding.materialSeekBarView.setCutStartAndEndTime(starTime, endTime);
                 stickerTimeLineOffset();
+//                LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
 
                 if (isDirection) {
-                    mSeekBarView.scrollToPosition(starTime);
+                    mBinding.materialSeekBarView.scrollToPosition(starTime);
                     //--------------ztj   解决bug拖动主进度条，素材音乐没修改的情况
                     if (musicStartTime < starTime) {
+//                        musicStartTime = starTime;
+//                        long xx = mCutStartTime - lastmCutTime;
+//                        musicEndTime = musicEndTime - xx;
                         musicStartFirstTime = starTime;
                         musicStartTime = starTime;
                         LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
@@ -327,62 +441,155 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     if (musicEndTime < starTime) {
                         musicEndFirstTime = musicStartTime + 1000;
                         musicEndTime = musicEndFirstTime;
-                        LogUtil.d("oom44", "音乐向后挤musicEndTime=" + musicEndTime+"musicStartTime="+musicStartTime);
+                        LogUtil.d("oom44", "音乐向后挤musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
                     }
-
 
                 } else {
                     LogUtil.d("oom444", "xx=");
-                    mSeekBarView.scrollToPosition(endTime);
+                    mBinding.materialSeekBarView.scrollToPosition(endTime);
                 }
-                presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+
+                mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
             }
 
             @Override
             public void onTouchEnd() {
                 videoToPause();
-                presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
             }
         });
-        mSeekBarView.setProgressListener(this);
-        mRLContainer.post(new Runnable() {
+    }
+
+    /**
+     * 设置默认视频背景
+     */
+    private void setDefaultVideoPlayerView() {
+        //有视频的时候，初始化视频
+        if (!TextUtils.isEmpty(videoPath)) {
+            //改变默认横竖屏，需知视频宽高比
+            boolean isLandscape = getDefaultPlayerViewSize();
+            setPlayerViewSize(isLandscape);
+            initExo(videoPath);
+
+        } else {
+            setImageBackSize(false);
+            //无视频但有背景图，处理换背景
+            changeImageBack();
+        }
+        //从前一个页面设置的横竖屏判断
+        if (nowUiIsLandscape) {
+            new Handler().postDelayed(() -> setPlayerViewSize(nowUiIsLandscape), 500);
+        }
+    }
+
+    /**
+     * 判断当前是横屏竖屏
+     */
+    private boolean getDefaultPlayerViewSize() {
+        try {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(videoPath);
+            String width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+            String height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+
+            int w = Integer.parseInt(width);
+            int h = Integer.parseInt(height);
+
+            LogUtil.d(TAG, "video width = " + width + " video height = " + height);
+            return w > h;
+        } catch (Exception e) {
+            LogUtil.d("e", e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 将线上图片下载到本地缓存
+     */
+    private void downloadBackImage() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                initHeight = mRLContainer.getHeight();
+                File file = null;
+                try {
+                    file = Glide.with(BaseApplication.getInstance()).load(mBackgroundImage)
+                            .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                            .get();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                imageBjPath = file.getPath();
             }
-        });
-        mRLContainer.getViewTreeObserver().addOnGlobalLayoutListener(this);
+        }).start();
+
     }
 
-    private void seekBarViewIsShow(boolean isShow) {
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mLlProgress.getLayoutParams();
-        if (isShow) {
-            layoutParams.addRule(RelativeLayout.ABOVE, R.id.rl_seek_bar);
-            viewPager.setVisibility(View.GONE);
-            mRlSeekBar.setVisibility(View.VISIBLE);
-        } else {
-            layoutParams.addRule(RelativeLayout.ABOVE, R.id.viewPager);
-            viewPager.setVisibility(View.VISIBLE);
-            mRlSeekBar.setVisibility(View.GONE);
+
+    /**
+     * 初始化页面跳转数据
+     */
+    private void initBundleData() {
+        Intent intent = getIntent();
+        Bundle bundle = intent.getBundleExtra(BUNDLE_KEY);
+        if (bundle != null) {
+            mFrom = bundle.getInt(BUNDLE_KEY_FROM);
+            imgPath = bundle.getString(BUNDLE_KEY_PATHS);
+            videoPath = bundle.getString(BUNDLE_KEY_VIDEO_PATH);
+            originalPath = bundle.getString(BUNDLE_KEY_ORIGINAL_PATH);
+            isNeedCut = bundle.getBoolean(BUNDLE_KEY_NEED_CUT);
+            title = bundle.getString(BUNDLE_KEY_TITLE);
+            templateId = bundle.getInt(BUNDLE_KEY_TEMPLATE_ID);
+            nowUiIsLandscape = bundle.getBoolean(BUNDLE_KEY_IS_LANDSCAPE, false);
+            mBackgroundImage = bundle.getString(BUNDLE_KEY_BACKGROUND_IMAGE);
+            LogUtil.d("OOM2", "nowUiIsLandscape=" + nowUiIsLandscape);
         }
-        mLlProgress.setLayoutParams(layoutParams);
     }
 
-    private MediaSource mediaSource;
+    /**
+     * 是否显示多时间线
+     *
+     * @param isShow
+     */
+    private void seekBarViewIsShow(boolean isShow) {
+        if (mFrom != FROM_DRESS_UP_BACK_CODE) {
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mBinding.llProgress.getLayoutParams();
+            if (isShow) {
+                layoutParams.addRule(RelativeLayout.ABOVE, R.id.rl_seek_bar);
+                mBinding.viewPager.setVisibility(View.GONE);
+                mBinding.rlSeekBar.setVisibility(View.VISIBLE);
+            } else {
+                layoutParams.addRule(RelativeLayout.ABOVE, R.id.viewPager);
+                mBinding.viewPager.setVisibility(View.VISIBLE);
+                mBinding.rlSeekBar.setVisibility(View.GONE);
+            }
+            mBinding.llProgress.setLayoutParams(layoutParams);
+        }
+
+    }
+
+    private LoadingDialog buildLoadingDialog() {
+        return LoadingDialog.getBuilder(mContext)
+                .setHasAd(true)
+                .setTitle("飞闪预览处理中")
+                .setMessage("请耐心等待，不要离开")
+                .build();
+    }
+
 
     private void initExo(String videoPath) {
         if (TextUtils.isEmpty(videoPath)) {
             return;
         }
 
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(CreationTemplateActivity.this);
-        playerView.setPlayer(exoPlayer);
+        exoPlayer = new SimpleExoPlayer.Builder(mContext)
+                .build();
+        mBinding.exoPlayer.setPlayer(exoPlayer);
         //不使用控制器
-        playerView.setUseController(false);
+        mBinding.exoPlayer.setUseController(false);
         exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF);
         exoPlayer.addListener(new Player.EventListener() {
             @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            public void onPlaybackStateChanged(int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_READY:
                         break;
@@ -396,29 +603,32 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 }
             }
         });
+
         mediaSource = new ProgressiveMediaSource.Factory(
                 new DefaultDataSourceFactory(CreationTemplateActivity.this, "exoplayer-codelab")).
-                createMediaSource(Uri.fromFile(new File(videoPath)));
+                createMediaSource(new MediaItem.Builder()
+                        .setUri(Uri.fromFile(new File(videoPath))).build());
 
-        exoPlayer.prepare(mediaSource, true, false);
-        videoPause();
+        exoPlayer.setMediaSource(mediaSource, true);
+        exoPlayer.prepare();
+
+        pauseExoPlayer();
     }
 
     private void videoToStart() {
         isPlayComplate = true;
         endTimer();
         isPlaying = false;
-        presenter.showGifAnim(false);
-        videoPause();
+        mPresenter.showGifAnim(false);
         videoToPause();
         seekToVideo(mCutStartTime);
         seekToMusic(mCutStartTime);
         nowStateIsPlaying(false);
-        presenter.showAllAnim(false);
+        mPresenter.showAllAnim(false);
     }
 
 
-    private void videoPause() {
+    private void pauseExoPlayer() {
         if (exoPlayer != null) {
             LogUtil.d("video", "videoPause");
             exoPlayer.setPlayWhenReady(false);
@@ -457,7 +667,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    videoPause();
+                    pauseExoPlayer();
                     destroyTimer();
                 }
             }, 200);
@@ -467,250 +677,371 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     protected void initAction() {
-        presenter.initStickerView(imgPath, originalPath);
-        presenter.initBottomLayout(viewPager, getSupportFragmentManager());
+        mPresenter.initStickerView(imgPath, originalPath);
+
+        initBottomLayout();
+
+        //设置预览界面大小
         initViewLayerRelative();
-        switchButton.setOnCheckedChangeListener((view, isChecked) -> {
+        setSwitchBtnCheckedListener();
+    }
+
+    private void setSwitchBtnCheckedListener() {
+        mBinding.switchButton.setOnCheckedChangeListener((view, isChecked) -> {
             if (isChecked) {
                 if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutopen");
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutopen");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutopen");
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutopen");
                 }
             } else {
                 if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutoff");
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "5_mb_bj_Cutoutoff");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutoff");
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "6_customize_bj_Cutoutoff");
                 }
             }
-            presenter.CheckedChanged(isChecked);
+
+            mPresenter.checkedChanged(isChecked);
         });
     }
 
+    private void setOnClickListener() {
+        mBinding.tvTopSubmit.setOnClickListener(this::onViewClicked);
+        mBinding.llPlay.setOnClickListener(this::onViewClicked);
+        mBinding.vAddText.ivDeleteAllText.setOnClickListener(this::onViewClicked);
+        mBinding.ivAddSticker.setOnClickListener(this::onViewClicked);
+        mBinding.ivTopBack.setOnClickListener(this::onViewClicked);
+        mBinding.ivChangeUi.setOnClickListener(this::onViewClicked);
+        mBinding.tvBackground.setOnClickListener(this::onViewClicked);
+        mBinding.tvMusic.setOnClickListener(this::onViewClicked);
+        mBinding.tvAnim.setOnClickListener(this::onViewClicked);
+        mBinding.tvTiezhi.setOnClickListener(this::onViewClicked);
+        mBinding.tvAddText.setOnClickListener(this::onViewClicked);
+        mBinding.rlCreationContainer.setOnClickListener(this::onViewClicked);
+        mBinding.tvFrame.setOnClickListener(this::onViewClicked);
+    }
 
-    boolean nowUiIsLandscape = false;
-
-    @Override
-    @OnClick({R.id.tv_top_submit, R.id.ll_play, R.id.iv_delete_all_text, R.id.iv_add_sticker, R.id.iv_top_back,
-            R.id.iv_change_ui, R.id.tv_background, R.id.tv_music, R.id.tv_anim, R.id.tv_tiezhi, R.id.tv_add_text,
-            R.id.rl_creation_container})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_top_submit:
-                DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
-                DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
-                if (isPlaying) {
-                    videoToPause();//submit
-                    pauseBgmMusic();
-                    endTimer();
-                }
-                if (!TextUtils.isEmpty(title)) {
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_save", title);
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_save");
-                }
-
-                if (UiStep.isFromDownBj) {
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Preview");
-                } else {
-                    statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
-                }
-                if(musicChooseIndex==2){
-                    musicEndTime=allVideoDuration;
-                    musicStartTime=0;
-                }
-                presenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutStartTime, mCutEndTime, title);
-                seekBarViewIsShow(true);
-                break;
-
-            case R.id.iv_delete_all_text:
-                presenter.deleteAllTextSticker();
-                if (createViewForAddText != null) {
-                    createViewForAddText.hideInputTextDialog();
-                }
-                break;
-
-
-//            case R.id.id_vview_realtime_gllayout:
-//                presenter.onclickRelativeLayout();
-//                break;
-
-
-            case R.id.ll_play:
-                if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
-                    if (isPlaying) {
-                        pauseBgmMusic();
-                        isIntoPause = false;
-                        isPlayComplate = false;
-                        videoToPause();//点击播放暂定
-                        presenter.showGifAnim(false);
-                        isPlaying = false;
-                        nowStateIsPlaying(false);
-                        presenter.showAllAnim(false);
-                    } else {
-                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, " 14_preview_video_bj");
-                        WaitingDialog.openPragressDialog(this);
-                        new Thread(() -> presenter.showAllAnim(true)).start();
-                    }
-                    mSeekBarViewManualDrag = false;
-                }
-                break;
-            case R.id.tv_music:
-                seekBarViewIsShow(false);
-                presenter.chooseAnim(2);
-                setTextColor(2);
-                isClickAddTextTag = false;
-                break;
-            case R.id.tv_add_text:
-                seekBarViewIsShow(false);
-                presenter.addTextSticker();
-                intoTextStyleDialog("");
-                isClickAddTextTag = true;
-                statisticsEventAffair.getInstance().setFlag(this, "20_bj_text");
-                break;
-            case R.id.iv_top_back:
-                onBackPressed();
-                break;
-            case R.id.iv_add_sticker:
-                if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
-                    presenter.showAllAnim(false);
-                    if (isPlaying) {
-                        videoToPause();//添加贴纸
-                        isPlaying = false;
-                        endTimer();
-                        presenter.showGifAnim(false);
-                        nowStateIsPlaying(false);
-                    }
-                    if (UiStep.isFromDownBj) {
-                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_material");
-                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_material");
-                    } else {
-                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_material");
-                        statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
-                    }
-                    //添加新的贴纸，这里的贴纸就是用户选择的贴纸
-                    AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
-                        Log.d("OOM", "isCancel=" + isCancel);
-                        if (!isCancel) {
-                            //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址
-                            String path = paths.get(0);
-                            String pathType = GetPathTypeModel.getInstance().getMediaType(path);
-                            if (albumType.isImage(pathType)) {
-                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage");
-                                CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
-                                    presenter.addNewSticker(tailorPaths.get(0), paths.get(0));
-                                });
-                                manage.toMatting(paths);
-                            } else {
-                                //贴纸选择的视频
-                                intoVideoCropActivity(paths.get(0));
-                                statisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo");
-                            }
-                        }
-                    }, "");
-                }
-                break;
-            case R.id.tv_background:
-                Intent intent = new Intent(
-                        this, ChooseBackgroundTemplateActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                isClickAddTextTag = false;
-                break;
-            case R.id.tv_anim:
-                seekBarViewIsShow(false);
-                presenter.chooseAnim(1);
-                setTextColor(1);
-                isClickAddTextTag = false;
-                break;
-            case R.id.tv_tiezhi:
-                seekBarViewIsShow(false);
-                presenter.chooseAnim(0);
-                setTextColor(0);
-                isClickAddTextTag = false;
-                break;
-            case R.id.iv_change_ui:
-                //横竖屏切换
-                nowUiIsLandscape = !nowUiIsLandscape;
-                setPlayerViewSize(nowUiIsLandscape);
-                break;
-            case R.id.rl_creation_container:
-                mProgressBarView.hindArrow();
-                break;
-            default:
-                break;
+    private void onViewClicked(View view) {
+        if (view == mBinding.tvTopSubmit) {
+            submitCreation();
+        } else if (view == mBinding.llPlay) {
+            onPlayClick();
+        } else if (view == mBinding.vAddText.ivDeleteAllText) {
+            deleteAllText();
+        } else if (view == mBinding.ivAddSticker) {
+            addSticker();
+        } else if (view == mBinding.ivTopBack) {
+            onBackPressed();
+        } else if (view == mBinding.tvMusic) {
+            onClickMusicBtn();
+        } else if (view == mBinding.tvAddText) {
+            addText();
+        } else if (view == mBinding.tvBackground) {
+            onClickBackGroundBtn();
+        } else if (view == mBinding.tvAnim) {
+            chooseAnimBtn();
+        } else if (view == mBinding.tvTiezhi) {
+            chooseStickerBtn();
+        } else if (view == mBinding.ivChangeUi) {
+            changeLandscape();
+        } else if (view == mBinding.rlCreationContainer) {
+            mBinding.progressBarView.hindArrow();
+        } else if (view == mBinding.tvFrame) {
+            choosePhotoFrame();
         }
     }
 
 
-    CreateViewForAddText createViewForAddText;
+    /**
+     * 选择相框
+     */
+    private void choosePhotoFrame() {
+        seekBarViewIsShow(false);
+        chooseAnim(1);
+        setTextColor(5);
+        isClickAddTextTag = false;
+    }
+
+    /**
+     * 横竖屏切换
+     */
+    private void changeLandscape() {
+        //横竖屏切换
+        nowUiIsLandscape = !nowUiIsLandscape;
+        if (mFrom == FROM_DRESS_UP_BACK_CODE) {
+            setImageBackSize(nowUiIsLandscape);
+        } else {
+            setPlayerViewSize(nowUiIsLandscape);
+        }
+    }
+
+    /**
+     * 选择贴纸
+     */
+    private void chooseStickerBtn() {
+        seekBarViewIsShow(false);
+        if (mFrom == FROM_DRESS_UP_BACK_CODE) {
+            chooseAnim(2);
+        } else {
+            chooseAnim(0);
+        }
+        setTextColor(0);
+        isClickAddTextTag = false;
+    }
+
+    /**
+     * 选择动画
+     */
+    private void chooseAnimBtn() {
+        seekBarViewIsShow(false);
+        chooseAnim(1);
+        setTextColor(1);
+        isClickAddTextTag = false;
+    }
+
+    /**
+     * 选择背景
+     */
+    private void chooseBackground() {
+        Intent intent = new Intent(
+                this, ChooseBackgroundTemplateActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        isClickAddTextTag = false;
+    }
+
+    /**
+     * 添加文字
+     */
+    private void addText() {
+        mBinding.viewPager.setVisibility(View.GONE);
+        seekBarViewIsShow(false);
+        mPresenter.addTextSticker();
+        intoTextStyleDialog("");
+        isClickAddTextTag = true;
+        if (mFrom == FROM_DRESS_UP_BACK_CODE) {
+            StatisticsEventAffair.getInstance().setFlag(this, "st_bj_text");
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(this, "20_bj_text");
+        }
+    }
+
+    public void chooseAnim(int pageNum) {
+        mBinding.viewPager.setCurrentItem(pageNum);
+        mBinding.viewPager.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 选择音乐
+     */
+    private void onClickMusicBtn() {
+        seekBarViewIsShow(false);
+        chooseAnim(2);
+        setTextColor(2);
+        isClickAddTextTag = false;
+    }
+
+    /**
+     * 选择背景 相框页面
+     */
+    private void onClickBackGroundBtn() {
+        if (mFrom == FROM_CREATION_CODE) {
+            chooseBackground();
+        } else if (mFrom == FROM_DRESS_UP_BACK_CODE) {
+            chooseBackgroundDressUp();
+        }
+    }
+
+    private void chooseBackgroundDressUp() {
+        seekBarViewIsShow(false);
+        chooseAnim(0);
+        setTextColor(4);
+        isClickAddTextTag = false;
+    }
+
+    /**
+     * 点击添加贴纸按钮
+     */
+    private void addSticker() {
+        if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+            mPresenter.showAllAnim(false);
+            if (isPlaying) {
+                videoToPause();//添加贴纸
+                isPlaying = false;
+                endTimer();
+                mPresenter.showGifAnim(false);
+                nowStateIsPlaying(false);
+            }
+            if (UiStep.isFromDownBj) {
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_material");
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_material");
+            } else {
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_material");
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_material");
+            }
+            //添加新的贴纸，这里的贴纸就是用户选择的贴纸
+            AlbumManager.chooseAlbum(this, 1, SELECTALBUM, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
+                Log.d("OOM", "isCancel=" + isCancel);
+                if (!isCancel) {
+                    //如果是选择的视频，就需要得到封面，然后设置在matting里面去，然后吧原图设置为视频地址
+                    String path = paths.get(0);
+                    String pathType = GetPathTypeModel.getInstance().getMediaType(path);
+                    if (AlbumType.isImage(pathType)) {
+                        StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_SelectImage");
+                        CompressionCuttingManage manage = new CompressionCuttingManage(CreationTemplateActivity.this, "", tailorPaths -> {
+                            mPresenter.addNewSticker(tailorPaths.get(0), paths.get(0));
+                        });
+                        manage.toMatting(paths);
+                    } else {
+                        //贴纸选择的视频
+                        intoVideoCropActivity(paths.get(0));
+                        StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Selectvideo");
+                    }
+                }
+            }, "");
+        }
+    }
+
+    /**
+     * 删除所有文字贴纸
+     */
+    private void deleteAllText() {
+        mPresenter.deleteAllTextSticker();
+        if (mCreateViewForAddText != null) {
+            mCreateViewForAddText.hideInputTextDialog();
+        }
+    }
+
+    /**
+     * 提交完成品
+     */
+    private void submitCreation() {
+        if (mFrom == FROM_DRESS_UP_BACK_CODE) {
+            keepPicture();
+            if (TextUtils.isEmpty(mBackGroundTitle)) {
+                mBackGroundTitle = title;
+            }
+            StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "st_bj_save", mBackGroundTitle);
+        } else {
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
+            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
+            if (isPlaying) {
+                videoToPause();//submit
+                pauseBgmMusic();
+                endTimer();
+            }
+            if (!TextUtils.isEmpty(title)) {
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "5_mb_bj_save", title);
+            } else {
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "6_customize_bj_save");
+            }
+
+            if (UiStep.isFromDownBj) {
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "7_Preview");
+            } else {
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, "8_Preview");
+            }
+
+            if (musicChooseIndex == 2) {
+                musicEndTime = allVideoDuration;
+                musicStartTime = 0;
+            }
+
+            mPresenter.toSaveVideo(imageBjPath, nowUiIsLandscape, percentageH, templateId, musicStartTime, musicEndTime, mCutStartTime, mCutEndTime, title);
+            seekBarViewIsShow(true);
+        }
+
+    }
+
+    /**
+     * 点击播放按键时
+     */
+    private void onPlayClick() {
+        if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
+            if (isPlaying) {
+                pauseBgmMusic();
+                isIntoPause = false;
+                isPlayComplate = false;
+                videoToPause();//点击播放暂定
+                mPresenter.showGifAnim(false);
+                isPlaying = false;
+                nowStateIsPlaying(false);
+                mPresenter.showAllAnim(false);
+            } else {
+                StatisticsEventAffair.getInstance().setFlag(CreationTemplateActivity.this, " 14_preview_video_bj");
+                WaitingDialog.openPragressDialog(this);
+                new Thread(() -> mPresenter.showAllAnim(true)).start();
+            }
+            mSeekBarViewManualDrag = false;
+        }
+    }
+
 
     private void intoTextStyleDialog(String inputText) {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
-            if (createViewForAddText != null) {
-                createViewForAddText.hideInputTextDialog();
-                createViewForAddText = null;
+            if (mCreateViewForAddText != null) {
+                mCreateViewForAddText.hideInputTextDialog();
+                mCreateViewForAddText = null;
             }
-            ll_add_text_style.setVisibility(View.VISIBLE);
-            createViewForAddText = new CreateViewForAddText(this, ll_add_text_style, new CreateViewForAddText.downCallback() {
+
+            mBinding.vAddText.llAddTextStyle.setVisibility(View.VISIBLE);
+            mCreateViewForAddText = new CreateViewForAddText(this, mBinding.vAddText.llAddTextStyle, new CreateViewForAddText.downCallback() {
                 @Override
                 public void isSuccess(String path, int type, String title) {
-                    presenter.ChangeTextStyle(path, type, title);
+                    mPresenter.changeTextStyle(path, type, title);
                 }
 
                 @Override
                 public void setText(String text) {
-                    presenter.ChangeTextLabe(text);
+                    mPresenter.changeTextLabe(text);
                     if (TextUtils.isEmpty(text)) {
-                        if (createViewForAddText != null) {
-                            createViewForAddText.hideInputTextDialog();
-                            createViewForAddText = null;
+                        if (mCreateViewForAddText != null) {
+                            mCreateViewForAddText.hideInputTextDialog();
+                            mCreateViewForAddText = null;
                         }
                     }
                 }
 
                 @Override
                 public void hindAddTextStickerView() {
-                    for (int i = 0; i < lin_Id.length; i++) {
-                        ((TextView) findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
+                    for (int value : LIN_ID) {
+                        ((TextView) findViewById(value)).setTextColor(getResources().getColor(R.color.white));
                     }
                     seekBarViewIsShow(true);
-                    mSeekBarView.scrollToTheBottom();
+                    mBinding.materialSeekBarView.scrollToTheBottom();
                 }
 
                 @Override
                 public void setTextColor(String color0, String color1, String title) {
                     LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1);
-                    presenter.ChangeTextColor(color0, color1, title);
+                    mPresenter.changeTextColor(color0, color1, title);
                 }
 
                 @Override
                 public void isSuccess(String textBjPath, String textFramePath, String frameTitle) {
                     LogUtil.d("OOM4", "textBjPath=" + textBjPath + "textFramePath=" + textFramePath + "frameTitle" + frameTitle);
-                    presenter.ChangeTextFrame(textBjPath, textFramePath, frameTitle);
+                    mPresenter.changeTextFrame(textBjPath, textFramePath, frameTitle);
                 }
 
                 @Override
                 public void isSuccess(String color0, String color1, String textFramePath, String frameTitle) {
                     LogUtil.d("OOM4", "color0=" + color0 + "color1=" + color1 + "textFramePath" + textFramePath + "frameTitle" + frameTitle);
-                    presenter.ChangeTextFrame(color0, color1, textFramePath, frameTitle);
+                    mPresenter.changeTextFrame(color0, color1, textFramePath, frameTitle);
                 }
             });
-            createViewForAddText.showBottomSheetDialog(inputText, "bj_template");
+            mCreateViewForAddText.showBottomSheetDialog(inputText, "bj_template");
         }
     }
 
-    private int[] lin_Id = {R.id.tv_tiezhi, R.id.tv_anim, R.id.tv_music, R.id.tv_add_text};
+    private static final int[] LIN_ID = {R.id.tv_tiezhi, R.id.tv_anim, R.id.tv_music, R.id.tv_add_text, R.id.tv_background, R.id.tv_frame};
 
     private void setTextColor(int chooseItem) {
-        for (int i = 0; i < lin_Id.length; i++) {
-            ((TextView) findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
+        for (int value : LIN_ID) {
+            ((TextView) findViewById(value)).setTextColor(ContextCompat.getColor(mContext, R.color.white));
         }
-        ((TextView) findViewById(lin_Id[chooseItem])).setTextColor(Color.parseColor("#5496FF"));
-
+        ((TextView) findViewById(LIN_ID[chooseItem])).setTextColor(Color.parseColor("#5496FF"));
     }
-
 
     private void intoVideoCropActivity(String path) {
         Intent intent = new Intent(CreationTemplateActivity.this, VideoCropActivity.class);
@@ -720,23 +1051,21 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         startActivity(intent);
     }
 
-
     private void videoToPause() {
         LogUtil.d("OOM44", "videoToPause");
-        videoPause();
-        presenter.intoOnPause();
+        pauseExoPlayer();
+        mPresenter.intoOnPause();
         isPlaying = false;
         endTimer();
-        presenter.showGifAnim(false);
+        mPresenter.showGifAnim(false);
         nowStateIsPlaying(false);
     }
 
-
     private void nowStateIsPlaying(boolean isPlaying) {
         if (isPlaying) {
-            ivPlay.setImageResource(R.mipmap.pause);
+            mBinding.ivPlay.setImageResource(R.mipmap.pause);
         } else {
-            ivPlay.setImageResource(R.mipmap.iv_play_creation);
+            mBinding.ivPlay.setImageResource(R.mipmap.iv_play_creation);
         }
     }
 
@@ -747,16 +1076,26 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      * author: 张同举 @邮箱 jutongzhang@sina.com
      */
     private void initViewLayerRelative() {
-        ViewGroup.LayoutParams relativeLayoutParams = viewLayerRelativeLayout.getLayoutParams();
+        ViewGroup.LayoutParams relativeLayoutParams = mBinding.idVviewRealtimeGllayout.getLayoutParams();
+        ViewGroup.LayoutParams relativeLayoutParams2 = mBinding.relativeContentAllContent2.getLayoutParams();
+
         float oriRatio;
         oriRatio = 9f / 16f;
         //保证获得mContainer大小不为0
-        viewLayerRelativeLayout.post(() -> {
-            int oriHeight = viewLayerRelativeLayout.getHeight();
+        mBinding.idVviewRealtimeGllayout.post(() -> {
+            int oriHeight = mBinding.idVviewRealtimeGllayout.getHeight();
             relativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
             relativeLayoutParams.height = oriHeight;
-            viewLayerRelativeLayout.setLayoutParams(relativeLayoutParams);
+            mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams);
+            mBinding.relativeContentAllContent2.setLayoutParams(relativeLayoutParams);
+            mBinding.relativeContentAllContent2.setGravity(Gravity.CENTER_HORIZONTAL);
+            mBinding.relativeContentAllContent.setGravity(Gravity.CENTER_HORIZONTAL);
+            relativeLayoutParams2.width = relativeLayoutParams.width;
+            relativeLayoutParams2.height = relativeLayoutParams.height;
+            mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+            mBinding.llContentPatents.setGravity(Gravity.CENTER_HORIZONTAL);
         });
+
 
         if (!TextUtils.isEmpty(videoPath)) {
             setBJVideoPath(false);
@@ -772,24 +1111,24 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         MediaInfo mediaInfo = new MediaInfo(videoPath);
         mediaInfo.prepare();
         allVideoDuration = (long) (mediaInfo.vDuration * 1000);
-        mProgressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        mBinding.progressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                mProgressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mBinding.progressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
-                tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
-                mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
+                mBinding.tvTotal.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
+                mBinding.progressBarView.addProgressBarView(allVideoDuration, videoPath);
                 if (isModifyMaterialTimeLine) {
                     LogUtil.d("OOM44", "11111");
                     musicStartTime = mCutStartTime;
                     musicEndTime = mCutEndTime;
-                    mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
-                    mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
-                    for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
-                        for (int j = 0; j < mSeekBarView.getTemplateMaterialItemViews().size(); j++) {
-                            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-                            TemplateMaterialItemView itemView = mSeekBarView.getTemplateMaterialItemViews().get(j);
+                    mBinding.materialSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
+                    mBinding.materialSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
+                    for (int i = 0; i < mBinding.idVviewRealtimeGllayout.getChildCount(); i++) {
+                        for (int j = 0; j < mBinding.materialSeekBarView.getTemplateMaterialItemViews().size(); j++) {
+                            StickerView stickerView = (StickerView) mBinding.idVviewRealtimeGllayout.getChildAt(i);
+                            TemplateMaterialItemView itemView = mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(j);
                             if (itemView != null) {
                                 if (TextUtils.equals(String.valueOf(itemView.getIdentityID()), String.valueOf(stickerView.getStickerNoIncludeAnimId()))) {
                                     stickerView.setShowStickerStartTime(itemView.getStartTime());
@@ -802,45 +1141,48 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
         });
         mediaInfo.release();
-        mSeekBarView.setGreenScreen(false);
+        mBinding.materialSeekBarView.setGreenScreen(false);
     }
 
     boolean isInitImageBj = false;
 
     private void showGreenBj(boolean isInitialize) {
-        ll_green_background.setVisibility(View.VISIBLE);
-        iv_green_background.setVisibility(View.VISIBLE);
+
+        mBinding.llGreenBackground.setVisibility(View.VISIBLE);
+        mBinding.ivGreenBackground.setVisibility(View.VISIBLE);
+
         if (isInitialize) {
             if (!isInitImageBj) {
                 float oriRatio = 9f / 16f;
                 //保证获得mContainer大小不为0
-                RelativeLayout.LayoutParams RelativeLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
                 //如果没有选择下载视频，那么就是自定义视频入口进来，那么默认为绿布
-                iv_green_background.post(() -> {
-                    int oriHeight = iv_green_background.getHeight();
-                    RelativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
-                    RelativeLayoutParams.height = oriHeight;
-                    iv_green_background.setLayoutParams(RelativeLayoutParams);
+                mBinding.ivGreenBackground.post(() -> {
+                    int oriHeight = mBinding.llSpace.getHeight();
+                    LogUtil.d(TAG, "ivGreenBackground height = " + oriHeight);
+                    relativeLayoutParams.width = Math.round(1f * oriHeight * oriRatio);
+                    relativeLayoutParams.height = oriHeight;
+                    mBinding.ivGreenBackground.setLayoutParams(relativeLayoutParams);
                 });
                 isInitImageBj = true;
             }
         } else {
             setPlayerViewSize(nowUiIsLandscape);
         }
-        presenter.initVideoProgressView();
-        mProgressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        mPresenter.initVideoProgressView();
+
+        mBinding.progressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                mProgressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mBinding.progressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
-                tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
-                mProgressBarView.addProgressBarView(allVideoDuration, "");
+                mBinding.tvTotal.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
+                mBinding.progressBarView.addProgressBarView(allVideoDuration, "");
             }
         });
-        mSeekBarView.setGreenScreen(true);
+        mBinding.materialSeekBarView.setGreenScreen(true);
     }
-
 
     /**
      * description ：设置播放器尺寸,如果不设置的话会出现黑屏，因为外面嵌套了ScrollView
@@ -852,124 +1194,269 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void setPlayerViewSize(boolean isLandscape) {
 
-        videoToPause();//切换横竖屏
-        LinearLayout.LayoutParams relativeLayoutParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
+        videoToPause();
+        //切换横竖屏
+        LinearLayout.LayoutParams relativeLayoutParams = (LinearLayout.LayoutParams) mBinding.exoPlayer.getLayoutParams();
         float oriRatio = 9f / 16f;
+
         if (isLandscape) {
             //横屏的情况
-            scrollView.post(() -> {
-                int oriWidth = ll_space.getWidth();
-                RelativeLayout.LayoutParams relativeLayoutParams2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
+            mBinding.scrollView.post(() -> {
+                int oriWidth = mBinding.llSpace.getWidth();
+                RelativeLayout.LayoutParams relativeLayoutParams2 = (RelativeLayout.LayoutParams) mBinding.scrollView.getLayoutParams();
                 relativeLayoutParams2.width = oriWidth;
                 relativeLayoutParams2.height = Math.round(1f * oriWidth * oriRatio);
-                scrollView.setLayoutParams(relativeLayoutParams2);
+                mBinding.scrollView.setLayoutParams(relativeLayoutParams2);
                 relativeLayoutParams.width = oriWidth;
                 relativeLayoutParams.height = Math.round(1f * oriWidth / oriRatio);
-                playerView.setLayoutParams(relativeLayoutParams);
+                mBinding.exoPlayer.setLayoutParams(relativeLayoutParams);
                 //设置预览编辑界面
-                viewLayerRelativeLayout.setLayoutParams(relativeLayoutParams2);
+                mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+                RelativeLayout.LayoutParams contentParam = (RelativeLayout.LayoutParams) mBinding.relativeContentAllContent2.getLayoutParams();
+                contentParam.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                contentParam.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                contentParam.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+                mBinding.relativeContentAllContent2.setLayoutParams(contentParam);
+
             });
         } else {
             //横屏模式下切换到了竖屏
-            scrollView.post(() -> {
-                RelativeLayout.LayoutParams relativeLayoutParams2 = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
-                int height = ll_space.getHeight();
+            mBinding.scrollView.post(() -> {
+                RelativeLayout.LayoutParams relativeLayoutParams2 = (RelativeLayout.LayoutParams) mBinding.scrollView.getLayoutParams();
+
+                int height = mBinding.llSpace.getHeight();
                 relativeLayoutParams2.height = height;
                 relativeLayoutParams2.width = Math.round(1f * height * oriRatio);
-                scrollView.setLayoutParams(relativeLayoutParams2);
+                mBinding.scrollView.setLayoutParams(relativeLayoutParams2);
+
                 relativeLayoutParams.width = Math.round(1f * height * oriRatio);
                 relativeLayoutParams.height = height;
-                playerView.setLayoutParams(relativeLayoutParams);
+                mBinding.exoPlayer.setLayoutParams(relativeLayoutParams);
                 //设置预览编辑界面
-                viewLayerRelativeLayout.setLayoutParams(relativeLayoutParams2);
+                mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+                RelativeLayout.LayoutParams contentParam = (RelativeLayout.LayoutParams) mBinding.relativeContentAllContent2.getLayoutParams();
+                contentParam.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                contentParam.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                contentParam.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+                mBinding.relativeContentAllContent2.setLayoutParams(contentParam);
+
+
             });
         }
 
 
-        if (ll_green_background.getVisibility() == View.VISIBLE) {
+        if (mBinding.llGreenBackground.getVisibility() == View.VISIBLE) {
             //可见的时候需要修稿这里
             Observable.just(isLandscape).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> {
                 if (isLandscape) {
                     //横屏的情况
-                    iv_green_background.post(() -> {
-                        int oriWidth = ll_space.getWidth();
-                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+                    mBinding.ivGreenBackground.post(() -> {
+                        int oriWidth = mBinding.llSpace.getWidth();
+
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) mBinding.llGreenBackground.getLayoutParams();
                         relativeLayoutParams3.width = oriWidth;
                         relativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
-                        ll_green_background.setLayoutParams(relativeLayoutParams3);
-                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                        mBinding.llGreenBackground.setLayoutParams(relativeLayoutParams3);
+
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) mBinding.ivGreenBackground.getLayoutParams();
                         relativeLayoutParams4.width = oriWidth;
                         relativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
-                        iv_green_background.setLayoutParams(relativeLayoutParams4);
+                        mBinding.ivGreenBackground.setLayoutParams(relativeLayoutParams4);
                     });
                 } else {
-                    iv_green_background.post(() -> {
-                        int oriHeight = ll_space.getHeight();
-                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) ll_green_background.getLayoutParams();
+
+                    mBinding.ivGreenBackground.post(() -> {
+                        int oriHeight = mBinding.llSpace.getHeight();
+
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) mBinding.llGreenBackground.getLayoutParams();
                         relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
                         relativeLayoutParams3.height = oriHeight;
-                        ll_green_background.setLayoutParams(relativeLayoutParams3);
-                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) iv_green_background.getLayoutParams();
+                        mBinding.llGreenBackground.setLayoutParams(relativeLayoutParams3);
+
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) mBinding.ivGreenBackground.getLayoutParams();
                         relativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
                         relativeLayoutParams4.height = oriHeight;
-                        iv_green_background.setLayoutParams(relativeLayoutParams4);
+                        mBinding.ivGreenBackground.setLayoutParams(relativeLayoutParams4);
                     });
                 }
             });
-
-
         }
 
-
-        scrollView.setOnScrollListener(scrollY -> {
-            int totalHeight = scrollView.getChildAt(0).getHeight();
+        mBinding.scrollView.setOnScrollListener(scrollY -> {
+            int totalHeight = mBinding.scrollView.getChildAt(0).getHeight();
             percentageH = scrollY / (float) totalHeight;
             LogUtil.d("OOM3", "percentageH" + percentageH);
         });
 
         new Handler().postDelayed(() -> {
-            presenter.setAllStickerCenter();
+            mPresenter.setAllStickerCenter();
             if (isLandscape) {
-                int height = Math.round(1f * ll_space.getWidth() / oriRatio);
-                scrollView.scrollTo(0, height / 2 - scrollView.getHeight() / 2);
+                int height = Math.round(1f * mBinding.llSpace.getWidth() / oriRatio);
+                mBinding.scrollView.scrollTo(0, height / 2 - mBinding.scrollView.getHeight() / 2);
             }
         }, 500);
     }
 
 
+    private void setImageBackSize(boolean isLandscape) {
+
+        videoToPause();
+        //切换横竖屏
+        ViewGroup.LayoutParams relativeLayoutParams = mBinding.ivBackImage.getLayoutParams();
+        float oriRatio = 9f / 16f;
+        float frameRatio = 1f;
+
+        if (isLandscape) {
+            //横屏的情况
+            mBinding.svBackImage.post(() -> {
+                int oriWidth = mBinding.llSpace.getWidth();
+                int spaceHeight = mBinding.llSpace.getHeight();
+
+                RelativeLayout.LayoutParams relativeLayoutParams2 = (RelativeLayout.LayoutParams) mBinding.svBackImage.getLayoutParams();
+                relativeLayoutParams2.width = oriWidth;
+                relativeLayoutParams2.height = Math.round(1f * oriWidth * oriRatio);
+                mBinding.svBackImage.setLayoutParams(relativeLayoutParams2);
+
+                relativeLayoutParams.width = oriWidth;
+                relativeLayoutParams.height = Math.round(1f * oriWidth / oriRatio);
+                mBinding.ivBackImage.setLayoutParams(relativeLayoutParams);
+
+                //设置预览编辑界面
+                mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+
+//                if (mBinding.ivFrameImage.getVisibility() == View.VISIBLE) {
+//                    ViewGroup.LayoutParams frameLayoutParams = mBinding.ivFrameImage.getLayoutParams();
+//                    frameLayoutParams.height = spaceHeight;
+//                    frameLayoutParams.width = spaceHeight;
+//                    mBinding.ivFrameImage.setLayoutParams(frameLayoutParams);
+//                }
+            });
+
+
+        } else {
+            //横屏模式下切换到了竖屏
+            mBinding.svBackImage.post(() -> {
+                RelativeLayout.LayoutParams relativeLayoutParams2 = (RelativeLayout.LayoutParams) mBinding.svBackImage.getLayoutParams();
+
+                int height = mBinding.llSpace.getHeight();
+                int width = mBinding.llSpace.getWidth();
+
+                if (mBinding.ivFrameImage.getVisibility() == View.VISIBLE) {
+
+
+                    relativeLayoutParams.width = width;//Math.round(1f * height * oriRatio)
+                    relativeLayoutParams.height = Math.round(1f * width / oriRatio);// height
+
+                    mBinding.ivBackImage.setLayoutParams(relativeLayoutParams);
+
+                    //设置预览编辑界面
+
+                    //RelativeLayout.LayoutParams frameLayoutParams = (RelativeLayout.LayoutParams) mBinding.ivFrameImage.getLayoutParams();
+
+                    relativeLayoutParams2.width = width;
+                    relativeLayoutParams2.height = height;
+
+                    //mBinding.ivFrameImage.setLayoutParams(frameLayoutParams);
+
+                    mBinding.svBackImage.setLayoutParams(relativeLayoutParams2);
+                    mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+                } else {
+                    relativeLayoutParams2.height = height;
+                    relativeLayoutParams2.width = Math.round(1f * height * oriRatio);
+                    mBinding.svBackImage.setLayoutParams(relativeLayoutParams2);
+
+                    relativeLayoutParams.width = Math.round(1f * height * oriRatio);
+                    relativeLayoutParams.height = height;
+                    mBinding.ivBackImage.setLayoutParams(relativeLayoutParams);
+                    //设置预览编辑界面
+                    mBinding.idVviewRealtimeGllayout.setLayoutParams(relativeLayoutParams2);
+                    RelativeLayout.LayoutParams contentParam = (RelativeLayout.LayoutParams) mBinding.relativeContentAllContent2.getLayoutParams();
+                    contentParam.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                    contentParam.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                    contentParam.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+
+                    mBinding.relativeContentAllContent2.setLayoutParams(contentParam);
+                }
+            });
+        }
+
+
+        if (mBinding.llGreenBackground.getVisibility() == View.VISIBLE) {
+            //可见的时候需要修稿这里
+            Observable.just(isLandscape).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> {
+                if (isLandscape) {
+                    //横屏的情况
+                    mBinding.ivGreenBackground.post(() -> {
+                        int oriWidth = mBinding.llSpace.getWidth();
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) mBinding.llGreenBackground.getLayoutParams();
+                        relativeLayoutParams3.width = oriWidth;
+                        relativeLayoutParams3.height = Math.round(1f * oriWidth * oriRatio);
+                        mBinding.llGreenBackground.setLayoutParams(relativeLayoutParams3);
+
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) mBinding.ivGreenBackground.getLayoutParams();
+                        relativeLayoutParams4.width = oriWidth;
+                        relativeLayoutParams4.height = Math.round(1f * oriWidth * oriRatio);
+                        mBinding.ivGreenBackground.setLayoutParams(relativeLayoutParams4);
+                    });
+                } else {
+                    mBinding.ivGreenBackground.post(() -> {
+                        int oriHeight = mBinding.llSpace.getHeight();
+
+                        RelativeLayout.LayoutParams relativeLayoutParams3 = (RelativeLayout.LayoutParams) mBinding.llGreenBackground.getLayoutParams();
+                        relativeLayoutParams3.width = Math.round(1f * oriHeight * oriRatio);
+                        relativeLayoutParams3.height = oriHeight;
+                        mBinding.llGreenBackground.setLayoutParams(relativeLayoutParams3);
+
+                        RelativeLayout.LayoutParams relativeLayoutParams4 = (RelativeLayout.LayoutParams) mBinding.ivGreenBackground.getLayoutParams();
+                        relativeLayoutParams4.width = Math.round(1f * oriHeight * oriRatio);
+                        relativeLayoutParams4.height = oriHeight;
+
+                        mBinding.ivGreenBackground.setLayoutParams(relativeLayoutParams4);
+                    });
+                }
+            });
+        }
+
+        mBinding.svBackImage.setOnScrollListener(scrollY -> {
+            int totalHeight = mBinding.svBackImage.getChildAt(0).getHeight();
+            int svBackImageHeight = mBinding.svBackImage.getHeight();
+            percentageH = scrollY / (float) (totalHeight - svBackImageHeight);
+            LogUtil.d(TAG, "svBackImageHeight" + svBackImageHeight);
+            LogUtil.d(TAG, "percentageH" + percentageH);
+            LogUtil.d(TAG, "totalHeight = " + totalHeight);
+            LogUtil.d(TAG, "scrollY = " + scrollY);
+        });
+
+        new Handler().postDelayed(() -> {
+            mPresenter.setAllStickerCenter();
+            if (isLandscape) {
+                int height = Math.round(1f * mBinding.llSpace.getWidth() / oriRatio);
+                mBinding.svBackImage.scrollTo(0, height / 2 - mBinding.svBackImage.getHeight() / 2);
+            }
+        }, 500);
+    }
+
     @Override
     protected void onPause() {
         videoToPause();//onPause
         isIntoPause = true;
-        presenter.intoOnPause();
+        mPresenter.intoOnPause();
         super.onPause();
     }
 
-    @Override
-    public void onDestroy() {
-//        presenter.onDestroy();
-        destroyTimer();
-        videoStop();
-        if (bgmPlayer != null) {
-            bgmPlayer.pause();
-            bgmPlayer.release();
-        }
-        EventBus.getDefault().unregister(this);
-        mRLContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-        super.onDestroy();
-    }
 
     @Override
-    public void ItemClickForStickView(AnimStickerModel stickViewModel) {
-        viewLayerRelativeLayout.addView(stickViewModel.getStickerView());
+    public void itemClickForStickView(AnimStickerModel stickViewModel) {
+        mBinding.idVviewRealtimeGllayout.addView(stickViewModel.getStickerView());
     }
 
     @Override
     public void hasPlayingComplete() {
+
     }
 
     @Override
-    public void ChooseMusicIndex(int index) {
+    public void chooseMusicIndex(int index) {
         musicChooseIndex = index;
         LogUtil.d("OOM5", "musicChooseIndex=" + musicChooseIndex);
         if (index == 0) {
@@ -981,7 +1468,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 musicEndTime = getFristVideoDuration();
                 if (musicEndTime == 0) {
                     musicEndTime = allVideoDuration;
-                    musicEndFirstTime=musicEndTime;
+                    musicEndFirstTime = musicEndTime;
                 }
             } else {
                 musicEndTime = musicEndFirstTime;
@@ -989,14 +1476,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         } else {
             musicStartTime = 0;
             musicEndTime = allVideoDuration;
-
         }
     }
 
 
     private long getFristVideoDuration() {
-        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
-            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+        for (int i = 0; i < mBinding.idVviewRealtimeGllayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) mBinding.idVviewRealtimeGllayout.getChildAt(i);
             if (stickerView.getStickerNoIncludeAnimId() == 0) {
                 String path = stickerView.getOriginalPath();
                 VideoInfo videoInfo = VideoManage.getInstance().getVideoInfo(this, path);
@@ -1009,11 +1495,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void deleteFirstSticker() {
-        new Handler().postDelayed(() -> {
-            viewPager.setCurrentItem(0);
-            tv_music.setVisibility(View.GONE);
-            setTextColor(0);
-        }, 500);
+        if (mFrom != FROM_DRESS_UP_BACK_CODE) {
+            new Handler().postDelayed(() -> {
+                mBinding.viewPager.setCurrentItem(0);
+                mBinding.tvMusic.setVisibility(View.GONE);
+                setTextColor(0);
+            }, 500);
+        }
     }
 
 
@@ -1024,9 +1512,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     @Override
     public void stickerOnclickCallback(String str) {
-        if (!TextUtils.isEmpty(str) && createViewForAddText != null) {
+        if (!TextUtils.isEmpty(str) && mCreateViewForAddText != null) {
             if (!"输入文本".equals(str)) {
-                createViewForAddText.setInputText(str);
+                mCreateViewForAddText.setInputText(str);
             }
         }
     }
@@ -1039,8 +1527,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void hideTextDialog() {
-        if (createViewForAddText != null) {
-            createViewForAddText.hideInputTextDialog();
+        if (mCreateViewForAddText != null) {
+            mCreateViewForAddText.hideInputTextDialog();
         }
     }
 
@@ -1067,9 +1555,9 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void getVideoDuration(long allVideoDuration) {
         this.allVideoDuration = allVideoDuration;
-        if(musicEndFirstTime==0){
+        if (musicEndFirstTime == 0) {
             musicEndTime = allVideoDuration;
-            musicEndFirstTime=musicEndTime;
+            musicEndFirstTime = musicEndTime;
         }
         Log.d("OOM44", "allVideoDuration=" + allVideoDuration);
     }
@@ -1081,7 +1569,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             isPlayComplate = false;
             LogUtil.d("OOM44", "needPauseVideo");
             videoToPause();//interface needPauseVideo
-            presenter.showGifAnim(false);
+            mPresenter.showGifAnim(false);
             isPlaying = false;
             nowStateIsPlaying(false);
         }
@@ -1089,10 +1577,11 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void getVideoCover(String path, String originalPath) {
-        presenter.addNewSticker(path, originalPath);
+        mPresenter.addNewSticker(path, originalPath);
         if (TextUtils.isEmpty(videoPath)) {
             //如果还是绿屏。那么需要刷新底部的时长
-            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> presenter.initVideoProgressView());
+            Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer ->
+                    mPresenter.initVideoProgressView());
         }
     }
 
@@ -1136,25 +1625,25 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void hideKeyBord() {
-        if (createViewForAddText != null) {
-            createViewForAddText.hideInputTextDialog();
+        if (mCreateViewForAddText != null) {
+            mCreateViewForAddText.hideInputTextDialog();
         }
     }
 
     @Override
     public void changFirstVideoSticker(String path) {
-        if (TextUtils.isEmpty(videoPath)||musicChooseIndex==0) {
-            if(TextUtils.isEmpty(videoPath)){
+        if (TextUtils.isEmpty(videoPath) || musicChooseIndex == 0) {
+            if (TextUtils.isEmpty(videoPath)) {
                 //如果还是绿屏。那么需要刷新底部的时长
-                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> presenter.initVideoProgressView());
+                Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> mPresenter.initVideoProgressView());
             }
             //需要重新刷新素材音乐开始时间,结束时间还是上次的
-            musicStartTime=0;
-            musicStartFirstTime=0;
-            LogUtil.d("OOM44","绿幕的情况下换了视频后结束音乐的时间为"+musicEndTime);
+            musicStartTime = 0;
+            musicStartFirstTime = 0;
+            LogUtil.d("OOM44", "绿幕的情况下换了视频后结束音乐的时间为" + musicEndTime);
 //            musicEndTime = getFristVideoDuration();
-            musicEndFirstTime=musicEndTime;
-            LogUtil.d("OOM44","绿幕的情况下换了视频后结束音乐的时间musicEndFirstTime为"+musicEndFirstTime);
+            musicEndFirstTime = musicEndTime;
+            LogUtil.d("OOM44", "绿幕的情况下换了视频后结束音乐的时间musicEndFirstTime为" + musicEndFirstTime);
         }
     }
 
@@ -1166,7 +1655,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void isFirstAddSuccess() {
         new Handler().postDelayed(() -> {
             if (!isNeedCut) {
-                switchButton.setChecked(false);
+                mBinding.switchButton.setChecked(false);
             }
         }, 1500);
     }
@@ -1174,22 +1663,27 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void showCreateTemplateAnim(boolean isShow) {
         if (isShow) {
-            viewLayerRelativeLayout.setVisibility(View.GONE);
+            mBinding.idVviewRealtimeGllayout.setVisibility(View.GONE);
         } else {
-            viewLayerRelativeLayout.setVisibility(View.VISIBLE);
+            mBinding.idVviewRealtimeGllayout.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void showMusicBtn(boolean isShow) {
-        if (isShow) {
-            tv_music.setVisibility(View.VISIBLE);
-        } else {
-            tv_music.setVisibility(View.GONE);
-            viewPager.setCurrentItem(0);
-        }
-        for (int i = 0; i < lin_Id.length; i++) {
-            ((TextView) findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
+        if (mFrom != FROM_DRESS_UP_BACK_CODE) {
+            if (isShow) {
+
+                mBinding.tvMusic.setVisibility(View.VISIBLE);
+
+            } else {
+                mBinding.tvMusic.setVisibility(View.GONE);
+                mBinding.viewPager.setCurrentItem(0);
+            }
+
+            for (int value : LIN_ID) {
+                ((TextView) findViewById(value)).setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            }
         }
     }
 
@@ -1202,7 +1696,8 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Override
     public void animIsComplate() {
         LogUtil.d("OOM", "animIsComplate");
-        WaitingDialog.closePragressDialog();
+        WaitingDialog.closeProgressDialog();
+
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             nowStateIsPlaying(true);
             if (!TextUtils.isEmpty(videoPath)) {
@@ -1246,7 +1741,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
             isPlaying = true;
             startTimer();
-            presenter.showGifAnim(true);
+            mPresenter.showGifAnim(true);
         });
 
     }
@@ -1260,13 +1755,13 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void startTimer() {
 
-        if(musicChooseIndex==2){
-            musicStartTime=0;
-            musicEndTime=allVideoDuration;
+        if (musicChooseIndex == 2) {
+            musicStartTime = 0;
+            musicEndTime = allVideoDuration;
         }
 
         isEndDestroy = false;
-        LogUtil.d("OOM44", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime+"musicChooseIndex="+musicChooseIndex);
+        LogUtil.d("OOM44", "startTimer:musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime + "musicChooseIndex=" + musicChooseIndex);
         nowTime = 5;
         totalPlayTime = mCutStartTime;
         if (timer != null) {
@@ -1278,57 +1773,65 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             task.cancel();
             task = null;
         }
+
         timer = new Timer();
+
         task = new TimerTask() {
             @Override
             public void run() {
-                totalPlayTime = totalPlayTime + 5;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!TextUtils.isEmpty(videoPath)) {
-                            bjMusicControl();
-                            if (isPlaying) {
-                                long nowCurrentPos = getCurrentPos();
-                                if (nowCurrentPos < 0) {
-                                    nowCurrentPos = 0;
-                                }
-                                if (nowCurrentPos >= mCutEndTime) {
-                                    exoPlayer.seekTo(mCutStartTime);
-                                    videoToPause();
-                                } else if (nowCurrentPos < mCutStartTime) {
-                                    exoPlayer.seekTo(mCutStartTime);
-                                    videoToPause();
-                                }
-                            }
-                            if (mProgressBarView != null) {
-                                mProgressBarView.scrollToPosition(getCurrentPos());
-                            }
-                        } else {
-                            bjMusicControl();
-                            //没有选择背景
-                            nowTime = nowTime + 5;
-                            LogUtil.d("OOM44", "nowTime==" + nowTime + "mCutEndTime=" + mCutEndTime);
-                            if (nowTime >= mCutEndTime) {
-                                nowTime = mCutStartTime;
-                                isPlayComplate = true;
-                                endTimer();
-                                isPlaying = false;
-                                presenter.showGifAnim(false);
-                                nowStateIsPlaying(false);
-                                presenter.showAllAnim(false);
-                            } else if (nowTime < mCutStartTime) {
-                                nowTime = mCutStartTime;
-                            }
-                            if (mProgressBarView != null) {
-                                mProgressBarView.scrollToPosition(nowTime);
-                            }
-                        }
-                    }
-                });
+                creationTimerTask();
             }
         };
         timer.schedule(task, 0, 5);
+    }
+
+    private void creationTimerTask() {
+        totalPlayTime = totalPlayTime + 5;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                bjMusicControl();
+                if (!TextUtils.isEmpty(videoPath)) {
+                    if (isPlaying) {
+                        long nowCurrentPos = getCurrentPos();
+                        if (nowCurrentPos < 0) {
+                            nowCurrentPos = 0;
+                        }
+                        if (nowCurrentPos >= mCutEndTime) {
+                            exoPlayer.seekTo(mCutStartTime);
+                            videoToPause();
+                        } else if (nowCurrentPos < mCutStartTime) {
+                            exoPlayer.seekTo(mCutStartTime);
+                            videoToPause();
+                        }
+                    }
+                    if (mBinding != null) {
+                        mBinding.progressBarView.scrollToPosition(getCurrentPos());
+                    }
+                } else {
+                    //没有选择背景
+                    nowTime = nowTime + 5;
+                    LogUtil.d("OOM44", "nowTime==" + nowTime + "mCutEndTime=" + mCutEndTime);
+
+                    if (nowTime >= mCutEndTime) {
+                        nowTime = mCutStartTime;
+                        isPlayComplate = true;
+                        endTimer();
+                        isPlaying = false;
+                        mPresenter.showGifAnim(false);
+                        nowStateIsPlaying(false);
+                        mPresenter.showAllAnim(false);
+                    } else if (nowTime < mCutStartTime) {
+                        nowTime = mCutStartTime;
+                    }
+
+                    if (mBinding.progressBarView != null) {
+                        mBinding.progressBarView.scrollToPosition(nowTime);
+                    }
+
+                }
+            }
+        });
     }
 
 
@@ -1371,7 +1874,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             }
         }
 
-
     }
 
 
@@ -1411,7 +1913,6 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         }
     }
 
-
     /**
      * user :TongJu  ; email:jutongzhang@sina.com
      * time：2018/10/15
@@ -1439,21 +1940,23 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     public void onEventMainThread(DownVideoPath event) {
 //        videoStop();
         Observable.just(event.getPath()).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-            if (albumType.isImage(GetPathTypeModel.getInstance().getMediaType(event.getPath()))) {
-                ll_green_background.setVisibility(View.VISIBLE);
-                scrollView.setVisibility(View.GONE);
-                presenter.setmVideoPath("");
+            if (AlbumType.isImage(GetPathTypeModel.getInstance().getMediaType(event.getPath()))) {
+                mBinding.relativePlayerView.setVisibility(View.INVISIBLE);
+                mBinding.rlBackImage.setVisibility(View.INVISIBLE);
+
+                mPresenter.setVideoPath("");
                 videoPath = "";
                 showGreenBj(false);
                 imageBjPath = event.getPath();
+
                 //图片背景和绿幕背景默认都是10秒
                 //循环得到最长的视频时长
                 long maxVideoDuration = 0;
-                for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
-                    if (mSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
-                        if (mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration() >= maxVideoDuration &&
-                                albumType.isVideo(GetPathType.getInstance().getPathType(mSeekBarView.getTemplateMaterialItemViews().get(i).resPath))) {
-                            maxVideoDuration = mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration();
+                for (int i = 0; i < mBinding.materialSeekBarView.getTemplateMaterialItemViews().size(); i++) {
+                    if (mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
+                        if (mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i).getDuration() >= maxVideoDuration &&
+                                AlbumType.isVideo(GetPathType.getInstance().getPathType(mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i).resPath))) {
+                            maxVideoDuration = mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i).getDuration();
                         }
                     }
                 }
@@ -1462,24 +1965,27 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                 } else {
                     modificationDuration(10 * 1000);
                 }
+
                 musicStartFirstTime = 0;
                 LogUtil.d("OOM44", "22222");
+                LogUtil.d("OOM44", s);
                 musicStartTime = 0;
                 musicEndFirstTime = mCutEndTime;
                 musicEndTime = mCutEndTime;
 
                 new Handler().postDelayed(() ->
                         Glide.with(CreationTemplateActivity.this)
-                                .load(s).into(iv_green_background), 500);
+                                .load(s).into(mBinding.ivGreenBackground), 500);
             } else {
                 LogUtil.d("OOM", "重新选择了视频背景,地址为" + event.getPath());
                 videoPath = event.getPath();
-                ll_green_background.setVisibility(View.GONE);
-                scrollView.setVisibility(View.VISIBLE);
+                mBinding.llGreenBackground.setVisibility(View.GONE);
+                mBinding.relativePlayerView.setVisibility(View.VISIBLE);
+
                 setPlayerViewSize(nowUiIsLandscape);
                 initExo(videoPath);
-                presenter.setmVideoPath(videoPath);
-                presenter.initVideoProgressView();
+                mPresenter.setVideoPath(videoPath);
+                mPresenter.initVideoProgressView();
                 setBJVideoPath(true);
                 musicStartFirstTime = 0;
                 LogUtil.d("OOM44", "333333");
@@ -1498,7 +2004,7 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
      */
     @Subscribe
     public void onEventMainThread(ChooseVideoAddSticker event) {
-        presenter.GetVideoCover(event.getPath());
+        mPresenter.getVideoCover(event.getPath());
     }
 
 
@@ -1538,19 +2044,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     @Subscribe
     public void onEventMainThread(CutSuccess cutSuccess) {
         String nowChooseBjPath = cutSuccess.getFilePath();
-        presenter.setAddChooseBjPath(nowChooseBjPath);
-        musicChooseIndex=2;
+        mPresenter.setAddChooseBjPath(nowChooseBjPath);
+        musicChooseIndex = 2;
     }
 
 
     @Override
     public final boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (ll_add_text_style.getVisibility() == View.VISIBLE) {
-                if (createViewForAddText != null) {
-                    createViewForAddText.hideInput();
+            if (mBinding.vAddText.llAddTextStyle.getVisibility() == View.VISIBLE) {
+                if (mCreateViewForAddText != null) {
+                    mCreateViewForAddText.hideInput();
                 }
-                ll_add_text_style.setVisibility(View.GONE);
+                mBinding.vAddText.llAddTextStyle.setVisibility(View.GONE);
             } else {
                 onBackPressed();
             }
@@ -1560,76 +2066,82 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void addStickerTimeLine(String id, boolean isText, String text, StickerView stickerView) {
-        mSeekBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        mBinding.materialSeekBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                mSeekBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mBinding.materialSeekBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
                 stickerView.setShowStickerStartTime(mCutStartTime);
                 stickerView.setShowStickerEndTime(mCutEndTime);
                 //是绿幕视频并且添加的素材是视频 遍历出所有素材的最长时长  为当前主轨道的时长
-                if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath())) && TextUtils.isEmpty(videoPath)) {
+                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath()))
+                        && TextUtils.isEmpty(videoPath)) {
+
                     MediaInfo mediaInfo = new MediaInfo(stickerView.getOriginalPath());
                     mediaInfo.prepare();
                     long videoDuration = (long) (mediaInfo.vDuration * 1000);
                     mediaInfo.release();
+
                     boolean modify = false;
                     //循环得到最长的视频时长
                     long maxVideoDuration = 0;
-                    for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
-                        if (mSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
-                            if (mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration() >= maxVideoDuration &&
-                                    albumType.isVideo(GetPathType.getInstance().getPathType(mSeekBarView.getTemplateMaterialItemViews().get(i).resPath))) {
-                                maxVideoDuration = mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration();
+                    for (int i = 0; i < mBinding.materialSeekBarView.getTemplateMaterialItemViews().size(); i++) {
+                        if (mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
+                            if (mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i).getDuration() >= maxVideoDuration &&
+                                    AlbumType.isVideo(GetPathType.getInstance().getPathType(mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i).resPath))) {
+                                maxVideoDuration = mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i).getDuration();
                             }
                         }
                     }
+
                     if (videoDuration > maxVideoDuration) {
                         modify = true;
                         oldMaxVideoDuration = videoDuration;
                     }
+
                     if (modify) {
                         modificationDuration(videoDuration);
-                        mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                        mBinding.materialSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                                 stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
                     } else if (videoDuration >= mCutEndTime) {
-                        mSeekBarView.addTemplateMaterialItemView(maxVideoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                        mBinding.materialSeekBarView.addTemplateMaterialItemView(maxVideoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                                 stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
                         stickerView.setShowStickerEndTime(mCutEndTime);
-                        mSeekBarView.setCutStartTime(mCutStartTime);
-                        mSeekBarView.setCutEndTime(mCutEndTime);
+                        mBinding.materialSeekBarView.setCutStartTime(mCutStartTime);
+                        mBinding.materialSeekBarView.setCutEndTime(mCutEndTime);
                     } else {
-                        mSeekBarView.addTemplateMaterialItemView(maxVideoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                        mBinding.materialSeekBarView.addTemplateMaterialItemView(maxVideoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                                 stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, videoDuration, isText, text, id);
                         stickerView.setShowStickerEndTime(videoDuration);
-                        mSeekBarView.setCutStartTime(mCutStartTime);
-                        mSeekBarView.setCutEndTime(maxVideoDuration);
+                        mBinding.materialSeekBarView.setCutStartTime(mCutStartTime);
+                        mBinding.materialSeekBarView.setCutEndTime(maxVideoDuration);
                         oldMaxVideoDuration = maxVideoDuration;
                     }
-                } else if (albumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath())) && !TextUtils.isEmpty(videoPath)) {
+                } else if (AlbumType.isVideo(GetPathType.getInstance().getPathType(stickerView.getOriginalPath())) && !TextUtils.isEmpty(videoPath)) {
                     MediaInfo mainMediaInfo = new MediaInfo(videoPath);
                     mainMediaInfo.prepare();
                     long videoDuration = (long) (mainMediaInfo.vDuration * 1000);
                     mainMediaInfo.release();
+
                     MediaInfo materialMediaInfo = new MediaInfo(stickerView.getOriginalPath());
                     materialMediaInfo.prepare();
                     long materialDuration = (long) (materialMediaInfo.vDuration * 1000);
                     materialMediaInfo.release();
 
                     if (mCutEndTime > materialDuration) {
-                        mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                        mBinding.materialSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                                 stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, materialDuration, isText, text, id);
                         stickerView.setShowStickerEndTime(materialDuration);
                     } else if (materialDuration > mCutEndTime) {
-                        mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                        mBinding.materialSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                                 stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
                         stickerView.setShowStickerEndTime(mCutEndTime);
                     } else {
-                        mSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                        mBinding.materialSeekBarView.addTemplateMaterialItemView(videoDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                                 stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
                     }
-                    mSeekBarView.setCutStartTime(mCutStartTime);
-                    mSeekBarView.setCutEndTime(mCutEndTime);
+                    mBinding.materialSeekBarView.setCutStartTime(mCutStartTime);
+                    mBinding.materialSeekBarView.setCutEndTime(mCutEndTime);
                 } else {
                     //如果素材全是图片的话默认为10秒   如果素材有视频的话以最长素材视频的时长为主轨道的时长
                     long materialDuration;
@@ -1639,16 +2151,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     boolean isAfreshSetEndCutEnd = false;
                     if (TextUtils.isEmpty(videoPath)) {
                         materialDuration = 10 * 1000;
-                        for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
-                            if (mSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
-                                if (albumType.isVideo(GetPathType.getInstance().getPathType(mSeekBarView.getTemplateMaterialItemViews().get(i).resPath))) {
-                                    for (int j = 0; j < mSeekBarView.getTemplateMaterialItemViews().size(); j++) {
-                                        if (mSeekBarView.getTemplateMaterialItemViews().get(j) != null &&
-                                                mSeekBarView.getTemplateMaterialItemViews().get(j).getDuration() >= maxVideoDuration &&
-                                                albumType.isVideo(GetPathType.getInstance().getPathType(mSeekBarView.getTemplateMaterialItemViews().get(j).resPath))
+                        for (int i = 0; i < mBinding.materialSeekBarView.getTemplateMaterialItemViews().size(); i++) {
+                            if (mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
+                                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i).resPath))) {
+                                    for (int j = 0; j < mBinding.materialSeekBarView.getTemplateMaterialItemViews().size(); j++) {
+                                        if (mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(j) != null &&
+                                                mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(j).getDuration() >= maxVideoDuration &&
+                                                AlbumType.isVideo(GetPathType.getInstance().getPathType(mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(j).resPath))
                                         ) {
-                                            maxVideoDuration = mSeekBarView.getTemplateMaterialItemViews().get(j).getDuration();
-                                            maxVideoResPath = mSeekBarView.getTemplateMaterialItemViews().get(j).resPath;
+                                            maxVideoDuration = mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(j).getDuration();
+                                            maxVideoResPath = mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(j).resPath;
                                         }
                                     }
                                 }
@@ -1669,29 +2181,28 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                         materialDuration = allVideoDuration;
                         isAfreshSetEndCutEnd = true;
                     }
-                    mSeekBarView.addTemplateMaterialItemView(materialDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
+                    mBinding.materialSeekBarView.addTemplateMaterialItemView(materialDuration, TextUtils.isEmpty(stickerView.getOriginalPath()) ?
                             stickerView.getResPath() : stickerView.getOriginalPath(), mCutStartTime, mCutEndTime, isText, text, id);
                     if (isMaxVideoDurationChange) {
-                        mSeekBarView.setCutStartTime(mCutStartTime);
+                        mBinding.materialSeekBarView.setCutStartTime(mCutStartTime);
                         allVideoDuration = materialDuration;
                         if (oldMaxVideoDuration != materialDuration) {
                             if (TextUtils.isEmpty(oldMaxVideoResPath) || !TextUtils.equals(maxVideoResPath, oldMaxVideoResPath)) {
-                                mProgressBarView.addProgressBarView(allVideoDuration, "");
+                                mBinding.progressBarView.addProgressBarView(allVideoDuration, "");
                                 oldMaxVideoResPath = maxVideoResPath;
                                 if (materialDuration > mCutEndTime) {
                                     mCutEndTime = materialDuration;
                                 }
                             }
-                            tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
-
+                            mBinding.tvTotal.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
                         }
                         oldMaxVideoDuration = materialDuration;
-                        mSeekBarView.setCutEndTime(mCutEndTime);
+                        mBinding.materialSeekBarView.setCutEndTime(mCutEndTime);
                         stickerView.setShowStickerEndTime(mCutEndTime);
                     }
                     if (isAfreshSetEndCutEnd) {
-                        mSeekBarView.setCutStartTime(mCutStartTime);
-                        mSeekBarView.setCutEndTime(mCutEndTime);
+                        mBinding.materialSeekBarView.setCutStartTime(mCutStartTime);
+                        mBinding.materialSeekBarView.setCutEndTime(mCutEndTime);
                     }
                 }
                 if (!TextUtils.isEmpty(id)) {
@@ -1708,24 +2219,24 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     @Override
     public void updateTimeLineSickerText(String text, String id) {
-        mSeekBarView.updateStickerViewText(text, id);
+        mBinding.materialSeekBarView.updateStickerViewText(text, id);
     }
 
     @Override
     public void deleteTimeLineSicker(String id) {
-        mSeekBarView.deleteTemplateMaterialItemView(id);
+        mBinding.materialSeekBarView.deleteTemplateMaterialItemView(id);
     }
 
     @Override
     public void showTimeLineSickerArrow(String id) {
         if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
-            mSeekBarView.isCurrentMaterialShowArrow(id);
+            mBinding.materialSeekBarView.isCurrentMaterialShowArrow(id);
         }
     }
 
     @Override
-    public void modifyTimeLineSickerPath(String id, String path,StickerView stickerView) {
-        if (albumType.isVideo(GetPathType.getInstance().getPathType(path)) && TextUtils.isEmpty(videoPath)) {
+    public void modifyTimeLineSickerPath(String id, String path, StickerView stickerView) {
+        if (AlbumType.isVideo(GetPathType.getInstance().getPathType(path)) && TextUtils.isEmpty(videoPath)) {
             //重新设置进度条的长度
             MediaInfo mediaInfo = new MediaInfo(path);
             mediaInfo.prepare();
@@ -1733,10 +2244,10 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             mediaInfo.release();
             boolean modify = false;
             int viewCount = 0;
-            for (int i = 0; i < mSeekBarView.getTemplateMaterialItemViews().size(); i++) {
-                if (mSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
+            for (int i = 0; i < mBinding.materialSeekBarView.getTemplateMaterialItemViews().size(); i++) {
+                if (mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i) != null) {
                     viewCount++;
-                    if (videoDuration > mSeekBarView.getTemplateMaterialItemViews().get(i).getDuration()) {
+                    if (videoDuration > mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(i).getDuration()) {
                         modify = true;
                     }
                 }
@@ -1744,19 +2255,19 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
             if (modify || viewCount == 1) {
                 modificationDuration(videoDuration);
             }
-            mSeekBarView.modifyMaterialThumbnail(path, id, true);
+            mBinding.materialSeekBarView.modifyMaterialThumbnail(path, id, true);
         } else if (!TextUtils.isEmpty(videoPath)) {
             //背景模板
-            mSeekBarView.modifyMaterialThumbnail(path, id, false);
-            if (TextUtils.equals("0", id) && albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
+            mBinding.materialSeekBarView.modifyMaterialThumbnail(path, id, false);
+            if (TextUtils.equals("0", id) && AlbumType.isVideo(GetPathType.getInstance().getPathType(path))) {
                 MediaInfo mediaInfo = new MediaInfo(path);
                 mediaInfo.prepare();
-                stickerView.setShowStickerStartTime(mCutStartTime);
+                stickerView.setShowStickerStartTime(0);
                 long minDuration = Math.min((long) (mediaInfo.vDuration * 1000), mCutEndTime);
                 mediaInfo.release();
                 stickerView.setShowStickerEndTime(minDuration);
-                musicStartTime = mCutStartTime;
-                musicStartFirstTime = mCutStartTime;
+                musicStartTime = 0;
+                musicStartFirstTime = 0;
                 if (musicChooseIndex == 0) {
                     //素材音乐
                     musicEndFirstTime = minDuration;
@@ -1766,44 +2277,127 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
                     musicEndFirstTime = mCutEndTime;
                     musicEndTime = mCutEndTime;
                 }
-            } else {
-                if (albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
-                    MediaInfo mediaInfo = new MediaInfo(path);
-                    mediaInfo.prepare();
-                    long duration = (long) (mediaInfo.vDuration * 1000);
-                    stickerView.setShowStickerStartTime(mCutStartTime);
-                    stickerView.setShowStickerEndTime(duration);
-                    mediaInfo.release();
-                }
             }
-
-            mSeekBarView.setCutStartTime(mCutStartTime);
-            mSeekBarView.setCutEndTime(mCutEndTime);
+            mBinding.materialSeekBarView.setCutStartTime(mCutStartTime);
+            mBinding.materialSeekBarView.setCutEndTime(mCutEndTime);
         } else {
             //背景为图片或者绿幕替换素材时修改时间轴的缩略图
-            mSeekBarView.modifyMaterialThumbnail(path, id, true);
+            mBinding.materialSeekBarView.modifyMaterialThumbnail(path, id, true);
         }
 
     }
 
     @Override
     public void stickerFragmentClose() {
-        for (int i = 0; i < lin_Id.length; i++) {
-            ((TextView) findViewById(lin_Id[i])).setTextColor(getResources().getColor(R.color.white));
+        for (int value : LIN_ID) {
+            ((TextView) findViewById(value)).setTextColor(ContextCompat.getColor(mContext, R.color.white));
         }
-        if (isClickAddTextTag && createViewForAddText != null) {
-            createViewForAddText.iv_down.performClick();
+        if (isClickAddTextTag && mCreateViewForAddText != null) {
+            mCreateViewForAddText.iv_down.performClick();
         } else {
             seekBarViewIsShow(true);
         }
-        mSeekBarView.scrollToTheBottom();
+        mBinding.materialSeekBarView.scrollToTheBottom();
+        if (mFrom == FROM_DRESS_UP_BACK_CODE) {
+            mBinding.viewPager.setVisibility(View.GONE);
+        }
     }
+
+
+    @Override
+    public void dismissLoadingDialog() {
+        mLoadingDialog.dismiss();
+    }
+
+    @Override
+    public void setDialogProgress(String title, int dialogProgress, String content) {
+        mLoadingDialog.setTitleStr(title);
+        mLoadingDialog.setProgress(dialogProgress);
+        mLoadingDialog.setContentStr(content);
+    }
+
+    @Override
+    public void chooseBack(String title, String path) {
+        if (TextUtils.isEmpty(path)) {
+            upLoadLocalBack();
+        } else {
+            mBackGroundTitle = title;
+            if (TextUtils.isEmpty(mBackGroundTitle)) {
+                mBackGroundTitle = "本地背景";
+            }
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_background", mBackGroundTitle);
+
+            mBackgroundImage = path;
+            changeImageBack();
+        }
+
+    }
+
+    /**
+     * 上传本地背景
+     */
+    private void upLoadLocalBack() {
+        AlbumManager.chooseImageAlbum(mContext, 1, 0, new AlbumChooseCallback() {
+            @Override
+            public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
+                if (!isCancel) {
+                    mBackgroundImage = paths.get(0);
+                    changeImageBack();
+                }
+            }
+        }, "");
+    }
+
+
+    /**
+     * 换背景
+     */
+    private void changeImageBack() {
+        if (!TextUtils.isEmpty(mBackgroundImage)) {
+            Glide.with(mContext).load(mBackgroundImage)
+                    .into(mBinding.ivBackImage);
+            downloadBackImage();
+        } else {
+            showGreenBj(true);
+        }
+    }
+
+    /**
+     * 选择像款
+     *
+     * @param path
+     */
+    @Override
+    public void chooseFrame(String path) {
+        mBinding.ivFrameImage.setVisibility(View.VISIBLE);
+
+        Glide.with(mContext)
+                .load(path)
+                .into(mBinding.ivFrameImage);
+        setImageBackSize(nowUiIsLandscape);
+
+    }
+
+    /**
+     * 取消选择
+     */
+    public void dismissFrame() {
+        mBinding.ivFrameImage.setVisibility(View.INVISIBLE);
+        setImageBackSize(nowUiIsLandscape);
+    }
+
+    //    private void test() {
+//        mBinding.ivFrameImage.post(() -> {
+//            getImgDisplaySize( mBinding.ivFrameImage);
+//        });
+//    }
+
 
     @Override
     public void progress(long progress, boolean manualDrag) {
         mSeekBarViewManualDrag = manualDrag;
         if (manualDrag) {
-            mProgressBarView.scrollToPosition(progress);
+            mBinding.progressBarView.scrollToPosition(progress);
         }
     }
 
@@ -1812,17 +2406,16 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
         mSeekBarViewManualDrag = manualDrag;
         videoToPause();
         LogUtil.d("OOM4", "progressBarProgress=" + progressBarProgress);
-        presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+        mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
     }
 
     @Override
     public void timelineChange(long startTime, long endTime, String id) {
         LogUtil.d("playBGMMusic", "timelineChange---id=" + id);
-        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
-            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+        for (int i = 0; i < mBinding.idVviewRealtimeGllayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) mBinding.idVviewRealtimeGllayout.getChildAt(i);
             if (TextUtils.equals(id, String.valueOf(stickerView.getStickerNoIncludeAnimId()))) {
                 if (!TextUtils.isEmpty(id) && "0".equals(id)) {
-                    lastmCutTime = 0;
                     LogUtil.d("playBGMMusic", "需要改变开始时间和结束时间---musicStartFirstTime=" + startTime);
                     //需要改变开始时间和结束时间
                     musicStartFirstTime = startTime;
@@ -1838,53 +2431,62 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
                     LogUtil.d("playBGMMusic", "musicEndTime=" + musicEndTime);
                 }
+
                 stickerView.setShowStickerStartTime(startTime);
                 stickerView.setShowStickerEndTime(endTime);
                 break;
             }
         }
-        presenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+        mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
     }
 
     @Override
     public void currentViewSelected(String id) {
-        presenter.bringStickerFront(id);
+        mPresenter.bringStickerFront(id);
     }
 
     @Override
     public void trackPause() {
-
         LogUtil.d("OOM44", "trackPause");
         videoToPause();
     }
 
     private void stickerTimeLineOffset() {
-        for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
-            StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
+
+        for (int i = 0; i < mBinding.idVviewRealtimeGllayout.getChildCount(); i++) {
+
+            StickerView stickerView = (StickerView) mBinding.idVviewRealtimeGllayout.getChildAt(i);
+
             if (stickerView.getShowStickerStartTime() > mCutStartTime && stickerView.getShowStickerEndTime() < mCutEndTime) {
                 continue;
             }
+
             if (stickerView.getShowStickerStartTime() < mCutStartTime && stickerView.getShowStickerEndTime() > mCutEndTime) {
                 stickerView.setShowStickerStartTime(mCutStartTime);
                 stickerView.setShowStickerEndTime(mCutEndTime);
             }
+
             if (stickerView.getShowStickerStartTime() > mCutStartTime && stickerView.getShowStickerEndTime() > mCutEndTime) {
                 stickerView.setShowStickerStartTime(mCutEndTime - (stickerView.getShowStickerEndTime() - stickerView.getShowStickerStartTime()));
                 stickerView.setShowStickerEndTime(mCutEndTime);
             }
+
             if (stickerView.getShowStickerStartTime() > mCutStartTime && mCutEndTime - stickerView.getShowStickerStartTime() < 1000) {
                 stickerView.setShowStickerStartTime(mCutStartTime);
             }
+
             if (stickerView.getShowStickerEndTime() < mCutStartTime) {
                 stickerView.setShowStickerStartTime(mCutStartTime);
                 stickerView.setShowStickerEndTime(mCutStartTime + 1000);
             }
+
             if (stickerView.getShowStickerEndTime() > mCutEndTime) {
                 stickerView.setShowStickerEndTime(mCutEndTime);
                 if (mCutEndTime - stickerView.getShowStickerStartTime() <= 1000) {
                     stickerView.setShowStickerStartTime(mCutEndTime - 1000);
                 }
             }
+
             if (stickerView.getShowStickerStartTime() < mCutStartTime) {
                 stickerView.setShowStickerStartTime(mCutStartTime);
                 if (stickerView.getShowStickerEndTime() - mCutStartTime <= 1000) {
@@ -1896,20 +2498,21 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
 
     private void modificationDuration(long duration) {
         allVideoDuration = duration;
-        mProgressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+        mBinding.progressBarView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                mProgressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mBinding.progressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
-                tv_total.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
-                mProgressBarView.addProgressBarView(allVideoDuration, videoPath);
-                mSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
-                mSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
-                for (int i = 0; i < viewLayerRelativeLayout.getChildCount(); i++) {
-                    for (int j = 0; j < mSeekBarView.getTemplateMaterialItemViews().size(); j++) {
-                        StickerView stickerView = (StickerView) viewLayerRelativeLayout.getChildAt(i);
-                        TemplateMaterialItemView itemView = mSeekBarView.getTemplateMaterialItemViews().get(j);
+                mBinding.tvTotal.setText(String.format("%ss", TimeUtils.timeParse(mCutEndTime - mCutStartTime)));
+                mBinding.progressBarView.addProgressBarView(allVideoDuration, videoPath);
+                mBinding.materialSeekBarView.resetStartAndEndTime(mCutStartTime, mCutEndTime);
+                mBinding.materialSeekBarView.changeVideoPathViewFrameSetWidth(allVideoDuration);
+                for (int i = 0; i < mBinding.idVviewRealtimeGllayout.getChildCount(); i++) {
+                    for (int j = 0; j < mBinding.materialSeekBarView.getTemplateMaterialItemViews().size(); j++) {
+                        StickerView stickerView = (StickerView) mBinding.idVviewRealtimeGllayout.getChildAt(i);
+                        TemplateMaterialItemView itemView = mBinding.materialSeekBarView.getTemplateMaterialItemViews().get(j);
                         if (itemView != null) {
                             if (TextUtils.equals(String.valueOf(itemView.getIdentityID()), String.valueOf(stickerView.getStickerNoIncludeAnimId()))) {
                                 stickerView.setShowStickerStartTime(itemView.getStartTime());
@@ -1924,65 +2527,483 @@ public class CreationTemplateActivity extends BaseActivity implements CreationTe
     }
 
     @Override
-    public void onGlobalLayout() {
-        //如果为0，说明获取高度失败，跳出
-        if (initHeight == 0) {
-            return;
+    public void dismissStickerFrame() {
+        for (int i = 0; i < mBinding.idVviewRealtimeGllayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) mBinding.idVviewRealtimeGllayout.getChildAt(i);
+            stickerView.disMissFrame();
         }
-        currentHeight = mRLContainer.getHeight();
-        if (initHeight > currentHeight) {
-            //初始高度大于当前高度，说明虚拟导航栏由隐藏变为显示
-            //此时，首次变化firstFlag设置为-1，说明首次进入时无导航栏
-            status = -1;
-            firstFlag = -1;
-        } else if (initHeight < currentHeight) {
-            //初始高度小于当前高度，说明虚拟导航栏由显示变为隐藏
-            //此时，首次变化firstFlag设置为1，说明首次进入时有导航栏
-            status = 1;
-            firstFlag = 1;
-        } else {
-            //虚拟导航栏状态未改变
-            //此时，status设置为0
-            status = 0;
-        }
-        //当虚拟导航栏状态发生改变时
-        if (status != 0) {
-            //虚拟导航栏由隐藏变为显示，首次进入时无导航栏
-            if (firstFlag == -1) {
-                //由隐藏变为显示，H需减去48dp；由显示变为隐藏，即回复初始状态，H不变
-                if (status < 0) {
-                    if (createViewForAddText != null) {
-                        createViewForAddText.setShowHeight(-1,
-                                Math.max(initHeight, currentHeight) - Math.min(initHeight, currentHeight));
-                    }
-                }
-            }
-            //虚拟导航栏由显示变为隐藏，首次进入时有导航栏
-            if (firstFlag == 1) {
-                //由显示变为隐藏，
-                if (status > 0) {
-                    if (createViewForAddText != null) {
-                        createViewForAddText.setShowHeight(1, 0);
-                    }
-                }
-            }
-        }
-        //当前高度currentHeight作为下一次变化前的初始高度initHeight
-        initHeight = currentHeight;
     }
 
     @Override
-    public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("确定要退出吗?");
-        builder.setTitle("提示");
-        builder.setPositiveButton("确定", (dialog, which) -> {
-            dialog.dismiss();
-            Runtime.getRuntime().gc();
-            finish();
+    public void dismissTextStickerFrame() {
+        for (int i = 0; i < mBinding.idVviewRealtimeGllayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) mBinding.idVviewRealtimeGllayout.getChildAt(i);
+            if (stickerView.getIsTextSticker()) {
+                stickerView.disMissFrame();
+            }
+        }
+    }
+
+    public void buildBottomViewPager() {
+        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+            CreationBottomPagerAdapter adapter = new CreationBottomPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, mPresenter.getFragmentList());
+            mBinding.viewPager.setAdapter(adapter);
+            mBinding.viewPager.setOffscreenPageLimit(3);
+        } else {
+            TemplateViewPager templateViewPager = new TemplateViewPager(mPresenter.getListForInitBottom());
+            mBinding.viewPager.setAdapter(templateViewPager);
+        }
+    }
+
+    /**
+     * 闪图 保存做好的图片
+     */
+    public void keepPicture() {
+        dismissStickerFrame();
+
+        new Handler().post(() -> {
+            ScreenCaptureUtil screenCaptureUtil = new ScreenCaptureUtil(BaseApplication.getInstance());
+            String textImagePath = screenCaptureUtil.getFilePath(mBinding.relativeContentAllContent2, mBinding.ivFrameImage);
+            startPreviewFramePicture(textImagePath);
         });
-        builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
-        builder.create().show();
-        presenter.intoOnPause();
+    }
+
+    /**
+     * 跳转到预览页
+     *
+     * @param textImagePath path
+     */
+    private void startPreviewFramePicture(String textImagePath) {
+        Intent intent = new Intent(mContext, DressUpPreviewActivity.class);
+        intent.putExtra("url", textImagePath);
+        intent.putExtra("template_id", templateId + "");
+        intent.putExtra("localImage", textImagePath);
+        intent.putExtra("isSpecial", true);
+        intent.putExtra("templateTitle", "");
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_edit_back_bj");
+
+        CommonMessageDialog.getBuilder(mContext)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_EXIT)
+                .setTitle("确定退出吗？")
+                .setPositiveButton("确定")
+                .setNegativeButton("取消")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                        Runtime.getRuntime().gc();
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
+
+        mPresenter.intoOnPause();
+    }
+
+    @Override
+    public void onDestroy() {
+//        presenter.onDestroy();
+        destroyTimer();
+        videoStop();
+        if (bgmPlayer != null) {
+            bgmPlayer.pause();
+            bgmPlayer.release();
+        }
+        mBinding.idVviewRealtimeGllayout.removeAllViews();
+        EventBus.getDefault().unregister(this);
+        mBinding.rlCreationContainer.getViewTreeObserver().removeOnGlobalLayoutListener(mGlobalLayoutListener);
+        super.onDestroy();
+    }
+
+    /**
+     * 构造需要的intent
+     */
+    public static Intent buildIntent(Context context, int from, String imgPath, String videoPath, String originalPath,
+                                     boolean isNeedCut, String title, int templateId, boolean nowUiIsLandscape, String backgroundImage) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(BUNDLE_KEY_FROM, from);
+        bundle.putString(BUNDLE_KEY_PATHS, imgPath);
+        bundle.putString(BUNDLE_KEY_VIDEO_PATH, videoPath);
+        bundle.putString(BUNDLE_KEY_ORIGINAL_PATH, originalPath);
+        bundle.putBoolean(BUNDLE_KEY_NEED_CUT, isNeedCut);
+        bundle.putString(BUNDLE_KEY_TITLE, title);
+        bundle.putInt(BUNDLE_KEY_TEMPLATE_ID, templateId);
+        bundle.putBoolean(BUNDLE_KEY_IS_LANDSCAPE, nowUiIsLandscape);
+        bundle.putString(BUNDLE_KEY_BACKGROUND_IMAGE, backgroundImage);
+
+        Intent intent = new Intent(context, CreationTemplateActivity.class);
+        intent.putExtra(BUNDLE_KEY, bundle);
+        return intent;
+    }
+
+    @Override
+    public void showLoading() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_bj");
+        mLoadingDialog.show();
+    }
+
+    @Override
+    public void hideLoading() {
+
+    }
+
+    @Override
+    public void showToast(String msg) {
+
+    }
+
+    @Override
+    public void showError() {
+
+    }
+
+    ImageView check_box_0;
+    ImageView check_box_1;
+    ImageView check_box_2;
+    ImageView check_box_3;
+
+    TextView tv_0;
+    TextView tv_1;
+    TextView tv_2;
+    TextView tv_3;
+
+    /**
+     * 初始化底部弹框
+     */
+    public void initBottomLayout() {
+        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+            initViewForChooseBack();
+            initViewForChooseFrame();
+            initViewForSticker();
+        } else {
+            initViewForSticker();
+            initViewForChooseAnim();
+            initViewForChooseMusic();
+        }
+        buildBottomViewPager();
+    }
+
+
+    /**
+     * 初始化选择背景view
+     */
+    private void initViewForChooseBack() {
+        CreationBottomFragment fragment = new CreationBottomFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", 0);
+        fragment.setArguments(bundle);
+
+        fragment.setFinishListener(this);
+        fragment.setBackChooseListener(this);
+
+        mPresenter.addFragmentList(fragment);
+    }
+
+    /**
+     * 初始化选择相框view
+     */
+    private void initViewForChooseFrame() {
+        CreationBottomFragment fragment = new CreationBottomFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", 1);
+        fragment.setArguments(bundle);
+        fragment.setFinishListener(this);
+        fragment.setFrameChooseListener(this);
+        mPresenter.addFragmentList(fragment);
+    }
+
+    ViewPager stickerViewPager;
+    SlidingTabLayout stickerTab;
+
+    /**
+     * 初始化贴纸列表view
+     */
+    public void initViewForSticker() {
+
+        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+            CreationBottomFragment fragment = new CreationBottomFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt("id", 2);
+            fragment.setArguments(bundle);
+            fragment.setStickerListener(this);
+            fragment.setFinishListener(this);
+            mPresenter.addFragmentList(fragment);
+        } else {
+            View templateThumbView = LayoutInflater.from(mContext).inflate(R.layout.view_template_paster, mBinding.viewPager, false);
+            stickerViewPager = templateThumbView.findViewById(R.id.viewpager_sticker);
+
+            templateThumbView.findViewById(R.id.iv_delete_sticker).setOnClickListener(v -> {
+                clearSticker();
+            });
+
+            templateThumbView.findViewById(R.id.iv_down_sticker).setOnClickListener(v ->
+                    stickerFragmentClose());
+
+            stickerTab = templateThumbView.findViewById(R.id.tb_sticker);
+            mPresenter.getStickerTypeList();
+            mPresenter.addListForBottom(templateThumbView);
+        }
+
+    }
+
+    TemplateGridViewAnimAdapter templateGridViewAnimAdapter;
+
+    /**
+     * 初始化动画列表view
+     */
+    private void initViewForChooseAnim() {
+        View viewForChooseAnim = LayoutInflater.from(mContext)
+                .inflate(R.layout.view_create_template_anim_creation, mBinding.viewPager, false);
+        GridView gridViewAnim = viewForChooseAnim.findViewById(R.id.gridView_anim);
+        TextView animTab = viewForChooseAnim.findViewById(R.id.tv_name_bj_head);
+        animTab.setText("默认");
+        animTab.setTextSize(17);
+
+        viewForChooseAnim.findViewById(R.id.iv_down_anim).setOnClickListener(v -> mPresenter.stickerFragmentClose());
+        viewForChooseAnim.findViewById(R.id.iv_delete_anim).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.needPauseVideo();
+                mPresenter.startPlayAnim(0, true, null, false);
+                StatisticsEventAffair.getInstance().setFlag(mContext, "9_Animation2");
+                StatisticsEventAffair.getInstance().setFlag(mContext, "9_Animation4");
+            }
+        });
+
+        gridViewAnim.setOnItemClickListener((adapterView, view, i, l) -> {
+            if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                mPresenter.modificationSingleAnimItemIsChecked(i);
+                templateGridViewAnimAdapter.notifyDataSetChanged();
+                mPresenter.needPauseVideo();
+                WaitingDialog.openPragressDialog(mContext);
+                mPresenter.startPlayAnim(i, false, null,  false);
+            }
+        });
+
+        templateGridViewAnimAdapter = new TemplateGridViewAnimAdapter(mPresenter.getListAllAnim(), mContext);
+        gridViewAnim.setAdapter(templateGridViewAnimAdapter);
+
+        mPresenter.addListForBottom(viewForChooseAnim);
+    }
+
+    /**
+     * 初始化选音乐页面
+     */
+    private void initViewForChooseMusic() {
+        //添加音乐
+        View viewForChooseMusic = LayoutInflater.from(mContext).inflate(R.layout.view_choose_music, mBinding.viewPager, false);
+
+        TextView tvAddMusic = viewForChooseMusic.findViewById(R.id.tv_add_music);
+        TextView tvDownMusic = viewForChooseMusic.findViewById(R.id.iv_down_music);
+
+        tvDownMusic.setVisibility(View.VISIBLE);
+        tvDownMusic.setOnClickListener(v ->
+                stickerFragmentClose());
+
+        tvAddMusic.setOnClickListener(view -> {
+            StatisticsEventAffair.getInstance().setFlag(mContext, "15_music_add");
+            Intent intent = new Intent(mContext, ChooseMusicActivity.class);
+            intent.putExtra("needDuration", mPresenter.getDuration());
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            mContext.startActivity(intent);
+        });
+
+        tv_0 = viewForChooseMusic.findViewById(R.id.tv_0);
+        tv_1 = viewForChooseMusic.findViewById(R.id.tv_1);
+        tv_2 = viewForChooseMusic.findViewById(R.id.tv_2);
+        tv_3 = viewForChooseMusic.findViewById(R.id.tv_3);
+
+        check_box_0 = viewForChooseMusic.findViewById(R.id.iv_check_box_0);
+        check_box_1 = viewForChooseMusic.findViewById(R.id.iv_check_box_1);
+        check_box_2 = viewForChooseMusic.findViewById(R.id.iv_check_box_2);
+        check_box_3 = viewForChooseMusic.findViewById(R.id.iv_check_box_3);
+
+        tv_1.setText("背景音乐");
+        tv_2.setText("提取音乐");
+
+        setOnViewClickListener();
+        mPresenter.addListForBottom(viewForChooseMusic);
+
+        mPresenter.chooseInitMusic();
+    }
+
+    @Override
+    public void clearCheckBox() {
+        mPresenter.setNowChooseMusicId(0);
+        check_box_0.setImageResource(R.mipmap.template_btn_unselected);
+        check_box_1.setImageResource(R.mipmap.template_btn_unselected);
+        check_box_2.setImageResource(R.mipmap.template_btn_unselected);
+        check_box_3.setImageResource(R.mipmap.template_btn_unselected);
+    }
+
+    @Override
+    public void chooseCheckBox(int i) {
+        switch (i) {
+            case 0:
+                check_box_0.setImageResource(R.mipmap.template_btn_selected);
+                break;
+            case 1:
+                check_box_1.setImageResource(R.mipmap.template_btn_selected);
+                break;
+            case 2:
+                check_box_2.setImageResource(R.mipmap.template_btn_selected);
+                break;
+            case 3:
+                check_box_3.setImageResource(R.mipmap.template_btn_selected);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void returnStickerTypeList(ArrayList<StickerTypeEntity> list) {
+        List<Fragment> fragments = new ArrayList<>();
+        String[] titles = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            titles[i] = list.get(i).getName();
+            Bundle bundle = new Bundle();
+            bundle.putInt("stickerType", list.get(i).getId());
+            bundle.putInt("from", CreationTemplateActivity.FROM_CREATION_CODE);
+            StickerFragment fragment = new StickerFragment();
+            fragment.setStickerListener(this);
+            fragment.setArguments(bundle);
+            fragments.add(fragment);
+        }
+
+        home_vp_frg_adapter vp_frg_adapter = new home_vp_frg_adapter(getSupportFragmentManager(), fragments);
+
+        stickerViewPager.setOffscreenPageLimit(list.size() - 1);
+        stickerViewPager.setAdapter(vp_frg_adapter);
+        stickerTab.setViewPager(stickerViewPager, titles);
+    }
+
+    private void setOnViewClickListener() {
+
+        View.OnClickListener tvMusicListener = view -> {
+
+            switch (view.getId()) {
+                case R.id.iv_check_box_0:
+                case R.id.tv_0:
+
+                    mPresenter.chooseNowStickerMaterialMusic();
+                    mPresenter.chooseMusicIndex(0);
+                    break;
+
+                case R.id.tv_1:
+                case R.id.iv_check_box_1:
+                    mPresenter.chooseMusicIndex(1);
+                    mPresenter.chooseTemplateMusic(true);
+                    break;
+
+                case R.id.tv_2:
+                case R.id.iv_check_box_2:
+                    mPresenter.chooseMusicIndex(2);
+                    mPresenter.setNowChooseMusicId(3);
+                    mPresenter.chooseAddChooseBjPath();
+                    break;
+
+                case R.id.iv_check_box_3:
+                case R.id.tv_3:
+                    mPresenter.chooseMusicIndex(3);
+                    clearCheckBox();
+                    check_box_3.setImageResource(R.mipmap.template_btn_selected);
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        tv_0.setOnClickListener(tvMusicListener);
+        tv_1.setOnClickListener(tvMusicListener);
+        tv_2.setOnClickListener(tvMusicListener);
+        tv_3.setOnClickListener(tvMusicListener);
+
+        check_box_0.setOnClickListener(tvMusicListener);
+        check_box_1.setOnClickListener(tvMusicListener);
+        check_box_2.setOnClickListener(tvMusicListener);
+        check_box_3.setOnClickListener(tvMusicListener);
+    }
+
+
+    @Override
+    public void addSticker(String stickerPath, String title) {
+        mPresenter.addSticker(stickerPath, title);
+    }
+
+    @Override
+    public void copyGif(String fileName, String copyName, String title) {
+        mPresenter.copyGif(fileName, copyName, title);
+    }
+
+    @Override
+    public void clickItemSelected(int position) {
+        mPresenter.showAllAnim(false);
+        mPresenter.needPauseVideo();
+    }
+
+    @Override
+    public void chooseFrame(String title, String path) {
+        if (TextUtils.isEmpty(path)) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_frame", "无相框");
+            clearImageFrame();
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "st_bj_frame", title);
+            mPresenter.chooseFrame(path);
+        }
+    }
+
+
+    @Override
+    public void onFinishClicked() {
+        mPresenter.stickerFragmentClose();
+    }
+
+    @Override
+    public void onClearClicked(int id) {
+        if (id == 0) {
+
+        } else if (id == 1) {
+            clearImageFrame();
+        } else {
+            clearSticker();
+        }
+    }
+
+    private void clearSticker() {
+        mPresenter.stopAllAnim();
+        closeAllAnim();
+        mPresenter.deleteAllSticker();
+        if (UiStep.isFromDownBj) {
+            StatisticsEventAffair.getInstance().setFlag(mContext, " 5_mb_bj_Stickeroff");
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(mContext, " 6_customize_bj_Stickeroff");
+        }
+    }
+
+    @Override
+    public void closeAllAnim() {
+        //ArrayList<AllStickerData> list = new ArrayList<>();
+        for (int i = 0; i < mBinding.idVviewRealtimeGllayout.getChildCount(); i++) {
+            StickerView stickerView = (StickerView) mBinding.idVviewRealtimeGllayout.getChildAt(i);
+            stickerView.pause();
+        }
+    }
+
+    private void clearImageFrame() {
+        dismissFrame();
     }
 }

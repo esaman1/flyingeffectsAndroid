@@ -5,7 +5,7 @@ import android.content.Context;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -13,6 +13,7 @@ import com.flyingeffects.com.ui.interfaces.model.homeItemMvpCallback;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -29,21 +30,22 @@ public class home_fag_itemMvpModel {
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private SmartRefreshLayout smartRefreshLayout;
     private boolean isRefresh = true;
-    private ArrayList<new_fag_template_item> listData = new ArrayList<>();
+    private ArrayList<NewFragmentTemplateItem> listData = new ArrayList<>();
     private int selectPage = 1;
     private String templateId, tc_id;
-    private int perPageCount = 10;
+    private int perPageCount = 9;
     /**
      * 1是模板 2是背景
      */
     private int template_type;
     private int fromType;
 
-    public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback, int fromType) {
+    public home_fag_itemMvpModel(Context context, homeItemMvpCallback callback, int fromType, FeedAdManager mAdManager) {
         this.context = context;
         this.callback = callback;
         this.fromType = fromType;
         template_type = template_type == 0 ? 1 : 2;
+
     }
 
 
@@ -90,7 +92,7 @@ public class home_fag_itemMvpModel {
         params.put("category_id", templateId);
         if (needRefresh) {
             selectPage = 1;
-            perPageCount = 10;
+            perPageCount = 9;
         }
         if (fromType == 4) {
             params.put("template_type", "3");
@@ -103,14 +105,15 @@ public class home_fag_itemMvpModel {
         params.put("search", "");
         params.put("page", selectPage + "");
         params.put("pageSize", perPageCount + "");
+
         Observable ob;
-        if(fromType == 4){
-            ob = Api.getDefault().getMeargeTemplate(BaseConstans.getRequestHead(params));
-        }else{
+        if (fromType == 4) {
+            ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
+        } else {
             ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
         }
-        LogUtil.d("OOM", StringUtil.beanToJSONString(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(context) {
+        LogUtil.d("requestFagData", StringUtil.beanToJSONString(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(context) {
             @Override
             protected void onSubError(String message) {
                 finishData();
@@ -118,7 +121,7 @@ public class home_fag_itemMvpModel {
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.dLong("OOM", "_onNext=" + str);
                 finishData();
@@ -134,12 +137,22 @@ public class home_fag_itemMvpModel {
 
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(context.getResources().getString(R.string.no_more_data));
-                }
-                if (data.size() < perPageCount) {
                     smartRefreshLayout.setEnableLoadMore(false);
+                }
+
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && data.size() > BaseConstans.NOWADSHOWPOSITION) {
+                    NewFragmentTemplateItem item = new NewFragmentTemplateItem();
+                    item.setHasShowAd(true);
+                    //设置当前是导流，进入抖音列表页就会自动过滤
+                    item.setIs_ad_recommend(1);
+                    data.add(BaseConstans.NOWADSHOWPOSITION, item);
                 }
                 listData.addAll(data);
                 callback.showData(listData);
+
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                    callback.needRequestFeedAd();
+                }
             }
         }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, false);
     }
@@ -148,6 +161,16 @@ public class home_fag_itemMvpModel {
     private void finishData() {
         smartRefreshLayout.finishRefresh();
         smartRefreshLayout.finishLoadMore();
+    }
+
+
+    /**
+     * description ：刷新全部数据
+     * creation date: 2021/4/15
+     * user : zhangtongju
+     */
+    public void RefreshAllData() {
+        requestFagData(true, false);
     }
 
 

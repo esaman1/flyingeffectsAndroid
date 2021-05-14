@@ -14,7 +14,7 @@ public interface TemplateMvpView {
 
     void toPreview(String path);
 
-    void ChangeMaterialCallback(ArrayList<TemplateThumbItem> listItem, List<String> list_all,List<String> listAssets);
+    void changeMaterialCallback(ArrayList<TemplateThumbItem> listItem, List<String> list_all, List<String> listAssets);
 
     void returnReplaceableFilePath(String[]paths);
 
@@ -28,4 +28,10 @@ public interface TemplateMvpView {
     void getSpliteMusic(String path);
 
     void GetChangeDressUpData(List<String> paths);
+
+    void setDialogProgress(int progress);
+
+    void setDialogDismiss();
+
+    void showProgressDialog();
 }

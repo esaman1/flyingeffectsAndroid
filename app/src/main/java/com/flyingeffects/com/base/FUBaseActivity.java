@@ -19,18 +19,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewStub;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.faceunity.FURenderer;
 import com.faceunity.gles.core.GlUtil;
@@ -95,8 +89,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
     private LinearLayout mLlLight;
     protected CameraFocus mCameraFocus;
     public RelativeLayout relative_content;
+    public FUBeautyActivity fuBeautyActivity;
     private String recordingFolder;
-    public  FUBeautyActivity fuBeautyActivity;
     private SensorManager mSensorManager;
     private Sensor mSensor;
     private final Runnable mCameraFocusDismiss = new Runnable() {
@@ -241,10 +235,9 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
     @Override
     public void onTrackStatusChanged(int type, int status) {
-        LogUtils.debug("OOM2","onTrackStatusChanged");
+        LogUtils.debug("OOM2", "onTrackStatusChanged");
 
     }
-
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~拍照录制部分~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -302,7 +295,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
         setContentView(R.layout.act_shoot);
         PermissionUtil.checkPermission(this);
         loadInternalConfigJson();
-        mGlSurfaceView = (GLSurfaceView) findViewById(R.id.fu_base_gl_surface);
+        mGlSurfaceView = findViewById(R.id.fu_base_gl_surface);
         mGlSurfaceView.setEGLContextClientVersion(GlUtil.getSupportGlVersion(this));
         mCameraRenderer = new Camera1Renderer(FUBaseActivity.this, mGlSurfaceView, new OnRendererStatusListener() {
             @Override
@@ -358,8 +351,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     }
 
 
-
-    public void SwitchCamera(){
+    public void switchCamera() {
         mCameraRenderer.switchCamera();
     }
 
@@ -464,6 +456,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                          fuBeautyActivity.ShowRecordingBtn(true);
                             ToastUtil.showToast("录制时间太短");
                         }
                     });
@@ -485,18 +478,15 @@ public abstract class FUBaseActivity extends AppCompatActivity
                                         dcimFile.delete();
                                     }
                                     LogUtil.d("OOM3","删除的地址为"+dcimFile.getPath());
-
-//                                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(dcimFile)));
                                     if(TextUtils.isEmpty(nowChooseBjPath)){
                                         intoTemplate(mVideoOutFile.getPath());
                                     }else{
                                         compoundVideo(mVideoOutFile.getPath(),nowChooseBjPath );
                                     }
-
                                 }
                             });
                         } catch (IOException e) {
-                            LogUtil.d("OOM22", "copyFile+EEE"+e.getMessage());
+                            LogUtil.d("OOM22", "copyFile+EEE" + e.getMessage());
 
                         }
                     }
@@ -507,8 +497,8 @@ public abstract class FUBaseActivity extends AppCompatActivity
 
 
     private void intoTemplate(String path) {
-        WaitingDialog.closePragressDialog();
-        fuBeautyActivity.ToNextPage( path);
+        WaitingDialog.closeProgressDialog();
+        fuBeautyActivity.toNextPage(path);
     }
 
 
@@ -551,6 +541,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
     public void stopRecording() {
         LogUtil.d("OOM", "stopRecording");
         Log.d(TAG, "stopRecording: ");
+
         if (mMuxer != null) {
             synchronized (mRecordLock) {
                 mVideoEncoder = null;
@@ -562,9 +553,9 @@ public abstract class FUBaseActivity extends AppCompatActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                fuBeautyActivity.ChangeClicKState();
+                fuBeautyActivity.changeClickState();
             }
-        },3000);
+        }, 3000);
 
     }
 
@@ -580,6 +571,7 @@ public abstract class FUBaseActivity extends AppCompatActivity
         if (!file.exists()) {
             return;
         }
+        LogUtil.d("OOM", "loadInternalConfigJson222");
         try {
             String jsonStr = FileUtils.readStringFromFile(file);
             JSONObject jsonObject = new JSONObject(jsonStr);
@@ -612,10 +604,10 @@ public abstract class FUBaseActivity extends AppCompatActivity
     private void compoundVideo(String videoPath, String musicPath) {
         WaitingDialog.openPragressDialog(this);
         MediaInfo mediaInfo = new MediaInfo(videoPath);
-        if (mediaInfo.prepare()){
-            LogUtil.d("OOM2", "mediaInfo=" + mediaInfo.getWidth()+"---"+mediaInfo.getHeight()+"duration="+mediaInfo.getDurationUs());
+        if (mediaInfo.prepare()) {
+            LogUtil.d("OOM2", "mediaInfo=" + mediaInfo.getWidth() + "---" + mediaInfo.getHeight() + "duration=" + mediaInfo.getDurationUs());
             try {
-                DrawPadAllExecute2 execute = new DrawPadAllExecute2(this, mediaInfo.getWidth(), mediaInfo.getHeight(), mediaInfo.getDurationUs() );
+                DrawPadAllExecute2 execute = new DrawPadAllExecute2(this, mediaInfo.getWidth(), mediaInfo.getHeight(), mediaInfo.getDurationUs());
                 execute.setFrameRate(20);
                 execute.setEncodeBitrate(5 * 1024 * 1024);
                 execute.setOnLanSongSDKErrorListener(message -> {
@@ -663,12 +655,12 @@ public abstract class FUBaseActivity extends AppCompatActivity
     }
 
 
-
     private Timer timer;
     private TimerTask task;
     private int nowShootTime;
+
     private void startTimer() {
-        nowShootTime=0;
+        nowShootTime = 0;
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -704,10 +696,6 @@ public abstract class FUBaseActivity extends AppCompatActivity
         }
 
     }
-
-
-
-
 
 
 }

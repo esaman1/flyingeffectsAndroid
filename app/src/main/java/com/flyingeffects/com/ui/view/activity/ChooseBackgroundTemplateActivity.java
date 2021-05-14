@@ -12,7 +12,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -49,7 +49,7 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
     @BindView(R.id.tl_tabs)
     SlidingTabLayout tabLayout;
 
-    private new_fag_template_item templateItem;
+    private NewFragmentTemplateItem templateItem;
 
     @Override
     protected int getLayoutId() {
@@ -59,7 +59,7 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
     @Override
     protected void initView() {
         EventBus.getDefault().register(this);
-        templateItem = (new_fag_template_item) getIntent().getSerializableExtra("templateItem");
+        templateItem = (NewFragmentTemplateItem) getIntent().getSerializableExtra("templateItem");
     }
 
     @Override

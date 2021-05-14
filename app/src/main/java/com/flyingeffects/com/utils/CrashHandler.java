@@ -225,7 +225,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
     public static String getGlobalpath() {
         return Environment.getExternalStorageDirectory().getAbsolutePath()
-                + File.separator + "卡点奔溃" + File.separator;
+                + File.separator + "飞闪错误" + File.separator;
     }
 
     public static void setTag(String tag) {

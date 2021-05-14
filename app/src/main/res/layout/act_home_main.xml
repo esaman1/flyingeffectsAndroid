@@ -17,8 +17,6 @@
 
     <ImageView
         android:id="@+id/iv_back_menu_0"
-
-
         app:layout_constraintHorizontal_weight="1"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -46,7 +44,7 @@
         android:layout_height="wrap_content"
         android:text="@string/text_background"
         android:textColor="@color/new_base_blue"
-        android:textSize="@dimen/text_16sp_size"
+        android:textSize="@dimen/sp_19"
         app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_0"
         app:layout_constraintEnd_toEndOf="@id/iv_back_menu_0"
         app:layout_constraintStart_toStartOf="@id/iv_back_menu_0"
@@ -83,7 +81,7 @@
         android:layout_height="wrap_content"
         android:text="@string/text_mould"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_16sp_size"
+        android:textSize="@dimen/sp_19"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/iv_back_menu_1"
         app:layout_constraintStart_toStartOf="@id/iv_back_menu_1"
@@ -173,9 +171,9 @@
         android:id="@+id/tv_main_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_message"
+        android:text="@string/text_flash"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_16sp_size"
+        android:textSize="@dimen/sp_19"
         app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_2"
         app:layout_constraintEnd_toEndOf="@id/iv_back_menu_2"
         app:layout_constraintStart_toStartOf="@id/iv_back_menu_2"
@@ -212,7 +210,7 @@
         android:layout_height="wrap_content"
         android:text="@string/text_mine"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_16sp_size"
+        android:textSize="@dimen/sp_19"
         app:layout_constraintBottom_toBottomOf="@id/iv_back_menu_3"
         app:layout_constraintEnd_toEndOf="@id/iv_back_menu_3"
         app:layout_constraintStart_toStartOf="@id/iv_back_menu_3"

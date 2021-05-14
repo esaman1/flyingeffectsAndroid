@@ -1,11 +1,16 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.content.pm.PackageManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -21,6 +26,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
+import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.keyBordUtils;
@@ -42,6 +48,7 @@ import butterknife.OnClick;
  */
 public class EditInformationActivity extends BaseActivity implements AlbumChooseCallback {
     public final static int SELECTALBUMFROMUSERAVATAR = 1;
+    private static final int CODE_AVATAR = 11;
 
     @BindView(R.id.iv_Avatar)
     ImageView ivAvatar;
@@ -91,7 +98,9 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
                 finish();
                 break;
             case R.id.rl_Avatar:
-                AlbumManager.chooseImageAlbum(this,1,SELECTALBUMFROMUSERAVATAR,this,"");
+                ActivityCompat.requestPermissions(this, PERMISSION_STORAGE, CODE_AVATAR);
+                //AlbumManager.chooseImageAlbum(this,1,SELECTALBUMFROMUSERAVATAR,this,"");
+
                 break;
             case R.id.tv_enter:
                 if(TextUtils.isEmpty(avatarPath)){
@@ -130,7 +139,7 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
                                     .load(avatarPath)
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                                     .into(ivAvatar);
-                            WaitingDialog.closePragressDialog();
+                            WaitingDialog.closeProgressDialog();
                         }
                     });
                 }
@@ -187,4 +196,33 @@ public class EditInformationActivity extends BaseActivity implements AlbumChoose
         return super.dispatchTouchEvent(ev);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ArrayList<String> deniedPermission = new ArrayList<>();
+        deniedPermission.clear();
+        for (int i = 0; i < permissions.length; i++) {
+            String permission = permissions[i];
+            int result = grantResults[i];
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                deniedPermission.add(permission);
+            }
+        }
+        if (deniedPermission.isEmpty()) {
+            if (requestCode == CODE_AVATAR) {
+                AlbumManager.chooseImageAlbum(this,1,SELECTALBUMFROMUSERAVATAR,this,"");
+            }
+        } else {
+            new AlertDialog.Builder(this)
+                    .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
+                    .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .setPositiveButton("去授权", (dialog, which) -> {
+                        PermissionUtil.gotoPermission(this);
+                        dialog.dismiss();
+                    }).create()
+                    .show();
+        }
+    }
 }

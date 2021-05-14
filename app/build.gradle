@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'mtj-circle-plugin'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'kotlin-kapt'
 
 android {
 
@@ -11,7 +13,6 @@ android {
             keyPassword 'android'
         }
 
-
         realse {
             storeFile file('feishan.jks')
             storePassword 'android'
@@ -19,6 +20,14 @@ android {
             keyPassword 'android'
         }
     }
+
+
+    //解决代码不规范不能打包问题
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     aaptOptions.cruncherEnabled = false //解决分包后打relase 出现了问题
     aaptOptions.useNewCruncher = false
     compileSdkVersion 28
@@ -28,8 +37,8 @@ android {
         multiDexEnabled true  //分包支持
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 30
-        versionName "4.3.0"
+        versionCode 35
+        versionName "4.8.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [UMENG_CHANNEL_VALUE: "umeng"]//添加一个默认渠道号  2018-6-19
         flavorDimensions "versionCode" //版本名后面添加一句话，意思就是flavor dimension 它的维度就是该版本号，这样维度就是都是统一的了
@@ -90,11 +99,11 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation project(path: ':faceunity')
-    implementation project(path: ':faceunity')
     implementation project(path: ':horizontalselectedviewlibrary')
     testImplementation 'junit:junit:4.12'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     //add
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
@@ -104,8 +113,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
     implementation 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4'
-    implementation 'com.orhanobut:hawk:2.0.0-Alpha'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.orhanobut:hawk:2.0.1'
+
     // eventbus
     implementation 'de.greenrobot:eventbus:3.0.0-beta1'
     //黄油手
@@ -124,41 +133,31 @@ dependencies {
     implementation 'jp.wasabeef:glide-transformations:2.0.1'
     //圆角矩形imageview
     implementation 'com.makeramen:roundedimageview:2.3.0'
-
     //水平进度条
     implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
 
     //加载控件
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
-    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0'
     //FlycoTabLayout
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
     //框架要求的
     implementation 'com.google.code.gson:gson:2.8.5'
     //视频播放器
-    implementation 'com.shuyu:GSYVideoPlayer:6.0.3'
+    implementation 'com.shuyu:GSYVideoPlayer:8.1.0'
     //文件上传下载  //https://github.com/SheHuan/DUtil
     implementation 'com.github.Othershe:DUtil:1.1.1'
     //  图片压缩 https://github.com/Curzibn/Luban
-    implementation 'top.zibin:Luban:1.1.3'
+    implementation 'top.zibin:Luban:1.1.8'
     //图片裁剪
     implementation 'com.github.yalantis:ucrop:2.2.6'
-
     //仿ios 开关  https://github.com/zcweng/SwitchButton
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     //友盟统计
-//    implementation 'com.umeng.umsdk:analytics:8.1.6'
     implementation 'com.umeng.umsdk:common:9.3.0'
     implementation 'com.umeng.umsdk:crash:0.0.4'
     implementation 'com.umeng.umsdk:asms:1.1.3'
-//    implementation 'com.umeng.umsdk:utdid:1.1.5.3'
-
     implementation 'com.umeng.umsdk:share-core:7.1.2'
     implementation 'com.umeng.umsdk:share-wx:7.1.2'
-    //exo视频播放器
-//    implementation 'com.google.android.exoplayer:exoplayer-core:2.10.8'
-//    implementation 'com.google.android.exoplayer:exoplayer-dash:2.6.1'
-//    implementation 'com.google.android.exoplayer:exoplayer-ui:2.10.8'
     //极光
     implementation 'cn.jiguang.sdk:jpush:3.5.8'
     implementation 'cn.jiguang.sdk:jcore:2.2.8'
@@ -168,32 +167,35 @@ dependencies {
     implementation 'com.amitshekhar.android:glide-bitmap-pool:0.0.1'
 
     //中台
-    implementation files('libs/NTAnalytics1.1.0.jar')
+    implementation files('libs/NTAnalytics1.1.2.jar')
     implementation project(':sxve')
     implementation project(':album')
     implementation project(':LanSongSDK')
-//    implementation project(':DownAndUpLibrary')
-//    implementation project(path: ':segjni')
 
     //mp4 声音和视频分离
     implementation 'com.googlecode.mp4parser:isoparser:1.1.21'
 
     //开屏广告
-    implementation(name: 'GDTSDK.unionNormal.4.330.1200', ext: 'aar')
+    implementation(name: 'GDTSDK.unionNormal.4.333.1203', ext: 'aar')
     // 广告sdk
-    implementation(name: 'NTADSDK-v2.5.7', ext: 'aar')
+    implementation(name: 'NTADSDK-v2.6.5', ext: 'aar')
     // 百度联盟
-    implementation(name: 'Baidu_MobAds_SDK-release_v5.85', ext: 'aar')
+    implementation(name: 'Baidu_MobAds_SDK-release_v5.98', ext: 'aar')
     // 穿山甲
-    implementation(name: 'open_ad_sdk_3.3.0.3', ext: 'aar')
+    implementation(name: 'open_ad_sdk_3.6.1.2', ext: 'aar')
     //快手
-    implementation(name: 'ks_adsdk-3.3.6', ext: 'aar')
+    implementation(name: 'ks_adsdk-3.3.14', ext: 'aar')
+    //快手监控
+    implementation(name: 'monitorsdk-1.0.6', ext: 'aar')
     //oppo
     implementation(name: 'mobad_normal_pub_354_2020_05_19', ext: 'aar')
     // 抖音1
     implementation(name: 'RangersAppLog-Lite-cn-3.3.12', ext: 'aar')
     //闪验
     api files('libs/shanyan_sdk_v2.3.1.5.aar')
+
+    //广告要求的分包工具
+    implementation(name: 'humesdk-1.0.0', ext: 'aar')
 
     //仿抖音sdk 需要的
     implementation 'androidx.viewpager2:viewpager2:1.0.0-beta02'
@@ -223,6 +225,16 @@ dependencies {
 
     //face sdk
     implementation(name: 'faceSdk', ext: 'aar')
+
+    implementation 'com.xj.android:anchortask:1.0.0'
+
+
+
+    //腾讯游戏SDK需要支持包start
+    implementation 'com.squareup.wire:wire-runtime:2.3.0-RC1'
+    //腾讯游戏SDK
+    implementation(name: 'klevinSDK_1.3.1.12', ext: 'aar')
+    //腾讯游戏SDK需要支持包end
 }
 
 

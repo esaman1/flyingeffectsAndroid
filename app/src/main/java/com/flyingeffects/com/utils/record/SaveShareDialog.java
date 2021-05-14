@@ -14,7 +14,7 @@ import com.bytedance.sdk.open.douyin.DouYinOpenApiFactory;
 import com.bytedance.sdk.open.douyin.api.DouYinOpenApi;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.umeng.socialize.ShareAction;
@@ -69,7 +69,7 @@ public class SaveShareDialog  {
                 dialogShare.setVisibility(View.GONE);
             }
 
-            statisticsEventAffair.getInstance().setFlag(mContext, "21_save_douying");
+            StatisticsEventAffair.getInstance().setFlag(mContext, "21_save_douying");
         });
         dialogShare.findViewById(R.id.bt_share_wx).setOnClickListener(v -> {
             //分享小程序
@@ -86,7 +86,7 @@ public class SaveShareDialog  {
                     .setCallback(shareListener).share();
         });
         dialogShare.findViewById(R.id.bt_upload_feishan).setOnClickListener(v -> {
-            statisticsEventAffair.getInstance().setFlag(mContext, "21_save_flyingfighting");
+            StatisticsEventAffair.getInstance().setFlag(mContext, "21_save_flyingfighting");
 
             Intent intent = new Intent(mContext, UploadMaterialActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -118,7 +118,7 @@ public class SaveShareDialog  {
         @Override
         public void onResult(SHARE_MEDIA platform) {
 //            ToastUtil.showToast("分享成功");
-            statisticsEventAffair.getInstance().setFlag(mContext, "21_save_wechat");
+            StatisticsEventAffair.getInstance().setFlag(mContext, "21_save_wechat");
             dialogShare.setVisibility(View.GONE);
         }
 

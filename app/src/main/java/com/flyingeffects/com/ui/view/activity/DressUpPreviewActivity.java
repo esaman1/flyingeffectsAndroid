@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
@@ -17,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
@@ -24,8 +26,9 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.DressUpModel;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -53,7 +56,8 @@ import rx.functions.Action1;
 /**
  * description ：换装预览界面
  * creation date: 2020/12/7
- * user : zhangtongju
+ *
+ * @author : zhangtongju
  */
 public class DressUpPreviewActivity extends BaseActivity {
 
@@ -76,8 +80,15 @@ public class DressUpPreviewActivity extends BaseActivity {
     private List<String> TemplateIdList = new ArrayList<>();
     private String localImage;
     private String templateTitle;
-    /**换装切换次数*/
+    /**
+     * 不是换脸，而是其他特殊类型页面
+     */
+    private boolean isSpecial;
+    /**
+     * 换装切换次数
+     */
     int dressupSwitchNumber = 0;
+    private Context mContext;
 
     @Override
     protected int getLayoutId() {
@@ -86,43 +97,47 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        mContext = DressUpPreviewActivity.this;
         LogUtil.d("OOM3", "换装页面initView");
         String urlPath = getIntent().getStringExtra("url");
         template_id = getIntent().getStringExtra("template_id");
         localImage = getIntent().getStringExtra("localImage");
+        isSpecial = getIntent().getBooleanExtra("isSpecial", false);
         templateTitle = getIntent().getStringExtra("templateTitle");
         tv_top_title.setText("上传清晰正脸照片最佳");
-        findViewById(R.id.iv_top_back).setOnClickListener(this);
         showAndSaveImage(urlPath);
         requestAllTemplateId();
     }
 
     @Override
     protected void initAction() {
-
-
+        if (isSpecial) {
+            findViewById(R.id.dress_up_next).setVisibility(View.GONE);
+        }
     }
 
 
     @Override
-    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album, R.id.share})
+    @OnClick({R.id.dress_up_next, R.id.iv_back, R.id.keep_to_album, R.id.share, R.id.iv_top_back})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.dress_up_next:
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    if (dressupSwitchNumber != 0 && dressupSwitchNumber % BaseConstans.getDressupIntervalsNumber() == 0 &&
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
+                    //1 开始记录位置，不然从0开始会能多做一次
+                    int needShowPosition=nowShowPosition+1;
+                    if (needShowPosition != 1 && needShowPosition % BaseConstans.getDressupIntervalsNumber() == 0 &&
                             BaseConstans.getIncentiveVideo() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                         VideoAdManager videoAdManager = new VideoAdManager();
                         videoAdManager.showVideoAd(this, AdConfigs.AD_DRESSUP_SCREEN_VIDEO, new VideoAdCallBack() {
                             @Override
                             public void onVideoAdSuccess() {
-//                                statisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_sucess");
+//                                StatisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_sucess");
                                 LogUtil.d("OOM4", "onVideoAdSuccess");
                             }
 
                             @Override
                             public void onVideoAdError(String s) {
-//                                statisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_fail");
+//                                StatisticsEventAffair.getInstance().setFlag(DressUpPreviewActivity.this, "video_ad_alert_request_fail");
                                 LogUtil.d("OOM4", "onVideoAdError" + s);
                                 showDressUp(true);
                                 iv_back.setVisibility(View.VISIBLE);
@@ -133,6 +148,10 @@ public class DressUpPreviewActivity extends BaseActivity {
                                 LogUtil.d("OOM4", "onVideoAdClose");
                                 showDressUp(true);
                                 iv_back.setVisibility(View.VISIBLE);
+                            }
+
+                            @Override
+                            public void onRewardVerify() {
                             }
 
                             @Override
@@ -168,15 +187,25 @@ public class DressUpPreviewActivity extends BaseActivity {
                 break;
             case R.id.keep_to_album:
                 alertAlbumUpdate(false);
-                statisticsEventAffair.getInstance().setFlag(this, "21_face_save", templateTitle);
+                StatisticsToSave(template_id);
+
+                if(isSpecial){
+                    StatisticsEventAffair.getInstance().setFlag(this, "st_ft_save", templateTitle);
+                }else{
+                    StatisticsEventAffair.getInstance().setFlag(this, "21_face_save", templateTitle);
+                }
+
+
                 break;
             case R.id.share:
                 share(listForKeep.get(nowChooseIndex));
                 break;
+            case R.id.iv_top_back:
+                onBackPressed();
+                break;
             default:
                 break;
         }
-        super.onClick(v);
 
     }
 
@@ -191,6 +220,35 @@ public class DressUpPreviewActivity extends BaseActivity {
                 .setPlatform(SHARE_MEDIA.WEIXIN)
                 .setCallback(shareListener).share();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        showBackDialog();
+    }
+
+    private void showBackDialog() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_edit_back_face");
+        CommonMessageDialog.getBuilder(mContext)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_EXIT)
+                .setTitle("确定退出吗？")
+                .setPositiveButton("确定")
+                .setNegativeButton("取消")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .build().show();
     }
 
     private UMShareListener shareListener = new UMShareListener() {
@@ -243,17 +301,18 @@ public class DressUpPreviewActivity extends BaseActivity {
         }
     };
 
+    private int nowShowPosition;
 
     private void showDressUp(boolean isNext) {
         LogUtil.d("OOM3", "nowChooseIndex=" + nowChooseIndex);
-        int needChooseIndex;
+
         if (isNext) {
-            needChooseIndex = nowChooseIndex + 1;
+            nowShowPosition = nowChooseIndex + 1;
         } else {
-            needChooseIndex = nowChooseIndex - 1;
+            nowShowPosition = nowChooseIndex - 1;
         }
 
-        if (needChooseIndex == 0) {
+        if (nowShowPosition == 0) {
             LogUtil.d("OOM3", "隐藏");
             Observable.just(0).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
                 @Override
@@ -263,18 +322,18 @@ public class DressUpPreviewActivity extends BaseActivity {
             });
 
         }
-        if (listForKeep.size() > needChooseIndex) {
+        if (listForKeep.size() > nowShowPosition) {
             LogUtil.d("OOM3", "有过缓存");
             //有过缓存
-            String needShowPath = listForKeep.get(needChooseIndex);
-            nowChooseIndex = needChooseIndex;
+            String needShowPath = listForKeep.get(nowShowPosition);
+            nowChooseIndex = nowShowPosition;
             Glide.with(this).load(needShowPath).apply(new RequestOptions().placeholder(R.mipmap.placeholder)).into(iv_show_content);
         } else {
             LogUtil.d("OOM3", "没得缓存");
             //没有缓存
-            if (TemplateIdList.size() > needChooseIndex) {
-                String id = TemplateIdList.get(needChooseIndex);
-                ToNextDressUp(id);
+            if (TemplateIdList.size() > nowShowPosition) {
+                String id = TemplateIdList.get(nowShowPosition);
+                toNextDressUp(id);
                 dressupSwitchNumber++;
             } else {
                 ToastUtil.showToast("没有更多换装了");
@@ -291,8 +350,9 @@ public class DressUpPreviewActivity extends BaseActivity {
      * creation date: 2020/12/8
      * user : zhangtongju
      */
-    private void ToNextDressUp(String templateId) {
+    private void toNextDressUp(String templateId) {
         DressUpModel dressUpModel = new DressUpModel(this, new DressUpModel.DressUpCallback() {
+
             @Override
             public void isSuccess(List<String> paths) {
                 if (paths != null && paths.size() > 0) {
@@ -304,9 +364,9 @@ public class DressUpPreviewActivity extends BaseActivity {
                 }
             }
         }, false);
-        if(!TextUtils.isEmpty(keepUploadPath)){
-            dressUpModel.RequestDressUp(keepUploadPath,templateId);
-        }else{
+        if (!TextUtils.isEmpty(keepUploadPath)) {
+            dressUpModel.requestDressUp(keepUploadPath, templateId);
+        } else {
             dressUpModel.toDressUp(localImage, templateId, new DressUpModel.DressUpCatchCallback() {
                 @Override
                 public void isSuccess(String uploadPath) {
@@ -325,7 +385,7 @@ public class DressUpPreviewActivity extends BaseActivity {
     private void showAndSaveImage(String url) {
         Glide.with(this).load(url).into(iv_show_content);
         listForKeep.add(url);
-        LogUtil.d("OOM3","showAndSaveImage");
+        LogUtil.d("OOM3", "showAndSaveImage");
     }
 
 
@@ -370,6 +430,7 @@ public class DressUpPreviewActivity extends BaseActivity {
                     albumBroadcast(path2);
                 }
             });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -393,15 +454,15 @@ public class DressUpPreviewActivity extends BaseActivity {
 
     public String getKeepOutput() {
         String product = android.os.Build.MANUFACTURER; //获得手机厂商
-        if (product != null && "vivo".equals(product)) {
-            File file_camera = new File(Environment.getExternalStorageDirectory() + "/相机");
-            if (file_camera.exists()) {
-                return file_camera.getPath() + File.separator + System.currentTimeMillis() + "synthetic.png";
+        if ("vivo".equals(product)) {
+            File fileCamera = new File(Environment.getExternalStorageDirectory() + "/相机");
+            if (fileCamera.exists()) {
+                return fileCamera.getPath() + File.separator + System.currentTimeMillis() + "synthetic.png";
             }
         }
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
-        File path_Camera = new File(path + "/Camera");
-        if (path_Camera.exists()) {
+        File pathCamera = new File(path + "/Camera");
+        if (pathCamera.exists()) {
             return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + "Camera" + File.separator + System.currentTimeMillis() + "synthetic.png";
         }
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + System.currentTimeMillis() + "synthetic.png";
@@ -430,4 +491,25 @@ public class DressUpPreviewActivity extends BaseActivity {
             keepImageToAlbum(path);
         }
     }
+
+    public void StatisticsToSave(String templateId) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("template_id", templateId);
+        params.put("template_type", "3");
+        // 启动时间
+        Observable ob = Api.getDefault().saveTemplate(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
+                    @Override
+                    protected void onSubError(String message) {
+                    }
+
+                    @Override
+                    protected void onSubNext(Object data) {
+
+                    }
+                }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject,
+                false, true, false);
+
+    }
+
 }

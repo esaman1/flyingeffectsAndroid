@@ -1,26 +1,28 @@
 package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.flyco.tablayout.SlidingTabLayout;
-import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
+import com.flyingeffects.com.enity.SecondChoosePageListener;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
 import com.flyingeffects.com.ui.presenter.home_fagMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,11 +36,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 
@@ -51,8 +56,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
     home_fagMvpPresenter Presenter;
     @BindView(R.id.tl_tabs)
-    SlidingTabLayout tabLayout;
-
+    TabLayout tabLayout;
     @BindView(R.id.viewpager_bj)
     ViewPager viewpager;
     @BindView(R.id.tv_search_hint)
@@ -65,12 +69,10 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
     private ArrayList<String> listSearchKey = new ArrayList<>();
     int listSearchKeyIndex = 0;
 
-
     @Override
     protected int getContentLayout() {
         return R.layout.fragment_template;
     }
-
 
     @Override
     protected void initView() {
@@ -87,13 +89,15 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
         manager = getChildFragmentManager();
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
         if (data == null || data.size() == 0) {
             Presenter.getFragmentList();
         }
+
+
+        LogUtil.d("OOM4","setUserVisibleHint="+getUserVisibleHint());
         listSearchKeyIndex = 0;
         if (!listSearchKey.isEmpty()) {
             if (mScheduledExecutorService != null) {
@@ -116,30 +120,29 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                 if (manager == null) {
                     manager = getFragmentManager();
                 }
-                String[] titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
                     Bundle bundle = new Bundle();
                     if (data.get(i).getCategory() != null && !data.get(i).getCategory().isEmpty()) {
-                        bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
-                        bundle.putInt("type", 0);
-                        bundle.putSerializable("id", data.get(i).getId());
-                        bundle.putString("categoryTabName",data.get(i).getName());
+                        Bundle bundle1 = SecondaryTypeFragment.buildArgument(data.get(i).getCategory(), SecondaryTypeFragment.BUNDLE_VALUE_TYPE_TEMPLATE, data.get(i).getId(),
+                                -1, i, 1, null, data.get(i).getName());
                         SecondaryTypeFragment fragment = new SecondaryTypeFragment();
-                        fragment.setArguments(bundle);
+                        fragment.setArguments(bundle1);
                         list.add(fragment);
                     } else {
                         bundle.putSerializable("id", data.get(i).getId());
                         bundle.putString("tc_id", "-1");
                         bundle.putSerializable("num", i);
+                        bundle.putSerializable("homePageNum", 1);
                         bundle.putSerializable("from", 0);
                         HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
                         fragment.setArguments(bundle);
                         list.add(fragment);
                     }
-                    titles[i] = data.get(i).getName();
+
                 }
                 home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
                 viewpager.setAdapter(adapter);
+                viewpager.setOffscreenPageLimit(1);
                 viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int i, float v, int i1) {
@@ -148,9 +151,10 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
                     @Override
                     public void onPageSelected(int i) {
+                        EventBus.getDefault().post(new SecondChoosePageListener(i));
 
                         if (i <= data.size() - 1) {
-                            statisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", titles[i]);
+                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "1_tab", data.get(i).getName());
                         }
                     }
 
@@ -159,18 +163,47 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 
                     }
                 });
-                tabLayout.setViewPager(viewpager, titles);
-                tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
+                tabLayout.setupWithViewPager(viewpager);
+                for (int i = 0; i < tabLayout.getTabCount(); i++) {
+                    tabLayout.getTabAt(i).setCustomView(R.layout.item_home_tab);
+                    View view = tabLayout.getTabAt(i).getCustomView();
+                    AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                    tvTabText.setText(data.get(i).getName());
+                    tvTabText.setTextColor(Color.parseColor("#797979"));
+                    if (i == 0) {
+                        tvTabText.setTextSize(24);
+                        tvTabText.setTextColor(Color.parseColor("#ffffff"));
+                    }
+                }
+                tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                     @Override
-                    public void onTabSelect(int position) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "13_template_tab_click", titles[position]);
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        View view = tab.getCustomView();
+                        if (view != null) {
+                            AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                            tvTabText.setTextSize(24);
+                            tvTabText.setTextColor(Color.parseColor("#ffffff"));
+                            StatisticsEventAffair.getInstance().setFlag(getActivity(), "13_template_tab_click", tvTabText.getText().toString());
+
+                        }
                     }
 
                     @Override
-                    public void onTabReselect(int position) {
+                    public void onTabUnselected(TabLayout.Tab tab) {
+                        View view = tab.getCustomView();
+                        if (view!=null){
+                            AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
+                            tvTabText.setTextSize(16);
+                            tvTabText.setTextColor(Color.parseColor("#797979"));
+                        }
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
 
                     }
                 });
+
             }
         }
 
@@ -183,7 +216,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
             case R.id.relative_top:
                 //搜索栏目
                 Intent intent = new Intent(getActivity(), TemplateSearchActivity.class);
-                intent.putExtra("isFrom",1);
+                intent.putExtra("isFrom", 1);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
@@ -239,7 +272,7 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
                     try {
                         tvSearchHint.setText("友友们都在搜\"" + listSearchKey.get(listSearchKeyIndex) + "\"");
                         listSearchKeyIndex++;
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         tvSearchHint.setText("请输入视频关键字");
                         listSearchKeyIndex++;
                     }

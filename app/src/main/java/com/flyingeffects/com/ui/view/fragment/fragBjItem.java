@@ -3,27 +3,27 @@ package com.flyingeffects.com.ui.view.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.main_recycler_adapter;
+import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.AttentionChange;
 import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
-import com.flyingeffects.com.enity.CommonNewsBean;
 import com.flyingeffects.com.enity.DownVideoPath;
 import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.new_fag_template_item;
-import com.flyingeffects.com.enity.templateDataCollectRefresh;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.enity.TemplateDataCollectRefresh;
 import com.flyingeffects.com.enity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
@@ -34,7 +34,6 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.nineton.market.android.sdk.AppMarketHelper;
 import com.nineton.ntadsdk.bean.FeedAdConfigBean;
-import com.nineton.ntadsdk.itr.FeedAdCallBack;
 import com.nineton.ntadsdk.manager.FeedAdManager;
 import com.orhanobut.hawk.Hawk;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -43,16 +42,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.BAIDU_FEED_AD_EVENT;
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.GDT_FEED_AD_EVENT;
-import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED_AD_EVENT;
+import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TYPE_GDT_FEED_EXPRESS_AD;
 
 
 /**
@@ -64,19 +59,21 @@ import static com.nineton.ntadsdk.bean.FeedAdConfigBean.FeedAdResultBean.TT_FEED
 public class fragBjItem extends BaseFragment {
 
 
-    private int perPageCount = 10;
+    private int perPageCount = 9;
     @BindView(R.id.RecyclerView)
     RecyclerView recyclerView;
-    private main_recycler_adapter adapter;
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private MainRecyclerAdapter adapter;
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
     private String templateId = "";
+    private int nowPageNum;
     @BindView(R.id.smart_refresh_layout_bj)
     SmartRefreshLayout smartRefreshLayout;
     @BindView(R.id.lin_show_nodata_bj)
     LinearLayout lin_show_nodata;
     private boolean isRefresh = true;
-    private ArrayList<new_fag_template_item> listData = new ArrayList<>();
+    private ArrayList<NewFragmentTemplateItem> listData = new ArrayList<>();
     private int selectPage = 1;
+    private boolean HasShowAd;
 
     /**
      * 0 表示来做模板，1表示来自背景 3表示创作下载页面
@@ -91,7 +88,7 @@ public class fragBjItem extends BaseFragment {
     private FeedAdManager mAdManager;
 
     private int intoTiktokClickPosition;
-    String tc_id ="";
+    String tc_id = "";
 
 
     @Override
@@ -101,34 +98,43 @@ public class fragBjItem extends BaseFragment {
 
     @Override
     protected void initView() {
+        mAdManager = new FeedAdManager();
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             templateId = bundle.getString("id");
             fromType = bundle.getInt("from");
             cover = bundle.getString("cover");
+            nowPageNum = bundle.getInt("num");
             tc_id = bundle.getString("tc_id");
         }
-        EventBus.getDefault().register(this);
         initRecycler();
         initSmartRefreshLayout();
         LogUtil.d("OOM", "fromType=" + fromType);
         LogUtil.d("OOM", "templateId=" + templateId);
-    }
-
-    @Override
-    protected void initAction() {
-        mAdManager = new FeedAdManager();
         requestFagData(true, true);
     }
 
     @Override
+    protected void initAction() {
+
+    }
+
+    @Override
     protected void initData() {
+        ChoosePageChange2(() -> {
+            if (getActivity() != null) {
+                if (listData != null && listData.size() > 0) {
+                    LogUtil.d("requestAd", "onResume之背景请求广告");
+                    requestFeedAd();
+                }
+            }
+        });
 
     }
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), fromType,false);
+        adapter = new MainRecyclerAdapter(allData, fromType, false, mAdManager);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.
                         VERTICAL);
@@ -136,7 +142,7 @@ public class fragBjItem extends BaseFragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            if (!DoubleClick.getInstance().isFastDoubleClick() && !allData.get(position).isHasShowAd()) {
                 if (!TextUtils.isEmpty(cover) && position == 0) {
                     EventBus.getDefault().post(new DownVideoPath(""));
                 } else {
@@ -150,7 +156,7 @@ public class fragBjItem extends BaseFragment {
                         }
                     } else {
                         Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
-                        List<new_fag_template_item> data = getFiltration(allData, position);
+                        List<NewFragmentTemplateItem> data = getFiltration(allData, position);
                         ListForUpAndDown listForUpAndDown = new ListForUpAndDown(data);
                         intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
                         intent.putExtra("position", intoTiktokClickPosition);
@@ -171,11 +177,11 @@ public class fragBjItem extends BaseFragment {
     }
 
 
-    public List<new_fag_template_item> getFiltration(List<new_fag_template_item> allData, int position) {
+    public List<NewFragmentTemplateItem> getFiltration(List<NewFragmentTemplateItem> allData, int position) {
         intoTiktokClickPosition = position;
-        List<new_fag_template_item> needData = new ArrayList<>();
+        List<NewFragmentTemplateItem> needData = new ArrayList<>();
         for (int i = 0; i < allData.size(); i++) {
-            new_fag_template_item item = allData.get(i);
+            NewFragmentTemplateItem item = allData.get(i);
             if (item.getIs_ad_recommend() == 0) {
                 needData.add(item);
             } else {
@@ -191,11 +197,15 @@ public class fragBjItem extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(getActivity()!=null&& "12".equals(templateId)) {
+        LogUtil.d("OOM", "onResume");
+        mAdManager.adResume();
+        if (getActivity() != null && "12".equals(templateId)) {
             isRefresh = true;
             selectPage = 1;
             requestFagData(false, false);
         }
+
+
     }
 
     public void initSmartRefreshLayout() {
@@ -217,7 +227,7 @@ public class fragBjItem extends BaseFragment {
 
     //得到banner缓存数据
     public void requestData() {
-        List<new_fag_template_item> data = Hawk.get("fagBjItem", new ArrayList<>());
+        List<NewFragmentTemplateItem> data = Hawk.get("fagBjItem", new ArrayList<>());
         if (data != null) {
             listData.clear();
             listData.addAll(data);
@@ -247,8 +257,8 @@ public class fragBjItem extends BaseFragment {
 
         Observable ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
 
-        LogUtil.d("OOM2","requestFagData背景模板请求的数据为"+StringUtil.beanToJSONString(params));
-        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
+        LogUtil.d("OOM2", "requestFagData背景模板请求的数据为" + StringUtil.beanToJSONString(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(getActivity()) {
             @Override
             protected void onSubError(String message) {
                 finishData();
@@ -256,16 +266,16 @@ public class fragBjItem extends BaseFragment {
             }
 
             @Override
-            protected void onSubNext(List<new_fag_template_item> data) {
+            protected void onSubNext(List<NewFragmentTemplateItem> data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "str=" + str);
                 finishData();
                 if (isRefresh) {
                     listData.clear();
                     if (!TextUtils.isEmpty(cover)) {
-                        if(!("11".equals(templateId)|| "12".equals(templateId))){
+                        if (!("11".equals(templateId) || "12".equals(templateId))) {
                             //关注和收藏
-                            new_fag_template_item item = new new_fag_template_item();
+                            NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                             item.setImage(cover);
                             item.setTitle("默认背景");
                             listData.add(item);
@@ -277,6 +287,14 @@ public class fragBjItem extends BaseFragment {
                 } else {
                     showNoData(false);
                 }
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && data.size() > BaseConstans.NOWADSHOWPOSITION) {
+                    NewFragmentTemplateItem item = new NewFragmentTemplateItem();
+                    item.setHasShowAd(true);
+                    //设置当前是导流，进入抖音列表页就会自动过滤
+                    item.setIs_ad_recommend(1);
+                    data.add(BaseConstans.NOWADSHOWPOSITION, item);
+                }
+
 
                 if (!isRefresh && data.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getResources().getString(R.string.no_more_data));
@@ -288,9 +306,56 @@ public class fragBjItem extends BaseFragment {
                 }
                 listData.addAll(data);
                 isShowData(listData);
+                requestFeedAd();
+
             }
         }, "fagBjItem", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, isSave, true, isCanRefresh);
     }
+
+
+    private void requestFeedAd() {
+        LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum + "NowSecondChooseNum=" + NowSecondChooseNum + "actTag" + nowPageNum);
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && NowHomePageChooseNum == 0 && nowPageNum == NowSecondChooseNum) {
+//            LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+nowPageNum);
+            HasShowAd = true;
+            requestFeedAd(mAdManager, new RequestFeedBack() {
+                @Override
+                public void getAdCallback(FeedAdConfigBean.FeedAdResultBean bean) {
+                    adCallback(bean);
+                }
+
+                @Override
+                public void choseAdBack(int type, int adIndex) {
+                    if (type != TYPE_GDT_FEED_EXPRESS_AD) {
+                        adapter.remove(adIndex);
+                    }
+                }
+            });
+        }
+    }
+
+
+    private void adCallback(FeedAdConfigBean.FeedAdResultBean feedAdResultBean) {
+        LogUtil.d("OOM2", "GetAdCallback");
+        if (allData != null && allData.size() > 0) {
+            int allSize = allData.size() - 1;
+            LogUtil.d("OOM2", "allSize=" + allSize);
+            for (int i = allSize; i > 0; i--) {
+                boolean hasAd = allData.get(i).isHasShowAd();
+                LogUtil.d("OOM2", "hasAd=" + hasAd);
+                if (hasAd) {
+                    if (allData.get(i).getFeedAdResultBean() == null) {
+                        allData.get(i).setFeedAdResultBean(feedAdResultBean);
+                        adapter.notifyItemChanged(i);
+                        LogUtil.d("OOM2", "取消循环更新item" + i);
+                        return;
+                    }
+                }
+                LogUtil.d("OOM2", "还在循环" + i);
+            }
+        }
+    }
+
 
     private void finishData() {
         smartRefreshLayout.finishRefresh();
@@ -312,7 +377,7 @@ public class fragBjItem extends BaseFragment {
         }
     }
 
-    public void isShowData(ArrayList<new_fag_template_item> listData) {
+    public void isShowData(ArrayList<NewFragmentTemplateItem> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);
@@ -345,7 +410,7 @@ public class fragBjItem extends BaseFragment {
                     }
                     LogUtil.d("OOM", "needID=" + needId);
                     if (needId == changeId) {
-                        new_fag_template_item item = allData.get(i);
+                        NewFragmentTemplateItem item = allData.get(i);
                         item.setPraise(event.getZanCount() + "");
                         if (isPraise) {
                             item.setIs_praise(1);
@@ -365,11 +430,11 @@ public class fragBjItem extends BaseFragment {
 
 
     @Subscribe
-    public void onEventMainThread(templateDataCollectRefresh event) {
+    public void onEventMainThread(TemplateDataCollectRefresh event) {
         if (event.getFrom() == 4) {
             int position = event.getPosition();
             if (allData != null && allData.size() > position) {
-                new_fag_template_item item = allData.get(position);
+                NewFragmentTemplateItem item = allData.get(position);
                 item.setIs_collection(event.isSeleted() ? 1 : 0);
                 allData.set(position, item);
                 adapter.notifyItemChanged(position);
@@ -381,6 +446,9 @@ public class fragBjItem extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (getActivity() != null) {
+            mAdManager.adDestroy();
+        }
         EventBus.getDefault().unregister(this);
     }
 

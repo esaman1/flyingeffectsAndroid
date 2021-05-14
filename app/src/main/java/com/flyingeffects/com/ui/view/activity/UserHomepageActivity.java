@@ -19,9 +19,10 @@ import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.fragHomePage;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.view.MarqueTextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public class UserHomepageActivity extends BaseActivity {
 
 
     @BindView(R.id.tv_name)
-    TextView tv_name;
+    MarqueTextView tv_name;
 
     @BindView(R.id.fans_count)
     TextView fans_count;
@@ -95,7 +96,7 @@ public class UserHomepageActivity extends BaseActivity {
     @BindView(R.id.im_user_skin_other)
     ImageView imSkin;
     @BindView(R.id.tv_Introduction)
-    TextView tvIntroduction;
+    MarqueTextView tvIntroduction;
 
 
 
@@ -110,7 +111,7 @@ public class UserHomepageActivity extends BaseActivity {
     @Override
     protected void initView() {
 
-        statisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_Homepage");
+        StatisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_Homepage");
         toUserId = getIntent().getStringExtra("toUserId");
         if(toUserId.equals(BaseConstans.GetUserId())){
             tv_focus.setVisibility(View.GONE);
@@ -171,9 +172,9 @@ public class UserHomepageActivity extends BaseActivity {
 
         if(isFocus){
             //取消关注
-            statisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_unsubscribe");
+            StatisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_unsubscribe");
         }else{
-            statisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_Attention");
+            StatisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_Attention");
         }
 
         // 启动时间

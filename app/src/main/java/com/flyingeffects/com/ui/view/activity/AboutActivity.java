@@ -1,7 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,7 +17,8 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.DataCleanManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.SystemUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -35,6 +34,8 @@ public class AboutActivity extends BaseActivity {
     @BindView(R.id.tv_version_number)
     TextView tvVersionNumber;
 
+    private Context mContext;
+
     @Override
     protected int getLayoutId() {
         return R.layout.act_about;
@@ -42,6 +43,7 @@ public class AboutActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        mContext = AboutActivity.this;
         ((TextView) findViewById(R.id.tv_top_title)).setText("关于");
         tvVersionNumber.setText("飞闪版本 " + SystemUtil.getVersionName(this));
     }
@@ -74,21 +76,17 @@ public class AboutActivity extends BaseActivity {
                 } else {
                     goActivity(SignoutActivity.class);
                 }
-
-
-
-
                 break;
             case R.id.iv_top_back:
                 this.finish();
                 break;
             case R.id.tv_contact_us:
-                statisticsEventAffair.getInstance().setFlag(this, "3_Evaluation");
+                StatisticsEventAffair.getInstance().setFlag(this, "3_Evaluation");
                 reception();
 
                 break;
             case R.id.tv_relation_us:
-                statisticsEventAffair.getInstance().setFlag(this, "3_contact");
+                StatisticsEventAffair.getInstance().setFlag(this, "3_contact");
 
                 contactUs();
                 break;
@@ -128,11 +126,11 @@ public class AboutActivity extends BaseActivity {
 //                }, "");
                 break;
             case R.id.tv_notification_management:
-                statisticsEventAffair.getInstance().setFlag(AboutActivity.this, "3_notifications");
+                StatisticsEventAffair.getInstance().setFlag(AboutActivity.this, "3_notifications");
                 PermissionUtil.gotoPermission(AboutActivity.this);
                 break;
             case R.id.tv_version_number:
-                statisticsEventAffair.getInstance().setFlag(mContext, "3_update");
+                StatisticsEventAffair.getInstance().setFlag(mContext, "3_update");
                 SystemUtil.openMarket(this);
                 break;
             default:
@@ -146,23 +144,29 @@ public class AboutActivity extends BaseActivity {
 
 
     private void showDialog() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
-                //去除黑边
-                new ContextThemeWrapper(AboutActivity.this,R.style.Theme_Transparent));
-        builder.setTitle(getString(R.string.notification));
-        builder.setMessage(
-                 "确定退出账号登录吗？");
-        builder.setNegativeButton("取消", (dialog, which) -> {
-            dialog.dismiss();
-        });
-        builder.setPositiveButton("确定", (dialog, which) -> {
-            BaseConstans.SetUserToken("");
-            findViewById(R.id.tv_top_submit).setVisibility(View.GONE);
-        });
-        builder.setCancelable(true);
-        Dialog mDialog = builder.show();
-        mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();
+        CommonMessageDialog.getBuilder(mContext)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_NONE)
+                .setPositiveButton("确定")
+                .setNegativeButton("取消")
+                .setTitle("确定退出账号登录吗？")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        BaseConstans.SetUserToken("");
+//                        EventBus.getDefault().post(new ExitOrLogin());
+                        findViewById(R.id.tv_top_submit).setVisibility(View.GONE);
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).build().show();
+    }
+
+    private void showDeleteDialog(String id) {
+
     }
 
 

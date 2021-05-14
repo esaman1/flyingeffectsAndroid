@@ -11,12 +11,13 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.AssetDelegate;
-import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.util.AffineTransform;
 import com.shixing.sxve.ui.util.BitmapCompress;
 import com.shixing.sxve.ui.util.PhotoBitmapUtils;
@@ -28,7 +29,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -80,22 +80,33 @@ public class MediaUiModel2 extends MediaUiModel {
     //1 表示换装
     private int nowTemplateIsAnim;
 
-    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size, Size temSize, float fps,int nowTemplateIsAnim) throws JSONException {
+    private boolean isToSing;
+
+
+//    private float firstTranX;
+//    private float FirstTranY;
+    private float firstScale;
+    private boolean isFirstMatrix = true;
+
+
+    public MediaUiModel2(String folder, JSONObject ui, Bitmap bitmap, AssetDelegate delegate, Size size, Size temSize, float fps, int nowTemplateIsAnim, boolean isToSing) throws JSONException {
         super(folder, ui, delegate, size);
         mBitmap = bitmap;
         this.fps = fps;
         this.temSize = temSize;
+        this.isToSing = isToSing;
         int[] editSize = getIntArray(ui.getJSONArray("editSize"));
         mClipWidth = editSize[0];
         mClipHeight = editSize[1];
-        this.nowTemplateIsAnim=nowTemplateIsAnim;
+        Log.d("OOM2", "mClipWidth=" + size.getWidth() + "mClipHeight=" + size.getHeight());
+        this.nowTemplateIsAnim = nowTemplateIsAnim;
         int[] p = getIntArray(ui.getJSONArray("p")); //position
         int[] a = getIntArray(ui.getJSONArray("a")); //anchor
         float[] s = getFloatArray(ui.getJSONArray("s")); //scale
         double t = ui.getDouble("t"); //transparent
         mR = ui.getDouble("r");//rotation
         mDuration = ui.getInt("duration");
-        Log.d("OOM","mDuration="+mDuration);
+        Log.d("OOM", "mDuration=" + mDuration);
         mInitPaint = new Paint();
         mInitPaint.setAntiAlias(true);
         mInitPaint.setFilterBitmap(true);
@@ -106,6 +117,7 @@ public class MediaUiModel2 extends MediaUiModel {
         affineTransform.set(new PointF(a[0], a[1]), new PointF(p[0], p[1]), new PointF(s[0], s[1]), (float) Math.toRadians(mR));
         mInitMatrix = affineTransform.getMatrix();
 //        mMatrixBj = affineTransform.getMatrix();
+        //默认居中
         mMatrix = new Matrix(mInitMatrix);
         mInverseMatrix = new Matrix();
         mInitMatrix.invert(mInverseMatrix);
@@ -173,15 +185,74 @@ public class MediaUiModel2 extends MediaUiModel {
             if (activeLayer > 0) {
                 mPaint = mTransparentPaint;
             }
+
+
+
             canvas.drawBitmap(f, 0, 0, mPaint);
         }
 
 
+        if (isFirstMatrix && isToSing) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    float values[] = new float[9];
+                    mMatrix.getValues(values);
+//                    firstTranX = values[2];
+//                    FirstTranY = values[5];
+                    firstScale = values[0];
+                    Log.d("OOM22",  "scanx=" + firstScale);
+                }
+            },300);
+            isFirstMatrix = false;
+        }
+
+
+//        float values[] = new float[9];
+//        mMatrix.getValues(values);
+//        float nowScale = values[0];
+//        float needScale = nowScale / firstScale;
+//        needScale = 1 / needScale;
+//        Log.d("OOM22", "needScale=" + needScale+"firstScale="+firstScale);
+
     }
+
+
+    /**
+     * description :仿tiktok 唱歌动画,手势数据  0,420  1080   1080
+     * creation date: 2021/3/3
+     * user : zhangtongju
+     */
+
+    public void getTransFormChangeData(TranChangeCallback callback) {
+        float[] values = new float[9];
+        mMatrix.getValues(values);
+        float nowTranX = values[2];
+        float nowTranY = values[5];
+        float nowScale = values[0];
+        float bitmapH = mBitmap.getHeight() * nowScale;
+        float bitmapW = mBitmap.getWidth() * nowScale;
+        float reactLeftX = (0 - nowTranX) + 540f;
+        float reactLeftY = 420 - nowTranY + 540f;
+        float needX = reactLeftX / bitmapW;
+        float needY = reactLeftY / (bitmapH);
+        float needScale = nowScale / firstScale;
+        needScale = 1 / needScale;
+        callback.changeBack(needX, needY, needScale);
+        Log.d("OOM22", "needScale=" + needScale);
+    }
+
+
+    public interface TranChangeCallback {
+        void changeBack(float tranX, float tranY, float scale);
+    }
+
 
     @Override
     public void scroll(float distanceX, float distanceY) {
-        if(nowTemplateIsAnim!=1){
+
+        Log.d("OOM11", "scroll:distanceX=" + distanceX + "distanceY=" + distanceY);
+        if (nowTemplateIsAnim != 1) {
             isVideoSlide = true;
             isMaskSlide = true;
             mMatrix.postTranslate(-distanceX, -distanceY);
@@ -189,10 +260,12 @@ public class MediaUiModel2 extends MediaUiModel {
 
     }
 
+
     @Override
     public void scale(float sx, float sy, float px, float py) {
+        Log.d("OOM11", "scale:sx=" + sx + "sy=" + sy + "px=" + px + "py=" + py);
 
-        if(nowTemplateIsAnim!=1){
+        if (nowTemplateIsAnim != 1) {
             isVideoSlide = true;
             isMaskSlide = true;
             mMatrix.postScale(sx, sy, px, py);
@@ -202,12 +275,11 @@ public class MediaUiModel2 extends MediaUiModel {
 
     @Override
     public void rotate(float degrees, float px, float py) {
-        if(nowTemplateIsAnim!=1){
+        if (nowTemplateIsAnim != 1 && !isToSing) {
             isVideoSlide = true;
             isMaskSlide = true;
             mMatrix.postRotate(degrees, px, py);
         }
-
 
 
     }
@@ -249,6 +321,16 @@ public class MediaUiModel2 extends MediaUiModel {
                 countMatrixBj(bgBitmap);
             }
         }
+    }
+
+
+    public int getOriginalBitmapWidth() {
+        return mBitmap.getWidth();
+    }
+
+
+    public int getOriginalBitmapHeight() {
+        return mBitmap.getHeight();
     }
 
     @Override
@@ -343,6 +425,7 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
     public void setImageAsset(String path) {
+        isFirstMatrix=true;
         this.path = path;
         isVideoSlide = true;
         isMaskSlide = true;
@@ -359,7 +442,7 @@ public class MediaUiModel2 extends MediaUiModel {
     public void setVideoPath(String path, boolean mute, float startTime) {
         mVideoPath = path;
         mMute = mute;
-        isVideoSlide=true;
+        isVideoSlide = true;
         mStartTime = startTime;
         mIsVideo = true;
         mInitPaint.setAlpha(255);
@@ -432,8 +515,25 @@ public class MediaUiModel2 extends MediaUiModel {
     }
 
 
+    /**
+     * description ：获得边框大小的matrix
+     * creation date: 2021/3/2
+     * user : zhangtongju
+     */
     public Matrix getMediaUiMatrix() {
         return mMatrix;
+    }
+
+
+    /**
+     * description ：获得内边框大小的matrix
+     * creation date: 2021/3/2
+     * user : zhangtongju
+     */
+    public Matrix GetInverseMatrix() {
+        Matrix matrix = new Matrix(mMatrix);
+        matrix.postConcat(mInverseMatrix);
+        return matrix;
     }
 
 
@@ -459,7 +559,7 @@ public class MediaUiModel2 extends MediaUiModel {
             }
 
             //是图片或者第二张图片和第一张一样，说明用户选择了视频没有抠图，那么和图片的逻辑一样的，需要一个白色图片
-            if (albumType.isImage(mimeType) || cartoonPath.equals(mVideoPath)) {
+            if (AlbumType.isImage(mimeType) || cartoonPath.equals(mVideoPath)) {
                 Bitmap bitmap = Bitmap.createBitmap(mClipWidth, mClipHeight, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bitmap);
                 Matrix matrix = new Matrix(mMatrix);
@@ -694,7 +794,6 @@ public class MediaUiModel2 extends MediaUiModel {
             mMatrixBj.preScale(scale, scale);
         }
     }
-
 
 
     public String getOriginalPath() {

@@ -2,8 +2,8 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -12,7 +12,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -26,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bytedance.applog.AppLog;
+import com.bytedance.applog.IOaidObserver;
 import com.bytedance.applog.InitConfig;
 import com.bytedance.applog.util.UriConfig;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
@@ -34,7 +34,9 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.enity.HomeChoosePageListener;
 import com.flyingeffects.com.enity.RequestMessage;
 import com.flyingeffects.com.enity.UserInfo;
 import com.flyingeffects.com.enity.checkVersion;
@@ -48,12 +50,13 @@ import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.SPHelper;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;
+import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
+import com.flyingeffects.com.ui.view.fragment.BackgroundFragment;
 import com.flyingeffects.com.ui.view.fragment.DressUpFragment;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
-import com.flyingeffects.com.ui.view.fragment.frag_Bj;
 import com.flyingeffects.com.ui.view.fragment.frag_user_center;
 import com.flyingeffects.com.utils.AssetsUtils;
 import com.flyingeffects.com.utils.ChannelUtil;
@@ -70,7 +73,10 @@ import com.orhanobut.hawk.Hawk;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
+import com.xj.anchortask.library.log.LogUtils;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -81,6 +87,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cn.nt.lib.analytics.NTAnalytics;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -94,25 +101,30 @@ import static com.flyingeffects.com.constans.BaseConstans.getChannel;
  * @author zhang
  */
 public class HomeMainActivity extends FragmentActivity {
-    //    private ImageView[] mIvMenu = new ImageView[4];
+    private static final String TAG = "HomeMainActivity";
+
+    private static final String[] CATCH_DIRECTORY = {"dynamic", "runCatch", "def", "imageCopy", "faceFolder", "faceMattingFolder",
+            "soundFolder", "cacheMattingFolder", "ExtractFrame", "DownVideo", "TextFolder", "toHawei", "downVideoForMusic",
+            "downSoundForMusic", "downCutSoundForMusic", "fontStyle", "DressUpFolder","facePP"};
+
     private final ImageView[] mIvMenuBack = new ImageView[4];
     private final TextView[] tv_main = new TextView[4];
-    //    private int[] img_Id = {R.id.iv_menu_0, R.id.iv_menu_1, R.id.iv_menu_2, R.id.iv_menu_3};
     private final int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
     public HomeMainActivity ThisMain;
     private final int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
-//    private int[] selectIconArr = {R.mipmap.home_bj, R.mipmap.moban, R.mipmap.chazhao, R.mipmap.wode};
-//    private int[] unSelectIconArr = {R.mipmap.home_bj_unselect, R.mipmap.moban_unslect, R.mipmap.chazhao_unselect, R.mipmap.wode_unselect};
-
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private Timer timer;
     private TimerTask task;
     private TextView message_count;
     private NoSlidingViewPager viewpager_home;
 
+    private Context mContext;
+
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
+        Log.d(TAG, "Application start finished");
+        mContext = HomeMainActivity.this;
         setTheme(R.style.AppTheme);
         //禁止休眠
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
@@ -147,12 +159,38 @@ public class HomeMainActivity extends FragmentActivity {
         initYouMeng();
         statisticsUpgradeApp();
         initFaceSdkModel.initFaceSdk();
+        initZt();
+        requestConfig();
+        setOaid();
     }
 
 
+
+
+
+
+
+
+    private void setOaid() {
+        AppLog.setOaidObserver(new IOaidObserver() {
+            @Override
+            public void onOaidLoaded(@NotNull final IOaidObserver.Oaid oaid) {
+                LogUtils.d(TAG, "oaid = " + oaid.id);
+                BaseConstans.setOaid(oaid.id);
+            }
+        });
+    }
+
+
+    /**
+     * 中台
+     */
+    private void initZt() {
+        NTAnalytics.setDebug(false);
+        NTAnalytics.init(this, "87", "vQlTNPzHOzBYHzkg", ChannelUtil.getChannel(this));
+    }
+
     private void initYouMeng() {
-//        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);  //页面采集模式
-//        MobclickAgent.setCatchUncaughtExceptions(true);
         UMConfigure.setProcessEvent(true); // 支持在子进程中统计自定义事件
         UMConfigure.setLogEnabled(!BaseConstans.PRODUCTION);
         UMConfigure.init(this, BaseConstans.UMENGAPPID, ChannelUtil.getChannel(this), UMConfigure.DEVICE_TYPE_PHONE, "");
@@ -205,9 +243,29 @@ public class HomeMainActivity extends FragmentActivity {
         task = new TimerTask() {
             @Override
             public void run() {
-                AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, () -> {
-                    if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
-                        checkCommentcheck();
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad" );
+                AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new AdManager.Callback() {
+                    @Override
+                    public void adShow() {
+
+                    }
+
+                    @Override
+                    public void adClose() {
+                        if (ShowPraiseModel.canShowAlert() && !ShowPraiseModel.getHasComment() && !ShowPraiseModel.getIsNewUser() && !ShowPraiseModel.ToDayHasShowAd()) {
+                            checkCommentcheck();
+                        }
+                    }
+
+                    @Override
+                    public void onScreenAdShow() {
+                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_show" );
+                    }
+
+                    @Override
+                    public void onScreenAdError() {
+                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_error" );
+
                     }
                 });
                 destroyTimer();
@@ -322,8 +380,8 @@ public class HomeMainActivity extends FragmentActivity {
                         String uploadVersion = data.getNewversion();
                         String content = data.getContent();
                         int uVersion = Integer.parseInt(uploadVersion);
-                        int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
-                        if (uVersion > NowVersion) {
+                        int nowVersion = Integer.parseInt(BaseConstans.getVersionCode());
+                        if (uVersion > nowVersion) {
                             intoCheckUpdateAct(data.getDownloadfile(), data.getIs_forceupdate(), content);
                         }
                     }
@@ -394,29 +452,31 @@ public class HomeMainActivity extends FragmentActivity {
             mIvMenuBack[i].setOnClickListener(listener);
         }
         List<Fragment> fragments = new ArrayList<>();
-        fragments.add(new frag_Bj());
+        fragments.add(new BackgroundFragment());
         fragments.add(new FragForTemplate());
         fragments.add(new DressUpFragment());
         menu3F = new frag_user_center();
         fragments.add(menu3F);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(), fragments);
         viewpager_home.setAdapter(adapter);
-        viewpager_home.setOffscreenPageLimit(3);
+        viewpager_home.setOffscreenPageLimit(1);
         whichMenuSelect(1);
         findViewById(R.id.iv_main_add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(BaseConstans.hasLogin()){
+                if (BaseConstans.hasLogin()) {
                     Intent intent = new Intent(HomeMainActivity.this, FUBeautyActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    StatisticsEventAffair.getInstance().setFlag(mContext, "12_Shoot");
                     startActivity(intent);
-                }else{
+                } else {
                     Intent intent = new Intent(HomeMainActivity.this, LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(intent);
                 }
             }
         });
+        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "默认页面不纳入统计");
     }
 
 
@@ -438,27 +498,12 @@ public class HomeMainActivity extends FragmentActivity {
         LanSongFileUtil.deleteDefaultDir();
         //清理外部sdk
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("dynamic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("runCatch"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("def"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("imageCopy"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("faceFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("faceMattingFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("soundFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("ExtractFrame"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("DownVideo"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("TextFolder"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("toHawei"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downVideoForMusic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downSoundForMusic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("downCutSoundForMusic"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("fontStyle"));
-            DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("DressUpFolder"));
-
+            for (String s : CATCH_DIRECTORY) {
+                DataCleanManager.deleteFilesByDirectory(getExternalFilesDir(s));
+            }
         }
-
     }
+
 
     private final NoDoubleClickListener listener = new NoDoubleClickListener() {
         @Override
@@ -467,24 +512,24 @@ public class HomeMainActivity extends FragmentActivity {
                 case R.id.iv_back_menu_0:
                     whichMenuSelect(0);
 
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
                     break;
                 case R.id.iv_back_menu_1:
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "2");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "2");
 
                     whichMenuSelect(1);
                     break;
                 case R.id.iv_back_menu_2:
                     whichMenuSelect(2);
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "3");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "3");
 
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "12_news");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "12_news");
                     break;
                 case R.id.iv_back_menu_3:
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "4");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "4");
 
-                    statisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
+                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
                     whichMenuSelect(3);
                     break;
                 default:
@@ -504,10 +549,8 @@ public class HomeMainActivity extends FragmentActivity {
      **/
     private void changeBottomTab() {
         for (int i = 0; i < mIvMenuBack.length; i++) {
-//            mIvMenu[i].setImageResource(unSelectIconArr[i]);
             tv_main[i].setTextColor(ContextCompat.getColor(this, R.color.white));
         }
-//        mIvMenu[LastWhichMenu].setImageResource(selectIconArr[LastWhichMenu]);
         tv_main[LastWhichMenu].setTextColor(ContextCompat.getColor(this, R.color.new_base_blue));
     }
 
@@ -548,28 +591,17 @@ public class HomeMainActivity extends FragmentActivity {
         setStatusBar();
         viewpager_home.setCurrentItem(which, false);
         EventBus.getDefault().post(new RequestMessage());
+        EventBus.getDefault().post(new HomeChoosePageListener(which));
     }
 
-    @Override
-    public final boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            exitPressAgain();
-        }
-        return true;
-    }
 
     private long exitTime = 0;
 
 
     private void exitPressAgain() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Toast.makeText(ThisMain, "再点一次退出程序" +
-                    "" +
-                    "" +
-                    "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ThisMain, "再点一次退出程序", Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
-
-
         } else {
             finish();
         }
@@ -578,45 +610,53 @@ public class HomeMainActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //exitPressAgain();
+        showBackMessage();
     }
 
 
-    private void intoCreationActivity() {
+    private void showBackMessage() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_quit_app");
+        CommonMessageDialog dialog = CommonMessageDialog.getBuilder(mContext)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+                .setAdId(AdConfigs.AD_IMAGE_EXIT)
+                .setPositiveButton("狠心退出")
+                .setNegativeButton("关闭")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                        finish();
+                    }
 
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        dialog.dismiss();
+                    }
+                })
+                .setDialogDismissListener(new CommonMessageDialog.DialogDismissListener() {
+                    @Override
+                    public void onDismiss() {
+
+                    }
+                })
+                .build();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (grantResults.length > 0) {
-                //被用户拒绝的权限集合
-                List<String> deniedPermissions = new ArrayList<>();
-                //用户通过的权限集合
-                List<String> grantedPermissions = new ArrayList<>();
-                for (int i = 0; i < grantResults.length; i++) {
-                    //获取授权结果，这是一个int类型的值
-                    int grantResult = grantResults[i];
-                    if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                        //用户拒绝授权的权限
-                        String permission = permissions[i];
-                        deniedPermissions.add(permission);
-                    } else {  //用户同意的权限
-                        String permission = permissions[i];
-                        grantedPermissions.add(permission);
-                    }
-                }
-                if (deniedPermissions.isEmpty()) {
-                    //用户拒绝权限为空
-                    intoCreationActivity();
-                } else {  //不为空
-//                    ToastUtil.showToast(getResources().getString(R.string.permission_denied));
-                }
+        // 获取到Activity下的Fragment
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        // 查找在Fragment中onRequestPermissionsResult方法并调用
+        for (Fragment fragment : fragments) {
+            if (fragment != null) {
+                // 这里就会调用我们Fragment中的onRequestPermissionsResult方法
+                fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
             }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -667,26 +707,26 @@ public class HomeMainActivity extends FragmentActivity {
         params.put("user_id", BaseConstans.GetUserId());
         Observable ob = Api.getDefault().getAllMessageNum(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<messageCount>(this) {
-            @Override
-            protected void onSubError(String message) {
-                ToastUtil.showToast(message);
-            }
-
-            @Override
-            protected void onSubNext(messageCount data) {
-                if (message_count != null) {
-                    String allCount = data.getAll_num();
-                    int intAllCount = Integer.parseInt(allCount);
-                    if (intAllCount == 0) {
-                        message_count.setVisibility(View.GONE);
-                    } else {
-                        message_count.setVisibility(View.VISIBLE);
-                        message_count.setText(intAllCount + "");
+                    @Override
+                    protected void onSubError(String message) {
+                        ToastUtil.showToast(message);
                     }
-                }
 
-            }
-        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+                    @Override
+                    protected void onSubNext(messageCount data) {
+                        if (message_count != null) {
+                            String allCount = data.getAll_num();
+                            int intAllCount = Integer.parseInt(allCount);
+                            if (intAllCount == 0) {
+                                message_count.setVisibility(View.GONE);
+                            } else {
+                                message_count.setVisibility(View.VISIBLE);
+                                message_count.setText(intAllCount + "");
+                            }
+                        }
+                    }
+                }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject,
+                false, true, false);
     }
 
 
@@ -705,7 +745,6 @@ public class HomeMainActivity extends FragmentActivity {
         }
     }
 
-
     /**
      * description ：统计
      * creation date: 2020/12/10
@@ -721,7 +760,6 @@ public class HomeMainActivity extends FragmentActivity {
         }
     }
 
-
     /**
      * description ：统计手机信息
      * creation date: 2020/12/10
@@ -734,8 +772,10 @@ public class HomeMainActivity extends FragmentActivity {
         Observable ob = Api.getDefault().add_active(BaseConstans.getRequestHead(params));
         LogUtil.d("OOM", "用户ip=" + StringUtil.beanToJSONString(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(HomeMainActivity.this) {
+
             @Override
             protected void onSubError(String message) {
+
             }
 
             @Override
@@ -743,6 +783,152 @@ public class HomeMainActivity extends FragmentActivity {
 
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    /**
+     * description ：这个配置是请求关于界面的联系我们
+     * creation date: 2020/4/8
+     * user : zhangtongju
+     */
+    private void requestConfig() {
+        HashMap<String, String> params = new HashMap<>();
+        // 启动时间
+        Observable ob = Api.getDefault().configList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<Config>>(HomeMainActivity.this) {
+            @Override
+            protected void onSubError(String message) {
+            }
+
+            @Override
+            protected void onSubNext(List<Config> data) {
+
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 0; i < data.size(); i++) {
+                    String tet = StringUtil.beanToJSONString(data.get(i));
+                    sb.append(tet);
+                    LogUtil.d("_onNext", "i-" + i + "Config=" + tet);
+                }
+                LogUtil.d("_onNext", "str=" + sb.toString());
+
+                if (data.size() > 0) {
+                    for (int i = 0; i < data.size(); i++) {
+                        Config config = data.get(i);
+                        int id = config.getId();
+                        if (id == 18) {
+                            //弹出微信
+                            BaseConstans.service_wxi = config.getValue();
+                        } else if (id == 20) {
+                            //android 审核数据
+                            String AuditModeJson = config.getValue();
+                            auditModeConfig(AuditModeJson);
+                        } else if (id == 22) {
+                            //获得热更新时长
+                            String outTime = config.getValue();
+                            BaseConstans.showAgainKaipingAd = Integer.parseInt(outTime);
+                        } else if (id == 24) {
+                            //首次安装前几次无广告
+                            int newUserIsVip = Integer.parseInt(config.getValue());
+                            LogUtil.d("OOM2", "newUserIsVip=" + newUserIsVip);
+                            if (BaseConstans.getOpenAppNum() < newUserIsVip - 1) {
+                                BaseConstans.setNextNewUser(true);
+                            } else {
+                                BaseConstans.setNextNewUser(false);
+                            }
+                            if (BaseConstans.getOpenAppNum() < newUserIsVip) { //新用户没广告
+                                BaseConstans.setIsNewUser(true);
+                            } else {
+                                BaseConstans.setIsNewUser(false);
+                            }
+                        } else if (id == 25) {
+                            //启动APP多少秒后显示插屏广告
+                            int second = Integer.parseInt(config.getValue());
+                            BaseConstans.setInterstitial(second);
+                        } else if (id == 26) {
+                            //开屏广告延迟时间
+                            int second = Integer.parseInt(config.getValue());
+                            BaseConstans.setKaiPingADTimeOut(second);
+                        } else if (id == 27) {
+                            //上传的时候
+                            int second = Integer.parseInt(config.getValue());
+                            BaseConstans.setMaxuploadTime(second);
+                        } else if (id == 32) {
+                            String second = config.getValue();
+                            BaseConstans.setminapp_share_title(second);
+                        } else if (id == 33) {
+                            //feed 自渲染信息流 上线和下限
+                            String second = config.getValue();
+                            BaseConstans.setFeedShowPositionNum(second);
+                        } else if (id == 53) {
+                            //相册加载广告间隔次数
+                            String albumADIntervalNumber = config.getValue();
+                            BaseConstans.setIntervalNumShowAD(Integer.parseInt(albumADIntervalNumber));
+                        } else if (id == 56) {
+                            //自定义模板分享到抖音的话题
+                            String douyingTopic = config.getValue();
+                            BaseConstans.setDouyingTopic(douyingTopic);
+                        } else if (id == 61) {
+                            //换装制作页面切换模板按钮加载视频广告的间隔次数
+                            int dressupIntervalsNumber = Integer.parseInt(config.getValue());
+                            BaseConstans.setDressupIntervalsNumber(dressupIntervalsNumber);
+                        } else if (id == 72) {
+                            String value = config.getValue();
+                            BaseConstans.setHasAdEntrance(value);
+                        } else if (id == 73) {
+                            String value = config.getValue();
+                            BaseConstans.setGifCourse(value);
+                        } else if (id == 74) {
+                            String video_error_can_save = config.getValue();
+                            //1 表示能保存 0 表示不能保存
+                            LogUtil.d("OOM3", "video_error_can_save=" + video_error_can_save);
+                            BaseConstans.setAdShowErrorCanSave(video_error_can_save);
+                        }else if(id==75){
+                            BaseConstans.setCreateVideoShowAdUserNum(config.getValue());
+
+                        }
+                    }
+                }
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+
+    private void auditModeConfig(String str) {
+        LogUtil.d("AuditModeConfig", "AuditModeConfig=" + str);
+        Hawk.put("AuditModeConfig", str);
+        int isVideoadvertisingId = 0;
+        JSONArray jsonArray;
+        try {
+            jsonArray = new JSONArray(str);
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obArray = jsonArray.getJSONObject(i);
+                    String channel = obArray.getString("channel");
+                    if ("isVideoadvertising".equals(channel)) { //控制了版本号
+                        isVideoadvertisingId = obArray.getInt("id");
+                    }
+                    if (channel.equals(BaseConstans.getChannel())) { //最新版的审核模式
+                        boolean auditOn = obArray.getBoolean("audit_on");
+                        int nowVersion = Integer.parseInt(BaseConstans.getVersionCode());
+                        if (auditOn || nowVersion != isVideoadvertisingId) {
+                            BaseConstans.setHasAdvertising(1);
+                        } else {
+                            BaseConstans.setHasAdvertising(0);
+                        }
+
+                        boolean video_ad_open = obArray.getBoolean("video_ad_open");
+                        BaseConstans.setIncentiveVideo(video_ad_open);
+
+                        boolean save_video_ad = obArray.getBoolean("save_video_ad");
+                        BaseConstans.setSave_video_ad(save_video_ad);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

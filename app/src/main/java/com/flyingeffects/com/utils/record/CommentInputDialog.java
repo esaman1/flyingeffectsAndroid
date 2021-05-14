@@ -15,7 +15,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.KeyboardUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -139,16 +139,16 @@ public class CommentInputDialog extends Dialog {
     private void replyMessage(String content, String type, String message_id) {
         if ("1".equals(type)) {
             if ("1".equals(templateType)) {
-                statisticsEventAffair.getInstance().setFlag(activity, " 12_amount", templateTitle);
+                StatisticsEventAffair.getInstance().setFlag(activity, " 12_amount", templateTitle);
             } else {
-                statisticsEventAffair.getInstance().setFlag(activity, " 13_amount", templateTitle);
+                StatisticsEventAffair.getInstance().setFlag(activity, " 13_amount", templateTitle);
             }
         } else {
 
             if ("1".equals(templateType)) {
-                statisticsEventAffair.getInstance().setFlag(activity, " 12_Reply", templateTitle);
+                StatisticsEventAffair.getInstance().setFlag(activity, " 12_Reply", templateTitle);
             } else {
-                statisticsEventAffair.getInstance().setFlag(activity, " 13_Reply", templateTitle);
+                StatisticsEventAffair.getInstance().setFlag(activity, " 13_Reply", templateTitle);
             }
 
 

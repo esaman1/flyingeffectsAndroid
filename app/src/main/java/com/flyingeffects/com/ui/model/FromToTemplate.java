@@ -48,5 +48,17 @@ public class FromToTemplate {
     public static final String DRESSUP = "DRESSUP";
     //拍摄入口
     public static final String SHOOT = "SHOOT";
+    //闪图换背景入口
+    public static final String CHOOSEBJ = "CHOOSEBJ";
+    //闪图换表情包入口
+    public static final String FACEGIF = "FACEGIF";
+    //闪图特效
+    public static final String SPECIAL = "SPECIAL";
 
+
+    //模板特效，不进入编辑，直接合成
+    public static final String TEMPLATESPECIAL1 = "TEMPLATESPECIAL1";
+
+    //表情包特效
+    public static final String TEMPLATESPECIAL = "TEMPLATESPECIAL";
 }

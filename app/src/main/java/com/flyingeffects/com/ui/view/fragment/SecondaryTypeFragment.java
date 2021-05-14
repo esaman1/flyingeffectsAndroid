@@ -10,16 +10,19 @@ import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseFragment;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.SecondaryTypeEntity;
-import com.flyingeffects.com.enity.new_fag_template_item;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
 import butterknife.BindView;
 
 /**
@@ -28,6 +31,21 @@ import butterknife.BindView;
  * 二级分类容器的fragment
  */
 public class SecondaryTypeFragment extends BaseFragment {
+    private static final String TAG = "SecondaryTypeFragment";
+    public static final String BUNDLE_KEY_SECONDARY_TYPE = "secondaryType";
+    public static final String BUNDLE_KEY_CATEGORY_ID = "id";
+    public static final String BUNDLE_KEY_TYPE = "type";
+    public static final String BUNDLE_KEY_FROM = "from";
+    public static final String BUNDLE_KEY_NUM = "num";
+    public static final String BUNDLE_KEY_HOME_PAGE_NUM = "homePageNum";
+    public static final String BUNDLE_KEY_TEMPLATE_ITEM = "templateItem";
+    public static final String BUNDLE_KEY_CATEGORY_TYPE_NAME = "categoryTabName";
+
+    public static final int BUNDLE_VALUE_TYPE_TEMPLATE = 0;
+    public static final int BUNDLE_VALUE_TYPE_BACKGROUND = 1;
+    public static final int BUNDLE_VALUE_TYPE_FACE = 2;
+
+
     @BindView(R.id.ll_type)
     LinearLayout mLLType;
 
@@ -38,9 +56,15 @@ public class SecondaryTypeFragment extends BaseFragment {
     /**
      * 0是模板 1是背景  2是换脸
      */
-    int type,from;
-    String category_id,categoryTabName;
-    private new_fag_template_item templateItem;
+    int type, from;
+
+    String category_id, categoryTabName;
+    private NewFragmentTemplateItem templateItem;
+    private int homePageNum;
+    /**
+     * 上个页面是哪一个
+     */
+    private int num;
 
     @Override
     protected int getContentLayout() {
@@ -49,12 +73,15 @@ public class SecondaryTypeFragment extends BaseFragment {
 
     @Override
     protected void initView() {
-        mTypeEntities = (List<SecondaryTypeEntity>) getArguments().getSerializable("secondaryType");
-        type = getArguments().getInt("type");
-        category_id = getArguments().getString("id");
-        from = getArguments().getInt("from");
-        templateItem = (new_fag_template_item) getArguments().getSerializable("templateItem");
-        categoryTabName = getArguments().getString("categoryTabName");
+        mTypeEntities = (List<SecondaryTypeEntity>) getArguments().getSerializable(BUNDLE_KEY_SECONDARY_TYPE);
+        type = getArguments().getInt(BUNDLE_KEY_TYPE);
+        category_id = getArguments().getString(BUNDLE_KEY_CATEGORY_ID);
+        from = getArguments().getInt(BUNDLE_KEY_FROM);
+        num = getArguments().getInt(BUNDLE_KEY_NUM);
+        homePageNum = getArguments().getInt(BUNDLE_KEY_HOME_PAGE_NUM);
+        templateItem = (NewFragmentTemplateItem) getArguments().getSerializable(BUNDLE_KEY_TEMPLATE_ITEM);
+        categoryTabName = getArguments().getString(BUNDLE_KEY_CATEGORY_TYPE_NAME);
+
         if (mTypeEntities == null) {
             mTypeEntities = new ArrayList<>();
         }
@@ -77,11 +104,12 @@ public class SecondaryTypeFragment extends BaseFragment {
         int[] colors = new int[]{Color.parseColor("#787878"), Color.parseColor("#46AAFF")};
         ColorStateList colorStateList = new ColorStateList(states, colors);
         for (int i = 0; i < mTypeEntities.size(); i++) {
+
             TextView textView = new TextView(getContext());
             textView.setText(mTypeEntities.get(i).getName());
             textView.setTextColor(colorStateList);
             textView.setTextSize(14);
-            textView.setBackground(getResources().getDrawable(R.drawable.secondary_type_selecrot));
+            textView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.secondary_type_selecrot));
             textView.setGravity(Gravity.CENTER);
             textView.setSelected(false);
             textView.setPadding(screenUtil.dip2px(getContext(), 10), screenUtil.dip2px(getContext(), 3),
@@ -95,18 +123,14 @@ public class SecondaryTypeFragment extends BaseFragment {
                     transaction.replace(R.id.fl_container, fragments.get(index));
                     transaction.commitAllowingStateLoss();
                     for (int i = 0; i < mTextViews.size(); i++) {
-                        if (i == index) {
-                            mTextViews.get(i).setSelected(true);
-                        } else {
-                            mTextViews.get(i).setSelected(false);
-                        }
+                        mTextViews.get(i).setSelected(i == index);
                     }
                     if (type == 0) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_mb_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_mb_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
                     } else if (type == 1) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_bj_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_bj_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
                     } else if (type == 2) {
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "21_fece_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "21_fece_sub_tab", categoryTabName + " - " + mTypeEntities.get(index).getName());
                     }
                 }
             });
@@ -120,18 +144,20 @@ public class SecondaryTypeFragment extends BaseFragment {
             if (type == 0) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", category_id);
-                bundle.putString("tc_id",mTypeEntities.get(i).getId());
-                bundle.putSerializable("num", i);
+                bundle.putString("tc_id", mTypeEntities.get(i).getId());
+                bundle.putSerializable("num", num);
                 bundle.putSerializable("from", 0);
+                bundle.putSerializable("homePageNum", homePageNum);
+
                 HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
                 fragment.setArguments(bundle);
                 fragments.add(fragment);
             } else if (type == 1) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", category_id);
-                bundle.putString("tc_id",mTypeEntities.get(i).getId());
+                bundle.putString("tc_id", mTypeEntities.get(i).getId());
                 bundle.putSerializable("from", from);
-                bundle.putSerializable("num", i);
+                bundle.putSerializable("num", num);
                 if (templateItem != null) {
                     bundle.putSerializable("cover", templateItem.getImage());
                 }
@@ -141,18 +167,33 @@ public class SecondaryTypeFragment extends BaseFragment {
             } else if (type == 2) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("id", category_id);
-                bundle.putString("tc_id",mTypeEntities.get(i).getId());
-                bundle.putSerializable("num", i);
+                bundle.putString("tc_id", mTypeEntities.get(i).getId());
+                bundle.putSerializable("num", num);
                 bundle.putSerializable("from", 4);
+                bundle.putSerializable("homePageNum", homePageNum);
                 HomeTemplateItemFragment fragment = new HomeTemplateItemFragment();
                 fragment.setArguments(bundle);
                 fragments.add(fragment);
             }
         }
-        if (!fragments.isEmpty()&& !mTextViews.isEmpty()) {
+        if (!fragments.isEmpty() && !mTextViews.isEmpty()) {
             transaction.replace(R.id.fl_container, fragments.get(0));
             transaction.commitAllowingStateLoss();
             mTextViews.get(0).setSelected(true);
         }
+    }
+
+    public static Bundle buildArgument(List<SecondaryTypeEntity> typeEntities, int type, String categoryId, int from,
+                                       int num, int homePageNum, NewFragmentTemplateItem templateItem, String categoryTabName) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(BUNDLE_KEY_SECONDARY_TYPE, (Serializable) typeEntities);
+        bundle.putInt(BUNDLE_KEY_TYPE, type);
+        bundle.putString(BUNDLE_KEY_CATEGORY_ID, categoryId);
+        bundle.putInt(BUNDLE_KEY_FROM, from);
+        bundle.putInt(BUNDLE_KEY_NUM, num);
+        bundle.putInt(BUNDLE_KEY_HOME_PAGE_NUM, homePageNum);
+        bundle.putSerializable(BUNDLE_KEY_TEMPLATE_ITEM, templateItem);
+        bundle.putString(BUNDLE_KEY_CATEGORY_TYPE_NAME, categoryTabName);
+        return bundle;
     }
 }

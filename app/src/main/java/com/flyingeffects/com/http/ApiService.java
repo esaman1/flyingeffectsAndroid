@@ -3,26 +3,27 @@ package com.flyingeffects.com.http;
 import com.flyingeffects.com.enity.ChooseMusic;
 import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.enity.DressUpSpecial;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.FontEnity;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.enity.ImageFrameEntity;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MineCommentEnity;
 import com.flyingeffects.com.enity.MineZanEnity;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
 import com.flyingeffects.com.enity.SearchUserEntity;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.enity.StickerTypeEntity;
 import com.flyingeffects.com.enity.SystemMessageCountAllEntiy;
 import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
-import com.flyingeffects.com.enity.SystemMessageDetailEnity;
-import com.flyingeffects.com.enity.TemplateType;
 import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.enity.VideoFusiomBean;
 import com.flyingeffects.com.enity.checkVersion;
 import com.flyingeffects.com.enity.fansEnity;
 import com.flyingeffects.com.enity.messageCount;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.enity.systemessagelist;
 
 import java.util.List;
@@ -37,7 +38,6 @@ import rx.Observable;
  * Created by zhangtongju
  * on 2016/10/9 17:09.
  */
-
 public interface ApiService {
 
     //登录
@@ -68,7 +68,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/template/collectionList")
-    Observable<HttpResult<List<new_fag_template_item>>> collectionList(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> collectionList(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
     @POST("/api/message/systemessagelist")
@@ -96,7 +96,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/message/getMyProduction")
-    Observable<HttpResult<List<new_fag_template_item>>> uploadList(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> uploadList(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded
@@ -141,7 +141,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/template/templateLInfo")
-    Observable<HttpResult<new_fag_template_item>> templateLInfo(@FieldMap Map<String, String> params);
+    Observable<HttpResult<NewFragmentTemplateItem>> templateLInfo(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded
@@ -177,8 +177,6 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/addComment")
     Observable<HttpResult<Object>> addComment(@FieldMap Map<String, String> params);
-
-
 
 
     @FormUrlEncoded
@@ -226,19 +224,32 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/api/template/templateListNew")
-    Observable<HttpResult<List<new_fag_template_item>>> getTemplate(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> getTemplate(@FieldMap Map<String, String> params);
 
 
 
     @FormUrlEncoded
     @POST("/api/mearge/templateList")
-    Observable<HttpResult<List<new_fag_template_item>>> getMeargeTemplate(@FieldMap Map<String, String> params);
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> getMeargeTemplate(@FieldMap Map<String, String> params);
+
+
+    /**
+     * 素材列表
+     * @param params
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("/api/mearge/materialList")
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> materialList(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("/api/mearge/imageBorder")
+    Observable<HttpResult<List<ImageFrameEntity>>> imageBorder(@FieldMap Map<String, String> params);
 
 
     @FormUrlEncoded
     @POST("/api/photo/photoList")
-    Observable<HttpResult<List<new_fag_template_item>>> photoList(@FieldMap Map<String, String> params);
-
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> photoList(@FieldMap Map<String, String> params);
 
 //
 //    //用戶的关注数或者粉丝数
@@ -246,12 +257,10 @@ public interface ApiService {
 //    @POST("/api/message/followerList")
 //    Observable<HttpResult<List<MyProduction>>> followerList(@FieldMap Map<String, String> params);
 
-
     //我发布的作品和我喜欢的作品
     @FormUrlEncoded
     @POST("/api/message/getMyProduction")
-    Observable<HttpResult<List<new_fag_template_item>>> getMyProduction(@FieldMap Map<String, String> params);
-
+    Observable<HttpResult<List<NewFragmentTemplateItem>>> getMyProduction(@FieldMap Map<String, String> params);
 
     //请求我的评论列表
     @FormUrlEncoded
@@ -273,7 +282,6 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/followUser")
     Observable<HttpResult<Object>> followUser(@FieldMap Map<String, String> params);
-
 
     @FormUrlEncoded
     @POST("/api/version/versionCheck")
@@ -358,6 +366,26 @@ public interface ApiService {
     @POST("/api/mearge/meargePicture")
     Observable<HttpResult<List<HumanMerageResult>>> humanMerageResult(@FieldMap Map<String,String> params);
 
+
+    /**融合api*/
+    @FormUrlEncoded
+    @POST("/api/Api/query")
+    Observable<HttpResult<DressUpSpecial>> Apiquery(@FieldMap Map<String,String> params);
+
+    /**通知服务器上传成功*/
+    @FormUrlEncoded
+    @POST("/api/mearge/animalImage")
+    Observable<HttpResult<String>> animalImage(@FieldMap Map<String,String> params);
+
+
+    /**请求结果*/
+    @FormUrlEncoded
+    @POST("/api/mearge/animalResult")
+    Observable<HttpResult<VideoFusiomBean>> animalResult(@FieldMap Map<String,String> params);
+
+
+
+
     /**贴纸分类列表*/
     @FormUrlEncoded
     @POST("/api/media/stickerCategory")
@@ -386,6 +414,15 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/addTimes")
     Observable<HttpResult<Object>> addTimes(@FieldMap Map<String,String> params);
+
+
+
+    /**腾讯api 联调，通过上传的图片，生成有趣的视频*/
+    @FormUrlEncoded
+    @POST("/api/Api/test")
+    Observable<HttpResult<DressUpSpecial>> ApiTest(@FieldMap Map<String,String> params);
+
+
 
 
 

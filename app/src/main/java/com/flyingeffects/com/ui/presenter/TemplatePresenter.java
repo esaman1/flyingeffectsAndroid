@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.enity.TemplateThumbItem;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.TemplateMvpModel;
@@ -19,11 +19,10 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     private TemplateMvpView home_mvpView;
     private TemplateMvpModel home_model;
 
-    public TemplatePresenter(Context context, TemplateMvpView mvp_view, String fromTo, String templateName) {
+    public TemplatePresenter(Context context, TemplateMvpView mvp_view, String fromTo, String templateName,String templateId,String templateType) {
         this.home_mvpView = mvp_view;
-        home_model = new TemplateMvpModel(context, this, fromTo, templateName);
+        home_model = new TemplateMvpModel(context, this, fromTo, templateName,templateId,templateType);
     }
-
 
     public void intoMattingVideo(String path, String name) {
         home_model.intoMattingVideo(path, name);
@@ -33,7 +32,7 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_model.StopBgmMusic();
     }
 
-    public void chooseBj(new_fag_template_item templateItem) {
+    public void chooseBj(NewFragmentTemplateItem templateItem) {
         home_model.chooseBj(templateItem);
     }
 
@@ -70,18 +69,23 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
     }
 
 
-    public void renderVideo(String mTemplateFolder, String mAudio1Path, boolean isPreview, int nowTemplateIsAnim, List<String> originalPath) {
-        home_model.renderVideo(mTemplateFolder, mAudio1Path, isPreview, nowTemplateIsAnim, originalPath);
+    public void renderVideo(String mTemplateFolder, String mAudio1Path, boolean isPreview, int nowTemplateIsAnim, List<String> originalPath,boolean nowIsGifTemplate) {
+        home_model.renderVideo(mTemplateFolder, mAudio1Path, isPreview, nowTemplateIsAnim, originalPath,nowIsGifTemplate);
     }
 
 
-    public void loadTemplate(String filePath, AssetDelegate delegate, int nowTemplateIsAnim, int nowTemplateIsMattingVideo) {
-        home_model.loadTemplate(filePath, delegate, nowTemplateIsAnim, nowTemplateIsMattingVideo);
+    public void SaveSpecialTemplate(int api_type,boolean nowIsGifTemplate,int needAssetsCount, boolean isMatting){
+        home_model.SaveSpecialTemplate(api_type,nowIsGifTemplate,needAssetsCount,isMatting);
     }
 
 
-    public void ChangeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
-        home_model.ChangeMaterial(list, maxChooseNum, needAssetsCount);
+    public void loadTemplate(String filePath, AssetDelegate delegate, int nowTemplateIsAnim, int nowTemplateIsMattingVideo,boolean isToSing) {
+        home_model.loadTemplate(filePath, delegate, nowTemplateIsAnim, nowTemplateIsMattingVideo,isToSing);
+    }
+
+
+    public void changeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
+        home_model.changeMaterial(list, maxChooseNum, needAssetsCount);
     }
 
 
@@ -97,7 +101,7 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
 
     @Override
     public void ChangeMaterialCallback(ArrayList<TemplateThumbItem> listItem, List<String> list_all, List<String> listAssets) {
-        home_mvpView.ChangeMaterialCallback(listItem, list_all, listAssets);
+        home_mvpView.changeMaterialCallback(listItem, list_all, listAssets);
     }
 
     @Override
@@ -135,16 +139,28 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_mvpView.GetChangeDressUpData(paths);
     }
 
-
-    public void StatisticsToSave(String templateId) {
-        home_model.StatisticsToSave(templateId);
-
+    @Override
+    public void setDialogProgress(int progress) {
+        home_mvpView.setDialogProgress(progress);
     }
 
+    @Override
+    public void setDialogDismiss() {
+        home_mvpView.setDialogDismiss();
+    }
+
+    @Override
+    public void showProgressDialog() {
+        home_mvpView.showProgressDialog();
+    }
+
+    public void statisticsToSave(String templateId) {
+        home_model.statisticsToSave(templateId);
+
+    }
 
     public void toDressUp(String path, String templateId) {
         home_model.toDressUp(path, templateId);
     }
-
 
 }

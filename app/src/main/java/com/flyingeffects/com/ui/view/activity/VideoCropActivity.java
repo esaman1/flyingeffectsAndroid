@@ -29,7 +29,7 @@ import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.FileManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.VideoCropMVPView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.presenter.VideoCropMVPPresenter;
@@ -40,7 +40,6 @@ import com.flyingeffects.com.view.RoundImageView;
 import com.flyingeffects.com.view.VideoFrameRecycler;
 import com.lansosdk.videoeditor.DrawPadView2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -104,7 +103,7 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
         initVideoDrawPad(videoPath, false);
         UiStep.nowUiTag = "";
         UiStep.isFromDownBj = false;
-        statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Crop");
+        StatisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Crop");
         if (!TextUtils.isEmpty(isFrom)) {
             if (isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORUSER) || isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)) {
                 tv_choose_pic.setVisibility(View.GONE);
@@ -128,12 +127,12 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
             case R.id.tv_choose_pic:
 
                 if (TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)) {
-                    statisticsEventAffair.getInstance().setFlag(this, "7_Chromakey");
+                    StatisticsEventAffair.getInstance().setFlag(this, "7_Chromakey");
                 } else if (TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISBJ)) {
-                    statisticsEventAffair.getInstance().setFlag(this, "8_Chromakey");
+                    StatisticsEventAffair.getInstance().setFlag(this, "8_Chromakey");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
-                    statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
+                    StatisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
+                    StatisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
                 }
 
                 saveVideo(true);
@@ -143,12 +142,12 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
             case R.id.tv_no_kt: //不需要抠图
 
                 if (TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISFROMEDOWNVIDEOFORADDSTICKER)) {
-                    statisticsEventAffair.getInstance().setFlag(this, "7_Nokeying");
+                    StatisticsEventAffair.getInstance().setFlag(this, "7_Nokeying");
                 } else if (TextUtils.isEmpty(isFrom) && isFrom.equals(FromToTemplate.ISBJ)) {
-                    statisticsEventAffair.getInstance().setFlag(this, "8_Nokeying");
+                    StatisticsEventAffair.getInstance().setFlag(this, "8_Nokeying");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
-                    statisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
+                    StatisticsEventAffair.getInstance().setFlag(this, "2_Titles_cutdone", "手动卡点_片头裁剪完成");
+                    StatisticsEventAffair.getInstance().setFlag(VideoCropActivity.this, "6_customize_bj_Cutout");
                 }
                 saveVideo(false);
                 isNeedCut = false;
@@ -316,14 +315,17 @@ public class VideoCropActivity extends BaseActivity implements VideoCropMVPView 
             // 启动时间
             Observable ob = Api.getDefault().userDefine(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(VideoCropActivity.this) {
+
                 @Override
                 protected void onSubError(String message) {
+
                 }
 
                 @Override
                 protected void onSubNext(UserInfo data) {
 
                 }
+
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
         }
     }

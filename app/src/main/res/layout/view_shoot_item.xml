@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:id="@+id/constraintLayout"
-    android:layout_height="wrap_content"
->
+    android:layout_height="wrap_content">
 
 
     <ImageView
@@ -14,7 +13,7 @@
         android:contentDescription="@string/app_name"
         android:src="@mipmap/shoot_change"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -22,6 +21,7 @@
         android:id="@+id/tv_rolling_over"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="@dimen/sp_11"
         android:gravity="center"
         android:text="翻转"
         android:textColor="@color/white"
@@ -99,19 +99,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:textSize="@dimen/sp_11"
         android:text="倒计时"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@+id/iv_count_down"
         app:layout_constraintStart_toStartOf="@+id/iv_count_down"
         app:layout_constraintTop_toBottomOf="@+id/iv_count_down" />
-
-
-
-
-
-
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,9 @@ public class Url {
     public static final String BASE_URL = BaseConstans.PRODUCTION ?
             "http://www.flyingeffect.com" : "http://test.flyingeffect.com";
 
+
+//    public static final String BASE_URL="http://admin.flyingeffect.com";
+
 }
 
 

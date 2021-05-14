@@ -1,6 +1,8 @@
 package com.flyingeffects.com.ui.view.fragment;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,37 +10,39 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.adapter.main_recycler_adapter;
+import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.SendSearchText;
-import com.flyingeffects.com.enity.new_fag_template_item;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AlbumManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
-import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -69,14 +73,18 @@ public class fragBjSearch extends BaseFragment {
     TextView mAddTitle;
 
     private int perPageCount = 10;
-    private main_recycler_adapter adapter;
-    private List<new_fag_template_item> allData = new ArrayList<>();
+    private MainRecyclerAdapter adapter;
+    private List<NewFragmentTemplateItem> allData = new ArrayList<>();
 
     private boolean isRefresh = true;
     private int selectPage = 1;
-    /**默认值肯定为""*/
+    /**
+     * 默认值肯定为""
+     */
     private String searchText;
-    /**0 表示搜索出来模板 1表示搜索内容为背景  3代表换装*/
+    /**
+     * 0 表示搜索出来模板 1表示搜索内容为背景  3代表换装（闪图）
+     */
     private int isFrom;
     private boolean hasSearch = false;
 
@@ -88,7 +96,6 @@ public class fragBjSearch extends BaseFragment {
 
     @Override
     protected void initView() {
-        EventBus.getDefault().register(this);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             isFrom = bundle.getInt("from");
@@ -109,14 +116,14 @@ public class fragBjSearch extends BaseFragment {
 
 
     private void initRecycler() {
-        adapter = new main_recycler_adapter(R.layout.list_main_item, allData, getActivity(), isFrom, true);
+        adapter = new MainRecyclerAdapter(allData, isFrom, true, null);
         StaggeredGridLayoutManager layoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
-            statisticsEventAffair.getInstance().setFlag(getActivity(), "11_yj_searchfor", allData.get(position).getTitle());
+            StatisticsEventAffair.getInstance().setFlag(getActivity(), "11_yj_searchfor", allData.get(position).getTitle());
             Intent intent = new Intent(getActivity(), PreviewUpAndDownActivity.class);
             ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
             intent.putExtra("person", listForUpAndDown);//直接存入被序列化的对象实例
@@ -127,13 +134,24 @@ public class fragBjSearch extends BaseFragment {
             if (isFrom == 0) {
                 //模板页面
                 intent.putExtra("fromTo", FromToTemplate.ISSEARCHTEMPLATE);
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb_click", allData.get(position).getTitle());
+                int api_type = allData.get(position).getApi_type();
+                if (api_type != 0) {
+                    intent.putExtra("fromTo", FromToTemplate.TEMPLATESPECIAL1);
+                }
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb_click", allData.get(position).getTitle());
             } else if (isFrom == 3) {
-                intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                String templateType = allData.get(position).getTemplate_type();
+                if(!TextUtils.isEmpty(templateType)&& "3".equals(templateType)){
+                    intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                }else if(!TextUtils.isEmpty(templateType)&& "4".equals(templateType)){
+                    intent.putExtra("fromTo", FromToTemplate.DRESSUP);
+                }else{
+                    intent.putExtra("fromTo", FromToTemplate.ISTEMPLATE);
+                }
             } else {
                 //背景页面
                 intent.putExtra("fromTo", FromToTemplate.ISSEARCHBJ);
-                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj_click", allData.get(position).getTitle());
+                StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj_click", allData.get(position).getTitle());
             }
             startActivity(intent);
         });
@@ -213,7 +231,7 @@ public class fragBjSearch extends BaseFragment {
         EventBus.getDefault().unregister(this);
     }
 
-    public void isShowData(ArrayList<new_fag_template_item> listData) {
+    public void isShowData(ArrayList<NewFragmentTemplateItem> listData) {
         if (getActivity() != null) {
             allData.clear();
             allData.addAll(listData);
@@ -240,18 +258,19 @@ public class fragBjSearch extends BaseFragment {
             if (isFrom == 0) {
                 params.put("template_type", "1");
             } else if (isFrom == 3) {
-                params.put("template_type", "3");
+                //不传表示所有
+             //   params.put("template_type", "3");
             } else {
                 params.put("template_type", "2");
             }
             Observable ob;
             if (isFrom == 3) {
-                ob = Api.getDefault().getMeargeTemplate(BaseConstans.getRequestHead(params));
+                ob = Api.getDefault().materialList(BaseConstans.getRequestHead(params));
             } else {
                 ob = Api.getDefault().getTemplate(BaseConstans.getRequestHead(params));
             }
             LogUtil.d("oom3", "搜索" + StringUtil.beanToJSONString(params));
-            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<new_fag_template_item>>(getActivity()) {
+            HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<NewFragmentTemplateItem>>(getActivity()) {
                 @Override
                 protected void onSubError(String message) {
                     finishData();
@@ -259,7 +278,7 @@ public class fragBjSearch extends BaseFragment {
                 }
 
                 @Override
-                protected void onSubNext(List<new_fag_template_item> data) {
+                protected void onSubNext(List<NewFragmentTemplateItem> data) {
                     LogUtil.d("oom3", "搜索结果" + StringUtil.beanToJSONString(data));
 
                     finishData();
@@ -268,22 +287,21 @@ public class fragBjSearch extends BaseFragment {
                     }
                     if (isRefresh && data.size() == 0) {
 
-
-                        statisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults", searchText);
+                        StatisticsEventAffair.getInstance().setFlag(getActivity(), "10_Noresults", searchText);
                         showNoData(true);
                         if (isVisible) {
                             if (isFrom == 1) {//背景无内容
-                                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj", searchText);
+                                StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj", searchText);
                             } else {//模板无内容
-                                statisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb", searchText);
+                                StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_mb", searchText);
                             }
                             ToastUtil.showToast("没有查询到输入内容，换个关键词试试");
                         }
                         if (isVisible) {
                             if (isFrom == 0) {
-                                statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", searchText);
+                                StatisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none", searchText);
                             } else {
-                                statisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none_bj", searchText);
+                                StatisticsEventAffair.getInstance().setFlag(getActivity(), "4_search_none_bj", searchText);
                             }
                         }
                     } else {
@@ -300,8 +318,6 @@ public class fragBjSearch extends BaseFragment {
                 }
             }, "FagData", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
         }
-
-
     }
 
 
@@ -326,35 +342,55 @@ public class fragBjSearch extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.relative_add:
-                if (BaseConstans.hasLogin()) {
-                    Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
-                    if (isFrom == 3) {
-                        AlbumManager.chooseImageAlbum(getContext(), 1, 0, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
-                            if (!isCancel) {
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.putExtra("videoPath", paths.get(0));
-                                intent.putExtra("isFrom", 2);
-                                startActivity(intent);
-                            }
-                        }, "");
+                if (getActivity() != null) {
+                    if (getActivity().getPackageManager().checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, BuildConfig.APPLICATION_ID)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        toUpLoad();
                     } else {
-                        AlbumManager.chooseVideo(getActivity(), 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
-                            if (!isCancel) {
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.putExtra("videoPath", paths.get(0));
-                                intent.putExtra("isFrom", 1);
-                                startActivity(intent);
-                            }
-                        }, "");
+                        new AlertDialog.Builder(getActivity())
+                                .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
+                                .setNegativeButton("取消", (dialog, which) -> {
+                                    dialog.dismiss();
+                                })
+                                .setPositiveButton("去授权", (dialog, which) -> {
+                                    PermissionUtil.gotoPermission(getActivity());
+                                    dialog.dismiss();
+                                }).create()
+                                .show();
                     }
-                } else {
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
                 }
                 break;
             default:
                 break;
+        }
+    }
+
+    private void toUpLoad() {
+        if (BaseConstans.hasLogin()) {
+            Intent intent = new Intent(getActivity(), UploadMaterialActivity.class);
+            if (isFrom == 3) {
+                AlbumManager.chooseImageAlbum(getContext(), 1, 0, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
+                    if (!isCancel) {
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("videoPath", paths.get(0));
+                        intent.putExtra("isFrom", 2);
+                        startActivity(intent);
+                    }
+                }, "");
+            } else {
+                AlbumManager.chooseVideo(getActivity(), 1, 1, (tag, paths, isCancel, isFromCamera, albumFileList) -> {
+                    if (!isCancel) {
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra("videoPath", paths.get(0));
+                        intent.putExtra("isFrom", 1);
+                        startActivity(intent);
+                    }
+                }, "");
+            }
+        } else {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
     }
 }

@@ -25,7 +25,7 @@ import java.util.List;
 public class Like_adapter extends BaseQuickAdapter<MineCommentEnity, BaseViewHolder> {
 
     private Context context;
-    public final static String TAG = "main_recycler_adapter";
+    public final static String TAG = "MainRecyclerAdapter";
 
     public Like_adapter(int layoutResId, @Nullable List<MineCommentEnity> data, Context context) {
         super(layoutResId, data);

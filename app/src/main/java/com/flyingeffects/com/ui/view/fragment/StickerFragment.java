@@ -18,18 +18,17 @@ import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.enity.ClearChooseStickerState;
-import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.StickerList;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.DownloadZipManager;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.ZipFileHelperManager;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -55,6 +54,7 @@ import static com.flyingeffects.com.manager.FileManager.saveBitmapToPath;
  * 贴纸fragment
  */
 public class StickerFragment extends BaseFragment {
+
     @BindView(R.id.smart_refresh_layout)
     SmartRefreshLayout mSmartRefreshLayout;
     @BindView(R.id.gridView)
@@ -74,6 +74,7 @@ public class StickerFragment extends BaseFragment {
     private int perPageCount = 20;
     private boolean isRefresh = true;
     private String mGifFolder;
+    private int mFrom;
 
     @Override
     protected int getContentLayout() {
@@ -84,9 +85,9 @@ public class StickerFragment extends BaseFragment {
     protected void initView() {
         stickerType = getArguments().getInt("stickerType");
         formToType = getArguments().getInt("type");
+        mFrom = getArguments().getInt("from");
         FileManager fileManager = new FileManager();
         mGifFolder = fileManager.getFileCachePath(getContext(), "gifFolder");
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -108,6 +109,7 @@ public class StickerFragment extends BaseFragment {
             selectPage = 1;
             requestStickersList(true);
         });
+
         mSmartRefreshLayout.setOnLoadMoreListener(refresh -> {
             isRefresh = false;
             selectPage++;
@@ -116,6 +118,7 @@ public class StickerFragment extends BaseFragment {
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
+            @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 EventBus.getDefault().post(new ClearChooseStickerState());
@@ -123,13 +126,16 @@ public class StickerFragment extends BaseFragment {
                     @Override
                     public void run() {
                         modificationSingleItemIsChecked(position);
+
                         if (mStickerListener != null) {
                             mStickerListener.clickItemSelected(position);
                         }
-                        if (UiStep.isFromDownBj) {
-                            statisticsEventAffair.getInstance().setFlag(getContext(), " 5_mb_bj_Sticker", listForSticker.get(position).getTitle());
+                        if (mFrom == CreationTemplateActivity.FROM_DRESS_UP_BACK_CODE) {
+                            StatisticsEventAffair.getInstance().setFlag(getContext(), "st_bj_sticker", listForSticker.get(position).getTitle());
+                        } else if (UiStep.isFromDownBj) {
+                            StatisticsEventAffair.getInstance().setFlag(getContext(), "5_mb_bj_Sticker", listForSticker.get(position).getTitle());
                         } else {
-                            statisticsEventAffair.getInstance().setFlag(getContext(), " 6_customize_bj_Sticker", listForSticker.get(position).getTitle());
+                            StatisticsEventAffair.getInstance().setFlag(getContext(), "6_customize_bj_Sticker", listForSticker.get(position).getTitle());
                         }
 
                         if (formToType == 1) {
@@ -138,10 +144,9 @@ public class StickerFragment extends BaseFragment {
                         } else {
                             downSticker(listForSticker.get(position).getImage(), listForSticker.get(position).getId(), position, listForSticker.get(position).getTitle());
                         }
+
                     }
-                },200);
-
-
+                }, 200);
 
             }
         });
@@ -270,6 +275,9 @@ public class StickerFragment extends BaseFragment {
             @Override
             protected void onSubNext(ArrayList<StickerList> list) {
                 finishData();
+                if (isRefresh) {
+                    listForSticker.clear();
+                }
                 if (!isRefresh && list.size() < perPageCount) {  //因为可能默认只请求8条数据
                     ToastUtil.showToast(getContext().getResources().getString(R.string.no_more_data));
                 }
@@ -320,7 +328,7 @@ public class StickerFragment extends BaseFragment {
                 if (mStickerListener != null) {
                     mStickerListener.copyGif(fileName, copyName, title);
                 }
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
                 return;
             }
             Observable.just(path).map(s -> {
@@ -341,15 +349,15 @@ public class StickerFragment extends BaseFragment {
                         if (mStickerListener != null) {
                             mStickerListener.addSticker(fileName, title);
                         }
-                        WaitingDialog.closePragressDialog();
+                        WaitingDialog.closeProgressDialog();
                         modificationSingleItem(position);
                     } else {
-                        WaitingDialog.closePragressDialog();
+                        WaitingDialog.closeProgressDialog();
                         ToastUtil.showToast("请重试");
                     }
 
                 } catch (IOException e) {
-                    WaitingDialog.closePragressDialog();
+                    WaitingDialog.closeProgressDialog();
                     e.printStackTrace();
                 }
             });
@@ -366,7 +374,7 @@ public class StickerFragment extends BaseFragment {
                     originalBitmap = futureTarget.get();
                     Bitmap finalOriginalBitmap = originalBitmap;
                     Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-                        WaitingDialog.closePragressDialog();
+                        WaitingDialog.closeProgressDialog();
                         String aa = path.substring(path.length() - 4);
                         String copyName = mGifFolder + File.separator + System.currentTimeMillis() + aa;
                         saveBitmapToPath(finalOriginalBitmap, copyName, isSucceed -> {

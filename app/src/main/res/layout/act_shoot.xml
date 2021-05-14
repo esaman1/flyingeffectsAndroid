@@ -12,11 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-
     <RelativeLayout
         android:id="@+id/relative_choose_music"
         android:layout_width="118dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/dp_34"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:background="@drawable/strok_choose_music_bj"
@@ -44,7 +43,7 @@
             android:singleLine="true"
             android:text="选择音乐"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="15sp" />
     </RelativeLayout>
 
 
@@ -65,12 +64,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="31dp"
-        android:layout_marginEnd="31dp"
+        android:layout_marginEnd="13dp"
         android:orientation="vertical">
 
-
         <include layout="@layout/view_shoot_item" />
-
 
     </LinearLayout>
 
@@ -89,23 +86,25 @@
         <LinearLayout
             android:id="@+id/ll_stage_property"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_horizontal"
+            android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/iv_stage_property"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@mipmap/prop" />
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="3dp"
                 android:text="道具"
+                android:textSize="@dimen/sp_11"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -113,25 +112,24 @@
 
         <RelativeLayout
             android:id="@+id/relative_click"
-            android:layout_width="74dp"
-            android:layout_height="74dp"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
             android:layout_gravity="center">
 
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/animation_view"
-                android:layout_width="74dp"
-                android:layout_height="74dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
                 app:lottie_fileName="shoot_btn.json" />
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/animation_view_progress"
-                android:layout_width="74dp"
-                android:layout_height="74dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
                 app:lottie_fileName="aa.json" />
 
         </RelativeLayout>
-
 
         <LinearLayout
             android:id="@+id/ll_album"
@@ -142,8 +140,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@mipmap/logo" />
 
 
@@ -160,10 +158,6 @@
     </LinearLayout>
 
 
-
-
-
-
     <TextView
         android:textColor="@color/white"
         android:textSize="16sp"
@@ -177,8 +171,6 @@
         android:layout_above="@+id/ll_bottom"
         android:layout_height="wrap_content"/>
 
-
-
     <com.example.horizontalselectedviewlibrary.HorizontalselectedView
         android:id="@+id/horizontalselectedView"
         android:layout_width="match_parent"
@@ -189,15 +181,9 @@
         android:layout_marginEnd="50dp"
         app:HorizontalselectedViewSeesize="5"
         app:HorizontalselectedViewSelectedTextColor="#FFFFFF"
-        app:HorizontalselectedViewSelectedTextSize="60"
-        app:HorizontalselectedViewTextColor="#566265"
-        app:HorizontalselectedViewTextSize="60"
-
-        />
-
-
-
-
+        app:HorizontalselectedViewSelectedTextSize="45"
+        app:HorizontalselectedViewTextColor="#4DFFFFFF"
+        app:HorizontalselectedViewTextSize="45" />
 
     <LinearLayout
         android:id="@+id/photograph_light_layout"

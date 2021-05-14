@@ -23,32 +23,31 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.TemplateThumbItem;
-import com.flyingeffects.com.enity.new_fag_template_item;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
-import com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity;
+import com.flyingeffects.com.ui.view.activity.MemeKeepActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MattingVideoEnity;
 import com.glidebitmappool.GlideBitmapPool;
 import com.orhanobut.hawk.Hawk;
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.AssetDelegate;
 import com.shixing.sxve.ui.SxveConstans;
-import com.shixing.sxve.ui.albumType;
 import com.shixing.sxve.ui.model.MediaUiModel2;
 import com.shixing.sxve.ui.model.TemplateModel;
 import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 import com.shixing.sxvideoengine.SXRenderListener;
 import com.shixing.sxvideoengine.SXTemplate;
 import com.shixing.sxvideoengine.SXTemplateRender;
@@ -56,10 +55,10 @@ import com.shixing.sxvideoengine.SXTemplateRender;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.UUID;
 
 import de.greenrobot.event.EventBus;
@@ -84,19 +83,23 @@ public class TemplateMvpModel {
     private String fromTo;
     private String saveVideoPath;
     private String templateName;
+    private String templateId;
+    private String templateType;
 
 
-    public TemplateMvpModel(Context context, TemplateMvpCallback callback,String fromTo,String templateName) {
+    public TemplateMvpModel(Context context, TemplateMvpCallback callback, String fromTo, String templateName, String templateId,String templateType) {
         this.context = context;
         this.callback = callback;
-        this.fromTo=fromTo;
-        this.templateName=templateName;
+        this.fromTo = fromTo;
+        this.templateName = templateName;
+        this.templateId = templateId;
         keepUunCatchPath = context.getExternalFilesDir("runCatch/");
         FileManager fileManager = new FileManager();
         cacheCutVideoPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "cacheMattingFolder");
         backgroundPath = fileManager.getFileCachePath(BaseApplication.getInstance(), "background");
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
         saveVideoPath = fileManager.getFileCachePath(context, "saveVideoPath");
+        this.templateType=templateType;
         isOnDestroy = false;
     }
 
@@ -106,7 +109,7 @@ public class TemplateMvpModel {
     }
 
 
-    public void StatisticsToSave(String templateId) {
+    public void statisticsToSave(String templateId) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
         params.put("action_type", 2 + "");
@@ -126,7 +129,6 @@ public class TemplateMvpModel {
     }
 
 
-
     /**
      * description ：换装
      * creation date: 2020/12/3
@@ -138,11 +140,10 @@ public class TemplateMvpModel {
             public void isSuccess(List<String> paths) {
                 callback.GetChangeDressUpData(paths);
             }
-        },true);
+        }, true);
 
         dressUpModel.toDressUp(path, templateId);
     }
-
 
 
     public void getBjMusic(String videoPath) {
@@ -163,7 +164,7 @@ public class TemplateMvpModel {
      */
     public void getMattingVideoCover(String path) {
         //如果是选择视频，那么需要第一针显示为用户
-        if (albumType.isImage(GetPathType.getInstance().getPathType(path))) {
+        if (AlbumType.isImage(GetPathType.getInstance().getPathType(path))) {
             Bitmap mattingMp = BitmapFactory.decodeFile(path);
             callback.showMattingVideoCover(mattingMp, path);
         } else {
@@ -229,10 +230,10 @@ public class TemplateMvpModel {
     }
 
 
-    public void loadTemplate(String filePath, AssetDelegate delegate, int nowTemplateIsAnim,int nowTemplateIsMattingVideo) {
+    public void loadTemplate(String filePath, AssetDelegate delegate, int nowTemplateIsAnim, int nowTemplateIsMattingVideo, boolean isToSing) {
         Observable.just(filePath).map(s -> {
             try {
-                mTemplateModel = new TemplateModel(filePath, delegate, context, nowTemplateIsAnim,nowTemplateIsMattingVideo);
+                mTemplateModel = new TemplateModel(filePath, delegate, context, nowTemplateIsAnim, nowTemplateIsMattingVideo, isToSing);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -251,22 +252,26 @@ public class TemplateMvpModel {
 
     //    private String outputPathForVideoSaveToPhoto;
     private String savePath;
+    private boolean nowIsGifTemplate;
 
-    public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview, int nowTemplateIsAnim, List<String> originalPath) {
-
-        WaitingDialog_progress waitingDialog_progress = new WaitingDialog_progress(context);
-        waitingDialog_progress.openProgressDialog();
-        waitingDialog_progress.setProgress("生成中...");
+    public void renderVideo(String mTemplateFolder, String mAudio1Path, Boolean isPreview, int nowTemplateIsAnim, List<String> originalPath, boolean nowIsGifTemplate) {
+        this.nowIsGifTemplate = nowIsGifTemplate;
+        callback.showProgressDialog();
+        if (FromToTemplate.PICTUREALBUM.equals(fromTo)) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_yj");
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_video_post_mb");
+        }
         Observable.create((Observable.OnSubscribe<Boolean>) subscriber -> {
             SXTemplate template = new SXTemplate(mTemplateFolder, SXTemplate.TemplateUsage.kForRender); //模板对象类，需要传入模板路径和使用方式
             String[] paths;
-                paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
+            paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
             paths = repairRandomPaths.randomPaths(paths);
             if (mTemplateModel.HasBj && !TextUtils.isEmpty(mTemplateModel.getBackgroundPath())) {
                 String[] newPaths = new String[paths.length + 1];
                 System.arraycopy(paths, 0, newPaths, 0, paths.length);
                 MediaUiModel2 mediaUiModel2 = (MediaUiModel2) mTemplateModel.mAssets.get(0).ui;
-                if (albumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))) {
+                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(mTemplateModel.getBackgroundPath()))) {
                     newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixVideo(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
                 } else {
                     newPaths[newPaths.length - 1] = mediaUiModel2.getpathForThisBjMatrixImage(Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath(), mTemplateModel.getBackgroundPath());
@@ -298,14 +303,15 @@ public class TemplateMvpModel {
 
                 @Override
                 public void onUpdate(int progress) {
-                    waitingDialog_progress.setProgress("飞闪预览处理中" + progress + "%\n" +
-                            "请勿离开页面");
+                    callback.setDialogProgress(progress);
+
                     LogUtil.d("OOM", "progress=" + progress);
                 }
 
                 @Override
                 public void onFinish(boolean success, String msg) {
-                    waitingDialog_progress.closePragressDialog();
+                    callback.setDialogDismiss();
+
                     LogUtil.d("OOM", "onFinish+" + msg);
                     subscriber.onNext(success);
                     subscriber.onCompleted();
@@ -323,12 +329,46 @@ public class TemplateMvpModel {
     }
 
 
-    private int test() {
-        Random r = new Random();
-        int ran1 = r.nextInt(2000);
-        LogUtil.d("OOM", "ran1=" + ran1);
-        return ran1;
+    /**
+     * description ：生成特殊模板，主要通过后台服务器合成方式
+     * creation date: 2021/4/20
+     * user : zhangtongju
+     */
+    public void SaveSpecialTemplate(int api_type, boolean nowIsGifTemplate, int needAssetsCount, boolean isMatting) {
+        String[] paths = mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
+        List<String> list = Arrays.asList(paths);
+        List strToList1 = new ArrayList(list);
+        if (needAssetsCount == 1 && strToList1.size() > 1 && AlbumType.isImage(GetPathTypeModel.getInstance().getMediaType(paths[0]))) {
+            //图片去掉mask图层
+            strToList1.remove(1);
+        } else if (AlbumType.isVideo(GetPathTypeModel.getInstance().getMediaType(paths[0])) && !isMatting) {
+            strToList1.remove(1);
+        }
+
+        DressUpSpecialModel dressUpModel = new DressUpSpecialModel(context, url -> {
+            LogUtil.d("oom22","templateName="+templateName);
+            if (nowIsGifTemplate || url.contains("gif")) {
+                Intent intent = new Intent(context, MemeKeepActivity.class);
+                intent.putExtra("templateType", templateType);
+                intent.putExtra("videoPath", url);
+                intent.putExtra("title", templateName);
+                intent.putExtra("templateId", templateId);
+                intent.putExtra("IsFrom", fromTo);
+                context.startActivity(intent);
+            } else {
+                Intent intent = new Intent(context, TemplateAddStickerActivity.class);
+                intent.putExtra("videoPath", url);
+                intent.putExtra("templateType", templateType);
+                intent.putExtra("title", templateName);
+                intent.putExtra("templateId", templateId);
+                intent.putExtra("IsFrom", fromTo);
+                context.startActivity(intent);
+            }
+        }, templateId);
+        dressUpModel.toDressUp(strToList1, api_type);
+
     }
+
 
     public String[] getRealTimePreview() {
         return mTemplateModel.getReplaceableFilePaths(Objects.requireNonNull(keepUunCatchPath.getPath()));
@@ -336,46 +376,34 @@ public class TemplateMvpModel {
 
 
     private void renderFinish(boolean isSucceed, boolean isPreview, String outputPath) {
-        LogUtil.d("OOM", "onFinish,success?=" + isSucceed + "MSG=" + isSucceed);
+        LogUtil.d("OOM", "onFinish,success?=" + isSucceed + "outputPath=" + outputPath);
 
-        WaitingDialog.closePragressDialog();
+        WaitingDialog.closeProgressDialog();
         if (isPreview) {
             callback.toPreview(outputPath);
         } else {
             if (isSucceed && !isOnDestroy) {
-                Intent intent = new Intent(context, TemplateAddStickerActivity.class);
-                intent.putExtra("videoPath", outputPath);
-                intent.putExtra("title",templateName);
-                intent.putExtra("IsFrom",fromTo);
-                context.startActivity(intent);
+                if (nowIsGifTemplate) {
+                    Intent intent = new Intent(context, MemeKeepActivity.class);
+                    intent.putExtra("templateType",templateType);
+                    intent.putExtra("videoPath", outputPath);
+                    intent.putExtra("title", templateName);
+                    intent.putExtra("templateId", templateId);
+                    intent.putExtra("IsFrom", fromTo);
+                    context.startActivity(intent);
+                } else {
+                    Intent intent = new Intent(context, TemplateAddStickerActivity.class);
+                    intent.putExtra("videoPath", outputPath);
+                    intent.putExtra("title", templateName);
+                    intent.putExtra("templateId", templateId);
+                    intent.putExtra("IsFrom", fromTo);
+                    context.startActivity(intent);
+                }
 
-//                if(BaseConstans.getHasAdvertising() == 1 &&BaseConstans.getIncentiveVideo()&& !BaseConstans.getIsNewUser()&&BaseConstans.getSave_video_ad()&&!BaseConstans.TemplateHasWatchingAd){
-//                    Intent intent = new Intent(context, AdHintActivity.class);
-//                    intent.putExtra("from", "isFormPreviewVideo");
-//                    intent.putExtra("templateTitle", "");
-//                    context.startActivity(intent);
-//                }else{
-//                    albumBroadcast(outputPath);
-//                    showDialog(outputPath);
-//                    if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-//                        AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
-//                    }
-//                }
+
             }
         }
     }
-
-
-//    public void alertAlbumUpdate(boolean isSuccess){
-//        if(!isSuccess){
-//            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-//                AdManager.getInstance().showCpAd(context, AdConfigs.AD_SCREEN_FOR_keep);
-//            }
-//        }
-//        albumBroadcast(outputPathForVideoSaveToPhoto);
-//        showDialog(outputPathForVideoSaveToPhoto);
-//
-//    }
 
     /**
      * description ：通知相册更新
@@ -430,22 +458,22 @@ public class TemplateMvpModel {
      * @param list
      * @param maxChooseNum
      */
-    public void ChangeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
+    public void changeMaterial(List<String> list, int maxChooseNum, int needAssetsCount) {
         ArrayList<TemplateThumbItem> listItem = new ArrayList<>();
         for (int i = 0; i < maxChooseNum; i++) {
             listItem.add(new TemplateThumbItem("", 1, false));
         }
-        List<String> list_all = new ArrayList<>();
+        List<String> listAll = new ArrayList<>();
         for (int i = 0; i < maxChooseNum; i++) {  //填满数据，为了缩略图
             if (list.size() > i && !TextUtils.isEmpty(list.get(i))) {
-                list_all.add(list.get(i)); //前面的时path ，后面的为默认的path
+                listAll.add(list.get(i)); //前面的时path ，后面的为默认的path
             } else {
-                list_all.add(SxveConstans.default_bg_path);
+                listAll.add(SxveConstans.default_bg_path);
             }
         }
-        for (int i = 0; i < list_all.size(); i++) {  //合成底部缩略图
+        for (int i = 0; i < listAll.size(); i++) {  //合成底部缩略图
             TemplateThumbItem templateThumbItem = new TemplateThumbItem();
-            templateThumbItem.setPathUrl(list_all.get(i));
+            templateThumbItem.setPathUrl(listAll.get(i));
             if (i == 0) {
                 templateThumbItem.setIsCheck(0);
             } else {
@@ -466,7 +494,7 @@ public class TemplateMvpModel {
         }
 
 
-        callback.ChangeMaterialCallback(listItem, list_all, listAssets);
+        callback.ChangeMaterialCallback(listItem, listAll, listAssets);
 
 
     }
@@ -496,7 +524,7 @@ public class TemplateMvpModel {
      * creation date: 2020/5/9
      * user : zhangtongju
      */
-    public void chooseBj(new_fag_template_item templateItem) {
+    public void chooseBj(NewFragmentTemplateItem templateItem) {
         Intent intent = new Intent(context, ChooseBackgroundTemplateActivity.class);
         intent.putExtra("templateItem", templateItem);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -578,12 +606,12 @@ public class TemplateMvpModel {
                     //下载后的地址
                     callback.getCartoonPath(path1.getPath());
                 } else {
-                    WaitingDialog.closePragressDialog();
+                    WaitingDialog.closeProgressDialog();
                     ToastUtil.showToast("请重试");
                 }
 
             } catch (Exception e) {
-                WaitingDialog.closePragressDialog();
+                WaitingDialog.closeProgressDialog();
                 e.printStackTrace();
             }
         });
@@ -622,8 +650,6 @@ public class TemplateMvpModel {
             bgmPlayer = null;
         }
     }
-
-
 
 
 }

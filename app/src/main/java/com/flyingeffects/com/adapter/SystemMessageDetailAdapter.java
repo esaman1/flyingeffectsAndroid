@@ -28,7 +28,7 @@ public class SystemMessageDetailAdapter extends BaseQuickAdapter<SystemMessageDe
     private Context context;
     //1是消息页面的赞
     int isFrom;
-    public final static String TAG = "main_recycler_adapter";
+    public final static String TAG = "MainRecyclerAdapter";
 
     public SystemMessageDetailAdapter(int layoutResId, @Nullable List<SystemMessageDetailEnity> data, Context context) {
         super(layoutResId, data);

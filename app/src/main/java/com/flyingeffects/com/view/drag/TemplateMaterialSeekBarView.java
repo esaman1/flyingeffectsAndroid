@@ -13,11 +13,10 @@ import android.widget.ScrollView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.GetPathType;
-import com.flyingeffects.com.manager.statisticsEventAffair;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
-import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -183,7 +182,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
                 itemView.setStartTime(0);
                 if (endTime > itemView.getDuration()) {
-                    if (albumType.isImage(GetPathType.getInstance().getPathType(itemView.resPath))) {
+                    if (AlbumType.isImage(GetPathType.getInstance().getPathType(itemView.resPath))) {
                         itemView.setEndTime(endTime);
                     } else if (!TextUtils.isEmpty(itemView.text)) {
                         itemView.setEndTime(endTime);
@@ -256,7 +255,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 if (TextUtils.equals(String.valueOf(mTemplateMaterialItemViews.get(i).getIdentityID()), id)) {
                     TemplateMaterialItemView itemView = mTemplateMaterialItemViews.get(i);
                     if (isBackgroundVideo) {
-                        if (albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
+                        if (AlbumType.isVideo(GetPathType.getInstance().getPathType(path))) {
                             MediaInfo mediaInfo = new MediaInfo(path);
                             mediaInfo.prepare();
                             long duration = (long) (mediaInfo.vDuration * 1000);
@@ -265,7 +264,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                         }
                         itemView.setResPathAndDuration(path, cutEndTime - cutStartTime, frameContainerHeight, false, "");
                     } else {
-                        if (albumType.isVideo(GetPathType.getInstance().getPathType(path))) {
+                        if (AlbumType.isVideo(GetPathType.getInstance().getPathType(path))) {
                             MediaInfo mediaInfo = new MediaInfo(path);
                             mediaInfo.prepare();
                             long duration = (long) (mediaInfo.vDuration * 1000);
@@ -325,7 +324,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
         this.cutStartTime = 0;
         this.cutEndTime = duration;
         TemplateMaterialItemView materialItemView = new TemplateMaterialItemView(getContext());
-        if (albumType.isVideo(GetPathType.getInstance().getPathType(resPath))) {
+        if (AlbumType.isVideo(GetPathType.getInstance().getPathType(resPath))) {
             MediaInfo mediaInfo = new MediaInfo(resPath);
             mediaInfo.prepare();
             materialItemView.setDuration((long) (mediaInfo.vDuration * 1000));
@@ -412,7 +411,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
             if (position == materialItemView.getIdentityID()) {
                 //左拖动
                 if (isDirection) {
-                    if (albumType.isVideo(GetPathType.getInstance().getPathType(materialItemView.resPath))) {
+                    if (AlbumType.isVideo(GetPathType.getInstance().getPathType(materialItemView.resPath))) {
                         long st = (long) (materialItemView.getStartTime() - (PER_MS_IN_PX * dragInterval));
                         if (st <= cutStartTime) {
                             materialItemView.setStartTime(cutStartTime);
@@ -471,7 +470,7 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
                 } else {
                     //右拖动
                     long et = (long) (materialItemView.getEndTime() + (PER_MS_IN_PX * dragInterval));
-                    if (albumType.isVideo(GetPathType.getInstance().getPathType(materialItemView.resPath))) {
+                    if (AlbumType.isVideo(GetPathType.getInstance().getPathType(materialItemView.resPath))) {
                         if (et > cutEndTime) {
                             materialItemView.setEndTime(cutEndTime);
                             return;
@@ -505,38 +504,38 @@ public class TemplateMaterialSeekBarView extends RelativeLayout implements Templ
     public void editStatistics(TemplateMaterialItemView view, boolean isOverallMove) {
         if (isOverallMove) {
             if (isGreenScreen) {
-                if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd1_move");
+                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd1_move");
                 } else if (TextUtils.isEmpty(view.text)) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd3_move");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd3_move");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd2_move");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd2_move");
                 }
             } else {
-                if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd1_move");
+                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd1_move");
                 } else if (TextUtils.isEmpty(view.text)) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd3_move");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd3_move");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd2_move");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd2_move");
                 }
             }
         } else {
             if (isGreenScreen) {
-                if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd1_clip");
+                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd1_clip");
                 } else if (TextUtils.isEmpty(view.text)) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd3_clip");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd3_clip");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd2_clip");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_bj_gd2_clip");
                 }
             } else {
-                if (albumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd1_clip");
+                if (AlbumType.isVideo(GetPathType.getInstance().getPathType(view.resPath))) {
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd1_clip");
                 } else if (TextUtils.isEmpty(view.text)) {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd3_clip");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd3_clip");
                 } else {
-                    statisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd2_clip");
+                    StatisticsEventAffair.getInstance().setFlag(getContext(), "21_mb_gd2_clip");
                 }
             }
         }

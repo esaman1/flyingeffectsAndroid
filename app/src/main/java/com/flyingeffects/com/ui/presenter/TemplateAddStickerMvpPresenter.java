@@ -1,11 +1,6 @@
 package com.flyingeffects.com.ui.presenter;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.Uri;
-import android.os.Handler;
-import android.text.TextUtils;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -15,21 +10,11 @@ import androidx.viewpager.widget.ViewPager;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.ui.interfaces.model.TemplateAddStickerMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.TemplateAddStickerMvpView;
-import com.flyingeffects.com.ui.interfaces.view.TemplateAddStickerMvpView;
 import com.flyingeffects.com.ui.model.TemplateAddStickerMvpModel;
-import com.flyingeffects.com.ui.model.TemplateAddStickerMvpModel;
-import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.MyScrollView;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.lansosdk.box.ViewLayerRelativeLayout;
-
-import java.io.File;
 
 public class TemplateAddStickerMvpPresenter extends BasePresenter implements TemplateAddStickerMvpCallback {
     private TemplateAddStickerMvpView TemplateAddStickermvpView;
@@ -72,7 +57,7 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
     }
 
     public void ChangeTextLabe(String str){
-        TemplateAddStickermodel.ChangeTextLabe(str);
+        TemplateAddStickermodel.changeTextLabe(str);
     }
 
 
@@ -102,6 +87,8 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
     public void toSaveVideo(float percentageH){
         TemplateAddStickermodel.toSaveVideo(percentageH);
     }
+
+
 
     public void setPlayerViewSize(PlayerView playerView, MyScrollView scrollView, ViewLayerRelativeLayout viewLayerRelativeLayout) {
         LinearLayout.LayoutParams RelativeLayoutParams = (LinearLayout.LayoutParams) playerView.getLayoutParams();
@@ -160,6 +147,11 @@ public class TemplateAddStickerMvpPresenter extends BasePresenter implements Tem
     @Override
     public void hideTextDialog() {
         TemplateAddStickermvpView.hideTextDialog();
+    }
+
+    @Override
+    public void showAdCallback() {
+        TemplateAddStickermvpView.showAdCallback();
     }
 
     @Override

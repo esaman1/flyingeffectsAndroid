@@ -24,7 +24,7 @@ import com.flyingeffects.com.view.RangeSeekBarForMusicView;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.beans.Thumb;
 import com.flyingeffects.com.view.interfaces.OnRangeSeekBarListener;
-import com.shixing.sxve.ui.albumType;
+import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
@@ -74,7 +74,6 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
 
     public void SeekToPositionMusic(int position) {
 
-
         if (mPlayer != null) {
             mPlayer.start();
             mPlayer.seekTo(position);
@@ -121,7 +120,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     private void toDownVideo(String path) {
         if (!TextUtils.isEmpty(path) && !path.contains("http")) {
             String mimeType = GetPathType.getInstance().getPathType(path);
-            if (albumType.isVideo(mimeType)) {
+            if (AlbumType.isVideo(mimeType)) {
                 LogUtil.d("OOM", "当前的地址是本地视频地址" + path);
                 toSplitMp4(path);
             } else {
@@ -139,7 +138,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             LogUtil.d("OOM", "当前的地址是网络地址" + path);
             String videoName;
             String mimeType = GetPathType.getInstance().getPathType(path);
-            if (albumType.isVideo(mimeType)) {
+            if (AlbumType.isVideo(mimeType)) {
                 LogUtil.d("OOM", "当前的地址是网络视频音频地址" + path);
                 nowMaterialIsVideo = true;
                 videoName = mVideoFolder + File.separator + "downPath.mp4";
@@ -153,7 +152,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
             }
             if (downProgressDialog == null) {
                 downProgressDialog = new WaitingDialog_progress(context);
-                downProgressDialog.openProgressDialog();
+                //downProgressDialog.openProgressDialog();
             }
             Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
                 DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> Observable.just(videoName).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s1 -> {
@@ -165,11 +164,10 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                     } else {
                         requestSoundData(s1);
                         localMusicTailorMvpModel.setSoundPath(s1);
-
                     }
                 }));
                 LogUtil.d("OOM2", "path=" + path);
-                manage.DownloadVideo(path, videoName);
+                manage.downloadVideo(path, videoName);
             });
         }
     }
@@ -192,7 +190,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                 LogUtil.d("OOM2", "分离出来的因为地址为null");
                 localMusicTailorMvpModel.setSoundPath("");
                 if (downProgressDialog != null) {
-                    downProgressDialog.closePragressDialog();
+                    downProgressDialog.closeProgressDialog();
                     downProgressDialog = null;
                 }
             }
@@ -220,6 +218,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     private SamplePlayer mPlayer;
 
     private void loadFromFile(String mFilename) {
+
         LogUtil.d("OOM2", "loadFromFile" + "mFilename=" + mFilename);
         mFile = new File(mFilename);
         final SoundFile.ProgressListener listener =
@@ -227,6 +226,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
                     long now = getCurrentTime();
                     if (now - mLoadingLastUpdateTime > 100) {
                         mLoadingLastUpdateTime = now;
+                        localMusicTailorMvpView.setLoadProgress((int) (100 * fractionComplete));
                         LogUtil.d("OOM2", "导入进度为" + (int) (100 * fractionComplete));
                     }
                     return mLoadingKeepGoing;
@@ -274,7 +274,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
     private void finishOpeningSoundFile() {
         Observable.just(0).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
             if (downProgressDialog != null) {
-                downProgressDialog.closePragressDialog();
+                downProgressDialog.closeProgressDialog();
                 downProgressDialog = null;
             }
             String mCaption =
@@ -417,7 +417,7 @@ public class LocalMusicTailorPresenter extends BasePresenter implements LocalMus
 
     private void closeProgress() {
         if (downProgressDialog != null) {
-            downProgressDialog.closePragressDialog();
+            downProgressDialog.closeProgressDialog();
             downProgressDialog = null;
         }
     }

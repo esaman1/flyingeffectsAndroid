@@ -4,6 +4,9 @@
     package="com.flyingeffects.com">
 
 
+    <!--华硕设备必须  腾讯sdk需要支持的 -->
+    <uses-permission android:name="com.asus.msa.SupplementaryDID.ACCESS" />
+
     <!--悬浮窗权限-->
     <!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
     <uses-permission android:name="android.permission.FLASHLIGHT" /><!--压力测试 -->
@@ -11,7 +14,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <!--获取手机录音机使用权限，听写、识别、语义理解需要用到此权限 -->
-    <!--<uses-permission android:name="android.permission.RECORD_AUDIO" />-->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!--读取网络信息状态 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!--获取当前wifi状态 -->
@@ -61,8 +64,6 @@
     <uses-permission
         android:name="android.permission.GET_TOP_ACTIVITY_INFO"
         tools:ignore="ProtectedPermissions" />
-
-
 
 
     <application
@@ -116,8 +117,9 @@
             android:name="com.flyingeffects.com.ui.view.activity.DressUpPreviewActivity"
             android:screenOrientation="portrait" />
 
-
-
+        <activity
+            android:name="com.flyingeffects.com.ui.view.activity.MemeKeepActivity"
+            android:screenOrientation="portrait" />
 
 
         <activity
@@ -202,13 +204,14 @@
 
         <!--        Theme.Translucent.NoTitleBar.Fullscreen-->
         <activity
-            android:name="com.flyingeffects.com.ui.view.activity.intoOtherAppActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.IntoOtherAppActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.HomeMainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <activity
@@ -216,7 +219,7 @@
             android:theme="@style/TransparentTheme" />
 
         <activity
-            android:name="com.flyingeffects.com.ui.view.activity.searchMusicActivity"
+            android:name="com.flyingeffects.com.ui.view.activity.SearchMusicActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 
@@ -230,9 +233,11 @@
             android:name="com.flyingeffects.com.ui.view.activity.TemplateSearchActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
+
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.LoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
 
         <activity
@@ -266,7 +271,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.view.activity.privacyPolicyActivity"
+            android:name=".ui.view.activity.PrivacyPolicyActivity"
             android:exported="false"
             android:theme="@style/TransparentTheme" />
 
