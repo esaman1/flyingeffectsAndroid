@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.showAdCallback;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -23,6 +22,7 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.TemplateKeepStatistics;
 import com.flyingeffects.com.ui.presenter.TemplateAddStickerMvpPresenter;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.screenUtil;
 import com.flyingeffects.com.view.HorizontalListView;
 import com.flyingeffects.com.view.MyScrollView;
@@ -128,7 +128,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
     @Override
     protected void initView() {
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
         videoPath = getIntent().getStringExtra("videoPath");
         title = getIntent().getStringExtra("title");
         LogUtil.d("OOM", "path=" + videoPath);
@@ -163,7 +163,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         videoStop();
         endTimer();
         isOnDestroy = true;
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -471,9 +471,12 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         }
     }
 
+
+    boolean hasAward=false;
     @Override
     public void showAdCallback() {
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            hasAward=false;
             VideoAdManager videoAdManager = new VideoAdManager();
             String adId;
             if (BaseConstans.getOddNum()) {
@@ -497,11 +500,14 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
 
                 @Override
                 public void onVideoAdClose() {
-
+                    if(!hasAward){
+                        ToastUtil.showToast("看完广告才能获得权益");
+                    }
                 }
 
                 @Override
                 public void onRewardVerify() {
+                    hasAward=true;
                     presenter.alertAlbumUpdate(true);
                 }
 
@@ -648,10 +654,6 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         }
     }
 
-    @Subscribe
-    public void onEventMainThread(showAdCallback event) {
-
-    }
 
 
     @Override

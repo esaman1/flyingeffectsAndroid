@@ -14,7 +14,7 @@ android {
         }
 
         realse {
-            storeFile file('feishan.jks')
+            storeFile file('D:\\key2\\feishan.jks')
             storePassword 'android'
             keyAlias = 'jujuname'
             keyPassword 'android'

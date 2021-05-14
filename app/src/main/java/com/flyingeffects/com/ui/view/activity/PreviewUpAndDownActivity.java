@@ -615,7 +615,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
         if (!TextUtils.isEmpty(templateItem.getType()) && "1"
-                .equals(templateItem.getType()) && BaseConstans.getIncentiveVideo()) {
+                .equals(templateItem.getType()) && BaseConstans.getIncentiveVideo()&&!BaseConstans.getIsNewUser()) {
             showMessageDialog();
         } else {
             hasLoginToNext();
@@ -1413,74 +1413,76 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     @Subscribe
     public void onEventMainThread(showAdCallback event) {
-        if (event != null && "PreviewActivity".equals(event.getIsFrom())) {
-            //需要激励视频
-            BaseConstans.TemplateHasWatchingAd = false;
-            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-                VideoAdManager videoAdManager = new VideoAdManager();
-                String adId;
-                if(TextUtils.equals(mOldFromTo, FromToTemplate.DRESSUP)){
-                    adId= AdConfigs.AD_DRESSUP_video;
-                }else if(TextUtils.equals(mOldFromTo, FromToTemplate.ISBJ)){
-                    adId= AdConfigs.AD_stimulate_video_bj;
-                }else{
-                    adId= AdConfigs.AD_stimulate_video;
-                }
-                videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
-                    @Override
-                    public void onVideoAdSuccess() {
-                        StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_sucess");
-                        LogUtil.d("OOM4", "onVideoAdSuccess");
+        if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+            if (event != null && "PreviewActivity".equals(event.getIsFrom())) {
+                //需要激励视频
+                BaseConstans.TemplateHasWatchingAd = false;
+                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                    VideoAdManager videoAdManager = new VideoAdManager();
+                    String adId;
+                    if(TextUtils.equals(mOldFromTo, FromToTemplate.DRESSUP)){
+                        adId= AdConfigs.AD_DRESSUP_video;
+                    }else if(TextUtils.equals(mOldFromTo, FromToTemplate.ISBJ)){
+                        adId= AdConfigs.AD_stimulate_video_bj;
+                    }else{
+                        adId= AdConfigs.AD_stimulate_video;
                     }
-
-                    @Override
-                    public void onVideoAdError(String s) {
-                        StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
-                        LogUtil.d("OOM4", "onVideoAdError" + s);
-                        if ("1".equals(BaseConstans.getAdShowErrorCanSave())) {
-                            hasLoginToNext();
+                    videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
+                        @Override
+                        public void onVideoAdSuccess() {
+                            StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_sucess");
+                            LogUtil.d("OOM4", "onVideoAdSuccess");
                         }
-                    }
 
-                    @Override
-                    public void onVideoAdClose() {
-                        LogUtil.d("OOM4", "onVideoAdClose");
+                        @Override
+                        public void onVideoAdError(String s) {
+                            StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
+                            LogUtil.d("OOM4", "onVideoAdError" + s);
+                            if ("1".equals(BaseConstans.getAdShowErrorCanSave())) {
+                                hasLoginToNext();
+                            }
+                        }
+
+                        public void onVideoAdClose() {
+                            LogUtil.d("OOM4", "onVideoAdClose");
 //                        BaseConstans.TemplateHasWatchingAd = false;
-                        if (sHasReward) {
-                            hasLoginToNext();
-                            sHasReward = false;
-                        } else {
-                            ToastUtil.showToast("看完广告才可获取权益");
+                            if (sHasReward) {
+                                hasLoginToNext();
+                                sHasReward = false;
+                            } else {
+                                ToastUtil.showToast("看完广告才可获取权益");
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onRewardVerify() {
-                        sHasReward = true;
-                        StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
-                        BaseConstans.TemplateHasWatchingAd = true;
-                        //hasLoginToNext();
-                    }
+                        @Override
+                        public void onRewardVerify() {
+                            sHasReward = true;
+                            StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
+                            BaseConstans.TemplateHasWatchingAd = true;
+                            //hasLoginToNext();
+                        }
 
-                    @Override
-                    public void onVideoAdSkip() {
-                        LogUtil.d("OOM4", "onVideoAdSkip");
-                    }
+                        @Override
+                        public void onVideoAdSkip() {
+                            LogUtil.d("OOM4", "onVideoAdSkip");
+                        }
 
-                    @Override
-                    public void onVideoAdComplete() {
-                        LogUtil.d("OOM4", "onVideoAdComplete");
-                    }
+                        @Override
+                        public void onVideoAdComplete() {
+                            LogUtil.d("OOM4", "onVideoAdComplete");
+                        }
 
-                    @Override
-                    public void onVideoAdClicked() {
-                        LogUtil.d("OOM4", "onVideoAdClicked");
-                    }
-                });
-            } else {
-                hasLoginToNext();
+                        @Override
+                        public void onVideoAdClicked() {
+                            LogUtil.d("OOM4", "onVideoAdClicked");
+                        }
+                    });
+                } else {
+                    hasLoginToNext();
+                }
             }
         }
+
     }
 
 

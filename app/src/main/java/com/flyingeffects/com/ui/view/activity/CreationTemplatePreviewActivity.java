@@ -32,6 +32,7 @@ import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.TimeUtils;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.record.SaveShareDialog;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
@@ -498,8 +499,9 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         }
     }
 
-
+    boolean hasAward=false;
     private void toWatchAd() {
+        hasAward=false;
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             videoPause();
             VideoAdManager videoAdManager = new VideoAdManager();
@@ -509,6 +511,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
             } else {
                 adId = AdConfigs.AD_save_video2;
             }
+
             videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
                 @Override
                 public void onVideoAdSuccess() {
@@ -527,11 +530,15 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
                 @Override
                 public void onVideoAdClose() {
+                    if(!hasAward){
+                        ToastUtil.showToast("看完广告才能获得权益");
+                    }
 
                 }
 
                 @Override
                 public void onRewardVerify() {
+                    hasAward=true;
                     videoPause();
                     mPresenter.toSaveVideo(true, nowUiIsLandscape);
                 }
