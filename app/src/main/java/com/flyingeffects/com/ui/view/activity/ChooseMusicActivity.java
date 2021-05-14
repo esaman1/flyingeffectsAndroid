@@ -3,17 +3,18 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.flyco.tablayout.SlidingTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.databinding.ActChooseMusicBinding;
 import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.FragmentHasSlide;
 import com.flyingeffects.com.ui.view.fragment.ExtractAudioChooseMusicFragment;
@@ -22,7 +23,6 @@ import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 
@@ -39,35 +39,33 @@ public class ChooseMusicActivity extends BaseActivity {
     public static int IS_FROM_MB_SHOOT = 1;
     public static int IS_FROM_OTHERS = 2;
 
-    @BindView(R.id.viewpager)
-    ViewPager viewpager;
-
-    @BindView(R.id.tl_tabs)
-    SlidingTabLayout tabLayout;
 
     FragmentManager manager;
-
-    @BindView(R.id.relative_top)
-    RelativeLayout relative_top;
 
     /**
      * 如果时长为0，就表示无限裁剪，这里新添加一个功能，可以拖动裁剪
      */
     private long needDuration;
 
-
     private boolean isFromShoot = false;
 
     private int isFrom = IS_FROM_SHOOT;
 
+    private ActChooseMusicBinding mBinding;
+
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_choose_music;
+        return 0;
     }
 
     @Override
     protected void initView() {
+
+        mBinding = ActChooseMusicBinding.inflate(getLayoutInflater());
+        View rootView = mBinding.getRoot();
+        setContentView(rootView);
+
         EventBus.getDefault().register(this);
         needDuration = getIntent().getLongExtra("needDuration", 10000);
         isFromShoot = getIntent().getBooleanExtra("isFromShoot", false);
@@ -111,7 +109,7 @@ public class ChooseMusicActivity extends BaseActivity {
         fragment2.setArguments(bundle2);
         list.add(fragment2);
 
-        relative_top.setOnClickListener(view -> {
+        mBinding.relativeTop.setOnClickListener(view -> {
             Intent intent = new Intent(ChooseMusicActivity.this, SearchMusicActivity.class);
             intent.putExtra("needDuration", needDuration);
             intent.putExtra(ChooseMusicActivity.IS_FROM, isFrom);
@@ -121,8 +119,8 @@ public class ChooseMusicActivity extends BaseActivity {
 
         manager = getSupportFragmentManager();
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
-        viewpager.setAdapter(adapter);
-        viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mBinding.viewpager.setAdapter(adapter);
+        mBinding.viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
 
@@ -138,8 +136,8 @@ public class ChooseMusicActivity extends BaseActivity {
 
             }
         });
-        tabLayout.setViewPager(viewpager, titles);
-        tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
+        mBinding.tlTabs.setViewPager(mBinding.viewpager, titles);
+        mBinding.tlTabs.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
 
@@ -150,7 +148,7 @@ public class ChooseMusicActivity extends BaseActivity {
 
             }
         });
-        viewpager.setOffscreenPageLimit(4);
+        mBinding.viewpager.setOffscreenPageLimit(4);
         findViewById(R.id.iv_top_back).setOnClickListener(view -> finish());
     }
 
