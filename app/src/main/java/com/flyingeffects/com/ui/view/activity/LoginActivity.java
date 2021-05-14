@@ -97,7 +97,6 @@ public class LoginActivity extends BaseActivity {
     private CountDownTimer mTimer;
     private int mTime = TOTAL_TIME;
 
-
     @Override
     protected int getLayoutId() {
         return 0;

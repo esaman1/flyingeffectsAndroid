@@ -1427,8 +1427,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 

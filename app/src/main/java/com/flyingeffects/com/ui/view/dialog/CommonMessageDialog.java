@@ -180,7 +180,6 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
 
             if (mAdStatus == AD_STATUS_BOTTOM) {
                 groupAdDialog = mView.findViewById(R.id.group_ad_dialog);
-                groupAdDialog.setVisibility(View.GONE);
 
                 mView.findViewById(R.id.iv_dialog_ad_close).setOnClickListener(new View.OnClickListener() {
                     @Override
