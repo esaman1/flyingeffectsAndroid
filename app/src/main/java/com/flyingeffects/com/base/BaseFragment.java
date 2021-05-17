@@ -74,8 +74,10 @@ public abstract class BaseFragment extends Fragment implements IActivity {
             }
             unbinder = ButterKnife.bind(this, contentView);
             initView();
-            EventBus.getDefault().register(this);
-        } else {
+            if (!EventBus.getDefault().isRegistered(this)) {
+                EventBus.getDefault().register(this);
+            }
+        }else {
             ViewGroup vp = (ViewGroup) contentView.getParent();
             if (null != vp) {
                 vp.removeView(contentView);

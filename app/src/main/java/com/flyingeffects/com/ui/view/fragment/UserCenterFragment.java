@@ -565,12 +565,13 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mBinding = null;
+        //mBinding = null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mBinding = null;
         EventBus.getDefault().unregister(this);
     }
 

@@ -10,19 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.SearchTemplateItemAdapter;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.databinding.ActTemplateSearchBinding;
 import com.flyingeffects.com.enity.SearchKeyWord;
 import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
 import com.flyingeffects.com.enity.SendSearchText;
@@ -39,8 +36,6 @@ import com.flyingeffects.com.ui.view.fragment.fragBjSearch;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.view.WarpLinearLayout;
-import com.google.android.material.appbar.AppBarLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,10 +45,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -65,75 +58,61 @@ import rx.Observable;
  */
 public class TemplateSearchActivity extends BaseActivity {
 
-    @BindView(R.id.AutoNewLineLayout)
-    WarpLinearLayout autoNewLineLayout;
-    @BindView(R.id.ed_search)
-    EditText ed_text;
-    @BindView(R.id.tl_tabs_search)
-    SlidingTabLayout tabSearch;
-    @BindView(R.id.viewpager)
-    ViewPager viewPager;
-    @BindView(R.id.iv_back)
-    ImageView iv_back;
-    @BindView(R.id.rc_search)
-    RecyclerView rcSearch;
-    @BindView(R.id.main_content)
-    CoordinatorLayout coordinatorLayout;
-    @BindView(R.id.appbar)
-    AppBarLayout appbar;
-    @BindView(R.id.ll_ad_content)
-    LinearLayout ll_ad_content;
-    @BindView(R.id.tv_search)
-    TextView tv_search;
-    @BindView(R.id.iv_delete)
-    ImageView mIvDelete;
 
     private ArrayList<Fragment> list = new ArrayList<>();
     private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
     private String nowShowText;
 
-    SearchTemplateItemAdapter  searchTemplateItemAdapter;
+    SearchTemplateItemAdapter searchTemplateItemAdapter;
 
-    /**0表示 背景过来，1表示 模板进来 3表示换脸进来*/
+    /**
+     * 0表示 背景过来，1表示 模板进来 3表示换脸进来
+     */
     private int isFrom;
+    private ActTemplateSearchBinding mBinding;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_template_search;
+        return 0;
     }
 
     @Override
     protected void initView() {
 
+        mBinding = ActTemplateSearchBinding.inflate(getLayoutInflater());
+        View rootView = mBinding.getRoot();
+        setContentView(rootView);
+
         StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "14_go_to_search");
+
         isFrom = getIntent().getIntExtra("isFrom", 0);
 
-
         searchTemplateItemAdapter = new SearchTemplateItemAdapter(R.layout.item_search_template_mohu);
-        rcSearch.setAdapter(searchTemplateItemAdapter);
+        mBinding.rcSearch.setAdapter(searchTemplateItemAdapter);
         //键盘的搜索按钮
-        ed_text.setOnEditorActionListener((v, actionId, event) -> {
+        mBinding.edSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
-                if(!TextUtils.isEmpty(ed_text.getText().toString().trim())){
-                    toTemplate(ed_text.getText().toString().trim());
-                    rcSearch.setVisibility(View.GONE);
-                    coordinatorLayout.setVisibility(View.VISIBLE);
+                if (!TextUtils.isEmpty(mBinding.edSearch.getText().toString().trim())) {
+                    toTemplate(mBinding.edSearch.getText().toString().trim());
+                    mBinding.rcSearch.setVisibility(View.GONE);
+                    mBinding.mainContent.setVisibility(View.VISIBLE);
                 }
                 return true;
             }
             return false;
         });
-        mIvDelete.setOnClickListener(view -> {
-            rcSearch.setVisibility(View.GONE);
-            coordinatorLayout.setVisibility(View.VISIBLE);
-            ed_text.setText("");
+        mBinding.ivDelete.setOnClickListener(view -> {
+            mBinding.rcSearch.setVisibility(View.GONE);
+            mBinding.mainContent.setVisibility(View.VISIBLE);
+            mBinding.edSearch.setText("");
             hideResultView(true);
             cancelFocus();
             hideKeyboard();
             EventBus.getDefault().post(new SendSearchText(""));
-            viewPager.setCurrentItem(0);
+            mBinding.viewpager.setCurrentItem(0);
         });
-        ed_text.addTextChangedListener(new TextWatcher() {
+
+        mBinding.edSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -148,55 +127,59 @@ public class TemplateSearchActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
                     hideResultView(false);
-                    rcSearch.setVisibility(View.GONE);
-                    mIvDelete.setVisibility(View.GONE);
-                    coordinatorLayout.setVisibility(View.VISIBLE);
-                    appbar.setExpanded(true);
+                    mBinding.rcSearch.setVisibility(View.GONE);
+                    mBinding.ivDelete.setVisibility(View.GONE);
+                    mBinding.mainContent.setVisibility(View.VISIBLE);
+                    mBinding.appbar.setExpanded(true);
                     hideResultView(true);
                 } else if (!keywordQueryItemClickTag) {
-                    rcSearch.setVisibility(View.VISIBLE);
-                    coordinatorLayout.setVisibility(View.GONE);
-                    requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
-                    mIvDelete.setVisibility(View.VISIBLE);
+                    mBinding.rcSearch.setVisibility(View.VISIBLE);
+                    mBinding.mainContent.setVisibility(View.GONE);
+                    requestServerTemplateFuzzyQuery(mBinding.edSearch.getText().toString().trim());
+                    mBinding.ivDelete.setVisibility(View.VISIBLE);
                 }
 
             }
         });
-        ed_text.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+        mBinding.edSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && !TextUtils.isEmpty(ed_text.getText().toString())) {
-                    if(!keywordQueryItemClickTag){
-                        rcSearch.setVisibility(View.VISIBLE);
-                        coordinatorLayout.setVisibility(View.GONE);
-                        requestServerTemplateFuzzyQuery(ed_text.getText().toString().trim());
+                if (hasFocus && !TextUtils.isEmpty(mBinding.edSearch.getText().toString())) {
+                    if (!keywordQueryItemClickTag) {
+                        mBinding.rcSearch.setVisibility(View.VISIBLE);
+                        mBinding.mainContent.setVisibility(View.GONE);
+                        requestServerTemplateFuzzyQuery(mBinding.edSearch.getText().toString().trim());
                     }
-                    mIvDelete.setVisibility(View.VISIBLE);
+                    mBinding.ivDelete.setVisibility(View.VISIBLE);
                     keywordQueryItemClickTag = false;
                 }
             }
         });
+
         hideResultView(true);
-        iv_back.setOnClickListener(new View.OnClickListener() {
+
+        mBinding.ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
 
-        if( BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()){
-            AdManager.getInstance().showImageAd(this, AdConfigs.AD_IMAGE, ll_ad_content);
+        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            AdManager.getInstance().showImageAd(this, AdConfigs.AD_IMAGE, mBinding.llAdContent);
         }
-        tv_search.setOnClickListener(new View.OnClickListener() {
+
+        mBinding.tvSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!TextUtils.isEmpty(ed_text.getText().toString().trim())){
+                if (!TextUtils.isEmpty(mBinding.edSearch.getText().toString().trim())) {
                     StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_button");
-                    StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_new",ed_text.getText().toString());
+                    StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_new", mBinding.edSearch.getText().toString());
 
-                    toTemplate(ed_text.getText().toString().trim());
-                    rcSearch.setVisibility(View.GONE);
-                    coordinatorLayout.setVisibility(View.VISIBLE);
+                    toTemplate(mBinding.edSearch.getText().toString().trim());
+                    mBinding.rcSearch.setVisibility(View.GONE);
+                    mBinding.mainContent.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -210,7 +193,9 @@ public class TemplateSearchActivity extends BaseActivity {
         }
     }
 
-    /**关键字模糊查询*/
+    /**
+     * 关键字模糊查询
+     */
     private void requestServerTemplateFuzzyQuery(String keywords) {
         HashMap<String, String> params = new HashMap<>();
         params.put("keywords", keywords);
@@ -227,8 +212,8 @@ public class TemplateSearchActivity extends BaseActivity {
                     @Override
                     protected void onSubError(String message) {
                         ToastUtil.showToast(message);
-                        rcSearch.setVisibility(View.GONE);
-                        coordinatorLayout.setVisibility(View.VISIBLE);
+                        mBinding.rcSearch.setVisibility(View.GONE);
+                        mBinding.mainContent.setVisibility(View.VISIBLE);
                     }
 
                     @Override
@@ -246,10 +231,10 @@ public class TemplateSearchActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 String itemContent = searchTemplateItemAdapter.getData().get(position).getName();
                 toTemplate(itemContent);
-                rcSearch.setVisibility(View.GONE);
-                coordinatorLayout.setVisibility(View.VISIBLE);
+                mBinding.rcSearch.setVisibility(View.GONE);
+                mBinding.mainContent.setVisibility(View.VISIBLE);
                 keywordQueryItemClickTag = true;
-                ed_text.setText(itemContent);
+                mBinding.edSearch.setText(itemContent);
                 if (position != 0) {
                     StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_search_query", itemContent);
                 } else {
@@ -268,18 +253,18 @@ public class TemplateSearchActivity extends BaseActivity {
             StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "10_searchfor", nowShowText);
             EventBus.getDefault().post(new SendSearchText(nowShowText));
             hideResultView(false);
-            ll_ad_content.setVisibility(View.GONE);
+            mBinding.llAdContent.setVisibility(View.GONE);
         }
     }
 
 
     private void hideResultView(boolean isHide) {
         if (isHide) {
-            viewPager.setVisibility(View.INVISIBLE);
-            tabSearch.setVisibility(View.INVISIBLE);
+            mBinding.viewpager.setVisibility(View.INVISIBLE);
+            mBinding.tlTabsSearch.setVisibility(View.INVISIBLE);
         } else {
-            viewPager.setVisibility(View.VISIBLE);
-            tabSearch.setVisibility(View.VISIBLE);
+            mBinding.viewpager.setVisibility(View.VISIBLE);
+            mBinding.tlTabsSearch.setVisibility(View.VISIBLE);
         }
     }
 
@@ -310,7 +295,7 @@ public class TemplateSearchActivity extends BaseActivity {
 
 
     private void setKeyWordList(ArrayList<SearchKeyWord> listSearchKey) {
-        autoNewLineLayout.removeAllViews();
+        mBinding.AutoNewLineLayout.removeAllViews();
         for (int i = 0; i < listSearchKey.size(); i++) {
             String nowChooseColor = ColorCorrectionManager.getInstance().getChooseColor(i);
             TextView tv = (TextView) LayoutInflater.from(TemplateSearchActivity.this).inflate(R.layout.textview_recommend, null);
@@ -323,11 +308,11 @@ public class TemplateSearchActivity extends BaseActivity {
                         StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "4_recommend", listSearchKey.get(finalI).getName());
                         nowShowText = listSearchKey.get(finalI).getName();
                         keywordQueryItemClickTag = true;
-                        ed_text.setText(nowShowText);
-                        rcSearch.setVisibility(View.GONE);
-                        coordinatorLayout.setVisibility(View.VISIBLE);
+                        mBinding.edSearch.setText(nowShowText);
+                        mBinding.rcSearch.setVisibility(View.GONE);
+                        mBinding.mainContent.setVisibility(View.VISIBLE);
                         toTemplate(nowShowText);
-                        ll_ad_content.setVisibility(View.GONE);
+                        mBinding.llAdContent.setVisibility(View.GONE);
                         StatisticsEventAffair.getInstance().setFlag(TemplateSearchActivity.this, "10_searchfor", nowShowText);
                         EventBus.getDefault().post(new SendSearchText(nowShowText));
 
@@ -335,9 +320,9 @@ public class TemplateSearchActivity extends BaseActivity {
                 }
             });
             //获取控件的背
-            GradientDrawable view_ground = (GradientDrawable) tv.getBackground();
-            view_ground.setStroke(2, Color.parseColor(nowChooseColor));
-            autoNewLineLayout.addView(tv);
+            GradientDrawable viewGround = (GradientDrawable) tv.getBackground();
+            viewGround.setStroke(2, Color.parseColor(nowChooseColor));
+            mBinding.AutoNewLineLayout.addView(tv);
         }
 
     }
@@ -432,17 +417,17 @@ public class TemplateSearchActivity extends BaseActivity {
             list.add(new FragmentUser());
         }
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(), list);
-        viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(3);
-        tabSearch.setViewPager(viewPager, titles);
+        mBinding.viewpager.setAdapter(adapter);
+        mBinding.viewpager.setOffscreenPageLimit(3);
+        mBinding.tlTabsSearch.setViewPager(mBinding.viewpager, titles);
     }
 
     private void cancelFocus() {
-        ed_text.setFocusable(true);
-        ed_text.setFocusableInTouchMode(true);
-        ed_text.requestFocus();
+        mBinding.edSearch.setFocusable(true);
+        mBinding.edSearch.setFocusableInTouchMode(true);
+        mBinding.edSearch.requestFocus();
         //失去焦点
-        ed_text.clearFocus();
+        mBinding.edSearch.clearFocus();
     }
 
 }

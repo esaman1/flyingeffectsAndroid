@@ -174,7 +174,6 @@ public class HomeMainActivity extends FragmentActivity {
         });
     }
 
-
     /**
      * 中台
      */
@@ -198,6 +197,7 @@ public class HomeMainActivity extends FragmentActivity {
         // 启动时间
         Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(this) {
+
             @Override
             protected void onSubError(String message) {
             }
@@ -208,6 +208,7 @@ public class HomeMainActivity extends FragmentActivity {
                 LogUtil.d("OOM2", "requestUserInfo=" + str);
                 Hawk.put("UserInfo", data);
             }
+
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 

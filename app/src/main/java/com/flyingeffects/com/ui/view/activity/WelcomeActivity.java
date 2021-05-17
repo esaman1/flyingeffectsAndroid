@@ -216,11 +216,15 @@ public class WelcomeActivity extends BaseActivity {
     private void getPermission() {
         mBinding.rlAdContainer.post(() -> {
             if (Build.VERSION.SDK_INT >= BUILD_VERSION) {
+
                 checkPermission();
                 StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_6");
+
             } else {
+
                 hasPermission = true;
                 StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6");
+
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
                     StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6_requestAd");
                     showSplashAd();
@@ -228,6 +232,7 @@ public class WelcomeActivity extends BaseActivity {
                     noQueryAdReason();
                     StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6_no_requestAd");
                 }
+
             }
         });
 
