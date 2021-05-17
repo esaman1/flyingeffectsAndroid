@@ -478,13 +478,7 @@ public class TemplateAddStickerActivity extends BaseActivity implements Template
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             hasAward=false;
             VideoAdManager videoAdManager = new VideoAdManager();
-            String adId;
-            if (BaseConstans.getOddNum()) {
-                adId = AdConfigs.AD_save_video;
-            } else {
-                adId = AdConfigs.AD_save_video2;
-            }
-            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
+            videoAdManager.showVideoAd(this, AdConfigs.AD_save_video, new VideoAdCallBack() {
                 @Override
                 public void onVideoAdSuccess() {
                     StatisticsEventAffair.getInstance().setFlag(TemplateAddStickerActivity.this, "video_ad_alert_request_sucess");

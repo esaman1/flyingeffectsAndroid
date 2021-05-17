@@ -505,14 +505,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             videoPause();
             VideoAdManager videoAdManager = new VideoAdManager();
-            String adId;
-            if (BaseConstans.getOddNum()) {
-                adId = AdConfigs.AD_save_video;
-            } else {
-                adId = AdConfigs.AD_save_video2;
-            }
-
-            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
+            videoAdManager.showVideoAd(this, AdConfigs.AD_save_video, new VideoAdCallBack() {
                 @Override
                 public void onVideoAdSuccess() {
                     onPause();
