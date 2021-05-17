@@ -519,6 +519,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             adapter.onDestroy();
         }
         GSYVideoManager.releaseAllVideos();
+
     }
 
 
@@ -1413,7 +1414,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     @Subscribe
     public void onEventMainThread(showAdCallback event) {
-        if(!DoubleClick.getInstance().isFastZDYDoubleClick(1000)){
+        if(!DoubleClick.getInstance().isFastZDYDoubleClick(200)){
             if (event != null && "PreviewActivity".equals(event.getIsFrom())) {
                 //需要激励视频
                 BaseConstans.TemplateHasWatchingAd = false;
