@@ -98,7 +98,7 @@
 
 
         <com.flyingeffects.com.view.WarpLinearLayout
-            android:id="@+id/AutoNewLineLayout"
+            android:id="@+id/autoNewLineLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
@@ -117,7 +117,7 @@
         android:splitMotionEvents="false">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/RecyclerView"
+            android:id="@+id/rv_search_music"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="ifContentScrolls"

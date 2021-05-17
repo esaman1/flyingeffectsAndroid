@@ -57,7 +57,7 @@ import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.ui.view.fragment.BackgroundFragment;
 import com.flyingeffects.com.ui.view.fragment.DressUpFragment;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
-import com.flyingeffects.com.ui.view.fragment.frag_user_center;
+import com.flyingeffects.com.ui.view.fragment.UserCenterFragment;
 import com.flyingeffects.com.utils.AssetsUtils;
 import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.LogUtil;
@@ -448,7 +448,7 @@ public class HomeMainActivity extends FragmentActivity {
         fragments.add(new BackgroundFragment());
         fragments.add(new FragForTemplate());
         fragments.add(new DressUpFragment());
-        menu3F = new frag_user_center();
+        menu3F = new UserCenterFragment();
         fragments.add(menu3F);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(), fragments);
         viewpager_home.setAdapter(adapter);
@@ -578,7 +578,7 @@ public class HomeMainActivity extends FragmentActivity {
         MobclickAgent.onPause(this);
     }
 
-    private frag_user_center menu3F = null;
+    private UserCenterFragment menu3F = null;
 
     private void openMenu(int which) {
         setStatusBar();

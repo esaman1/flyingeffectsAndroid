@@ -46,7 +46,7 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     protected static final String[] PERMISSION_READ_PHONE_STATE = new String[]{Manifest.permission.READ_PHONE_STATE};
     protected static final int CODE_PERMISSION_READ_PHONE_STATE = 2;
     protected static final String[] PERMISSION_LOCATION = new String[]{Manifest.permission.ACCESS_FINE_LOCATION
-            ,Manifest.permission.ACCESS_COARSE_LOCATION};
+            , Manifest.permission.ACCESS_COARSE_LOCATION};
     protected static final int CODE_PERMISSION_LOCATION = 3;
 
     protected View contentView = null;
@@ -67,7 +67,11 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (contentView == null) {
-            contentView = inflater.inflate(getContentLayout(), null);
+            if (getContentLayout() != 0) {
+                contentView = inflater.inflate(getContentLayout(), null);
+            } else {
+                contentView = getBindingView(inflater, container);
+            }
             unbinder = ButterKnife.bind(this, contentView);
             initView();
             EventBus.getDefault().register(this);
@@ -81,6 +85,10 @@ public abstract class BaseFragment extends Fragment implements IActivity {
         initData();
 
         return contentView;
+    }
+
+    protected View getBindingView(LayoutInflater inflater, ViewGroup container) {
+        return null;
     }
 
 

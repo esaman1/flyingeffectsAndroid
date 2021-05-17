@@ -7,28 +7,27 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
-import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.databinding.FagUserCenterBinding;
 import com.flyingeffects.com.enity.RequestMessage;
 import com.flyingeffects.com.enity.SystemMessageCountAllEntiy;
 import com.flyingeffects.com.enity.UserInfo;
@@ -58,7 +57,6 @@ import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.UCropOption;
-import com.flyingeffects.com.view.MarqueTextView;
 import com.google.android.material.appbar.AppBarLayout;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.nineton.ntadsdk.bean.AdInfoBean;
@@ -75,7 +73,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
@@ -89,89 +86,171 @@ import rx.functions.Action1;
  * 时间：2018/4/24
  **/
 
-public class frag_user_center extends BaseFragment implements AlbumChooseCallback, AppBarLayout.OnOffsetChangedListener {
+public class UserCenterFragment extends BaseFragment implements AlbumChooseCallback, AppBarLayout.OnOffsetChangedListener {
     public final static int SELECTALBUMFROMUSETCENTERBJ = 1;
     private static final int CODE_PEELING = 10;
 
     private String[] titles = {"我上传的作品", "喜欢", "模板收藏"};
 
-    @BindView(R.id.viewpager)
-    ViewPager viewpager;
-    @BindView(R.id.tl_tabs)
-    SlidingTabLayout tabLayout;
-    @BindView(R.id.iv_about)
-    ImageView iv_about;
-    @BindView(R.id.iv_head)
-    ImageView iv_head;
-    @BindView(R.id.tv_id)
-    TextView tv_id;
-    @BindView(R.id.tv_name)
-    MarqueTextView tv_name;
-    @BindView(R.id.fans_count)
-    TextView fans_count;
-    @BindView(R.id.attention_count)
-    TextView attention_count;
-    @BindView(R.id.tv_video_count)
-    TextView tv_video_count;
-    @BindView(R.id.im_user_skin)
-    ImageView imSkin;
-    @BindView(R.id.tv_Introduction)
-    MarqueTextView tvIntroduction;
-    @BindView(R.id.im_edit)
-    ImageView imEdit;
-    @BindView(R.id.tv_edit_information)
-    TextView tvEditInformation;
-    @BindView(R.id.tv_private_message)
-    TextView mTVPrivateMessage;
-    @BindView(R.id.tv_comment_count)
-    TextView mTVCommentCount;
-    @BindView(R.id.tv_zan)
-    TextView mTVZan;
-    @BindView(R.id.tv_comment_count_add)
-    TextView mTVCommentCountAdd;
-    @BindView(R.id.tv_go_login)
-    TextView mTVGoLogin;
-    @BindView(R.id.ll_info)
-    LinearLayout mLLInfo;
-    @BindView(R.id.ll_info_Related)
-    LinearLayout mLLInfoRelated;
-    @BindView(R.id.ll_no_login_info)
-    LinearLayout mLLNoLoginInfo;
-    @BindView(R.id.tv_top_name)
-    TextView tv_top_name;
-    @BindView(R.id.appbar)
-    AppBarLayout appbar;
-    @BindView(R.id.ll_ad_content)
-    LinearLayout mLLADContent;
-    @BindView(R.id.ll_ad_entrance)
-    LinearLayout ll_ad_entrance;
 
     private UCrop.Options options;
     String systemMessageId = "";
-
+    private FagUserCenterBinding mBinding;
 
     @Override
     protected int getContentLayout() {
-        return R.layout.fag_user_center;
+        return 0;
+    }
+
+    @Override
+    protected View getBindingView(LayoutInflater inflater, ViewGroup container) {
+        mBinding = FagUserCenterBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
     }
 
 
     @Override
     protected void initView() {
         options = UCropOption.getInstance().getUcropOption();
-        iv_about.setOnClickListener(view -> {
-            if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                StatisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
-                Intent intent = new Intent(getActivity(), AboutActivity.class);
-                startActivity(intent);
-            }
-        });
+        setOnClickListener();
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-            AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, mLLADContent);
+            AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, mBinding.llAdContent);
             loadImageAd();
         }
-
     }
+
+    private void setOnClickListener() {
+        mBinding.llIconZan.setOnClickListener(this::onViewClicked);
+        mBinding.llComment.setOnClickListener(this::onViewClicked);
+        mBinding.llPrivateMessage.setOnClickListener(this::onViewClicked);
+        mBinding.llAttentionCount.setOnClickListener(this::onViewClicked);
+        mBinding.llVideoCount.setOnClickListener(this::onViewClicked);
+        mBinding.ivPeeling.setOnClickListener(this::onViewClicked);
+        mBinding.tvEditInformation.setOnClickListener(this::onViewClicked);
+        mBinding.llEditData.setOnClickListener(this::onViewClicked);
+        mBinding.tvGoLogin.setOnClickListener(this::onViewClicked);
+        mBinding.ivAbout.setOnClickListener(this::onViewClicked);
+    }
+
+    private void onViewClicked(View view) {
+        if (view == mBinding.llIconZan) {
+            onClickZan();
+        } else if (view == mBinding.llComment) {
+            showComment();
+        } else if (view == mBinding.llPrivateMessage) {
+            showPrivateMessage();
+        } else if (view == mBinding.llAttentionCount) {
+            onAttentionCount();
+        } else if (view == mBinding.llVideoCount) {
+            showFansPage();
+        } else if (view == mBinding.ivPeeling) {
+            ActivityCompat.requestPermissions(getActivity(), PERMISSION_STORAGE, CODE_PEELING);
+        } else if (view == mBinding.llEditData || view == mBinding.tvEditInformation) {
+            editInformation();
+        } else if (view == mBinding.tvGoLogin) {
+            toLogin();
+        } else if (view == mBinding.ivAbout) {
+            openAboutPage();
+        }
+    }
+
+    private void showFansPage() {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            if (BaseConstans.hasLogin()) {
+                Intent intentFan = new Intent(getActivity(), FansActivity.class);
+                intentFan.putExtra("to_user_id", BaseConstans.GetUserId());
+                intentFan.putExtra("from", 0);
+                startActivity(intentFan);
+            } else {
+                ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+            }
+        }
+    }
+
+
+    private void openAboutPage() {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            StatisticsEventAffair.getInstance().setFlag(getActivity(), "3_help");
+            Intent intent = new Intent(getActivity(), AboutActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    private void toLogin() {
+        if (!BaseConstans.hasLogin()) {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+        }
+    }
+
+    private void editInformation() {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            StatisticsEventAffair.getInstance().setFlag(getContext(), "3_Information");
+            Intent intent = new Intent(getActivity(), EditInformationActivity.class);
+            startActivity(intent);
+        }
+    }
+
+
+    private void onAttentionCount() {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            if (BaseConstans.hasLogin()) {
+                Intent intent = new Intent(getActivity(), MineFocusActivity.class);
+                intent.putExtra("to_user_id", BaseConstans.GetUserId());
+                startActivity(intent);
+            } else {
+                ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+            }
+        }
+    }
+
+    private void showPrivateMessage() {
+        StatisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
+        if (BaseConstans.hasLogin()) {
+            if (!TextUtils.isEmpty(systemMessageId)) {
+                Intent intent = new Intent(getActivity(), SystemMessageDetailActivity.class);
+                intent.putExtra("needId", systemMessageId);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            } else {
+                ToastUtil.showToast("没有私信哦~");
+            }
+        } else {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+    }
+
+    private void showComment() {
+        if (BaseConstans.hasLogin()) {
+            StatisticsEventAffair.getInstance().setFlag(getActivity(), "12_comment");
+            Intent intentComment = new Intent(getActivity(), LikeActivity.class);
+            intentComment.putExtra("from", 1);
+            intentComment.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intentComment);
+        } else {
+            ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+        }
+    }
+
+
+    /**
+     * 点赞
+     */
+    private void onClickZan() {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            if (BaseConstans.hasLogin()) {
+                Intent intentZan = new Intent(getActivity(), ZanActivity.class);
+                intentZan.putExtra("from", 1);
+                startActivity(intentZan);
+            } else {
+                ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+            }
+        }
+    }
+
 
     @Override
     protected void initAction() {
@@ -180,40 +259,41 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
 
     @Override
     protected void initData() {
-        appbar.addOnOffsetChangedListener(this);
+        mBinding.appbar.addOnOffsetChangedListener(this);
     }
+
 
     @Override
     public void onResume() {
         if (getActivity() != null) {
             //未登陆
             if (BaseConstans.hasLogin()) {
-                tv_id.setVisibility(View.VISIBLE);
-                tv_id.setText("飞友号：" + BaseConstans.GetUserId());
-                tvEditInformation.setVisibility(View.VISIBLE);
-                mLLInfo.setVisibility(View.VISIBLE);
-                mLLInfoRelated.setVisibility(View.VISIBLE);
-                mTVGoLogin.setVisibility(View.GONE);
-                mLLNoLoginInfo.setVisibility(View.GONE);
+                mBinding.tvId.setVisibility(View.VISIBLE);
+                mBinding.tvId.setText("飞友号：" + BaseConstans.GetUserId());
+                mBinding.tvEditInformation.setVisibility(View.VISIBLE);
+                mBinding.llInfo.setVisibility(View.VISIBLE);
+                mBinding.llInfoRelated.setVisibility(View.VISIBLE);
+                mBinding.tvGoLogin.setVisibility(View.GONE);
+                mBinding.llNoLoginInfo.setVisibility(View.GONE);
 
                 requestUserInfo();
                 requestMessageCount();
                 requestSystemMessageCount();
             } else {
-                tv_top_name.setText("未登录");
-                tv_id.setVisibility(View.GONE);
+                mBinding.tvTopName.setText("未登录");
+                mBinding.tvId.setVisibility(View.GONE);
                 Glide.with(this)
                         .load(R.mipmap.head)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                        .into(iv_head);
-                mLLInfo.setVisibility(View.GONE);
+                        .into(mBinding.ivHead);
+                mBinding.llInfo.setVisibility(View.GONE);
                 Glide.with(getActivity())
                         .load(R.mipmap.home_page_bj)
-                        .into(imSkin);
-                tvEditInformation.setVisibility(View.GONE);
-                mLLInfoRelated.setVisibility(View.GONE);
-                mTVGoLogin.setVisibility(View.VISIBLE);
-                mLLNoLoginInfo.setVisibility(View.VISIBLE);
+                        .into(mBinding.imUserSkin);
+                mBinding.tvEditInformation.setVisibility(View.GONE);
+                mBinding.llInfoRelated.setVisibility(View.GONE);
+                mBinding.tvGoLogin.setVisibility(View.VISIBLE);
+                mBinding.llNoLoginInfo.setVisibility(View.VISIBLE);
             }
         }
         super.onResume();
@@ -231,13 +311,13 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         frag_user_upload_bj fag_1 = new frag_user_upload_bj();
         list.add(fag_1);
 
-        fragHomePage fag_like = new fragHomePage();
+        fragHomePage fagLike = new fragHomePage();
         Bundle bundle1 = new Bundle();
         bundle1.putSerializable("toUserId", BaseConstans.GetUserId());
         bundle1.putSerializable("isFrom", 2);
         bundle1.putSerializable("fromTo", FromToTemplate.ISHOMEMYLIKE);
-        fag_like.setArguments(bundle1);
-        list.add(fag_like);
+        fagLike.setArguments(bundle1);
+        list.add(fagLike);
 
         frag_user_collect fag_0 = new frag_user_collect();
         Bundle bundle2 = new Bundle();
@@ -245,100 +325,10 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         fag_0.setArguments(bundle2);
         list.add(fag_0);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
-        viewpager.setAdapter(adapter);
-        tabLayout.setViewPager(viewpager, titles);
+        mBinding.viewpager.setAdapter(adapter);
+        mBinding.tlTabs.setViewPager(mBinding.viewpager, titles);
     }
 
-
-    @OnClick({R.id.ll_icon_zan, R.id.ll_comment, R.id.ll_private_message, R.id.ll_attention_count,
-            R.id.ll_video_count, R.id.iv_Peeling, R.id.tv_edit_information, R.id.ll_edit_data, R.id.tv_go_login})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.ll_icon_zan:
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    if (BaseConstans.hasLogin()) {
-                        Intent intentZan = new Intent(getActivity(), ZanActivity.class);
-                        intentZan.putExtra("from", 1);
-                        startActivity(intentZan);
-                    } else {
-                        ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
-                    }
-                }
-                break;
-            case R.id.ll_comment:
-                if (BaseConstans.hasLogin()) {
-                    StatisticsEventAffair.getInstance().setFlag(getActivity(), "12_comment");
-                    Intent intentComment = new Intent(getActivity(), LikeActivity.class);
-                    intentComment.putExtra("from", 1);
-                    intentComment.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intentComment);
-                } else {
-                    ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
-                }
-                break;
-            case R.id.ll_private_message:
-                StatisticsEventAffair.getInstance().setFlag(getActivity(), "12_system");
-                if (BaseConstans.hasLogin()) {
-                    if (!TextUtils.isEmpty(systemMessageId)) {
-                        Intent intent = new Intent(getActivity(), SystemMessageDetailActivity.class);
-                        intent.putExtra("needId", systemMessageId);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    } else {
-                        ToastUtil.showToast("没有私信哦~");
-                    }
-                } else {
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                }
-                break;
-            case R.id.ll_attention_count:
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    if (BaseConstans.hasLogin()) {
-                        Intent intentFoucs = new Intent(getActivity(), MineFocusActivity.class);
-                        intentFoucs.putExtra("to_user_id", BaseConstans.GetUserId());
-                        startActivity(intentFoucs);
-                    } else {
-                        ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
-                    }
-                }
-                break;
-            case R.id.ll_video_count:
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    if (BaseConstans.hasLogin()) {
-                        Intent intentFan = new Intent(getActivity(), FansActivity.class);
-                        intentFan.putExtra("to_user_id", BaseConstans.GetUserId());
-                        intentFan.putExtra("from", 0);
-                        startActivity(intentFan);
-                    } else {
-                        ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
-                    }
-                }
-                break;
-            case R.id.iv_Peeling:
-                ActivityCompat.requestPermissions(getActivity(), PERMISSION_STORAGE, CODE_PEELING);
-                //toPeeling();
-                break;
-            case R.id.tv_edit_information:
-            case R.id.ll_edit_data:
-                if (!DoubleClick.getInstance().isFastDoubleClick()) {
-                    StatisticsEventAffair.getInstance().setFlag(getContext(), "3_Information");
-                    Intent intent = new Intent(getActivity(), EditInformationActivity.class);
-                    startActivity(intent);
-                }
-                break;
-            case R.id.tv_go_login:
-                if (!BaseConstans.hasLogin()) {
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
-                }
-                break;
-            default:
-                break;
-        }
-    }
 
     private void toPeeling() {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
@@ -363,10 +353,10 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 LogUtil.d("OOM", str);
                 systemMessageId = data.getSystem_message().get(0).getId();
                 if (data.getSystem_message().get(0).getTotal() == 0) {
-                    mTVPrivateMessage.setVisibility(View.GONE);
+                    mBinding.tvPrivateMessage.setVisibility(View.GONE);
                 } else {
-                    mTVPrivateMessage.setVisibility(View.VISIBLE);
-                    mTVPrivateMessage.setText(String.valueOf(data.getSystem_message().get(0).getTotal()));
+                    mBinding.tvPrivateMessage.setVisibility(View.VISIBLE);
+                    mBinding.tvPrivateMessage.setText(String.valueOf(data.getSystem_message().get(0).getTotal()));
                 }
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -381,7 +371,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(getActivity()) {
                 @Override
                 protected void onSubError(String message) {
-                    tv_id.setText("未登录");
+                    mBinding.tvId.setText("未登录");
                     BaseConstans.SetUserToken("");
                 }
 
@@ -389,46 +379,46 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 protected void onSubNext(UserInfo data) {
                     Hawk.put("UserInfo", data);
                     if (getActivity() != null) {
-                        tv_id.setText("飞友号：" + data.getId());
+                        mBinding.tvId.setText("飞友号：" + data.getId());
                         if (!TextUtils.isEmpty(data.getNickname())) {
-                            tv_name.setText(data.getNickname());
-                            tv_name.setVisibility(View.VISIBLE);
+                            mBinding.tvName.setText(data.getNickname());
+                            mBinding.tvName.setVisibility(View.VISIBLE);
                         } else {
-                            tv_name.setVisibility(View.GONE);
+                            mBinding.tvName.setVisibility(View.GONE);
                         }
-                        tv_top_name.setText(data.getNickname());
+                        mBinding.tvTopName.setText(data.getNickname());
                         if (!TextUtils.isEmpty(data.getPhotourl())) {
                             Glide.with(getActivity())
                                     .load(data.getPhotourl())
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                                    .into(iv_head);
+                                    .into(mBinding.ivHead);
                         } else {
                             Glide.with(getActivity())
                                     .load(R.mipmap.head)
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                                    .into(iv_head);
+                                    .into(mBinding.ivHead);
                         }
                         //创作的视频数量
-                        fans_count.setText(data.getUser_video());
+                        mBinding.fansCount.setText(data.getUser_video());
                         //我关注的数量
-                        attention_count.setText(data.getUser_watch());
+                        mBinding.attentionCount.setText(data.getUser_watch());
                         //关注我的数量
-                        tv_video_count.setText(data.getUser_follower());
+                        mBinding.tvVideoCount.setText(data.getUser_follower());
                         if (TextUtils.isEmpty(data.getSkin())) {
                             Glide.with(getActivity())
                                     .load(R.mipmap.home_page_bj)
-                                    .into(imSkin);
+                                    .into(mBinding.imUserSkin);
                         } else {
                             Glide.with(getActivity())
                                     .load(data.getSkin())
-                                    .into(imSkin);
+                                    .into(mBinding.imUserSkin);
                         }
                         if (!TextUtils.isEmpty(data.getRemark())) {
-                            tvIntroduction.setText(data.getRemark());
-                            imEdit.setVisibility(View.GONE);
+                            mBinding.tvIntroduction.setText(data.getRemark());
+                            mBinding.imEdit.setVisibility(View.GONE);
                         } else {
-                            tvIntroduction.setText("您还没有填写简介，点击编辑资料添加");
-                            imEdit.setVisibility(View.VISIBLE);
+                            mBinding.tvIntroduction.setText("您还没有填写简介，点击编辑资料添加");
+                            mBinding.imEdit.setVisibility(View.VISIBLE);
                         }
                     }
                     BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
@@ -509,7 +499,7 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                     protected void onSubNext(Object data) {
                         Glide.with(getActivity())
                                 .load(skinPath)
-                                .into(imSkin);
+                                .into(mBinding.imUserSkin);
                     }
                 }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
@@ -534,26 +524,26 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
         String follow_num = data.getFollow_num();
         int followNum = Integer.parseInt(follow_num);
         if (followNum == 0) {
-            mTVCommentCountAdd.setVisibility(View.GONE);
+            mBinding.tvCommentCountAdd.setVisibility(View.GONE);
         } else {
-            mTVCommentCountAdd.setVisibility(View.VISIBLE);
-            mTVCommentCountAdd.setText(followNum + "");
+            mBinding.tvCommentCountAdd.setVisibility(View.VISIBLE);
+            mBinding.tvCommentCountAdd.setText(followNum + "");
         }
         String praise_num = data.getPraise_num();
         int praiseNum = Integer.parseInt(praise_num);
         if (praiseNum == 0) {
-            mTVZan.setVisibility(View.GONE);
+            mBinding.tvZan.setVisibility(View.GONE);
         } else {
-            mTVZan.setVisibility(View.VISIBLE);
-            mTVZan.setText(praiseNum + "");
+            mBinding.tvZan.setVisibility(View.VISIBLE);
+            mBinding.tvZan.setText(praiseNum + "");
         }
         String commentNum = data.getComment_num();
         int commentNumInt = Integer.parseInt(commentNum);
         if (commentNumInt == 0) {
-            mTVCommentCount.setVisibility(View.GONE);
+            mBinding.tvCommentCount.setVisibility(View.GONE);
         } else {
-            mTVCommentCount.setVisibility(View.VISIBLE);
-            mTVCommentCount.setText(commentNumInt + "");
+            mBinding.tvCommentCount.setVisibility(View.VISIBLE);
+            mBinding.tvCommentCount.setText(commentNumInt + "");
         }
     }
 
@@ -565,11 +555,17 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
                 requestMessageCount();
                 requestSystemMessageCount();
             } else {
-                mTVCommentCountAdd.setVisibility(View.GONE);
-                mTVZan.setVisibility(View.GONE);
-                mTVCommentCount.setVisibility(View.GONE);
+                mBinding.tvCommentCountAdd.setVisibility(View.GONE);
+                mBinding.tvZan.setVisibility(View.GONE);
+                mBinding.tvCommentCount.setVisibility(View.GONE);
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mBinding = null;
     }
 
     @Override
@@ -592,12 +588,12 @@ public class frag_user_center extends BaseFragment implements AlbumChooseCallbac
      */
     private void loadImageAd() {
         ImageAdManager imageAdManager = new ImageAdManager();
-        imageAdManager.showImageAd(getActivity(), AdConfigs.APP_FUDONG, ll_ad_entrance, null, new ImageAdCallBack() {
+        imageAdManager.showImageAd(getActivity(), AdConfigs.APP_FUDONG, mBinding.llAdEntrance, null, new ImageAdCallBack() {
             @Override
             public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {
                 if (adView != null) {
-                    ll_ad_entrance.removeAllViews();
-                    ll_ad_entrance.addView(adView);
+                    mBinding.llAdEntrance.removeAllViews();
+                    mBinding.llAdEntrance.addView(adView);
                 }
             }
 
