@@ -32,10 +32,6 @@ public class TemplatePresenter extends BasePresenter implements TemplateMvpCallb
         home_model.StopBgmMusic();
     }
 
-    public void chooseBj(NewFragmentTemplateItem templateItem) {
-        home_model.chooseBj(templateItem);
-    }
-
     public void getBjMusic(String videoPath) {
         home_model.getBjMusic(videoPath);
     }

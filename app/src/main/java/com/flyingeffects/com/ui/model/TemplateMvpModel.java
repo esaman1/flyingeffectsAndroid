@@ -519,17 +519,7 @@ public class TemplateMvpModel {
     }
 
 
-    /**
-     * description ：选择音乐
-     * creation date: 2020/5/9
-     * user : zhangtongju
-     */
-    public void chooseBj(NewFragmentTemplateItem templateItem) {
-        Intent intent = new Intent(context, ChooseBackgroundTemplateActivity.class);
-        intent.putExtra("templateItem", templateItem);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        context.startActivity(intent);
-    }
+
 
 
     public void getButtomIcon(String path) {
