@@ -19,9 +19,13 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
+import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.SystemUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+
+import java.io.File;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -87,8 +91,11 @@ public class AboutActivity extends BaseActivity {
                 break;
             case R.id.tv_relation_us:
                 StatisticsEventAffair.getInstance().setFlag(this, "3_contact");
-
-                contactUs();
+                try {
+                    contactUs();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             //隐私政策
             case R.id.tv_privacy_policy:
@@ -182,7 +189,7 @@ public class AboutActivity extends BaseActivity {
         }
     }
 
-    public void contactUs() {
+    public void contactUs() throws Exception {
         ClipboardManager tvCopy = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.getService_wxi()));
         new AlertDialog.Builder(this)
