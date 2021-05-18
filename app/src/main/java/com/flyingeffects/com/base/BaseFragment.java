@@ -66,23 +66,23 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (contentView == null) {
-            if (getContentLayout() != 0) {
-                contentView = inflater.inflate(getContentLayout(), null);
-            } else {
-                contentView = getBindingView(inflater, container);
-            }
-            unbinder = ButterKnife.bind(this, contentView);
-            initView();
-            if (!EventBus.getDefault().isRegistered(this)) {
-                EventBus.getDefault().register(this);
-            }
-        }else {
-            ViewGroup vp = (ViewGroup) contentView.getParent();
-            if (null != vp) {
-                vp.removeView(contentView);
-            }
+        if (getContentLayout() != 0) {
+            contentView = inflater.inflate(getContentLayout(), null);
+        } else {
+            contentView = getBindingView(inflater, container);
         }
+        unbinder = ButterKnife.bind(this, contentView);
+        initView();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+//        if (contentView == null) {
+//        }else {
+//            ViewGroup vp = (ViewGroup) contentView.getParent();
+//            if (null != vp) {
+//                vp.removeView(contentView);
+//            }
+//        }
         initAction();
         initData();
 

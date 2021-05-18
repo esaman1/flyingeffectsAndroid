@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -73,7 +72,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -90,8 +88,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     public final static int SELECTALBUMFROMUSETCENTERBJ = 1;
     private static final int CODE_PEELING = 10;
 
-    private String[] titles = {"我上传的作品", "喜欢", "模板收藏"};
-
+    private static final String[] TITLES = {"我上传的作品", "喜欢", "模板收藏"};
 
     private UCrop.Options options;
     String systemMessageId = "";
@@ -162,7 +159,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                 intentFan.putExtra("from", 0);
                 startActivity(intentFan);
             } else {
-                ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                ToastUtil.showToast(getString(R.string.need_login));
             }
         }
     }
@@ -326,7 +323,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
         list.add(fag_0);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
         mBinding.viewpager.setAdapter(adapter);
-        mBinding.tlTabs.setViewPager(mBinding.viewpager, titles);
+        mBinding.tlTabs.setViewPager(mBinding.viewpager, TITLES);
     }
 
 
@@ -565,13 +562,12 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        //mBinding = null;
+        mBinding = null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mBinding = null;
         EventBus.getDefault().unregister(this);
     }
 

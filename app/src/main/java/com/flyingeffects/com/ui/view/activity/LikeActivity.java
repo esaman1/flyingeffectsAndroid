@@ -15,6 +15,7 @@ import com.flyingeffects.com.adapter.Like_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.databinding.ActLikeBinding;
 import com.flyingeffects.com.enity.ListForUpAndDown;
 import com.flyingeffects.com.enity.MineCommentEnity;
 import com.flyingeffects.com.enity.NewFragmentTemplateItem;
@@ -43,46 +44,47 @@ public class LikeActivity extends BaseActivity {
     private static final String TAG = "LikeActivity";
     private int perPageCount = 10;
 
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
-
     private Like_adapter adapter;
 
-    private List<MineCommentEnity> listData=new ArrayList<>();
+    private List<MineCommentEnity> listData = new ArrayList<>();
 
     private boolean isRefresh = true;
     private int selectPage = 1;
 
-    @BindView(R.id.smart_refresh_layout_bj)
-    SmartRefreshLayout smartRefreshLayout;
 
     //1 来自消息评论页面
-    int from ;
+    int from;
 
     private List<NewFragmentTemplateItem> allData = new ArrayList<>();
+    private ActLikeBinding mBinding;
+
     @Override
     protected int getLayoutId() {
-        return R.layout.act_like;
+        return 0;
     }
 
     @Override
     protected void initView() {
-        ((TextView) findViewById(R.id.tv_top_title)).setText("评论");
-        findViewById(R.id.iv_top_back).setOnClickListener(this);
-        from=getIntent().getIntExtra("from",0);
+        mBinding = ActLikeBinding.inflate(getLayoutInflater());
+        View rootView = mBinding.getRoot();
+        setContentView(rootView);
+
+        mBinding.tvTopTitle.setText("评论");
+        mBinding.ivTopBack.setOnClickListener(this);
+        from = getIntent().getIntExtra("from", 0);
         initSmartRefreshLayout();
         adapter = new Like_adapter(R.layout.list_like_item, listData, this);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                requestTemplateDetail(listData.get(position).getTemplate_id(),position);
+                requestTemplateDetail(listData.get(position).getTemplate_id(), position);
             }
         });
 
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                switch (view.getId()){
+                switch (view.getId()) {
                     case R.id.iv_icon:
                         Intent intent = new Intent(LikeActivity.this, UserHomepageActivity.class);
                         intent.putExtra("toUserId", listData.get(position).getUser_id());
@@ -100,13 +102,13 @@ public class LikeActivity extends BaseActivity {
 
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(adapter);
+        mBinding.recyclerView.setLayoutManager(layoutManager);
+        mBinding.recyclerView.setHasFixedSize(true);
+        mBinding.recyclerView.setAdapter(adapter);
     }
 
 
-    public void requestTemplateDetail(String templateId,int position) {
+    public void requestTemplateDetail(String templateId, int position) {
         if (!TextUtils.isEmpty(templateId)) {
             HashMap<String, String> params = new HashMap<>();
             params.put("template_id", templateId);
@@ -121,7 +123,7 @@ public class LikeActivity extends BaseActivity {
                 @Override
                 protected void onSubNext(NewFragmentTemplateItem data) {
                     allData.clear();
-                    Intent intent =new Intent(LikeActivity.this,PreviewUpAndDownActivity.class);
+                    Intent intent = new Intent(LikeActivity.this, PreviewUpAndDownActivity.class);
                     String type = data.getTemplate_type();
                     allData.add(data);
                     ListForUpAndDown listForUpAndDown = new ListForUpAndDown(allData);
@@ -146,12 +148,12 @@ public class LikeActivity extends BaseActivity {
 
     @Override
     protected void initAction() {
-        if(from==1&&!BaseConstans.hasLogin()){
+        if (from == 1 && !BaseConstans.hasLogin()) {
             goActivity(LoginActivity.class);
         }
-        if(BaseConstans.hasLogin()){
+        if (BaseConstans.hasLogin()) {
             requestCommentList(true);
-        }else{
+        } else {
             ToastUtil.showToast(getResources().getString(R.string.need_login));
         }
     }
@@ -194,7 +196,7 @@ public class LikeActivity extends BaseActivity {
                     ToastUtil.showToast(getResources().getString(R.string.no_more_data));
                 }
                 if (data.size() < perPageCount) {
-                    smartRefreshLayout.setEnableLoadMore(false);
+                    mBinding.smartRefreshLayoutBj.setEnableLoadMore(false);
                 }
                 listData.addAll(data);
                 adapter.notifyDataSetChanged();
@@ -203,15 +205,14 @@ public class LikeActivity extends BaseActivity {
     }
 
 
-
     public void initSmartRefreshLayout() {
-        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
+        mBinding.smartRefreshLayoutBj.setOnRefreshListener(refreshLayout -> {
             isRefresh = true;
             refreshLayout.setEnableLoadMore(true);
             selectPage = 1;
-            requestCommentList(false );
+            requestCommentList(false);
         });
-        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
+        mBinding.smartRefreshLayoutBj.setOnLoadMoreListener(refresh -> {
             isRefresh = false;
             selectPage++;
             requestCommentList(false);
@@ -219,10 +220,9 @@ public class LikeActivity extends BaseActivity {
     }
 
     private void finishData() {
-        smartRefreshLayout.finishRefresh();
-        smartRefreshLayout.finishLoadMore();
+        mBinding.smartRefreshLayoutBj.finishRefresh();
+        mBinding.smartRefreshLayoutBj.finishLoadMore();
     }
-
 
 
 }
