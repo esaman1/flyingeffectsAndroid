@@ -96,6 +96,13 @@ public class AdConfigs {
      * 激励视频
      */
     public static final String AD_stimulate_video = "371";
+
+    /**
+     * 背景解锁激励视频
+     */
+    public static final String AD_stimulate_video_bj = "973";
+
+
     /**
      * 换装激励视频ID
      */
@@ -165,4 +172,10 @@ public class AdConfigs {
      * 互动广告
      */
     public static final String APP_FUDONG = "861";
+
+
+    /**
+     *最新背景激励视频保存id
+     */
+    public static final String APP_BJ_KEEP_ID = "973";
 }

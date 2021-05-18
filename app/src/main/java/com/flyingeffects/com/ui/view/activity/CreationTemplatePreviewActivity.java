@@ -32,6 +32,7 @@ import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.TimeUtils;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.record.SaveShareDialog;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
@@ -53,7 +54,6 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
-import de.greenrobot.event.Subscribe;
 
 
 /**
@@ -116,7 +116,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     @Override
     protected void initView() {
         mContext = CreationTemplatePreviewActivity.this;
-        EventBus.getDefault().register(this);
         Bundle bundle = getIntent().getBundleExtra("bundle");
         imagePath = bundle.getString("path");
         titleEffect = bundle.getStringArrayList("titleEffect");
@@ -257,16 +256,16 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     //从创作抠像视频入口过来，保存的时候验证当前用户的id最后一位，若为，1，
                     // 5，9则需要观看激励视频才能保存，其他自动保存，尾数1，5，9 由后台控
                     // 制  如果设置为0，则不需要请求，设置为11 全开
-                    boolean needWatchAd=false;
-                    String config=BaseConstans.getCreateVideoShowAdUserNum();
-                    LogUtil.d("OOM2","config="+config);
-                    if(config.equals("11")){
-                        needWatchAd=true;
-                    }else{
-                        String[]str=config.split(",");
+                    boolean needWatchAd = false;
+                    String config = BaseConstans.getCreateVideoShowAdUserNum();
+                    LogUtil.d("OOM2", "config=" + config);
+                    if (config.equals("11")) {
+                        needWatchAd = true;
+                    } else {
+                        String[] str = config.split(",");
                         String id = BaseConstans.GetUserId();
-                        String lastNum =(id.substring(id.length() - 1));
-                        LogUtil.d("OOM2","lastNum="+lastNum);
+                        String lastNum = (id.substring(id.length() - 1));
+                        LogUtil.d("OOM2", "lastNum=" + lastNum);
                         for (String s : str) {
                             if (lastNum.equals(s)) {
                                 needWatchAd = true;
@@ -276,7 +275,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     }
                     if (needWatchAd) {
                         showMessageDialog();
-                    }else{
+                    } else {
                         // 表示不需要广告
                         videoPause();
                         mPresenter.destroyTimer();
@@ -325,7 +324,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         StatisticsEventAffair.getInstance().setFlag(mContext, "bj_ad_open", "");
                         StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_confirm");
-                        EventBus.getDefault().post(new showAdCallback("isFormPreviewVideo"));
+                        toWatchAd();
                         dialog.dismiss();
                     }
 
@@ -466,70 +465,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
 
-//    public void showIsPlay(boolean isPlay) {
-//        if (isPlay) {
-//            iv_play.setImageResource(R.mipmap.pause);
-//        } else {
-//            iv_play.setImageResource(R.mipmap.iv_play);
-//        }
-//    }
 
-
-    /**
-     * user :TongJu  ; email:jutongzhang@sina.com
-     * time：2018/10/15
-     * describe:严防内存泄露
-     **/
-//    private void destroyTimer() {
-//        if (timer != null) {
-//            timer.purge();
-//            timer.cancel();
-//            timer = null;
-//        }
-//        if (task != null) {
-//            task.cancel();
-//            task = null;
-//        }
-//    }
-
-//    private Timer timer;
-//    private TimerTask task;
-//
-//    private void startTimer() {
-//        if (timer != null) {
-//            timer.purge();
-//            timer.cancel();
-//            timer = null;
-//        }
-//        if (task != null) {
-//            task.cancel();
-//            task = null;
-//        }
-//
-//        timer = new Timer();
-//        task = new TimerTask() {
-//            @Override
-//            public void run() {
-//                Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> {
-//                    if (exoPlayer != null) {
-//                        exoPlayer.setPlayWhenReady(true);
-//                        if (getCurrentPos() >= mEndDuration) {
-//                            exoPlayer.seekTo(0);
-//                        } else if (getCurrentPos() < 0) {
-//                            exoPlayer.seekTo(0);
-//                        }
-//
-//                    }
-//                    float progress = getCurrentPos() / (float) mEndDuration;
-////                    int realPosition = (int) (progress * 100);
-////                    TimeUtils = new TimeUtils();
-////                    tv_start_time.setText(TimeUtils.timeParse(getCurrentPos()));
-////                    seekBar.setProgress(realPosition);
-//                });
-//            }
-//        };
-//        timer.schedule(task, 0, 16);
-//    }
 
 
     boolean isOndesTroy = false;
@@ -553,40 +489,23 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         }
     }
 
-    /**
-     * 获取当前进度
-     */
-    private long getCurrentPos() {
-        return exoPlayer != null ? exoPlayer.getCurrentPosition() : 0;
-    }
-
 
     @Override
     protected void onPause() {
         super.onPause();
         isIntoPause = true;
         if (isPlaying()) {
-
-//            showIsPlay(false);
             videoPause();
-//            destroyTimer();
         }
     }
 
-
-    @Subscribe
-    public void onEventMainThread(showAdCallback event) {
+    boolean hasAward=false;
+    private void toWatchAd() {
+        hasAward=false;
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             videoPause();
-//            destroyTimer();
             VideoAdManager videoAdManager = new VideoAdManager();
-            String adId;
-            if (BaseConstans.getOddNum()) {
-                adId = AdConfigs.AD_save_video;
-            } else {
-                adId = AdConfigs.AD_save_video2;
-            }
-            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
+            videoAdManager.showVideoAd(this, AdConfigs.AD_save_video, new VideoAdCallBack() {
                 @Override
                 public void onVideoAdSuccess() {
                     onPause();
@@ -604,13 +523,17 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
                 @Override
                 public void onVideoAdClose() {
-                    videoPause();
-                    mPresenter.toSaveVideo(true, nowUiIsLandscape);
+                    if(!hasAward){
+                        ToastUtil.showToast("看完广告才能获得权益");
+                    }
+
                 }
 
                 @Override
                 public void onRewardVerify() {
-
+                    hasAward=true;
+                    videoPause();
+                    mPresenter.toSaveVideo(true, nowUiIsLandscape);
                 }
 
                 @Override
@@ -660,7 +583,5 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         if (!isOndesTroy) {
             saveToAlbum(path, isAdSuccess);
         }
-
-
     }
 }

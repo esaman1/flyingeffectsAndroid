@@ -71,7 +71,6 @@ public class WelcomeActivity extends BaseActivity {
         mBinding = ActWelcomeBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         setContentView(rootView);
-        BaseConstans.setOddNum();
         //快手集成sdk 应用活跃事件
         TurboAgent.onAppActive();
         checkNextDayStay();

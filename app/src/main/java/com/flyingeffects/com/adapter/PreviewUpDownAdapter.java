@@ -2,7 +2,6 @@ package com.flyingeffects.com.adapter;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -146,10 +145,6 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
             helper.addOnClickListener(R.id.iv_zan);
             helper.addOnClickListener(R.id.tv_make);
             helper.addOnClickListener(R.id.tv_title_music);
-
-            LogUtil.d(TAG, "nowPreviewPosition = " + nowPreviewPosition);
-            LogUtil.d(TAG, "offset = " + offset);
-
             if (nowPreviewPosition == offset&&hasVideo) {
 //                new Handler().postDelayed(new Runnable() {
 //                    @Override

@@ -2,10 +2,7 @@ package com.flyingeffects.com.base;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.multidex.MultiDexApplication;
@@ -20,9 +17,6 @@ import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;
 import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
-import com.kwai.monitor.log.OAIDProxy;
-import com.kwai.monitor.log.TurboAgent;
-import com.kwai.monitor.log.TurboConfig;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.xj.anchortask.library.AnchorProject;
@@ -33,6 +27,7 @@ import com.xj.anchortask.library.monitor.OnGetMonitorRecordCallback;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
@@ -47,6 +42,7 @@ public class BaseApplication extends MultiDexApplication {
     private static final String TAG = "BaseApplication";
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private static BaseApplication baseApp;
+    private ArrayList<Activity> list = new ArrayList<>();
     private boolean isActive = true;
     /**
      * 默认从APP退到后台值为true
@@ -111,21 +107,22 @@ public class BaseApplication extends MultiDexApplication {
 
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         Log.d(TAG, "Application onCreate end");
-//        setSystemFont();
+
+
     }
 
 
-    /**
-     * description ：设置系统字体不跟随用户的改变而改变
-     * creation date: 2021/4/2
-     * user : zhangtongju
-     */
-    private void setSystemFont() {
-        Resources res = super.getResources();
-        Configuration config = new Configuration();
-        config.setToDefaults();
-        res.updateConfiguration(config, res.getDisplayMetrics());
-    }
+//    /**
+//     * description ：设置系统字体不跟随用户的改变而改变
+//     * creation date: 2021/4/2
+//     * user : zhangtongju
+//     */
+//    private void setSystemFont() {
+//        Resources res = super.getResources();
+//        Configuration config = new Configuration();
+//        config.setToDefaults();
+//        res.updateConfiguration(config, res.getDisplayMetrics());
+//    }
 
 
     /***
@@ -218,6 +215,11 @@ public class BaseApplication extends MultiDexApplication {
     public static BaseApplication getInstance() {
         return baseApp;
     }
+
+
+
+
+
 
 }
 

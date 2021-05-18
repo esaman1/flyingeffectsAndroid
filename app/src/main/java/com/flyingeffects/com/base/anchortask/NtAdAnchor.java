@@ -27,6 +27,7 @@ public class NtAdAnchor extends AnchorTask {
                         .appChannel(ChannelUtil.getChannel(BaseApplication.getInstance()))
                         .TTAppKey(AdConfigs.APP_ID_CSJ)
                         .KSAppKey("517200002")
+                        .TXYXAppKey("30097")
                         .KaiJiaAppKey("68662a49")
                         .GDTAppKey(AdConfigs.APP_ID_GDT)
                         .isDebug(false)

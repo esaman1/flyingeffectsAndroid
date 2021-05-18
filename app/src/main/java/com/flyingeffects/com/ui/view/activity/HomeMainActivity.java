@@ -105,7 +105,7 @@ public class HomeMainActivity extends FragmentActivity {
 
     private static final String[] CATCH_DIRECTORY = {"dynamic", "runCatch", "def", "imageCopy", "faceFolder", "faceMattingFolder",
             "soundFolder", "cacheMattingFolder", "ExtractFrame", "DownVideo", "TextFolder", "toHawei", "downVideoForMusic",
-            "downSoundForMusic", "downCutSoundForMusic", "fontStyle", "DressUpFolder"};
+            "downSoundForMusic", "downCutSoundForMusic", "fontStyle", "DressUpFolder","facePP"};
 
     private final ImageView[] mIvMenuBack = new ImageView[4];
     private final TextView[] tv_main = new TextView[4];
@@ -163,6 +163,13 @@ public class HomeMainActivity extends FragmentActivity {
         requestConfig();
         setOaid();
     }
+
+
+
+
+
+
+
 
     private void setOaid() {
         AppLog.setOaidObserver(new IOaidObserver() {

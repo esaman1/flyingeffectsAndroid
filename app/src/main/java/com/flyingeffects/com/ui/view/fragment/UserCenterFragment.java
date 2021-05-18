@@ -292,6 +292,10 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                 mBinding.tvGoLogin.setVisibility(View.VISIBLE);
                 mBinding.llNoLoginInfo.setVisibility(View.VISIBLE);
             }
+
+            if(imageAdManager!=null){
+                imageAdManager.adResume();
+            }
         }
         super.onResume();
     }
@@ -300,6 +304,9 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     @Override
     public void onPause() {
         super.onPause();
+        if(imageAdManager!=null){
+            imageAdManager.adPause();
+        }
     }
 
     private void initTabData() {
@@ -569,6 +576,9 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        if(imageAdManager!=null){
+            imageAdManager.adDestroy();
+        }
     }
 
 
@@ -583,8 +593,9 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     /**
      * 加载图片广告
      */
+    ImageAdManager imageAdManager;
     private void loadImageAd() {
-        ImageAdManager imageAdManager = new ImageAdManager();
+        imageAdManager = new ImageAdManager();
         imageAdManager.showImageAd(getActivity(), AdConfigs.APP_FUDONG, mBinding.llAdEntrance, null, new ImageAdCallBack() {
             @Override
             public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {

@@ -14,12 +14,20 @@ android {
         }
 
         realse {
-            storeFile file('feishan.jks')
+            storeFile file('D:\\key2\\feishan.jks')
             storePassword 'android'
             keyAlias = 'jujuname'
             keyPassword 'android'
         }
     }
+
+
+    //解决代码不规范不能打包问题
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     aaptOptions.cruncherEnabled = false //解决分包后打relase 出现了问题
     aaptOptions.useNewCruncher = false
     compileSdkVersion 28
@@ -92,7 +100,7 @@ dependencies {
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation project(path: ':faceunity')
     implementation project(path: ':horizontalselectedviewlibrary')
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
@@ -142,7 +150,6 @@ dependencies {
     implementation 'top.zibin:Luban:1.1.8'
     //图片裁剪
     implementation 'com.github.yalantis:ucrop:2.2.6'
-
     //仿ios 开关  https://github.com/zcweng/SwitchButton
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     //友盟统计
@@ -171,8 +178,6 @@ dependencies {
     implementation project(':sxve')
     implementation project(':album')
     implementation project(':LanSongSDK')
-//    implementation project(':DownAndUpLibrary')
-//    implementation project(path: ':segjni')
 
     //mp4 声音和视频分离
     implementation 'com.googlecode.mp4parser:isoparser:1.1.21'
@@ -180,11 +185,11 @@ dependencies {
     //开屏广告
     implementation(name: 'GDTSDK.unionNormal.4.333.1203', ext: 'aar')
     // 广告sdk
-    implementation(name: 'NTADSDK-v2.6.4', ext: 'aar')
+    implementation(name: 'NTADSDK-v2.6.5', ext: 'aar')
     // 百度联盟
     implementation(name: 'Baidu_MobAds_SDK-release_v5.98', ext: 'aar')
     // 穿山甲
-    implementation(name: 'open_ad_sdk_3.5.0.4', ext: 'aar')
+    implementation(name: 'open_ad_sdk_3.6.1.2', ext: 'aar')
     //快手
     implementation(name: 'ks_adsdk-3.3.14', ext: 'aar')
     //快手监控
@@ -229,6 +234,14 @@ dependencies {
     implementation(name: 'faceSdk', ext: 'aar')
 
     implementation 'com.xj.android:anchortask:1.0.0'
+
+
+
+    //腾讯游戏SDK需要支持包start
+    implementation 'com.squareup.wire:wire-runtime:2.3.0-RC1'
+    //腾讯游戏SDK
+    implementation(name: 'klevinSDK_1.3.1.12', ext: 'aar')
+    //腾讯游戏SDK需要支持包end
 }
 
 
