@@ -9,6 +9,7 @@ buildscript {
 //        }
         maven { url 'https://repo1.maven.org/maven2/' }
         google()
+        maven { url 'https://repo1.maven.org/maven2/' }
     }
 
     dependencies {
