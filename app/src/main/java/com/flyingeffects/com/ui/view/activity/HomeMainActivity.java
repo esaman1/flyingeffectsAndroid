@@ -34,6 +34,7 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.AplicationInitRetroposition;
 import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.enity.HomeChoosePageListener;
@@ -124,6 +125,7 @@ public class HomeMainActivity extends FragmentActivity {
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         Log.d(TAG, "Application start finished");
+        EventBus.getDefault().post(new AplicationInitRetroposition());
         mContext = HomeMainActivity.this;
         setTheme(R.style.AppTheme);
         //禁止休眠
