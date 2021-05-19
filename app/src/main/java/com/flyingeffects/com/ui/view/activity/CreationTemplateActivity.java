@@ -228,10 +228,6 @@ public class CreationTemplateActivity extends BaseActivity implements ICreationT
 
     private int musicChooseIndex = 0;
 
-    private int initHeight = 0;//屏幕初始高度
-    private int currentHeight;//调用onGlobalLayout()后，当前屏幕高度
-    private int firstFlag = 0;//虚拟导航栏状态的**首次**变化情况
-    private int status = 0;//虚拟导航栏状态的变化情况
     private int mFrom;
 
     private MediaSource mediaSource;
