@@ -32,15 +32,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-
 import com.imaginstudio.imagetools.pixellab.DrawingPanelRenderer;
-import com.imaginstudio.imagetools.pixellab.MainActivity;
 import com.imaginstudio.imagetools.pixellab.appStateConstants;
 import com.imaginstudio.imagetools.pixellab.commonFuncs;
 import com.imaginstudio.imagetools.pixellab.font.customTypeface;
 import com.imaginstudio.imagetools.pixellab.functions.interval;
 import com.imaginstudio.imagetools.pixellab.functions.spansIntervals;
 import com.imaginstudio.imagetools.pixellab.imageinfo.ImageSource;
+import com.imaginstudio.imagetools.pixellab.imageinfo.displayInfo;
 import com.imaginstudio.imagetools.pixellab.textContainer;
 
 import java.util.ArrayList;
@@ -189,6 +188,7 @@ public class TextComponent extends View {
     int top_padding = 0;
 //    GradientMaker.GradientFill usedGradient = new GradientMaker.GradientFill();
     PointF viewCenter;
+    displayInfo helperClass;
 
     public interface OnSelectEventListener {
         void onEvent_MoveMaxText(float f, float f2, float f3, boolean z, String str);
@@ -386,7 +386,7 @@ public class TextComponent extends View {
     }
 
     public float getZoomFactor() {
-        return MainActivity.helperClass.getZoomFactor();
+        return helperClass.getZoomFactor();
     }
 
     public void setTouchEventListener(OnSelectEventListener eventListener) {
@@ -450,7 +450,7 @@ public class TextComponent extends View {
         this.paintHandlesBorder.setStyle(Paint.Style.FILL_AND_STROKE);
         this.paintHandlesBorder.setStrokeWidth(commonFuncs.dpToPx(1));
         this.paintHandlesHighlight.setColor(Color.parseColor("#4db8f3"));
-        this.textDraw = new CustomTextView(context, Math.max(MainActivity.helperClass.getContainerHeight(), MainActivity.helperClass.getContainerWidth()) * 2);
+        this.textDraw = new CustomTextView(context, Math.max(helperClass.getContainerHeight(), helperClass.getContainerWidth()) * 2);
         this.textDraw.setLayoutParams(new ViewGroup.LayoutParams(-2, -2));
         this.textDraw.setTypeface(Typeface.DEFAULT);
         PointF pt = new PointF(0.0f, 0.0f);
@@ -463,10 +463,11 @@ public class TextComponent extends View {
     }
 
     @SuppressLint({"NewApi"})
-    public TextComponent(Context context, int initialColor, String reference2) {
+    public TextComponent(Context context, int initialColor, String reference2, displayInfo helperClass) {
         super(context);
         init(context);
         this.reference = reference2;
+        this.helperClass = helperClass;
         setColorFill(initialColor);
     }
 
@@ -845,14 +846,15 @@ public class TextComponent extends View {
         this.lastClick = System.currentTimeMillis();
     }
 
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (this.locked || (isHidden() && !this.isSelected)) {
             return false;
         }
         float X = event.getRawX();
         float Y = event.getRawY();
-        switch (event.getAction() & 255) {
-            case 0:
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
                 this.downX = X;
                 this.downY = Y;
                 this.dX = 0.0f;
@@ -872,12 +874,12 @@ public class TextComponent extends View {
                 this.oldPosX = getX();
                 this.oldPosY = getY();
                 break;
-            case 1:
-            case 3:
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
                 if (Math.abs(this.downX - X) <= this.clickTolerance && Math.abs(this.downY - Y) <= this.clickTolerance) {
                     clicked();
                 }
-                MainActivity.helperClass.motionActionUp();
+                helperClass.motionActionUp();
                 float newPosX = getX();
                 float newPosY = getY();
                 float newMaxW = (float) this.textDraw.userMaxWidth;
@@ -887,11 +889,11 @@ public class TextComponent extends View {
                 this.dragID = -1;
                 invalidate();
                 break;
-            case 2:
+            case MotionEvent.ACTION_MOVE:
                 if (this.dragID != this.DRAG_ID_WHOLE) {
                     if (this.dragID == this.DRAG_ID_MAX_WIDTHER) {
                         float difference = (float) this.textWidth;
-                        setMax(((int) this.angle) == 0 ? MainActivity.helperClass.snapPosX(event.getX() + getX(), false) - getX() : event.getX());
+                        setMax(((int) this.angle) == 0 ? helperClass.snapPosX(event.getX() + getX(), false) - getX() : event.getX());
                         this.textDraw.measure(0, 0);
                         setX(getX() + ((difference - ((float) this.textDraw.getMeasuredWidth())) * Math.signum(this.angle) * (this.angle / 180.0f)));
                         break;
@@ -899,8 +901,8 @@ public class TextComponent extends View {
                 } else {
                     this.dX = (X - this.previousX) / getZoomFactor();
                     this.dY = (Y - this.previousY) / getZoomFactor();
-                    setX(MainActivity.helperClass.snapPosX(getX() + this.dX, ((float) this.textWidth) * 0.5f, true));
-                    setY(MainActivity.helperClass.snapPosY(getY() + this.dY, ((float) this.textHeight) * 0.5f, true));
+                    setX(helperClass.snapPosX(getX() + this.dX, ((float) this.textWidth) * 0.5f, true));
+                    setY(helperClass.snapPosY(getY() + this.dY, ((float) this.textHeight) * 0.5f, true));
                     this.previousX = X;
                     this.previousY = Y;
                     break;
@@ -1390,23 +1392,23 @@ public class TextComponent extends View {
             resetAlphaToPaint(this.paint);
         }
         canvas.restore();
-        if (this.isSelected && !this.renderMode) {
-            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBg);
-            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBorder);
-            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelected);
-        }
-        if (this.handleEnabled && this.isSelected && !this.isCurved && !this.renderMode) {
-            canvas.drawCircle(this.maxWidther.getX(), this.maxWidther.getY(), (float) getBiggerRadius(), this.paintHandlesBorder);
-            float x = this.maxWidther.getX();
-            float y = this.maxWidther.getY();
-            float biggerRadius = (float) getBiggerRadius();
-            if (this.dragID == this.DRAG_ID_MAX_WIDTHER) {
-                paint2 = this.paintHandlesHighlight;
-            } else {
-                paint2 = this.paintHandles;
-            }
-            canvas.drawCircle(x, y, biggerRadius, paint2);
-        }
+//        if (this.isSelected && !this.renderMode) {
+//            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBg);
+//            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBorder);
+//            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelected);
+//        }
+//        if (this.handleEnabled && this.isSelected && !this.isCurved && !this.renderMode) {
+//            canvas.drawCircle(this.maxWidther.getX(), this.maxWidther.getY(), (float) getBiggerRadius(), this.paintHandlesBorder);
+//            float x = this.maxWidther.getX();
+//            float y = this.maxWidther.getY();
+//            float biggerRadius = (float) getBiggerRadius();
+//            if (this.dragID == this.DRAG_ID_MAX_WIDTHER) {
+//                paint2 = this.paintHandlesHighlight;
+//            } else {
+//                paint2 = this.paintHandles;
+//            }
+//            canvas.drawCircle(x, y, biggerRadius, paint2);
+//        }
     }
 
     /* access modifiers changed from: package-private */
@@ -1852,6 +1854,7 @@ public class TextComponent extends View {
         setRotation(this.angle);
     }
 
+    @Override
     public boolean isSelected() {
         return this.isSelected;
     }
@@ -1913,10 +1916,10 @@ public class TextComponent extends View {
 
     /* access modifiers changed from: package-private */
     public boolean isNotVisible() {
-        if (!MainActivity.helperClass.safetyCheck()) {
+        if (!helperClass.safetyCheck()) {
             return false;
         }
-        Rect containerRect = new Rect(0, 0, MainActivity.helperClass.getContainerWidth(), MainActivity.helperClass.getContainerHeight());
+        Rect containerRect = new Rect(0, 0, helperClass.getContainerWidth(), helperClass.getContainerHeight());
         Point p1 = new Point(getLeft(), getTop());
         Point p2 = new Point(getLeft(), getBottom());
         Point p3 = new Point(getRight(), getTop());
@@ -1979,7 +1982,7 @@ public class TextComponent extends View {
         this.textWidth = this.textDraw.getMeasuredWidth();
         this.textHeight = this.textDraw.getMeasuredHeight();
         if (reAdjustMax) {
-            float shouldMaxAt = (((float) MainActivity.helperClass.getContainerWidth()) - getX()) - ((float) this.smallBallRadiusPx);
+            float shouldMaxAt = (((float) helperClass.getContainerWidth()) - getX()) - ((float) this.smallBallRadiusPx);
             if (((float) this.textWidth) > shouldMaxAt) {
                 this.textDraw.userMaxWidth = (double) shouldMaxAt;
                 this.textDraw.setMaxWidth((int) shouldMaxAt);
@@ -2304,8 +2307,8 @@ public class TextComponent extends View {
         }
         bundle.putInt("shapeX", (int) getX());
         bundle.putInt("shapeY", (int) getY());
-        bundle.putInt("shapeOldContainerWidth", MainActivity.helperClass.getContainerWidth());
-        bundle.putInt("shapeOldContainerHeight", MainActivity.helperClass.getContainerHeight());
+        bundle.putInt("shapeOldContainerWidth", helperClass.getContainerWidth());
+        bundle.putInt("shapeOldContainerHeight", helperClass.getContainerHeight());
         bundle.putInt(appStateConstants.TEXT_PADDING_LEFT, getInPaddingLeft());
         bundle.putInt(appStateConstants.TEXT_PADDING_RIGHT, getInPaddingRight());
         return bundle;
@@ -2327,9 +2330,9 @@ public class TextComponent extends View {
         }
         int oldContainerWidth = bundle.getInt("shapeOldContainerWidth");
         int oldContainerHeight = bundle.getInt("shapeOldContainerHeight");
-        int newContainer_w = MainActivity.helperClass.getContainerWidth();
+        int newContainer_w = helperClass.getContainerWidth();
         float scaleX = ((float) newContainer_w) / ((float) oldContainerWidth);
-        float scaleY = ((float) MainActivity.helperClass.getContainerHeight()) / ((float) oldContainerHeight);
+        float scaleY = ((float) helperClass.getContainerHeight()) / ((float) oldContainerHeight);
         if (!copy && !isStyle) {
             setX(((float) bundle.getInt("shapeX")) * scaleX);
             setY(((float) bundle.getInt("shapeY")) * scaleY);
@@ -2442,18 +2445,21 @@ public class TextComponent extends View {
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
     public void requestLayout() {
         if (!this.frozen) {
             super.requestLayout();
         }
     }
 
+    @Override
     public void postInvalidate() {
         if (!this.frozen) {
             super.postInvalidate();
         }
     }
 
+    @Override
     public void postInvalidate(int left, int top, int right, int bottom) {
         if (!this.frozen) {
             super.postInvalidate(left, top, right, bottom);
@@ -2466,6 +2472,7 @@ public class TextComponent extends View {
         }
     }
 
+    @Override
     public void invalidate() {
         if (!this.frozen) {
             super.invalidate();
@@ -2473,6 +2480,7 @@ public class TextComponent extends View {
         }
     }
 
+    @Override
     public void invalidate(Rect rect) {
         if (!this.frozen) {
             super.invalidate(rect);
@@ -2480,6 +2488,7 @@ public class TextComponent extends View {
         }
     }
 
+    @Override
     public void invalidate(int l, int t, int r, int b) {
         if (!this.frozen) {
             super.invalidate(l, t, r, b);
@@ -2488,7 +2497,7 @@ public class TextComponent extends View {
     }
 
     public static Bitmap renderPreview(Bundle bundle, Context context, int height) {
-        TextComponent text = new TextComponent(context, 0, "0");
+        TextComponent text = new TextComponent(context, 0, "0",null);
         text.applyBundle(bundle, false, true);
         text.setTextSize((float) height);
         text.setText("SAMPLE", false);

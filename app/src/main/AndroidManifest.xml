@@ -106,6 +106,12 @@
 
         </activity>
 
+        <activity android:name="com.flyingeffects.com.ui.view.activity.MainActivity2"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustPan">
+        </activity>
+
 
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity"

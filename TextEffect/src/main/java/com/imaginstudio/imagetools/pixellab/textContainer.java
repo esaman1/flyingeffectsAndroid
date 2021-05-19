@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.imaginstudio.imagetools.pixellab.TextObject.TextComponent;
+import com.imaginstudio.imagetools.pixellab.imageinfo.displayInfo;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -34,6 +35,8 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
     OnSelectionChangedListener mSelectionListener;
     public Map<Integer, TextComponent> texts = new HashMap();
     public boolean willResize;
+
+    displayInfo helperClass;
 
     public interface OnLayersListener {
         void objectCountChanged();
@@ -102,6 +105,7 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         setOnClickListener(new OnClickListener() {
             /* class com.imaginstudio.imagetools.pixellab.textContainer.AnonymousClass1 */
 
+            @Override
             public void onClick(View arg0) {
                 textContainer.this.selectTextId(-1);
                 textContainer.this.selectShapeId(-1);
@@ -116,16 +120,17 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         }
     }
 
-    public String addNewText(int initColor) {
+    public String addNewText(int initColor, displayInfo helperClass) {
         this.lastInserted++;
+        this.helperClass = helperClass;
         String reference = getRandomString(5);
-        TextComponent new_text = new TextComponent(getContext(), initColor, reference);
+        TextComponent new_text = new TextComponent(getContext(), initColor, reference,helperClass);
         this.texts.put(Integer.valueOf(this.lastInserted), new_text);
         new_text.assigned_id = this.lastInserted;
         selectShapeId(-1);
         selectTextId(this.lastInserted);
         new_text.setTouchEventListener(this);
-        PointF origin = MainActivity.helperClass.getViewOrigin();
+        PointF origin = helperClass.getViewOrigin();
         new_text.setX(origin.x);
         new_text.setY(origin.y);
         addView(new_text);
@@ -361,7 +366,7 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         selectShapeId(-1);
         selectTextId(this.lastInserted);
         text.setTouchEventListener(this);
-        PointF origin = MainActivity.helperClass.getViewOrigin();
+        PointF origin = helperClass.getViewOrigin();
         text.setX(origin.x);
         text.setY(origin.y);
         addView(text);
@@ -703,6 +708,7 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
 //        }
 //    }
 
+    @Override
     public void removeView(View view) {
         super.removeView(view);
         if (this.layersListener != null) {
@@ -847,19 +853,19 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
                 dX = -1.0f * objectsBoundingBox.left;
                 break;
             case right:
-                dX = ((float) MainActivity.helperClass.getContainerWidth()) - objectsBoundingBox.right;
+                dX = ((float) helperClass.getContainerWidth()) - objectsBoundingBox.right;
                 break;
             case bottom:
-                dY = ((float) MainActivity.helperClass.getContainerHeight()) - objectsBoundingBox.bottom;
+                dY = ((float) helperClass.getContainerHeight()) - objectsBoundingBox.bottom;
                 break;
             case top:
                 dY = -1.0f * objectsBoundingBox.top;
                 break;
             case center_hor:
-                dX = (((float) MainActivity.helperClass.getContainerWidth()) * 0.5f) - objectsBoundingBox.centerX();
+                dX = (((float) helperClass.getContainerWidth()) * 0.5f) - objectsBoundingBox.centerX();
                 break;
             case center_ver:
-                dY = (((float) MainActivity.helperClass.getContainerHeight()) * 0.5f) - objectsBoundingBox.centerY();
+                dY = (((float) helperClass.getContainerHeight()) * 0.5f) - objectsBoundingBox.centerY();
                 break;
         }
         if (!(dX == 0.0f && dY == 0.0f)) {

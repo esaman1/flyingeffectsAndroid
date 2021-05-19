@@ -93,6 +93,7 @@ android {
         viewBinding = true
     }
 
+
 }
 
 dependencies {
@@ -100,6 +101,7 @@ dependencies {
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation project(path: ':faceunity')
     implementation project(path: ':horizontalselectedviewlibrary')
+    implementation project(path: ':TextEffect')
     testImplementation 'junit:junit:4.12'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
@@ -237,6 +239,7 @@ dependencies {
     //腾讯游戏SDK
     implementation(name: 'klevinSDK_1.3.1.12', ext: 'aar')
     //腾讯游戏SDK需要支持包end
+    implementation 'com.google.android.material:material:1.3.0'
 }
 
 
