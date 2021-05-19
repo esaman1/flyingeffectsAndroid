@@ -29,6 +29,7 @@ import com.flyingeffects.com.manager.DownloadVideoManage;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.keyboard.KeyboardHeightProvider;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
@@ -117,6 +118,9 @@ public class CreateViewForAddText {
         listTitle.add("热门效果");
         listTitle.add("边框");
         listTitle.add("字体");
+        listTitle.add("内发光");
+        listTitle.add("浮雕");
+        listTitle.add("3d");
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -140,7 +144,7 @@ public class CreateViewForAddText {
             }
         });
 
-        if (TextUtils.isEmpty(inputText)|| "输入文本".equals(inputText)) {
+        if (TextUtils.isEmpty(inputText) || "输入文本".equals(inputText)) {
             editText.setText("");
             editText.setHint("输入文本");
         }
@@ -191,7 +195,7 @@ public class CreateViewForAddText {
             createTemplateTextEffectAdapterFrame.select(i);
             if ("bj_template".equals(type)) {
                 StatisticsEventAffair.getInstance().setFlag(context, "20_bj_text_border", listFrame.get(i).getTitle());
-            }else{
+            } else {
                 StatisticsEventAffair.getInstance().setFlag(context, "20_mb_text_border", listFrame.get(i).getTitle());
             }
             WaitingDialog.openPragressDialog(context);
@@ -205,10 +209,10 @@ public class CreateViewForAddText {
                             WaitingDialog.closeProgressDialog();
                             if (callback != null) {
                                 if (type == 1) {
-                                    callback.isSuccess(path1, path2,listFrame.get(i).getTitle());
+                                    callback.isSuccess(path1, path2, listFrame.get(i).getTitle());
                                 } else {
                                     String[] str = listFrame.get(i).getColor().split(",");
-                                    callback.isSuccess("#" + str[1], "#" + str[0], path2,listFrame.get(i).getTitle());
+                                    callback.isSuccess("#" + str[1], "#" + str[0], path2, listFrame.get(i).getTitle());
 
                                 }
                             }
@@ -288,9 +292,9 @@ public class CreateViewForAddText {
             @Override
             public void onHeightChanged(int height) {
                 //小于200的高度是返回的虚拟导航栏的高度
-                if (height >200) {
+                if (height > 200) {
                     keyboardHeight = height;
-                    LogUtil.d("OOM3", "keyboardHeight=" + keyboardHeight+"  status "+status);
+                    LogUtil.d("OOM3", "keyboardHeight=" + keyboardHeight + "  status " + status);
                     LinearLayout.LayoutParams layoutParams1 = (LinearLayout.LayoutParams) llAddText.getLayoutParams();
                     if (status != 0) {
                         //隐藏导航栏变显示
@@ -330,7 +334,8 @@ public class CreateViewForAddText {
 
     int status = 0;
     int navigationBarHeight;
-    public void setShowHeight(int status,int navigationBarHeight) {
+
+    public void setShowHeight(int status, int navigationBarHeight) {
         this.status = status;
         if (status < 0) {
             this.navigationBarHeight = navigationBarHeight;
@@ -390,7 +395,39 @@ public class CreateViewForAddText {
         LogUtil.d("OOM3", "showWitch=" + showWitch);
         viewPager.setCurrentItem(showWitch);
         selectedTab(showWitch);
+
+        if (showWitch == 4 || showWitch == 5 || showWitch == 6) {
+            ToastUtil.showToast("tools fragment");
+            viewPager.setVisibility(View.GONE);
+        } else {
+            viewPager.setVisibility(View.VISIBLE);
+        }
     }
+
+//
+//    private void expandOptionFor(int action, History.ComponentType type, ArrayList<String> references) {
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+////        fragmentTransaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.popenter, R.anim.popexit);
+//        if (((optionExpand) fragmentManager.findFragmentByTag("option_expand")) != null) {
+//            doneEditing();
+//        }
+//        ControlsHolder currFrag = (ControlsHolder) fragmentManager.findFragmentByTag("fragment_tools");
+//        if (currFrag != null) {
+//            fragmentTransaction.hide(currFrag);
+//        }
+//        optionExpand expandFrag = optionExpand.newInstance(action, type, references);
+//        this.mFragments.add(new WeakReference<>(expandFrag));
+//        fragmentTransaction.add(R.id.toolsPanel, expandFrag, "option_expand");
+//        fragmentTransaction.addToBackStack(null);
+//        try {
+//            fragmentTransaction.commitAllowingStateLoss();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        minimizeLayers();
+//    }
+
 
     private int lastViewPagerChoosePosition;
 
@@ -516,11 +553,14 @@ public class CreateViewForAddText {
 
         void setTextColor(String color0, String color1, String title);
 
-        void isSuccess(String textBjPath, String textFramePath,String frameTitle);
+        void isSuccess(String textBjPath, String textFramePath, String frameTitle);
 
-        void isSuccess(String color0, String color1, String textFramePath,String frameTitle);
+        void isSuccess(String color0, String color1, String textFramePath, String frameTitle);
 
-        default void hindAddTextStickerView(){};
+        default void hindAddTextStickerView() {
+        }
+
+        ;
     }
 
 

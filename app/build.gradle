@@ -153,11 +153,12 @@ dependencies {
     //仿ios 开关  https://github.com/zcweng/SwitchButton
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     //友盟统计
-    implementation 'com.umeng.umsdk:common:9.3.0'
+    implementation 'com.umeng.umsdk:common:9.3.8'
     implementation 'com.umeng.umsdk:crash:0.0.4'
-    implementation 'com.umeng.umsdk:asms:1.1.3'
-    implementation 'com.umeng.umsdk:share-core:7.1.2'
-    implementation 'com.umeng.umsdk:share-wx:7.1.2'
+    implementation 'com.umeng.umsdk:asms:1.2.2'
+    implementation 'com.umeng.umsdk:share-core:7.1.4'
+    implementation 'com.umeng.umsdk:share-wx:7.1.4'
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     //极光
     implementation 'cn.jiguang.sdk:jpush:3.5.8'
     implementation 'cn.jiguang.sdk:jcore:2.2.8'
