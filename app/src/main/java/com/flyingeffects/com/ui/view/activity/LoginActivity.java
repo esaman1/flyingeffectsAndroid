@@ -19,9 +19,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -31,6 +29,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.databinding.ActLoginBinding;
 import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
 import com.flyingeffects.com.enity.LoginToAttentionUserEvent;
 import com.flyingeffects.com.enity.UserInfo;
@@ -47,7 +46,6 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.VideoUtils;
 import com.flyingeffects.com.view.MyVideoView;
-import com.kwai.monitor.log.TurboAgent;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.umeng.socialize.UMAuthListener;
@@ -64,8 +62,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import cn.nt.lib.analytics.NTAnalytics;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
@@ -77,59 +73,44 @@ import rx.Observable;
  */
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
-
-    private Context mContext;
-
-    @BindView(R.id.shanyan_login_relative)
-    RelativeLayout shanyan_login_relative;
-    @BindView(R.id.password)
-    EditText editTextPassword;
-    @BindView(R.id.username)
-    EditText editTextUsername;
-    private boolean isCanSendMsg = true;
-    @BindView(R.id.tv_login)
-    TextView tv_login;
-    @BindView(R.id.tv_xy)
-    TextView tv_xy;
-    @BindView(R.id.relative_normal)
-    RelativeLayout relative_normal;
-    //    private boolean isOpenAuth = false;
-    MyVideoView videoView;
-//    private static final String WEIXIN = "wx";
-//    private static final String QQ = "qq";
-
-    boolean isOnDestroy = false;
     /**
      * 0 ，发送验证码，1 登录
      */
     private int nowProgressType;
-
-
-    //当前页面类型 0是老板ui ,1 是新版ui
+    /**
+     * 当前页面类型 0是老板ui ,1 是新版ui
+     */
     private int nowPageType = 1;
-
+    private Context mContext;
+    private boolean isCanSendMsg = true;
+    private MyVideoView videoView;
+    boolean isOnDestroy = false;
+    private ActLoginBinding mBinding;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_login;
+        return 0;
     }
 
     @Override
     protected void initView() {
+        mBinding = ActLoginBinding.inflate(getLayoutInflater());
+        setContentView( mBinding.getRoot());
         mContext = LoginActivity.this;
         isOnDestroy = false;
-
         EventBus.getDefault().register(this);
         clearUmData();
         WaitingDialog.openPragressDialog(this);
         OneKeyLoginManager.getInstance().setLoadingVisibility(false);
         OneKeyLoginManager.getInstance().setAuthThemeConfig(ShanyanConfigUtils.getCJSConfig(getApplicationContext()), ShanyanConfigUtils.getCJSConfig(getApplicationContext()));
         openLoginActivity();
-
         SpannableStringBuilder strBuilder = initTipsBuilder();
+        mBinding.tvXy.setMovementMethod(LinkMovementMethod.getInstance());
+        mBinding.tvXy.setText(strBuilder);
+        mBinding.tvLogin.setOnClickListener(this::onViewClick);
+        mBinding.ivClose.setOnClickListener(this::onViewClick);
+        mBinding.llWeixin.setOnClickListener(this::onViewClick);
 
-        tv_xy.setMovementMethod(LinkMovementMethod.getInstance());
-        tv_xy.setText(strBuilder);
     }
 
     private SpannableStringBuilder initTipsBuilder() {
@@ -184,10 +165,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     public void onDestroy() {
         super.onDestroy();
         isOnDestroy = true;
-        if (null != shanyan_login_relative) {
-            shanyan_login_relative.removeAllViews();
-        }
-
+        mBinding.shanyanLoginRelative.removeAllViews();
         if (null != videoView) {
             videoView.setOnCompletionListener(null);
             videoView.setOnPreparedListener(null);
@@ -208,23 +186,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         OneKeyLoginManager.getInstance().openLoginAuth(false, (code, result) -> {
             WaitingDialog.closeProgressDialog();
             if (1000 == code) {
-//                isOpenAuth = true;
-                //拉起授权页成功
                 Log.e("VVV", "拉起授权页成功： _code==" + code + "   _result==" + result);
                 videoView = new MyVideoView(getApplicationContext());
                 RelativeLayout.LayoutParams mLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-                shanyan_login_relative.addView(videoView, 0, mLayoutParams);
+                mBinding.shanyanLoginRelative.addView(videoView, 0, mLayoutParams);
                 VideoUtils.startBgVideo(videoView, getApplicationContext(), "android.resource://" + LoginActivity.this.getPackageName() + "/" + R.raw.login_video);
             } else {
                 nowPageType = 0;
-                //拉起授权页失败
                 Log.e("VVV", "拉起授权页失败： _code==" + code + "   _result==" + result);
-                relative_normal.setVisibility(View.VISIBLE);
+
+                mBinding.relativeNormal.setVisibility(View.VISIBLE);
                 dissMissShanYanUi();
             }
         }, (code, result) -> {
             if (1011 == code) {
-//                isOpenAuth = false;
                 Log.e("OOM", "用户点击授权页返回： _code==" + code + "   _result==" + result);
                 finish();
             } else if (1000 == code) {
@@ -235,26 +210,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             } else {
                 Log.e("VVV", "用户点击登录获取token失败： _code==" + code + "   _result==" + result);
-//                    ToastUtil.showToast("用户点击登录获取token失败： _code==" + code + "   _result==" + result);
-//                    relative_normal.setVisibility(View.VISIBLE);
                 finish();
             }
-
         });
     }
 
     @Override
     protected void initAction() {
-        editTextPassword.addTextChangedListener(new TextWatcher() {
+        mBinding.password.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String strPassword = editTextPassword.getText().toString().trim();
+                String strPassword = mBinding.password.getText().toString().trim();
                 if (!"".equals(strPassword)) {
                     nextStep(true);
-                    tv_login.setEnabled(true);
+                    mBinding.tvLogin.setEnabled(true);
                     endTimer();
                 } else {
                     nextStep(false);
@@ -269,16 +240,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable editable) {
                 nextStep(true);
-                tv_login.setEnabled(true);
+                mBinding.tvLogin.setEnabled(true);
                 endTimer();
             }
         });
 
-        editTextUsername.addTextChangedListener(new TextWatcher() {
+        mBinding.username.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 endTimer();
-                nextStep(!TextUtils.isEmpty(editTextPassword.getText().toString()));
+                nextStep(!TextUtils.isEmpty(mBinding.password.getText().toString()));
             }
 
             @Override
@@ -288,7 +259,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             public void afterTextChanged(Editable editable) {
-                tv_login.setEnabled(true);
+                mBinding.tvLogin.setEnabled(true);
             }
         });
     }
@@ -296,11 +267,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void nextStep(boolean isLogin) {
         if (isLogin) {
-            tv_login.setText("登录");
-            tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
+            mBinding.tvLogin.setText("登录");
+            mBinding.tvLogin.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
             nowProgressType = 1;
         } else {
-            tv_login.setText("获得验证码");
+            mBinding.tvLogin.setText("获得验证码");
             nowProgressType = 0;
         }
     }
@@ -330,72 +301,65 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void requestLogin() {
 
-        if ("".equals(editTextUsername.getText().toString())) {
+        if ("".equals(mBinding.username.getText().toString())) {
             ToastUtil.showToast("请输入手机号");
             return;
         }
 
-        if ("".equals(editTextPassword.getText().toString())) {
+        if ("".equals(mBinding.password.getText().toString())) {
             ToastUtil.showToast("请输入验证码");
             return;
         }
-        requestLogin(editTextUsername.getText().toString().trim(), editTextPassword.getText().toString().trim());
+        requestLogin(mBinding.username.getText().toString().trim(), mBinding.password.getText().toString().trim());
     }
 
 
-    @Override
-    @OnClick({R.id.tv_login, R.id.iv_close, R.id.ll_weixin})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_login:
-                if (nowProgressType == 0) {
-                    if (isCanSendMsg) {
-                        toRequestSms();
-                    }
-                } else {
-                    tv_login.setEnabled(true);
-                    tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
-                    requestLogin();
+    public void onViewClick(View view) {
+        if (view == mBinding.tvLogin) {
+            if (nowProgressType == 0) {
+                if (isCanSendMsg) {
+                    toRequestSms();
                 }
-                break;
-
-            case R.id.iv_close:
-                finish();
-                break;
-
-            case R.id.ll_weixin:
-                if (!isWeixinAvilible(this)) {
-                    ToastUtil.showToast("您还未安装微信");
-                } else {
-                    if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
-                        wxLogin();
-                    }
+            } else {
+                mBinding.tvLogin.setEnabled(true);
+                mBinding.tvLogin.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
+                requestLogin();
+            }
+        } else if (view == mBinding.ivClose) {
+            finish();
+        } else if (view == mBinding.llWeixin) {
+            if (!isWeixinAvilible(this)) {
+                ToastUtil.showToast("您还未安装微信");
+            } else {
+                if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
+                    wxLogin();
                 }
-                break;
-            default:
-                break;
+            }
         }
     }
 
 
+    /**
+     * description ：短信接口
+     * creation date: 2021/5/19
+     * user : zhangtongju
+     */
     private void toRequestSms() {
-        if (TextUtils.isEmpty(editTextUsername.getText().toString())) {
+        if (TextUtils.isEmpty(mBinding.username.getText().toString())) {
             Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        if (!StringUtil.isPhone(editTextUsername.getText().toString())) {
+        if (!StringUtil.isPhone(mBinding.username.getText().toString())) {
             Toast.makeText(this, "请输入正确手机号", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        requestSms(editTextUsername.getText().toString().trim());
+        requestSms(mBinding.username.getText().toString().trim());
     }
 
 
-    private void requestSms(String strEditTextUsername) {
+    private void requestSms(String username) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("phone", strEditTextUsername);
+        params.put("phone", username);
         // 启动时间
         Observable ob = Api.getDefault().toSms(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(LoginActivity.this) {
@@ -416,18 +380,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void changeFocus() {
-        editTextPassword.requestFocus();
-        editTextPassword.setFocusable(true);
-        editTextPassword.setFocusableInTouchMode(true);
+        mBinding.password.requestFocus();
+        mBinding.password.setFocusable(true);
+        mBinding.password.setFocusableInTouchMode(true);
     }
 
-    private void requestLogin(String editTextUsername, String password) {
+    private void requestLogin(String username, String password) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("phone", editTextUsername);
+        params.put("phone", username);
         params.put("code", password);
-
         params.put("center_imei", NTAnalytics.getIMEI());
-        // 启动时间
         LogUtil.d("OOM", StringUtil.beanToJSONString(params));
         Observable ob = Api.getDefault().toLogin(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(LoginActivity.this) {
@@ -445,11 +407,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
                 EventBus.getDefault().post(new LoginToAttentionUserEvent());
                 EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
-//                EventBus.getDefault().post(new ExitOrLogin());
-                LoginActivity.this.finish();
+                finishActivity();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
+
+
+
+    private void finishActivity(){
+        new Handler().postDelayed(LoginActivity.this::finish,500);
+    }
+
 
 
     /**
@@ -476,8 +444,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     if (!isOnDestroy) {
                         WaitingDialog.closeProgressDialog();
                         ToastUtil.showToast(message);
-//                        dissMissShanYanUi();
-//                        LoginActivity.this.finish();
                     }
                 }
 
@@ -485,15 +451,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 protected void onSubNext(UserInfo data) {
                     if (!isOnDestroy) {
                         Hawk.put("UserInfo", data);
-                        String str = StringUtil.beanToJSONString(data);
-                        LogUtil.d("OOM", "setToken=" + data.getToken());
                         BaseConstans.SetUserToken(data.getToken());
                         BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
                         dissMissShanYanUi();
                         WaitingDialog.closeProgressDialog();
                         EventBus.getDefault().post(new LoginToAttentionUserEvent());
                         EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
-                        finish();
+                        finishActivity();
                     }
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
@@ -510,15 +474,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what) {
-                case 1:
-                    total_Time = total_Time - 1;
-                    tv_login.setText((String.format(getResources().getString(R.string.remainTime), total_Time)));
-                    if (total_Time == 0) {
-                        total_Time = 60;
-                        endTimer();
-                    }
-                    break;
+            total_Time = total_Time - 1;
+            mBinding.tvLogin.setText((String.format(getResources().getString(R.string.remainTime), total_Time)));
+            if (total_Time == 0) {
+                total_Time = 60;
+                endTimer();
             }
         }
     };
@@ -528,8 +488,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
      */
     private void startTimer() {
         isCanSendMsg = false;
-        tv_login.setEnabled(false);
-        tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button_forbidden));
+        mBinding.tvLogin.setEnabled(false);
+        mBinding.tvLogin.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button_forbidden));
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -565,12 +525,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             task = null;
         }
         if (nowProgressType == 0) {
-            tv_login.setText("获取短信验证码");
+            mBinding.tvLogin.setText("获取短信验证码");
         }
 
         isCanSendMsg = true;
-        tv_login.setEnabled(true);
-        tv_login.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
+        mBinding.tvLogin.setEnabled(true);
+        mBinding.tvLogin.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
     }
 
 

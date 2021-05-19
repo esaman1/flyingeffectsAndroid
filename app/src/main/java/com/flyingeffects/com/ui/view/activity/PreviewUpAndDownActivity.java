@@ -1458,7 +1458,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         @Override
                         public void onRewardVerify() {
                             sHasReward = true;
-                            StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
                             BaseConstans.TemplateHasWatchingAd = true;
                             //hasLoginToNext();
                         }
