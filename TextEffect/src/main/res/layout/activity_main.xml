@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:id="@+id/preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <RelativeLayout
+                        android:id="@+id/previewPanel"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="top"
+                        android:layout_margin="4dp">
+
+                        <FrameLayout
+                            android:id="@+id/workingArea"
+                            android:layout_width="300dp"
+                            android:layout_height="300dp"
+                            android:layout_alignParentTop="false"
+                            android:layout_centerInParent="true"
+                            android:background="@android:color/darker_gray"
+                            android:focusableInTouchMode="false"
+                            android:padding="0dp"
+                            android:visibility="visible">
+
+
+                        </FrameLayout>
+                    </RelativeLayout>
+
+                </FrameLayout>
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp">
+
+                    <LinearLayout
+                        android:id="@+id/toolsPanel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/panel_bg"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/holo_blue_dark"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:id="@+id/textSizeTv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="字体大小"
+                                android:textColor="@color/black">
+
+                            </TextView>
+
+                            <com.google.android.material.slider.Slider
+                                    android:stepSize="1"
+                                android:id="@+id/sizeSeek"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_weight="1"
+                                android:value="20"
+                                android:valueFrom="0"
+                                android:valueTo="500" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:background="@android:color/holo_blue_dark"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:id="@+id/faguang_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="自发光"
+                                android:textColor="@color/black">
+
+                            </TextView>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/inner_radius_label"
+
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="半径"
+                                    android:textColor="@color/black" />
+
+                                <com.google.android.material.slider.Slider
+                                    android:stepSize="1"
+                                    android:id="@+id/inner_radius"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:value="0"
+                                    android:valueFrom="0"
+                                    android:valueTo="25"
+                                    />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/inner_dx_label"
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="x偏移"
+                                    android:textColor="@color/black" />
+
+                                <com.google.android.material.slider.Slider
+                                    android:stepSize="1"
+                                    android:id="@+id/inner_dx"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:value="0"
+                                    android:valueFrom="-140"
+                                    android:valueTo="140"
+                                   />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/inner_dy_label"
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="y偏移"
+                                    android:textColor="@color/black" />
+
+                                <com.google.android.material.slider.Slider
+                                    android:stepSize="1"
+                                    android:id="@+id/inner_dy"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:value="0"
+                                    android:valueFrom="-140"
+                                    android:valueTo="140" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:background="@android:color/holo_blue_dark"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:id="@+id/emoss_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="浮雕"
+                                android:textColor="@color/black">
+
+                            </TextView>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/arc_label"
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="光照角度"
+                                    android:textColor="@color/black" />
+
+                                <com.google.android.material.slider.Slider
+                                    android:stepSize="1"
+                                    android:id="@+id/emoss_arc"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:value="0"
+                                    android:valueFrom="0"
+                                    android:valueTo="360" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/qiangdu_label"
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="光照强度"
+                                    android:textColor="@color/black"
+                                    />
+
+                                <com.google.android.material.slider.Slider
+                                    android:stepSize="1"
+                                    android:id="@+id/emoss_qiangdu"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:value="0"
+                                    android:valueFrom="0"
+                                    android:valueTo="100" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/xiejiao_lable"
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="斜角"
+                                    android:textColor="@color/black" />
+
+                                <com.google.android.material.slider.Slider
+                                    android:stepSize="1"
+                                    android:id="@+id/emoss_xieijiao"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:value="0"
+                                    android:valueFrom="0"
+                                    android:valueTo="100" />
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:background="@android:color/holo_blue_dark"
+                            android:orientation="vertical"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:id="@+id/ddd_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="3d文本"
+                                android:textColor="@color/black">
+
+                            </TextView>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/ddd_shengdu_label"
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="深度"
+                                    android:textColor="@color/black" />
+
+                                <com.google.android.material.slider.Slider
+                                    android:stepSize="1"
+                                    android:id="@+id/ddd_shengdu"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:value="1"
+                                    android:valueFrom="1"
+                                    android:valueTo="100" />
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </ScrollView>
+
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+</layout>
