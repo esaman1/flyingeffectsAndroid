@@ -615,7 +615,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
-        if (!TextUtils.isEmpty(templateItem.getType()) && "1"
+        if (BaseConstans.getHasAdvertising() == 1&&!TextUtils.isEmpty(templateItem.getType()) && "1"
                 .equals(templateItem.getType()) && BaseConstans.getIncentiveVideo()&&!BaseConstans.getIsNewUser()) {
             showMessageDialog();
         } else {
