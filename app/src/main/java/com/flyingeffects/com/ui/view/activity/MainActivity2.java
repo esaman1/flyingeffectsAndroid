@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -15,6 +16,7 @@ import com.imaginstudio.imagetools.pixellab.textContainer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
 public class MainActivity2 extends AppCompatActivity implements textContainer.OnSelectionChangedListener {
@@ -45,7 +47,9 @@ public class MainActivity2 extends AppCompatActivity implements textContainer.On
 
         this.workingArea.addView(this.textContain, new FrameLayout.LayoutParams(-1, -1));
         this.textContain.setSelectionListener(this);
-        this.textContain.addNewText(Color.parseColor("#252B3B"),helperClass);
+        this.textContain.addNewText(Color.parseColor("#252B3B"),helperClass,
+                ContextCompat.getDrawable(this, R.drawable.sticker_delete),
+                ContextCompat.getDrawable(this, R.mipmap.sticker_redact));
 
         viewDataBinding.sizeSeek.addOnChangeListener(new Slider.OnChangeListener() {
             @Override

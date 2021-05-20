@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,11 +121,13 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         }
     }
 
-    public String addNewText(int initColor, displayInfo helperClass) {
+    public String addNewText(int initColor, displayInfo helperClass, Drawable leftTopDrawable,Drawable rightBottomDrawable) {
         this.lastInserted++;
         this.helperClass = helperClass;
-        String reference = getRandomString(5);
+        String reference = "上海自来水来自海上";
         TextComponent new_text = new TextComponent(getContext(), initColor, reference,helperClass);
+        new_text.setLeftTopBitmap(leftTopDrawable);
+        new_text.setRightBottomBitmap(rightBottomDrawable);
         this.texts.put(Integer.valueOf(this.lastInserted), new_text);
         new_text.assigned_id = this.lastInserted;
         selectShapeId(-1);
@@ -362,6 +365,7 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         String reference = getRandomString(5);
         TextComponent text = new TextComponent(getContext(), this.texts.get(Integer.valueOf(this.curr_id)).saveToBundle(), true, reference);
         this.texts.put(Integer.valueOf(this.lastInserted), text);
+        text.showFrame();
         text.assigned_id = this.lastInserted;
         selectShapeId(-1);
         selectTextId(this.lastInserted);
