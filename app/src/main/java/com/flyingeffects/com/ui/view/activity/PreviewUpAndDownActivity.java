@@ -616,6 +616,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
+
         Log.d(TAG, "isVip = " + templateItem.getIs_vip());
         if (!CheckVipOrAdUtils.checkIsVip()&&templateItem.getIs_vip() == 1) {
             showVipDialog();
@@ -632,28 +633,23 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         CommonMessageDialog.getBuilder(mContext)
                 .setContentView(R.layout.dialog_common_message)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_NONE)
-                .setTitle("改模板为VIP专享")
+                .setTitle("该模板为VIP专享")
                 .setPositiveButton("成为VIP立即制作")
                 .setNegativeButton("再想想")
                 .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
-                        StatisticsEventAffair.getInstance().setFlag(mContext, "bj_ad_open", templateItem.getTitle());
-                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_confirm");
-                        EventBus.getDefault().post(new showAdCallback("PreviewActivity"));
+                        Intent intent = new Intent(mContext, BuyVipActivity.class);
+                        startActivity(intent);
                         dialog.dismiss();
                     }
 
                     @Override
                     public void onCancelBtnClick(CommonMessageDialog dialog) {
-                        StatisticsEventAffair.getInstance().setFlag(mContext, "mb_ad_cancel", templateItem.getTitle());
-                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_cancel");
-                        dialog.dismiss();
+                                          dialog.dismiss();
                     }
 
-                })
-                .setDialogDismissListener(() -> mAdDialogIsShow = false)
-                .build().show();
+                }).build().show();
     }
 
     private void showMessageDialog() {
@@ -671,28 +667,31 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 CommonMessageDialog.AD_STATUS_BOTTOM : CommonMessageDialog.AD_STATUS_NONE;
 
         CommonMessageDialog.getBuilder(mContext)
-                .setContentView(R.layout.dialog_common_message_ad_under)
+                .setContentView(R.layout.dialog_common_message_vip_ad_under)
                 .setAdStatus(showAd)
                 .setAdId(AdConfigs.AD_IMAGE_DIALOG_OPEN_VIDEO)
                 .setTitle("亲爱的友友")
                 .setMessage("模板需要观看几秒广告")
                 .setMessage2("「看完后就能制作飞闪视频」")
-                .setPositiveButton("观看广告并制作")
-                .setNegativeButton("取消")
+                .setPositiveButton("成为VIP立即制作")
+                .setNegativeButton("观看广告并制作")
                 .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
-                        StatisticsEventAffair.getInstance().setFlag(mContext, "bj_ad_open", templateItem.getTitle());
-                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_confirm");
-                        EventBus.getDefault().post(new showAdCallback("PreviewActivity"));
+                        Intent intent = new Intent(mContext, BuyVipActivity.class);
+                        startActivity(intent);
                         dialog.dismiss();
                     }
 
                     @Override
                     public void onCancelBtnClick(CommonMessageDialog dialog) {
-                        StatisticsEventAffair.getInstance().setFlag(mContext, "mb_ad_cancel", templateItem.getTitle());
-                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_cancel");
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "bj_ad_open", templateItem.getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_confirm");
+                        EventBus.getDefault().post(new showAdCallback("PreviewActivity"));
                         dialog.dismiss();
+//                        StatisticsEventAffair.getInstance().setFlag(mContext, "mb_ad_cancel", templateItem.getTitle());
+//                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_cancel");
+//                        dialog.dismiss();
                     }
 
                 })
@@ -1475,6 +1474,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                             }
                         }
 
+                        @Override
                         public void onVideoAdClose() {
                             LogUtil.d("OOM4", "onVideoAdClose");
 //                        BaseConstans.TemplateHasWatchingAd = false;
