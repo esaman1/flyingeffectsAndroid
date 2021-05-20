@@ -26,11 +26,11 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.databinding.FagUserCenterBinding;
-import com.flyingeffects.com.enity.RequestMessage;
-import com.flyingeffects.com.enity.SystemMessageCountAllEntiy;
-import com.flyingeffects.com.enity.UserInfo;
-import com.flyingeffects.com.enity.messageCount;
+import com.flyingeffects.com.databinding.FragmentUserCenterBinding;
+import com.flyingeffects.com.entity.RequestMessage;
+import com.flyingeffects.com.entity.SystemMessageCountAllEntiy;
+import com.flyingeffects.com.entity.UserInfo;
+import com.flyingeffects.com.entity.messageCount;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -43,6 +43,7 @@ import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.AboutActivity;
+import com.flyingeffects.com.ui.view.activity.BuyVipActivity;
 import com.flyingeffects.com.ui.view.activity.EditInformationActivity;
 import com.flyingeffects.com.ui.view.activity.FansActivity;
 import com.flyingeffects.com.ui.view.activity.LikeActivity;
@@ -92,7 +93,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
 
     private UCrop.Options options;
     String systemMessageId = "";
-    private FagUserCenterBinding mBinding;
+    private FragmentUserCenterBinding mBinding;
 
     @Override
     protected int getContentLayout() {
@@ -101,7 +102,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
 
     @Override
     protected View getBindingView(LayoutInflater inflater, ViewGroup container) {
-        mBinding = FagUserCenterBinding.inflate(inflater, container, false);
+        mBinding = FragmentUserCenterBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
 
@@ -120,13 +121,14 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
         mBinding.llIconZan.setOnClickListener(this::onViewClicked);
         mBinding.llComment.setOnClickListener(this::onViewClicked);
         mBinding.llPrivateMessage.setOnClickListener(this::onViewClicked);
-        mBinding.llAttentionCount.setOnClickListener(this::onViewClicked);
-        mBinding.llVideoCount.setOnClickListener(this::onViewClicked);
+        mBinding.vAttention.setOnClickListener(this::onViewClicked);
+        mBinding.vVideo.setOnClickListener(this::onViewClicked);
         mBinding.ivPeeling.setOnClickListener(this::onViewClicked);
         mBinding.tvEditInformation.setOnClickListener(this::onViewClicked);
-        mBinding.llEditData.setOnClickListener(this::onViewClicked);
+        mBinding.tvIntroduction.setOnClickListener(this::onViewClicked);
         mBinding.tvGoLogin.setOnClickListener(this::onViewClicked);
         mBinding.ivAbout.setOnClickListener(this::onViewClicked);
+        mBinding.tvVipBtn.setOnClickListener(this::onViewClicked);
     }
 
     private void onViewClicked(View view) {
@@ -136,26 +138,34 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
             showComment();
         } else if (view == mBinding.llPrivateMessage) {
             showPrivateMessage();
-        } else if (view == mBinding.llAttentionCount) {
+        } else if (view == mBinding.vAttention) {
             onAttentionCount();
-        } else if (view == mBinding.llVideoCount) {
+        } else if (view == mBinding.vVideo) {
             showFansPage();
         } else if (view == mBinding.ivPeeling) {
             ActivityCompat.requestPermissions(getActivity(), PERMISSION_STORAGE, CODE_PEELING);
-        } else if (view == mBinding.llEditData || view == mBinding.tvEditInformation) {
+        } else if (view == mBinding.tvIntroduction || view == mBinding.tvEditInformation) {
             editInformation();
         } else if (view == mBinding.tvGoLogin) {
             toLogin();
         } else if (view == mBinding.ivAbout) {
             openAboutPage();
+        } else if (view == mBinding.tvVipBtn) {
+            startBuyVipActivity();
         }
+    }
+
+
+    private void startBuyVipActivity() {
+        Intent intent = new Intent(getActivity(), BuyVipActivity.class);
+        startActivity(intent);
     }
 
     private void showFansPage() {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             if (BaseConstans.hasLogin()) {
                 Intent intentFan = new Intent(getActivity(), FansActivity.class);
-                intentFan.putExtra("to_user_id", BaseConstans.GetUserId());
+                intentFan.putExtra("to_user_id", BaseConstans.getUserId());
                 intentFan.putExtra("from", 0);
                 startActivity(intentFan);
             } else {
@@ -194,10 +204,10 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             if (BaseConstans.hasLogin()) {
                 Intent intent = new Intent(getActivity(), MineFocusActivity.class);
-                intent.putExtra("to_user_id", BaseConstans.GetUserId());
+                intent.putExtra("to_user_id", BaseConstans.getUserId());
                 startActivity(intent);
             } else {
-                ToastUtil.showToast(getActivity().getResources().getString(R.string.need_login));
+                ToastUtil.showToast(getString(R.string.need_login));
             }
         }
     }
@@ -266,34 +276,30 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
             //未登陆
             if (BaseConstans.hasLogin()) {
                 mBinding.tvId.setVisibility(View.VISIBLE);
-                mBinding.tvId.setText("飞友号：" + BaseConstans.GetUserId());
+                mBinding.tvId.setText("飞友号：" + BaseConstans.getUserId());
                 mBinding.tvEditInformation.setVisibility(View.VISIBLE);
-                mBinding.llInfo.setVisibility(View.VISIBLE);
-                mBinding.llInfoRelated.setVisibility(View.VISIBLE);
-                mBinding.tvGoLogin.setVisibility(View.GONE);
-                mBinding.llNoLoginInfo.setVisibility(View.GONE);
-
+                mBinding.gVipShow.setVisibility(View.VISIBLE);
+                mBinding.gLoginShow.setVisibility(View.VISIBLE);
+                mBinding.gNoLoginInfo.setVisibility(View.GONE);
                 requestUserInfo();
                 requestMessageCount();
                 requestSystemMessageCount();
             } else {
-                mBinding.tvTopName.setText("未登录");
                 mBinding.tvId.setVisibility(View.GONE);
                 Glide.with(this)
                         .load(R.mipmap.head)
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                         .into(mBinding.ivHead);
-                mBinding.llInfo.setVisibility(View.GONE);
                 Glide.with(getActivity())
                         .load(R.mipmap.home_page_bj)
-                        .into(mBinding.imUserSkin);
+                        .into(mBinding.ivUserSkin);
                 mBinding.tvEditInformation.setVisibility(View.GONE);
-                mBinding.llInfoRelated.setVisibility(View.GONE);
-                mBinding.tvGoLogin.setVisibility(View.VISIBLE);
-                mBinding.llNoLoginInfo.setVisibility(View.VISIBLE);
+                mBinding.gVipShow.setVisibility(View.INVISIBLE);
+                mBinding.gLoginShow.setVisibility(View.GONE);
+                mBinding.gNoLoginInfo.setVisibility(View.VISIBLE);
             }
 
-            if(imageAdManager!=null){
+            if (imageAdManager != null) {
                 imageAdManager.adResume();
             }
         }
@@ -304,7 +310,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     @Override
     public void onPause() {
         super.onPause();
-        if(imageAdManager!=null){
+        if (imageAdManager != null) {
             imageAdManager.adPause();
         }
     }
@@ -317,7 +323,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
 
         fragHomePage fagLike = new fragHomePage();
         Bundle bundle1 = new Bundle();
-        bundle1.putSerializable("toUserId", BaseConstans.GetUserId());
+        bundle1.putSerializable("toUserId", BaseConstans.getUserId());
         bundle1.putSerializable("isFrom", 2);
         bundle1.putSerializable("fromTo", FromToTemplate.ISHOMEMYLIKE);
         fagLike.setArguments(bundle1);
@@ -343,7 +349,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
 
     private void requestSystemMessageCount() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("user_id", BaseConstans.GetUserId());
+        params.put("user_id", BaseConstans.getUserId());
         Observable ob = Api.getDefault().systemTotal(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<SystemMessageCountAllEntiy>(getActivity()) {
             @Override
@@ -369,7 +375,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     private void requestUserInfo() {
         if (getActivity() != null) {
             HashMap<String, String> params = new HashMap<>();
-            params.put("to_user_id", BaseConstans.GetUserId());
+            params.put("to_user_id", BaseConstans.getUserId());
             // 启动时间
             Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
             HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(getActivity()) {
@@ -381,7 +387,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
 
                 @Override
                 protected void onSubNext(UserInfo data) {
-                    Hawk.put("UserInfo", data);
+                    Hawk.put(UserInfo.USER_INFO_KEY, data);
                     if (getActivity() != null) {
                         mBinding.tvId.setText("飞友号：" + data.getId());
                         if (!TextUtils.isEmpty(data.getNickname())) {
@@ -390,7 +396,6 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                         } else {
                             mBinding.tvName.setVisibility(View.GONE);
                         }
-                        mBinding.tvTopName.setText(data.getNickname());
                         if (!TextUtils.isEmpty(data.getPhotourl())) {
                             Glide.with(getActivity())
                                     .load(data.getPhotourl())
@@ -403,26 +408,26 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                                     .into(mBinding.ivHead);
                         }
                         //创作的视频数量
-                        mBinding.fansCount.setText(data.getUser_video());
+                        mBinding.tvVideoCount.setText(data.getUser_video());
                         //我关注的数量
-                        mBinding.attentionCount.setText(data.getUser_watch());
+                        mBinding.tvAttentionCount.setText(data.getUser_watch());
                         //关注我的数量
-                        mBinding.tvVideoCount.setText(data.getUser_follower());
+                        mBinding.tvFansCount.setText(data.getUser_follower());
                         if (TextUtils.isEmpty(data.getSkin())) {
                             Glide.with(getActivity())
                                     .load(R.mipmap.home_page_bj)
-                                    .into(mBinding.imUserSkin);
+                                    .into(mBinding.ivUserSkin);
                         } else {
                             Glide.with(getActivity())
                                     .load(data.getSkin())
-                                    .into(mBinding.imUserSkin);
+                                    .into(mBinding.ivUserSkin);
                         }
                         if (!TextUtils.isEmpty(data.getRemark())) {
                             mBinding.tvIntroduction.setText(data.getRemark());
-                            mBinding.imEdit.setVisibility(View.GONE);
+                            mBinding.tvIntroduction.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
                         } else {
                             mBinding.tvIntroduction.setText("您还没有填写简介，点击编辑资料添加");
-                            mBinding.imEdit.setVisibility(View.VISIBLE);
+                            mBinding.tvIntroduction.setCompoundDrawablesRelativeWithIntrinsicBounds(R.mipmap.icon_edit, 0, 0, 0);
                         }
                     }
                     BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
@@ -503,7 +508,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                     protected void onSubNext(Object data) {
                         Glide.with(getActivity())
                                 .load(skinPath)
-                                .into(mBinding.imUserSkin);
+                                .into(mBinding.ivUserSkin);
                     }
                 }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
@@ -576,7 +581,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        if(imageAdManager!=null){
+        if (imageAdManager != null) {
             imageAdManager.adDestroy();
         }
     }
@@ -594,6 +599,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
      * 加载图片广告
      */
     ImageAdManager imageAdManager;
+
     private void loadImageAd() {
         imageAdManager = new ImageAdManager();
         imageAdManager.showImageAd(getActivity(), AdConfigs.APP_FUDONG, mBinding.llAdEntrance, null, new ImageAdCallBack() {

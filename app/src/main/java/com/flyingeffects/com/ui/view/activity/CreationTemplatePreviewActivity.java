@@ -17,8 +17,7 @@ import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
-import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.enity.showAdCallback;
+import com.flyingeffects.com.entity.VideoInfo;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -263,7 +262,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                         needWatchAd = true;
                     } else {
                         String[] str = config.split(",");
-                        String id = BaseConstans.GetUserId();
+                        String id = BaseConstans.getUserId();
                         String lastNum = (id.substring(id.length() - 1));
                         LogUtil.d("OOM2", "lastNum=" + lastNum);
                         for (String s : str) {

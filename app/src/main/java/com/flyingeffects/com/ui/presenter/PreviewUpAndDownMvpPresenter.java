@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.ui.interfaces.model.PreviewUpAndDownMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.PreviewUpAndDownMvpView;
 import com.flyingeffects.com.ui.model.PreviewUpAndDownMvpModel;

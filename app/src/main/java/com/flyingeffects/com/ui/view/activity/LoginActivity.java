@@ -1,6 +1,5 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -8,8 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Message;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -31,11 +28,11 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActLoginBinding;
-import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
-import com.flyingeffects.com.enity.HttpResult;
-import com.flyingeffects.com.enity.LoginToAttentionUserEvent;
-import com.flyingeffects.com.enity.UserInfo;
-import com.flyingeffects.com.enity.WxLogin;
+import com.flyingeffects.com.entity.BackgroundTemplateCollectionEvent;
+import com.flyingeffects.com.entity.HttpResult;
+import com.flyingeffects.com.entity.LoginToAttentionUserEvent;
+import com.flyingeffects.com.entity.UserInfo;
+import com.flyingeffects.com.entity.WxLogin;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -61,8 +58,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import cn.nt.lib.analytics.NTAnalytics;
 import de.greenrobot.event.EventBus;
@@ -343,9 +338,8 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-
     public void onViewClick(View view) {
-        if (view == mBinding.tvLogin){
+        if (view == mBinding.tvLogin) {
             if (nowProgressType == 0) {
                 if (isCanSendMsg) {
                     toRequestSms();
@@ -355,9 +349,9 @@ public class LoginActivity extends BaseActivity {
                 mBinding.tvLogin.setBackground(ContextCompat.getDrawable(mContext, R.drawable.login_button));
                 requestLogin();
             }
-        }else if (view == mBinding.ivClose){
+        } else if (view == mBinding.ivClose) {
             finish();
-        }else if (view == mBinding.llWeixin){
+        } else if (view == mBinding.llWeixin) {
             if (!isWeiXinAvailable(this)) {
                 ToastUtil.showToast("您还未安装微信");
             } else {
@@ -429,7 +423,7 @@ public class LoginActivity extends BaseActivity {
 
             @Override
             protected void onSubNext(UserInfo data) {
-                Hawk.put("UserInfo", data);
+                Hawk.put(UserInfo.USER_INFO_KEY, data);
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "requestLogin=" + str);
                 BaseConstans.SetUserToken(data.getToken());
@@ -473,7 +467,7 @@ public class LoginActivity extends BaseActivity {
                 @Override
                 protected void onSubNext(UserInfo data) {
                     if (!isOnDestroy) {
-                        Hawk.put("UserInfo", data);
+                        Hawk.put(UserInfo.USER_INFO_KEY, data);
                         //String str = StringUtil.beanToJSONString(data);
                         LogUtil.d("OOM", "setToken=" + data.getToken());
                         BaseConstans.SetUserToken(data.getToken());
@@ -489,9 +483,6 @@ public class LoginActivity extends BaseActivity {
         }
 
     }
-
-
-
 
 
     /***
@@ -642,8 +633,6 @@ public class LoginActivity extends BaseActivity {
         }
         return false;
     }
-
-
 
 
 }

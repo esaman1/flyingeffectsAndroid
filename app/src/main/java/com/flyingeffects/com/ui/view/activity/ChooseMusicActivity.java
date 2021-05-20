@@ -4,7 +4,6 @@ package com.flyingeffects.com.ui.view.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -15,8 +14,8 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.databinding.ActChooseMusicBinding;
-import com.flyingeffects.com.enity.CutSuccess;
-import com.flyingeffects.com.enity.FragmentHasSlide;
+import com.flyingeffects.com.entity.CutSuccess;
+import com.flyingeffects.com.entity.FragmentHasSlide;
 import com.flyingeffects.com.ui.view.fragment.ExtractAudioChooseMusicFragment;
 import com.flyingeffects.com.ui.view.fragment.RecentUpdateMusicFragment;
 import com.flyingeffects.com.utils.LogUtil;

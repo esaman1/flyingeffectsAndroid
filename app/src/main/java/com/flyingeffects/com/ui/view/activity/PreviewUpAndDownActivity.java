@@ -28,14 +28,14 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
 import com.flyingeffects.com.databinding.ActivityPreviewUpAndDownBinding;
-import com.flyingeffects.com.enity.CreateCutCallback;
-import com.flyingeffects.com.enity.DownVideoPath;
-import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.ReplayMessageEvent;
-import com.flyingeffects.com.enity.showAdCallback;
-import com.flyingeffects.com.enity.TemplateDataCollectRefresh;
-import com.flyingeffects.com.enity.templateDataZanRefresh;
+import com.flyingeffects.com.entity.CreateCutCallback;
+import com.flyingeffects.com.entity.DownVideoPath;
+import com.flyingeffects.com.entity.ListForUpAndDown;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.ReplayMessageEvent;
+import com.flyingeffects.com.entity.showAdCallback;
+import com.flyingeffects.com.entity.TemplateDataCollectRefresh;
+import com.flyingeffects.com.entity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -55,6 +55,7 @@ import com.flyingeffects.com.ui.model.initFaceSdkModel;
 import com.flyingeffects.com.ui.presenter.PreviewUpAndDownMvpPresenter;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
@@ -615,12 +616,44 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
-        if (!TextUtils.isEmpty(templateItem.getType()) && "1"
-                .equals(templateItem.getType()) && BaseConstans.getIncentiveVideo()&&!BaseConstans.getIsNewUser()) {
+        Log.d(TAG, "isVip = " + templateItem.getIs_vip());
+        if (!CheckVipOrAdUtils.checkIsVip()&&templateItem.getIs_vip() == 1) {
+            showVipDialog();
+        } else if (!TextUtils.isEmpty(templateItem.getType()) && "1"
+                .equals(templateItem.getType()) && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && !CheckVipOrAdUtils.checkIsVip()) {
             showMessageDialog();
         } else {
             hasLoginToNext();
         }
+
+    }
+
+    private void showVipDialog() {
+        CommonMessageDialog.getBuilder(mContext)
+                .setContentView(R.layout.dialog_common_message)
+                .setAdStatus(CommonMessageDialog.AD_STATUS_NONE)
+                .setTitle("改模板为VIP专享")
+                .setPositiveButton("成为VIP立即制作")
+                .setNegativeButton("再想想")
+                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                    @Override
+                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "bj_ad_open", templateItem.getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_confirm");
+                        EventBus.getDefault().post(new showAdCallback("PreviewActivity"));
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "mb_ad_cancel", templateItem.getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_cancel");
+                        dialog.dismiss();
+                    }
+
+                })
+                .setDialogDismissListener(() -> mAdDialogIsShow = false)
+                .build().show();
     }
 
     private void showMessageDialog() {
@@ -735,7 +768,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 bjMp3Duration = Float.parseFloat(templateItem.getVideotime());
                 LogUtil.d("OOM", "bj.mp3=" + TemplateFilePath);
                 bjMp3 = TemplateFilePath + File.separator + "bj.mp3";
-                if (mOldFromTo.equals(FromToTemplate.FACEGIF)||mOldFromTo.equals(FromToTemplate.TEMPLATESPECIAL)) {
+                if (mOldFromTo.equals(FromToTemplate.FACEGIF) || mOldFromTo.equals(FromToTemplate.TEMPLATESPECIAL)) {
                     //闪图表情包不需要跟随音乐拍摄
                     AlbumManager.chooseAlbum(this, defaultnum, SELECTALBUM, this, "");
                 } else {
@@ -879,9 +912,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      * creation date: 2021/5/6
      * user : zhangtongju
      */
-    private void updateFromToData(NewFragmentTemplateItem data ){
+    private void updateFromToData(NewFragmentTemplateItem data) {
         //如果模板是来自一键模板，但是模板类型是背景，那么修改状态值
-        if(!data.isHasShowAd()){
+        if (!data.isHasShowAd()) {
             if (!TextUtils.isEmpty(templateItem.getPre_url())) {
                 mOldFromTo = FromToTemplate.ISBJ;
             }
@@ -1016,10 +1049,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     StatisticsEventAffair.getInstance().setFlag(this, "8_Selectvideo");
                     mMvpPresenter.DownVideo(templateItem.getVidoefile(), "", templateItem.getId() + "", false);
                 } else {
-                    if(templateItem.getApi_type()!=0&&mOldFromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)){
+                    if (templateItem.getApi_type() != 0 && mOldFromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
                         //搜索特殊模板的情况，这里比较特殊，模板都是直接旋转素材，而不需要现在zip
                         AlbumManager.chooseImageAlbum(this, templateItem.getDefaultnum(), SELECTALBUMFROMDressUp, this, "");
-                    }else{
+                    } else {
                         if (mOldFromTo.equals(FromToTemplate.ISSEARCHBJ) || mOldFromTo.equals(FromToTemplate.ISSEARCHTEMPLATE)) {
                             StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "4_search_make", templateItem.getTitle());
                         }
@@ -1139,13 +1172,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         }
                     } else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
                         int api_type = templateItem.getApi_type();
-                        mMvpPresenter.ToDressUpSpecial(paths, api_type, templateId, templateItem.getTitle(),templateItem.getType());
-                    }else if (mOldFromTo.equals(FromToTemplate.TEMPLATESPECIAL1)) {
+                        mMvpPresenter.ToDressUpSpecial(paths, api_type, templateId, templateItem.getTitle(), templateItem.getType());
+                    } else if (mOldFromTo.equals(FromToTemplate.TEMPLATESPECIAL1)) {
                         int api_type = templateItem.getApi_type();
-                        mMvpPresenter.ToTemplateAddStickerActivity(paths, templateItem.getTitle(), templateId,api_type,templateItem.getType());
-                    }
-
-                    else if (templateItem.getIs_anime() == 1) {
+                        mMvpPresenter.ToTemplateAddStickerActivity(paths, templateItem.getTitle(), templateId, api_type, templateItem.getType());
+                    } else if (templateItem.getIs_anime() == 1) {
                         //模板换装新逻辑
                         DressUpModel dressUpModel = new DressUpModel(this, paths1 -> mMvpPresenter.GetDressUpPath(paths1), true);
                         dressUpModel.toDressUp(paths.get(0), templateId);
@@ -1414,19 +1445,19 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
      */
     @Subscribe
     public void onEventMainThread(showAdCallback event) {
-        if(!DoubleClick.getInstance().isFastZDYDoubleClick(200)){
+        if (!DoubleClick.getInstance().isFastZDYDoubleClick(200)) {
             if (event != null && "PreviewActivity".equals(event.getIsFrom())) {
                 //需要激励视频
                 BaseConstans.TemplateHasWatchingAd = false;
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     VideoAdManager videoAdManager = new VideoAdManager();
                     String adId;
-                    if(TextUtils.equals(mOldFromTo, FromToTemplate.DRESSUP)){
-                        adId= AdConfigs.AD_DRESSUP_video;
-                    }else if(TextUtils.equals(mOldFromTo, FromToTemplate.ISBJ)){
-                        adId= AdConfigs.AD_stimulate_video_bj;
-                    }else{
-                        adId= AdConfigs.AD_stimulate_video;
+                    if (TextUtils.equals(mOldFromTo, FromToTemplate.DRESSUP)) {
+                        adId = AdConfigs.AD_DRESSUP_video;
+                    } else if (TextUtils.equals(mOldFromTo, FromToTemplate.ISBJ)) {
+                        adId = AdConfigs.AD_stimulate_video_bj;
+                    } else {
+                        adId = AdConfigs.AD_stimulate_video;
                     }
                     videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
                         @Override

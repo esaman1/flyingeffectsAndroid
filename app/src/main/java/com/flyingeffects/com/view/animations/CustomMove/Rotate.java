@@ -1,6 +1,5 @@
 package com.flyingeffects.com.view.animations.CustomMove;
 
-import com.flyingeffects.com.enity.TransplationPos;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.Layer;

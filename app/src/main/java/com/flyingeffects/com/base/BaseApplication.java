@@ -11,7 +11,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.anchortask.AnchorTaskCreator;
 import com.flyingeffects.com.base.anchortask.TaskNameConstants;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.isIntoBackground;
+import com.flyingeffects.com.entity.isIntoBackground;
 import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
 import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;

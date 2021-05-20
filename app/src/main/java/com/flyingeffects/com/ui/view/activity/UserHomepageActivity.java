@@ -14,8 +14,8 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.AttentionChange;
-import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.entity.AttentionChange;
+import com.flyingeffects.com.entity.UserInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -113,7 +113,7 @@ public class UserHomepageActivity extends BaseActivity {
 
         StatisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_Homepage");
         toUserId = getIntent().getStringExtra("toUserId");
-        if(toUserId.equals(BaseConstans.GetUserId())){
+        if(toUserId.equals(BaseConstans.getUserId())){
             tv_focus.setVisibility(View.GONE);
         }
     }

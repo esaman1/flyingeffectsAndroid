@@ -1,7 +1,6 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.StickerList;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 
 import java.util.List;

@@ -3,7 +3,7 @@ package com.flyingeffects.com.ui.presenter;
 import android.content.Context;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.ui.interfaces.model.homeItemMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
 import com.flyingeffects.com.ui.model.home_fag_itemMvpModel;

@@ -3,14 +3,13 @@ package com.flyingeffects.com.view.animations.CustomMove;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 
-import com.flyingeffects.com.enity.TransplationPos;
+import com.flyingeffects.com.entity.TransplationPos;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.SubLayer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;

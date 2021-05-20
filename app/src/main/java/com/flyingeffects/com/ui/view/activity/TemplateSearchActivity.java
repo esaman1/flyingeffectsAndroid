@@ -20,9 +20,9 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActTemplateSearchBinding;
-import com.flyingeffects.com.enity.SearchKeyWord;
-import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
-import com.flyingeffects.com.enity.SendSearchText;
+import com.flyingeffects.com.entity.SearchKeyWord;
+import com.flyingeffects.com.entity.SearchTemplateInfoEntity;
+import com.flyingeffects.com.entity.SendSearchText;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -47,7 +47,6 @@ import java.util.List;
 
 import androidx.fragment.app.Fragment;
 
-import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 

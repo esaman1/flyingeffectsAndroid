@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.entity.ConfigForTemplateList;
 import com.flyingeffects.com.http.Url;
 import com.flyingeffects.com.http.abc;
 import com.flyingeffects.com.manager.SPHelper;
@@ -30,6 +30,7 @@ public class BaseConstans {
      * 抖音分享ClientKey
      */
     public static final String DOUYINSHARE_CLIENTKEY = "awikd2g333hd0ien";
+    public static final int MAP_DEFAULT_INITIAL_CAPACITY = 16;
 
 
     /**
@@ -53,7 +54,7 @@ public class BaseConstans {
     /**
      * 是否是正式环境
      */
-    public static final boolean PRODUCTION = true;
+    public static final boolean PRODUCTION = false;
     public static final boolean DEBUG = BuildConfig.DEBUG;
     private static String channel = "";
     private static String versionCode = "";
@@ -123,7 +124,7 @@ public class BaseConstans {
     }
 
 
-    public static String GetUserId() {
+    public static String getUserId() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("userId", "");
     }

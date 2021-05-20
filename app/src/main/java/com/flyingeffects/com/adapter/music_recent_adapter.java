@@ -15,7 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.ChooseMusic;
+import com.flyingeffects.com.entity.ChooseMusic;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;

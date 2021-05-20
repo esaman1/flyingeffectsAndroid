@@ -5,10 +5,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -22,10 +22,11 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.TemplateDown;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.enity.SecondChoosePageListener;
-import com.flyingeffects.com.enity.fromKuaishou;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.databinding.FagBjBinding;
+import com.flyingeffects.com.entity.FirstLevelTypeEntity;
+import com.flyingeffects.com.entity.SecondChoosePageListener;
+import com.flyingeffects.com.entity.fromKuaishou;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -51,7 +52,6 @@ import com.shixing.sxve.ui.AlbumType;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
@@ -61,50 +61,28 @@ import rx.functions.Action1;
 
 
 /**
- * user :TongJu  ;描述：背景页面
+ * ;描述：背景页面
  * 时间：2018/4/24
+ * @author  TongJu
  **/
 
 public class BackgroundFragment extends BaseFragment implements FagBjMvpView, AppBarLayout.OnOffsetChangedListener {
     private static final String TAG = "BackgroundFragment";
 
-    @BindView(R.id.viewpager)
-    ViewPager viewPager;
-
-    @BindView(R.id.tl_tabs_bj)
-    TabLayout tl_tabs_bj;
-
-
-    @BindView(R.id.ll_expand)
-    RelativeLayout ll_expand;
-
-    @BindView(R.id.ll_close)
-    RelativeLayout ll_close;
-
-
-    @BindView(R.id.view_top)
-    TextView view_top;
-
-
-    @BindView(R.id.appbar)
-    AppBarLayout appbar;
-
-
     private FagBjMvpPresenter presenter;
     public final static int SELECTALBUM = 1;
 
-
     private List<FirstLevelTypeEntity> data;
-
 
     private int lastViewPagerChoosePosition;
 
     private NewFragmentTemplateItem template_item;
     private LoadingDialog mLoadingDialog;
+    private FagBjBinding mBinding;
 
     @Override
     protected int getContentLayout() {
-        return R.layout.fag_bj;
+        return 0;
     }
 
     @Override
@@ -113,7 +91,19 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         presenter = new FagBjMvpPresenter(getActivity(), this);
         presenter.requestData();
         mLoadingDialog = buildLoadingDialog();
-        appbar.addOnOffsetChangedListener(this);
+        mBinding.appbar.addOnOffsetChangedListener(this);
+    }
+
+    @Override
+    protected View getBindingView(LayoutInflater inflater, ViewGroup container) {
+        mBinding = FagBjBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mBinding = null;
     }
 
     private LoadingDialog buildLoadingDialog() {
@@ -188,9 +178,9 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     }
                 }
                 home_vp_frg_adapter2 adapter = new home_vp_frg_adapter2(getFragmentManager(), list);
-                viewPager.setAdapter(adapter);
-                viewPager.setOffscreenPageLimit(1);
-                viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                mBinding.viewpager.setAdapter(adapter);
+                mBinding.viewpager.setOffscreenPageLimit(1);
+                mBinding.viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int i, float v, int i1) {
                     }
@@ -222,11 +212,11 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                         LogUtil.d("OOM", "i=" + i);
                     }
                 });
-                tl_tabs_bj.setupWithViewPager(viewPager);
+                mBinding.tlTabsBj.setupWithViewPager(mBinding.viewpager);
 
-                for (int i = 0; i < tl_tabs_bj.getTabCount(); i++) {
-                    tl_tabs_bj.getTabAt(i).setCustomView(R.layout.item_home_tab);
-                    View view = tl_tabs_bj.getTabAt(i).getCustomView();
+                for (int i = 0; i <  mBinding.tlTabsBj.getTabCount(); i++) {
+                    mBinding.tlTabsBj.getTabAt(i).setCustomView(R.layout.item_home_tab);
+                    View view =  mBinding.tlTabsBj.getTabAt(i).getCustomView();
                     AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
                     tvTabText.setText(data.get(i).getName());
                     tvTabText.setTextColor(Color.parseColor("#797979"));
@@ -235,7 +225,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                         tvTabText.setTextColor(Color.parseColor("#ffffff"));
                     }
                 }
-                tl_tabs_bj.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                mBinding.tlTabsBj.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                     @Override
                     public void onTabSelected(TabLayout.Tab tab) {
                         View view = tab.getCustomView();
@@ -331,7 +321,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         if (data.size() != 0) {
             StatisticsEventAffair.getInstance().setFlag(getActivity(), "13_back_tab_click", data.get(showWitch).getName());
         }
-        viewPager.setCurrentItem(showWitch);
+        mBinding.viewpager.setCurrentItem(showWitch);
     }
 
     private void setViewWidth(View mView, int width) {
@@ -461,6 +451,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
     /**
      * 前往影集页面
+     *
      * @param item
      * @param templateFilePath
      */
@@ -472,7 +463,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     Intent intent = new Intent(getActivity(), TemplateActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putStringArrayList("paths", (ArrayList<String>) paths);
-                    LogUtil.d(TAG,"paths.size = "+paths.size());
+                    LogUtil.d(TAG, "paths.size = " + paths.size());
                     bundle.putInt("isPicNum", 20);
                     bundle.putString("fromTo", FromToTemplate.PICTUREALBUM);
                     bundle.putInt("picout", 0);
@@ -533,17 +524,17 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         float percentage = percentagef * 100;
         int percent = (int) percentage;
         int topPercent = 100 - percent;
-        view_top.getBackground().setAlpha(topPercent + 30);
+        mBinding.viewTop.tvViewMask.getBackground().setAlpha(topPercent + 30);
         if (offset <= total * 2 / 3) {
-            ll_expand.setScaleY(percentagef);
-            ll_expand.setVisibility(View.VISIBLE);
-            ll_close.setVisibility(View.GONE);
-            ll_expand.bringToFront();
+            mBinding.llExpand.setScaleY(percentagef);
+            mBinding.llExpand.setVisibility(View.VISIBLE);
+            mBinding.llClose.setVisibility(View.GONE);
+            mBinding.llExpand.bringToFront();
         } else {
-            ll_expand.setScaleY(1);
-            ll_expand.setVisibility(View.GONE);
-            ll_close.setVisibility(View.VISIBLE);
-            ll_close.bringToFront();
+            mBinding.llExpand.setScaleY(1);
+            mBinding.llExpand.setVisibility(View.GONE);
+            mBinding.llClose.setVisibility(View.VISIBLE);
+            mBinding.llClose.bringToFront();
         }
     }
 

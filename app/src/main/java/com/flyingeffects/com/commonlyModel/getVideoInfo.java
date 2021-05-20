@@ -2,8 +2,7 @@ package com.flyingeffects.com.commonlyModel;
 
 import android.media.MediaPlayer;
 
-import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.entity.VideoInfo;
 import com.lansosdk.videoeditor.MediaInfo;
 
 import java.io.IOException;

@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
@@ -16,9 +14,9 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActLikeBinding;
-import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.MineCommentEnity;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.ListForUpAndDown;
+import com.flyingeffects.com.entity.MineCommentEnity;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -26,13 +24,11 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.BindView;
 import rx.Observable;
 
 /**

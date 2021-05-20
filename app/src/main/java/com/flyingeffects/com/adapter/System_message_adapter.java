@@ -5,10 +5,9 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.systemessagelist;
+import com.flyingeffects.com.entity.systemessagelist;
 
 import java.util.List;
 

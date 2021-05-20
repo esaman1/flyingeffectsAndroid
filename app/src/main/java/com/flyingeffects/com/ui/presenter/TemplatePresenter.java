@@ -4,8 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
-import com.flyingeffects.com.enity.TemplateThumbItem;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.TemplateThumbItem;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.TemplateMvpView;
 import com.flyingeffects.com.ui.model.TemplateMvpModel;

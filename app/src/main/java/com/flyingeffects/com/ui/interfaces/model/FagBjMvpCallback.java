@@ -1,7 +1,7 @@
 package com.flyingeffects.com.ui.interfaces.model;
 
-import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.FirstLevelTypeEntity;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 
 import java.util.List;
 

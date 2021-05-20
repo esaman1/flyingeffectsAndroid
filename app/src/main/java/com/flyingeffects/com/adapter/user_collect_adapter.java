@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.user_collect;
+import com.flyingeffects.com.entity.user_collect;
 import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.List;

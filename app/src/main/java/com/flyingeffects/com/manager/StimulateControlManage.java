@@ -3,7 +3,7 @@ package com.flyingeffects.com.manager;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.entity.UserInfo;
 import com.flyingeffects.com.utils.LogUtil;
 import com.orhanobut.hawk.Hawk;
 

@@ -1,6 +1,6 @@
 package com.flyingeffects.com.ui.interfaces.view;
 
-import com.flyingeffects.com.enity.FirstLevelTypeEntity;
+import com.flyingeffects.com.entity.FirstLevelTypeEntity;
 
 import java.util.List;
 

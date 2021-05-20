@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.systemessagelist;
+import com.flyingeffects.com.entity.systemessagelist;
 
 import java.util.List;
 

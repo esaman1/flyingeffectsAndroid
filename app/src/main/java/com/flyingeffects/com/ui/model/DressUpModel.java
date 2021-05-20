@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.entity.HumanMerageResult;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;

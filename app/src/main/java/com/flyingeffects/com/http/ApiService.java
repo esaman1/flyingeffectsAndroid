@@ -1,30 +1,32 @@
 package com.flyingeffects.com.http;
 
-import com.flyingeffects.com.enity.ChooseMusic;
-import com.flyingeffects.com.enity.Config;
-import com.flyingeffects.com.enity.ConfigForTemplateList;
-import com.flyingeffects.com.enity.DressUpSpecial;
-import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.enity.FontEnity;
-import com.flyingeffects.com.enity.HttpResult;
-import com.flyingeffects.com.enity.HumanMerageResult;
-import com.flyingeffects.com.enity.ImageFrameEntity;
-import com.flyingeffects.com.enity.MessageData;
-import com.flyingeffects.com.enity.MineCommentEnity;
-import com.flyingeffects.com.enity.MineZanEnity;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
-import com.flyingeffects.com.enity.SearchUserEntity;
-import com.flyingeffects.com.enity.StickerList;
-import com.flyingeffects.com.enity.StickerTypeEntity;
-import com.flyingeffects.com.enity.SystemMessageCountAllEntiy;
-import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
-import com.flyingeffects.com.enity.UserInfo;
-import com.flyingeffects.com.enity.VideoFusiomBean;
-import com.flyingeffects.com.enity.checkVersion;
-import com.flyingeffects.com.enity.fansEnity;
-import com.flyingeffects.com.enity.messageCount;
-import com.flyingeffects.com.enity.systemessagelist;
+import com.flyingeffects.com.entity.ChooseMusic;
+import com.flyingeffects.com.entity.Config;
+import com.flyingeffects.com.entity.ConfigForTemplateList;
+import com.flyingeffects.com.entity.DressUpSpecial;
+import com.flyingeffects.com.entity.FirstLevelTypeEntity;
+import com.flyingeffects.com.entity.FontEnity;
+import com.flyingeffects.com.entity.HttpResult;
+import com.flyingeffects.com.entity.HumanMerageResult;
+import com.flyingeffects.com.entity.ImageFrameEntity;
+import com.flyingeffects.com.entity.MessageData;
+import com.flyingeffects.com.entity.MineCommentEnity;
+import com.flyingeffects.com.entity.MineZanEnity;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.PayEntity;
+import com.flyingeffects.com.entity.PriceListEntity;
+import com.flyingeffects.com.entity.SearchTemplateInfoEntity;
+import com.flyingeffects.com.entity.SearchUserEntity;
+import com.flyingeffects.com.entity.StickerList;
+import com.flyingeffects.com.entity.StickerTypeEntity;
+import com.flyingeffects.com.entity.SystemMessageCountAllEntiy;
+import com.flyingeffects.com.entity.SystemMessageDetailAllEnity;
+import com.flyingeffects.com.entity.UserInfo;
+import com.flyingeffects.com.entity.VideoFusiomBean;
+import com.flyingeffects.com.entity.checkVersion;
+import com.flyingeffects.com.entity.fansEnity;
+import com.flyingeffects.com.entity.messageCount;
+import com.flyingeffects.com.entity.systemessagelist;
 
 import java.util.List;
 import java.util.Map;
@@ -422,10 +424,19 @@ public interface ApiService {
     @POST("/api/Api/test")
     Observable<HttpResult<DressUpSpecial>> ApiTest(@FieldMap Map<String,String> params);
 
+    /**
+     * 价格列表-购买会员
+     */
+    @FormUrlEncoded
+    @POST("/api/order/goodsList")
+    Observable<HttpResult<List<PriceListEntity>>> getVipPriceList(@FieldMap Map<String, String> params);
 
-
-
-
+    /**
+     * 提交订单
+     */
+    @FormUrlEncoded
+    @POST("/api/order/addorder")
+    Observable<HttpResult<PayEntity>> addOrder(@FieldMap Map<String, String> params);
 
 
 }

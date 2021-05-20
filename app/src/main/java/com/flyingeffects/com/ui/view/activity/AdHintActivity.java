@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.showAdCallback;
+import com.flyingeffects.com.entity.showAdCallback;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.FromToTemplate;

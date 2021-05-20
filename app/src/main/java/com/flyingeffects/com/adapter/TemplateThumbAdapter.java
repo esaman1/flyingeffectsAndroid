@@ -14,7 +14,7 @@ import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.GetPathType;
-import com.flyingeffects.com.enity.TemplateThumbItem;
+import com.flyingeffects.com.entity.TemplateThumbItem;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 import com.shixing.sxve.ui.AlbumType;
 

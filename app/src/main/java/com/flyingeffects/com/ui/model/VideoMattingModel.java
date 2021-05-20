@@ -12,7 +12,7 @@ import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
-import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.entity.VideoInfo;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.FileManager;
@@ -31,7 +31,6 @@ import com.lansosdk.box.LSOBitmapAsset;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.view.WaitingDialogProgressNowAnim;
 
 import java.io.File;
 import java.util.List;

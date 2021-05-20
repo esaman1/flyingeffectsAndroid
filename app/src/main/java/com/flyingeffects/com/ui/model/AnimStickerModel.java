@@ -2,7 +2,7 @@ package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
 
-import com.flyingeffects.com.enity.StickerForParents;
+import com.flyingeffects.com.entity.StickerForParents;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.ViewLayerRelativeLayout;
 

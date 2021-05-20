@@ -14,7 +14,8 @@ android {
         }
 
         realse {
-            storeFile file('D:\\key2\\feishan.jks')
+            //storeFile file('D:\\key2\\feishan.jks')
+            storeFile file('feishan.jks')
             storePassword 'android'
             keyAlias = 'jujuname'
             keyPassword 'android'
@@ -100,6 +101,9 @@ dependencies {
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation project(path: ':faceunity')
     implementation project(path: ':horizontalselectedviewlibrary')
+    implementation project(path: ':paylib')
+
+
     testImplementation 'junit:junit:4.13.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'

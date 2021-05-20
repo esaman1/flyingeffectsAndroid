@@ -11,9 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.flyingeffects.com.enity.CommonNewsBean;
-import com.flyingeffects.com.enity.HomeChoosePageListener;
-import com.flyingeffects.com.enity.SecondChoosePageListener;
+import com.flyingeffects.com.entity.CommonNewsBean;
+import com.flyingeffects.com.entity.HomeChoosePageListener;
+import com.flyingeffects.com.entity.SecondChoosePageListener;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;

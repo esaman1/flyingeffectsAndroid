@@ -1,5 +1,6 @@
 package com.flyingeffects.com.utils;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -195,4 +196,88 @@ public class TimeUtils {
     public static long millis2Days(long millis, TimeZone timeZone) {
         return (((long) timeZone.getOffset(millis)) + millis) / 86400000;
     }
+
+    public static String formatTheDate(String dateStr) {
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+
+//        Date date1 = new Date();
+//        LogUtils.d("date", "date1 = " + date1.getTime());
+//        String dateReturn = simpleDateFormat.format(date);
+//        LogUtils.d("date", "dateReturn = " + dateReturn);
+//        return dateReturn;
+
+        long dateLong = Long.parseLong(dateStr);
+        dateLong = dateLong * 1000;
+        return getDateTime(dateLong);
+    }
+
+    public static String formatTheDate(long date) {
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+
+//        Date date1 = new Date();
+//        LogUtils.d("date", "date1 = " + date1.getTime());
+//        String dateReturn = simpleDateFormat.format(date);
+//        LogUtils.d("date", "dateReturn = " + dateReturn);
+//        return dateReturn;
+
+        long dateLong = date * 1000;
+        return getDateTime(dateLong);
+    }
+
+    public static String formatTheDateHour(String dateStr) {
+        long dateLong = Long.parseLong(dateStr);
+        dateLong = dateLong * 1000;
+        return getDateTimeHour(dateLong);
+    }
+
+    public static String formatTheDateHour(long date) {
+        long dateLong = date * 1000;
+        return getDateTimeHour(dateLong);
+    }
+
+
+    /**
+     * long转换成字符串日期
+     *
+     * @return yyyy-MM-dd HH:mm:ss
+     */
+    private static String getDateTime(long longTime) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateToString(new Date(longTime), dateFormat);
+    }
+
+    /**
+     * long转换成字符串日期
+     *
+     * @return yyyy-MM-dd HH:mm:ss
+     */
+    private static String getDateTimeHour(long longTime) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return dateToString(new Date(longTime), dateFormat);
+    }
+
+    /**
+     * 日期类型转换成字符串类型
+     *
+     * @param date       日期
+     * @param dateFormat 日期格式
+     * @return 日期字符串
+     */
+    private static String dateToString(Date date, DateFormat dateFormat) {
+        return dateFormat.format(date);
+    }
+
+    /**
+     * 判断两个时间戳是否为同一天
+     *
+     * @param millis1
+     * @param millis2
+     * @param timeZone
+     * @return
+     */
+    public static boolean isSameDay(long millis1, long millis2, TimeZone timeZone) {
+        long interval = millis1 - millis2;
+        return interval < 86400000 && interval > -86400000 && millis2Days(millis1, timeZone) == millis2Days(millis2, timeZone);
+    }
+
 }
