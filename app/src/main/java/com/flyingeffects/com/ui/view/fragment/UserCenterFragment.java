@@ -476,7 +476,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
             vipBtnStr = "立即开通";
             mBinding.tvAvatarVipIcon.setVisibility(View.INVISIBLE);
         }
-        mBinding.tvVipTimeText.setText(vipDateStr);
+        mBinding.tvVipTimeText.setText(vipDateStr+"到期");
         mBinding.tvVipBtn.setText(vipBtnStr);
         mBinding.tvAvatarVipIcon.setText(vipIconStr);
     }
