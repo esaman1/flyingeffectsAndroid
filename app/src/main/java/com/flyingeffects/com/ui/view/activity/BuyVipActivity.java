@@ -123,11 +123,12 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
                     .into(mBinding.ivAvatar);
             mBinding.tvUserName.setText(userInfo.getNickname());
             mBinding.tvUserId.setText(MessageFormat.format("飞友号：{0}", userInfo.getId()));
-            setVipGradeText(userInfo.getIs_vip(), userInfo.getVip_grade());
+            String vipGradeStr = getVipGradeText(userInfo.getIs_vip(), userInfo.getVip_grade());
+            mBinding.tvIsOpen.setText(vipGradeStr);
         }
     }
 
-    private void setVipGradeText(int isVip, int vipGrade) {
+    private String getVipGradeText(int isVip, int vipGrade) {
         String vipGradeStr = "";
         if (isVip == CheckVipOrAdUtils.IS_VIP) {
             switch (vipGrade) {
@@ -147,7 +148,7 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
         } else {
             vipGradeStr = "暂未开通";
         }
-        mBinding.tvIsOpen.setText(vipGradeStr);
+        return vipGradeStr;
     }
 
     @Override
@@ -199,14 +200,14 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
             finish();
         } else if (view == mBinding.tvOpenVip) {
             mPresenter.createOrder();
-        }else if (view == mBinding.tvProblem){
+        } else if (view == mBinding.tvProblem) {
             showProblemDialog();
         }
     }
 
     private void showProblemDialog() {
-        OpenWechatUtils.showOpenWxDialog(mContext,CommonMessageDialog.AD_STATUS_NONE
-        ,"飞闪提示","友友您好，已经为您复制微信号，留言说明问题","打开微信");
+        OpenWechatUtils.showOpenWxDialog(mContext, CommonMessageDialog.AD_STATUS_NONE
+                , "飞闪提示", "友友您好，已经为您复制微信号，留言说明问题", "打开微信");
     }
 
 

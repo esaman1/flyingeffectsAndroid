@@ -242,7 +242,7 @@ public class TimeUtils {
      * @return yyyy-MM-dd HH:mm:ss
      */
     private static String getDateTime(long longTime) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd");
         return dateToString(new Date(longTime), dateFormat);
     }
 

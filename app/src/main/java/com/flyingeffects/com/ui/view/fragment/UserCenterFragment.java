@@ -51,10 +51,12 @@ import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.MineFocusActivity;
 import com.flyingeffects.com.ui.view.activity.SystemMessageDetailActivity;
 import com.flyingeffects.com.ui.view.activity.ZanActivity;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.StringUtil;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.UCropOption;
 import com.google.android.material.appbar.AppBarLayout;
@@ -122,7 +124,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
         mBinding.llComment.setOnClickListener(this::onViewClicked);
         mBinding.llPrivateMessage.setOnClickListener(this::onViewClicked);
         mBinding.vAttention.setOnClickListener(this::onViewClicked);
-        mBinding.vVideo.setOnClickListener(this::onViewClicked);
+        mBinding.vFans.setOnClickListener(this::onViewClicked);
         mBinding.ivPeeling.setOnClickListener(this::onViewClicked);
         mBinding.tvEditInformation.setOnClickListener(this::onViewClicked);
         mBinding.tvIntroduction.setOnClickListener(this::onViewClicked);
@@ -140,7 +142,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
             showPrivateMessage();
         } else if (view == mBinding.vAttention) {
             onAttentionCount();
-        } else if (view == mBinding.vVideo) {
+        } else if (view == mBinding.vFans) {
             showFansPage();
         } else if (view == mBinding.ivPeeling) {
             ActivityCompat.requestPermissions(getActivity(), PERMISSION_STORAGE, CODE_PEELING);
@@ -431,9 +433,52 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                         }
                     }
                     BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
+                    startVipInfo(data);
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
         }
+    }
+
+    private static final String TAG = "UserCenterFragment";
+
+    private void startVipInfo(UserInfo data) {
+        String vipBtnStr = "";
+        String vipDateStr = "";
+        String vipIconStr = "";
+        vipDateStr = TimeUtils.formatTheDate(data.getVip_end_time());
+        Log.d(TAG, "vipEndTime = " + vipDateStr);
+        if (data.getIs_vip() == CheckVipOrAdUtils.IS_VIP) {
+            mBinding.tvAvatarVipIcon.setVisibility(View.VISIBLE);
+            switch (data.getVip_grade()) {
+                case CheckVipOrAdUtils.VIP_GRADE_MONTH:
+                    vipBtnStr = "立即续费";
+                    vipDateStr = TimeUtils.formatTheDate(data.getVip_end_time());
+                    vipIconStr = "月";
+                    break;
+                case CheckVipOrAdUtils.VIP_GRADE_YEAR:
+                    vipBtnStr = "立即续费";
+                    vipDateStr = TimeUtils.formatTheDate(data.getVip_end_time());
+                    vipIconStr = "年";
+                    break;
+                case CheckVipOrAdUtils.VIP_GRADE_FOREVER:
+                    vipBtnStr = "会员中心";
+                    vipDateStr = "永久会员";
+                    vipIconStr = "永久";
+                    break;
+                default:
+                    vipDateStr = "永久会员";
+                    vipBtnStr = "会员中心";
+                    vipIconStr = "永久";
+                    break;
+            }
+        } else {
+            vipDateStr = "解锁模板，无视频无广告";
+            vipBtnStr = "立即开通";
+            mBinding.tvAvatarVipIcon.setVisibility(View.INVISIBLE);
+        }
+        mBinding.tvVipTimeText.setText(vipDateStr);
+        mBinding.tvVipBtn.setText(vipBtnStr);
+        mBinding.tvAvatarVipIcon.setText(vipIconStr);
     }
 
     @Override

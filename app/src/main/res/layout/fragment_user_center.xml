@@ -85,6 +85,25 @@
                     app:layout_constraintVertical_bias="0.35" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_avatar_vip_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_vip_float_button"
+                    android:drawableStart="@mipmap/ic_vip_mini"
+                    android:drawablePadding="@dimen/dp_3"
+                    android:paddingStart="@dimen/dp_5"
+                    android:paddingTop="@dimen/dp_3"
+                    android:paddingEnd="@dimen/dp_5"
+                    android:paddingBottom="@dimen/dp_3"
+                    android:text="月"
+                    android:textColor="@color/color_vip_text"
+                    android:textSize="@dimen/sp_12"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_head"
+                    app:layout_constraintEnd_toEndOf="@id/iv_head"
+                    app:layout_constraintStart_toStartOf="@id/iv_head"
+                    app:layout_constraintTop_toBottomOf="@id/iv_head" />
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_edit_information"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -313,7 +332,7 @@
                     android:layout_height="wrap_content"
                     app:constraint_referenced_ids="tv_video_count,tv_video,
                     tv_attention_count,tv_attention,tv_fans_count,
-                    tv_fans,tv_comment_count_add,v_video,v_attention,v_fans
+                    tv_fans,v_video,v_attention,v_fans
                     ,tv_name,tv_introduction" />
 
 
@@ -345,17 +364,18 @@
                     app:layout_constraintStart_toStartOf="@id/v_vip_back"
                     app:layout_constraintTop_toTopOf="@id/v_vip_back" />
 
-<!--                <androidx.appcompat.widget.AppCompatTextView-->
-<!--                    android:id="@+id/tv_vip_text"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="VIP会员"-->
-<!--                    android:layout_marginStart="@dimen/dp_5"-->
-<!--                    android:textColor="@color/color_vip_text"-->
-<!--                    android:textSize="@dimen/sp_16"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@id/iv_vip_icon"-->
-<!--                    app:layout_constraintStart_toEndOf="@id/iv_vip_icon"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/iv_vip_icon" />-->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_vip_time_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_5"
+                    android:text="VIP会员"
+                    android:textColor="@color/color_vip_text"
+                    android:textSize="@dimen/sp_12"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_vip_icon"
+                    app:layout_constraintEnd_toStartOf="@id/tv_vip_btn"
+                    app:layout_constraintStart_toEndOf="@id/iv_vip_icon"
+                    app:layout_constraintTop_toTopOf="@id/iv_vip_icon" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_vip_btn"
