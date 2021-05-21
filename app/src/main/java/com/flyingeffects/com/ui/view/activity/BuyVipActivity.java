@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.View;
 import android.widget.RadioGroup;
 
@@ -14,6 +15,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.PriceListAdapter;
 import com.flyingeffects.com.adapter.PrivilegeListAdapter;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActivityBuyVipBinding;
 import com.flyingeffects.com.databinding.ViewCommonTitleBinding;
 import com.flyingeffects.com.entity.PayEntity;
@@ -63,7 +65,7 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
         mTopBinding = ViewCommonTitleBinding.bind(rootView);
         setContentView(rootView);
 
-        mPresenter = new BuyVipPresenter(mContext);
+        mPresenter = new BuyVipPresenter();
         getLifecycle().addObserver(mPresenter);
         mPresenter.attachView(this);
 
@@ -74,6 +76,20 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
         initVipPrivilegeList();
 
         initPriceListView();
+
+        checkVipServerShow();
+    }
+
+    /**
+     * 判断客服按键显隐
+     */
+    private void checkVipServerShow() {
+        if (BaseConstans.getVipServerShow() == 1) {
+            mBinding.tvProblem.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+            mBinding.tvProblem.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.tvProblem.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void setOnCheckListener() {
@@ -123,33 +139,11 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
                     .into(mBinding.ivAvatar);
             mBinding.tvUserName.setText(userInfo.getNickname());
             mBinding.tvUserId.setText(MessageFormat.format("飞友号：{0}", userInfo.getId()));
-            String vipGradeStr = getVipGradeText(userInfo.getIs_vip(), userInfo.getVip_grade());
+            String vipGradeStr = mPresenter.getVipGradeText(userInfo.getIs_vip(), userInfo.getVip_grade());
             mBinding.tvIsOpen.setText(vipGradeStr);
         }
     }
 
-    private String getVipGradeText(int isVip, int vipGrade) {
-        String vipGradeStr = "";
-        if (isVip == CheckVipOrAdUtils.IS_VIP) {
-            switch (vipGrade) {
-                case CheckVipOrAdUtils.VIP_GRADE_MONTH:
-                    vipGradeStr = "包月会员";
-                    break;
-                case CheckVipOrAdUtils.VIP_GRADE_YEAR:
-                    vipGradeStr = "包年会员";
-                    break;
-                case CheckVipOrAdUtils.VIP_GRADE_FOREVER:
-                    vipGradeStr = "永久会员";
-                    break;
-                default:
-                    vipGradeStr = "永久会员";
-                    break;
-            }
-        } else {
-            vipGradeStr = "暂未开通";
-        }
-        return vipGradeStr;
-    }
 
     @Override
     public void updateOpenBtnText(String price) {

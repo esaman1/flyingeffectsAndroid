@@ -187,8 +187,8 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         huaweiFolder = fileManager.getFileCachePath(this, "toHawei");
         StatisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "6_customize_bj_Crop");
         ed_nickname.addTextChangedListener(textpassWatcher);
-        if (!TextUtils.isEmpty(BaseConstans.NickName())) {
-            ed_nickname.setText(BaseConstans.NickName());
+        if (!TextUtils.isEmpty(BaseConstans.nickName())) {
+            ed_nickname.setText(BaseConstans.nickName());
         }
         if (!TextUtils.isEmpty(BaseConstans.headUrl())) {
             Glide.with(UploadMaterialActivity.this)

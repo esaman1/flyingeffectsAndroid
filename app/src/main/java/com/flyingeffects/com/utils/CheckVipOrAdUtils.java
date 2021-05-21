@@ -10,6 +10,9 @@ import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.orhanobut.hawk.Hawk;
 import com.xj.anchortask.library.log.LogUtils;
 
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * 检查是否为vip或是否显示广告的工具类
  *
@@ -47,6 +50,21 @@ public class CheckVipOrAdUtils {
             return System.currentTimeMillis() < vipEndDate && IS_VIP == isVip;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * 检查是否显示悬浮窗
+     */
+    public static boolean checkFloatWindowShow() {
+        Date date = new Date();
+        boolean isSameDay = TimeUtils.isSameDay(date.getTime(), BaseConstans.getVipFloatWindowShowTime(), TimeZone.getDefault());
+        if (!isSameDay) {
+            BaseConstans.setVipFloatWindowShowTime(date.getTime());
+            BaseConstans.setVipFloatWindowShowTimes(0);
+            return true;
+        } else {
+            return BaseConstans.getVipFloatWindowShowTimes() < BaseConstans.getVipFloatWindowConfigShowTimes();
         }
     }
 

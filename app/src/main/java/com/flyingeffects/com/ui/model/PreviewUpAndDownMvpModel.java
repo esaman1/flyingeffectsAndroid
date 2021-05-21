@@ -683,7 +683,7 @@ public class PreviewUpAndDownMvpModel {
                 break;
             case FromToTemplate.ISBJCOLLECT:
                 params.put("template_type", "2");
-                params.put("token", BaseConstans.GetUserToken());
+                params.put("token", BaseConstans.getUserToken());
                 ob = Api.getDefault().collectionList(BaseConstans.getRequestHead(params));
                 break;
 
@@ -777,7 +777,7 @@ public class PreviewUpAndDownMvpModel {
     public void collectTemplate(String templateId, String title, String template_type) {
         HashMap<String, String> params = new HashMap<>();
         params.put("template_id", templateId);
-        params.put("token", BaseConstans.GetUserToken());
+        params.put("token", BaseConstans.getUserToken());
         params.put("template_type", template_type);
         // 启动时间
         Observable ob = Api.getDefault().newCollection(BaseConstans.getRequestHead(params));
@@ -849,7 +849,7 @@ public class PreviewUpAndDownMvpModel {
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(context) {
             @Override
             protected void onSubError(String message) {
-                BaseConstans.SetUserToken("");
+                BaseConstans.setUserToken("");
                 callback.hasLogin(false);
             }
 

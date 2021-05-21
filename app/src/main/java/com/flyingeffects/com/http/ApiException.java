@@ -77,7 +77,7 @@ public class ApiException extends RuntimeException{
 
     private static void intoLoginAct(){
         if(!DoubleClick.getInstance().isFastZDYDoubleClick(3000)){
-            BaseConstans.SetUserToken("");
+            BaseConstans.setUserToken("");
             Intent toLogin=new Intent(BaseApplication.getInstance(),LoginActivity.class);
             toLogin.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             BaseApplication.getInstance().startActivity(toLogin);

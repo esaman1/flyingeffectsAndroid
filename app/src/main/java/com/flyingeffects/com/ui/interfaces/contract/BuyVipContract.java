@@ -34,6 +34,8 @@ public interface BuyVipContract {
         public abstract void changeRadioChecked(int checkedId);
 
         public abstract void createOrder();
+
+        public abstract String getVipGradeText(int is_vip, int vip_grade);
     }
 
     interface BuyVipMvpView extends BaseView {

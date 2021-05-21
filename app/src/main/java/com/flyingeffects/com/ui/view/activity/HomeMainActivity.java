@@ -484,7 +484,7 @@ public class HomeMainActivity extends FragmentActivity {
         mTvVipFloatBtn = findViewById(R.id.tv_vip_float_btn);
         mIvVipFloatClose = findViewById(R.id.iv_close_float_btn);
 
-        if (CheckVipOrAdUtils.checkIsVip()){
+        if (CheckVipOrAdUtils.checkIsVip()) {
             mIvVipFloatClose.setVisibility(View.INVISIBLE);
             mTvVipFloatBtn.setVisibility(View.INVISIBLE);
         }
@@ -500,6 +500,8 @@ public class HomeMainActivity extends FragmentActivity {
             public void onClick(View v) {
                 mIvVipFloatClose.setVisibility(View.GONE);
                 mTvVipFloatBtn.setVisibility(View.GONE);
+                //每关闭一次，浮窗展示次数+1
+                BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
             }
         });
     }
@@ -926,7 +928,15 @@ public class HomeMainActivity extends FragmentActivity {
                             BaseConstans.setAdShowErrorCanSave(video_error_can_save);
                         } else if (id == 75) {
                             BaseConstans.setCreateVideoShowAdUserNum(config.getValue());
-
+                        } else if (id == 76) {
+                            LogUtil.d(TAG, "vip_window_show_times name = " + config.getName() + " value = " + config.getValue());
+                            int value = Integer.parseInt(config.getValue());
+                            BaseConstans.setVipFloatWindowConfigShowTimes(value);
+                            changeFloatWindowShow();
+                        } else if (id == 77) {
+                            LogUtil.d(TAG, "vip_server name = " + config.getName() + " value = " + config.getValue());
+                            int value = Integer.parseInt(config.getValue());
+                            BaseConstans.setVipServerShow(value);
                         }
                     }
                 }
@@ -934,6 +944,15 @@ public class HomeMainActivity extends FragmentActivity {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
+    private void changeFloatWindowShow() {
+        if (!CheckVipOrAdUtils.checkIsVip() && CheckVipOrAdUtils.checkFloatWindowShow()) {
+            mIvVipFloatClose.setVisibility(View.VISIBLE);
+            mTvVipFloatBtn.setVisibility(View.VISIBLE);
+        } else {
+            mIvVipFloatClose.setVisibility(View.INVISIBLE);
+            mTvVipFloatBtn.setVisibility(View.INVISIBLE);
+        }
+    }
 
     private void auditModeConfig(String str) {
         LogUtil.d("AuditModeConfig", "AuditModeConfig=" + str);

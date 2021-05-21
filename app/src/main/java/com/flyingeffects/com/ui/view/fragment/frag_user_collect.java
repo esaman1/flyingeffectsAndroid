@@ -103,7 +103,7 @@ public class frag_user_collect extends BaseFragment {
     private void requestCollectionList(boolean isShowDialog) {
         tv_hint.setVisibility(View.GONE);
         HashMap<String, String> params = new HashMap<>();
-        params.put("token", BaseConstans.GetUserToken());
+        params.put("token", BaseConstans.getUserToken());
         params.put("page", selectPage + "");
         params.put("template_type", template_type + "");
         params.put("pageSize", perPageCount + "");

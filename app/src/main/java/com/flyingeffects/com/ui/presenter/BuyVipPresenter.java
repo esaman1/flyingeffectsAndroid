@@ -14,6 +14,7 @@ import com.flyingeffects.com.entity.PrivilegeEntity;
 import com.flyingeffects.com.entity.UserInfo;
 import com.flyingeffects.com.ui.interfaces.contract.BuyVipContract;
 import com.flyingeffects.com.ui.model.BuyVipModel;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.orhanobut.hawk.Hawk;
 import com.sweet.paylib.alipay.AliPayManager;
@@ -42,13 +43,11 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
     private List<PrivilegeEntity> mPrivilegeList;
     private PrivilegeListAdapter mPrivilegeListAdapter;
 
-    private Context mContext;
 
     private int mCheckedPriceId;
     private int mTradeType;
 
-    public BuyVipPresenter(Context context) {
-        mContext = context;
+    public BuyVipPresenter() {
         mBuyVipMvpModel = new BuyVipModel(this);
     }
 
@@ -64,7 +63,7 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
     @Override
     public void returnPriceList(List<PriceListEntity> data) {
         mPriceList = data;
-        if (getView() != null) {
+        if (isViewAttached()) {
             getView().updateCostList(data);
         }
     }
@@ -80,11 +79,13 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
     public void toPay(String tradeType, PayEntity data) {
         int type = Integer.parseInt(tradeType);
         PayEntity.Pay_data payData = data.getPay_data();
-        if (type == TRADE_TYPE_WECHAT) {
-            getView().startWeChatPay(payData);
-        } else if (type == TRADE_TYPE_ALIPAY) {
-            String orderInfo = data.getPay_url();
-            getView().startAlipay(orderInfo);
+        if (isViewAttached()){
+            if (type == TRADE_TYPE_WECHAT) {
+                getView().startWeChatPay(payData);
+            } else if (type == TRADE_TYPE_ALIPAY) {
+                String orderInfo = data.getPay_url();
+                getView().startAlipay(orderInfo);
+            }
         }
     }
 
@@ -105,7 +106,9 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
     public void getUserInfo() {
         UserInfo userInfo = Hawk.get("UserInfo");
         if (userInfo != null) {
-            getView().updateUserInfo(userInfo);
+            if (isViewAttached()){
+                getView().updateUserInfo(userInfo);
+            }
         } else {
             mBuyVipMvpModel.requestUserInfo();
         }
@@ -113,7 +116,9 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
 
     @Override
     public void returnUserInfo(UserInfo data) {
-        getView().updateUserInfo(data);
+        if (isViewAttached()){
+            getView().updateUserInfo(data);
+        }
     }
 
     @Override
@@ -124,7 +129,9 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
         PriceListEntity priceListEntity = data.get(position);
         priceListEntity.setChecked(true);
         mCheckedPriceId = priceListEntity.getId();
-        getView().updateOpenBtnText(priceListEntity.getPrice());
+        if (isViewAttached()){
+            getView().updateOpenBtnText(priceListEntity.getPrice());
+        }
     }
 
     @Override
@@ -142,9 +149,33 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
     }
 
 
+    @Override
+    public String getVipGradeText(int isVip, int vipGrade) {
+        String vipGradeStr = "";
+        if (isVip == CheckVipOrAdUtils.IS_VIP) {
+            switch (vipGrade) {
+                case CheckVipOrAdUtils.VIP_GRADE_MONTH:
+                    vipGradeStr = "包月会员";
+                    break;
+                case CheckVipOrAdUtils.VIP_GRADE_YEAR:
+                    vipGradeStr = "包年会员";
+                    break;
+                case CheckVipOrAdUtils.VIP_GRADE_FOREVER:
+                    vipGradeStr = "永久会员";
+                    break;
+                default:
+                    vipGradeStr = "永久会员";
+                    break;
+            }
+        } else {
+            vipGradeStr = "暂未开通";
+        }
+        return vipGradeStr;
+    }
+
+
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onDestroy() {
         detachView();
-        mContext = null;
     }
 }
