@@ -12,7 +12,6 @@ import java.io.Serializable;
 public class AplicationInitRetroposition  implements Serializable {
 
         public AplicationInitRetroposition(){
-
         }
 
 }
