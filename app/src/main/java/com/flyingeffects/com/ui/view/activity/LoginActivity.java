@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -101,23 +102,18 @@ public class LoginActivity extends BaseActivity {
     protected void initView() {
         mContext = LoginActivity.this;
         isOnDestroy = false;
-
         mBinding = ActLoginBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         setContentView(rootView);
-
         EventBus.getDefault().register(this);
         clearUmData();
         WaitingDialog.openPragressDialog(this);
         OneKeyLoginManager.getInstance().setLoadingVisibility(false);
         OneKeyLoginManager.getInstance().setAuthThemeConfig(ShanyanConfigUtils.getCJSConfig(getApplicationContext()), ShanyanConfigUtils.getCJSConfig(getApplicationContext()));
         openLoginActivity();
-
         SpannableStringBuilder strBuilder = initTipsBuilder();
-
         mBinding.tvXy.setMovementMethod(LinkMovementMethod.getInstance());
         mBinding.tvXy.setText(strBuilder);
-
         setOnclickListener();
     }
 
@@ -203,7 +199,6 @@ public class LoginActivity extends BaseActivity {
         OneKeyLoginManager.getInstance().openLoginAuth(false, (code, result) -> {
             WaitingDialog.closeProgressDialog();
             if (1000 == code) {
-//                isOpenAuth = true;
                 //拉起授权页成功
                 Log.e("VVV", "拉起授权页成功： _code==" + code + "   _result==" + result);
                 videoView = new MyVideoView(getApplicationContext());
@@ -219,23 +214,20 @@ public class LoginActivity extends BaseActivity {
             }
         }, (code, result) -> {
             if (1011 == code) {
-//                isOpenAuth = false;
                 Log.e("OOM", "用户点击授权页返回： _code==" + code + "   _result==" + result);
-                finish();
+                closeThisAct();
             } else if (1000 == code) {
                 Log.e("VVV", "用户点击登录获取token成功： _code==" + code + "   _result==" + result);
                 try {
                     JSONObject ob = new JSONObject(result);
-                    requestLoginForSdk("4", ob.getString("token"), "", "", "", "", false);
+                    requestLoginForSdk("4", ob.getString("token"), "", "", "", "");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
             } else {
                 Log.e("VVV", "用户点击登录获取token失败： _code==" + code + "   _result==" + result);
-//                    ToastUtil.showToast("用户点击登录获取token失败： _code==" + code + "   _result==" + result);
-//                    relative_normal.setVisibility(View.VISIBLE);
-                finish();
+                closeThisAct();
             }
 
         });
@@ -430,11 +422,16 @@ public class LoginActivity extends BaseActivity {
                 BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
                 EventBus.getDefault().post(new LoginToAttentionUserEvent());
                 EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
-//                EventBus.getDefault().post(new ExitOrLogin());
-                LoginActivity.this.finish();
+                closeThisAct();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);
     }
+
+
+    private void closeThisAct(){
+        new Handler().postDelayed(LoginActivity.this::finish,500);
+    }
+
 
 
     /**
@@ -443,7 +440,7 @@ public class LoginActivity extends BaseActivity {
      * param :type|1=微信2=qq3=苹果4=闪验
      * user : zhangtongju
      */
-    private void requestLoginForSdk(String type, String flash_token, String nickname, String photourl, String openid, String unionid, boolean isShowDialog) {
+    private void requestLoginForSdk(String type, String flash_token, String nickname, String photourl, String openid, String unionid) {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             HashMap<String, String> params = new HashMap<>();
             params.put("type", type);
@@ -476,10 +473,10 @@ public class LoginActivity extends BaseActivity {
                         WaitingDialog.closeProgressDialog();
                         EventBus.getDefault().post(new LoginToAttentionUserEvent());
                         EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
-                        finish();
+                        closeThisAct();
                     }
                 }
-            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, isShowDialog);
+            }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
         }
 
     }
@@ -569,7 +566,7 @@ public class LoginActivity extends BaseActivity {
                 bundle.putSerializable("iconUrl", iconUrl);
 
                 WaitingDialog.openPragressDialog(LoginActivity.this);
-                requestLoginForSdk("1", "", name, iconUrl, data.get("openid"), data.get("unionid"), false);
+                requestLoginForSdk("1", "", name, iconUrl, data.get("openid"), data.get("unionid"));
             }
         }
 

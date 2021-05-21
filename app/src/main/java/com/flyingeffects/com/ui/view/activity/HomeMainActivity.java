@@ -36,6 +36,7 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.entity.AplicationInitRetroposition;
 import com.flyingeffects.com.entity.Config;
 import com.flyingeffects.com.entity.ConfigForTemplateList;
 import com.flyingeffects.com.entity.HomeChoosePageListener;
