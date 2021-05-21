@@ -178,7 +178,7 @@ dependencies {
     //开屏广告
     implementation(name: 'GDTSDK.unionNormal.4.333.1203', ext: 'aar')
     // 广告sdk
-    implementation(name: 'NTADSDK-v2.6.5', ext: 'aar')
+    implementation(name: 'NTADSDK-v2.6.6', ext: 'aar')
     // 百度联盟
     implementation(name: 'Baidu_MobAds_SDK-release_v5.98', ext: 'aar')
     // 穿山甲
@@ -235,6 +235,19 @@ dependencies {
     //腾讯游戏SDK
     implementation(name: 'klevinSDK_1.3.1.12', ext: 'aar')
     //腾讯游戏SDK需要支持包end
+
+
+
+    implementation(name: 'bxmsdk-release-3.4.7', ext: 'aar')
+
+    //  小满
+    implementation("com.bx:adsdk:1.4.2.3") {
+        transitive = true
+        changing = true
+        exclude group:"com.miit.sdk"
+    }
+
+
 }
 
 
