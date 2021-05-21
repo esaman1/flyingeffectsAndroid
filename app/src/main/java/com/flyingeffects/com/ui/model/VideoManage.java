@@ -5,7 +5,7 @@ import android.media.MediaMetadataRetriever;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
-import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.entity.VideoInfo;
 
 import java.io.File;
 import java.io.FileInputStream;

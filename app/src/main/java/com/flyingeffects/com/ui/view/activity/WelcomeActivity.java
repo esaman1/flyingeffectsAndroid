@@ -19,15 +19,13 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActWelcomeBinding;
-import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.entity.ConfigForTemplateList;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
-import com.flyingeffects.com.utils.LogUtil;
-import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.kwai.monitor.log.TurboAgent;
@@ -215,11 +213,15 @@ public class WelcomeActivity extends BaseActivity {
     private void getPermission() {
         mBinding.rlAdContainer.post(() -> {
             if (Build.VERSION.SDK_INT >= BUILD_VERSION) {
+
                 checkPermission();
                 StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_6");
+
             } else {
+
                 hasPermission = true;
                 StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6");
+
                 if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
                     StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6_requestAd");
                     showSplashAd();
@@ -227,6 +229,7 @@ public class WelcomeActivity extends BaseActivity {
                     noQueryAdReason();
                     StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6_no_requestAd");
                 }
+
             }
         });
 

@@ -3,13 +3,10 @@ package com.flyingeffects.com.ui.presenter;
 import android.content.Context;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
-import com.flyingeffects.com.enity.FirstLevelTypeEntity;
+import com.flyingeffects.com.entity.FirstLevelTypeEntity;
 import com.flyingeffects.com.ui.interfaces.model.DressUpMvpCallback;
-import com.flyingeffects.com.ui.interfaces.model.home_fagMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.DressUpMvpView;
-import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
 import com.flyingeffects.com.ui.model.DressUpMvpModel;
-import com.flyingeffects.com.ui.model.home_fagMvpModel;
 
 import java.util.List;
 

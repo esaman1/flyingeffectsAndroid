@@ -1,6 +1,6 @@
 package com.flyingeffects.com.view.animations.CustomMove;
 
-import com.flyingeffects.com.enity.TransplationPos;
+import com.flyingeffects.com.entity.TransplationPos;
 
 import java.util.ArrayList;
 

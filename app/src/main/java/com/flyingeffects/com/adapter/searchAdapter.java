@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.hotSearch;
+import com.flyingeffects.com.entity.hotSearch;
 
 import java.util.List;
 

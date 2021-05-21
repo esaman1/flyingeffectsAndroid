@@ -4,15 +4,15 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.flyco.tablayout.SlidingTabLayout;
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.DownVideoPath;
-import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.databinding.ActChooseBackgroundTemplateBinding;
+import com.flyingeffects.com.entity.DownVideoPath;
+import com.flyingeffects.com.entity.FirstLevelTypeEntity;
+import com.flyingeffects.com.entity.HttpResult;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -28,9 +28,7 @@ import java.util.List;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
-import butterknife.BindView;
-import butterknife.OnClick;
+
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -39,27 +37,36 @@ import rx.Observable;
 /**
  * description ：自定义背景选择模板
  * creation date: 2020/4/22
- * user : zhangtongju
+ * @author : zhangtongju
  */
-
 public class ChooseBackgroundTemplateActivity extends BaseActivity {
-    @BindView(R.id.viewpager_bj)
-    ViewPager viewpager;
-
-    @BindView(R.id.tl_tabs)
-    SlidingTabLayout tabLayout;
-
     private NewFragmentTemplateItem templateItem;
+    private ActChooseBackgroundTemplateBinding mBinding;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_choose_background_template;
+        return 0;
     }
 
     @Override
     protected void initView() {
+        mBinding = ActChooseBackgroundTemplateBinding.inflate(getLayoutInflater());
+        View rootView = mBinding.getRoot();
+        setContentView(rootView);
+
         EventBus.getDefault().register(this);
         templateItem = (NewFragmentTemplateItem) getIntent().getSerializableExtra("templateItem");
+        setOnClickListener();
+    }
+
+    private void setOnClickListener() {
+        mBinding.ivBack.setOnClickListener(this::onViewClicked);
+    }
+
+    private void onViewClicked(View view) {
+        if (view == mBinding.ivBack) {
+            finish();
+        }
     }
 
     @Override
@@ -76,8 +83,8 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
 
     private void requestMainData() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("type","2");
-        Observable ob = Api.getDefault().getCategoryList(BaseConstans.getRequestHead(params));
+        params.put("type", "2");
+        Observable<HttpResult<List<FirstLevelTypeEntity>>> ob = Api.getDefault().getCategoryList(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FirstLevelTypeEntity>>(this) {
             @Override
             protected void onSubError(String message) {
@@ -103,10 +110,6 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
                     bundle.putSerializable("id", data.get(i).getId());
                     bundle.putSerializable("from", 3);
                     bundle.putSerializable("num", i);
-//                    if (templateItem != null) {
-//                        //一键模板选择背景
-//                        bundle.putSerializable("cover", templateItem.getImage());
-//                    }
                     fragBjItem fragment = new fragBjItem();
                     fragment.setArguments(bundle);
                     list.add(fragment);
@@ -116,8 +119,8 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
                         bundle.putSerializable("secondaryType", (Serializable) data.get(i).getCategory());
                         bundle.putInt("type", 1);
                         bundle.putSerializable("id", data.get(i).getId());
-                        bundle.putInt("from",3);
-                        bundle.putString("categoryTabName",data.get(i).getName());
+                        bundle.putInt("from", 3);
+                        bundle.putString("categoryTabName", data.get(i).getName());
                         if (templateItem != null) {
                             //一键模板选择背景
                             bundle.putSerializable("cover", templateItem.getImage());
@@ -125,10 +128,10 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
                         SecondaryTypeFragment fragment = new SecondaryTypeFragment();
                         fragment.setArguments(bundle);
                         list.add(fragment);
-                    }else {
+                    } else {
                         bundle.putSerializable("id", data.get(i).getId());
                         bundle.putString("tc_id", "-1");
-                        bundle.putInt("from",3);
+                        bundle.putInt("from", 3);
                         bundle.putSerializable("num", i);
                         if (templateItem != null) {
                             //一键模板选择背景
@@ -142,23 +145,9 @@ public class ChooseBackgroundTemplateActivity extends BaseActivity {
                 titles[i] = data.get(i).getName();
             }
             home_vp_frg_adapter adapter = new home_vp_frg_adapter(manager, list);
-            viewpager.setAdapter(adapter);
-            tabLayout.setViewPager(viewpager, titles);
+            mBinding.viewpagerBj.setAdapter(adapter);
+            mBinding.tlTabs.setViewPager(mBinding.viewpagerBj, titles);
         }
-    }
-
-
-    @Override
-    @OnClick({R.id.iv_back})
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.iv_back:
-                this.finish();
-                break;
-            default:
-                break;
-        }
-        super.onClick(v);
     }
 
 

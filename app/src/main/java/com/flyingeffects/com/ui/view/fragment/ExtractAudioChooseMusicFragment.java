@@ -18,9 +18,9 @@ import com.flyingeffects.com.adapter.music_local_adapter;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
-import com.flyingeffects.com.enity.BlogFile.Video;
-import com.flyingeffects.com.enity.FragmentHasSlide;
-import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.entity.BlogFile.Video;
+import com.flyingeffects.com.entity.FragmentHasSlide;
+import com.flyingeffects.com.entity.VideoInfo;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.model.VideoManage;
 import com.flyingeffects.com.ui.view.activity.ChooseMusicActivity;
@@ -28,8 +28,6 @@ import com.flyingeffects.com.ui.view.activity.LocalMusicTailorActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.shixing.sxve.ui.view.WaitingDialog;
-import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,12 +36,10 @@ import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
-import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 import static com.flyingeffects.com.utils.BlogFileResource.FileManager.isLansongVESuppport;

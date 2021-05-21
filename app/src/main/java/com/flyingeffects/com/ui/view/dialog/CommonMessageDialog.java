@@ -26,7 +26,6 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
     public static final int AD_STATUS_BOTTOM = 2;
     public static final int AD_STATUS_NONE = 0;
 
-
     protected CommonMessageDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
     }
@@ -180,7 +179,6 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
 
             if (mAdStatus == AD_STATUS_BOTTOM) {
                 groupAdDialog = mView.findViewById(R.id.group_ad_dialog);
-                groupAdDialog.setVisibility(View.GONE);
 
                 mView.findViewById(R.id.iv_dialog_ad_close).setOnClickListener(new View.OnClickListener() {
                     @Override

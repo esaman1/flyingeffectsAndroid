@@ -10,14 +10,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.enity.BlogFile.AppInfo;
-import com.flyingeffects.com.enity.BlogFile.ImgFolderBean;
-import com.flyingeffects.com.enity.BlogFile.Music;
-import com.flyingeffects.com.enity.BlogFile.Video;
+import com.flyingeffects.com.entity.BlogFile.AppInfo;
+import com.flyingeffects.com.entity.BlogFile.ImgFolderBean;
+import com.flyingeffects.com.entity.BlogFile.Music;
+import com.flyingeffects.com.entity.BlogFile.Video;
 import com.flyingeffects.com.utils.LogUtil;
 import com.lansosdk.videoeditor.LanSongFileUtil;
 import com.lansosdk.videoeditor.MediaInfo;

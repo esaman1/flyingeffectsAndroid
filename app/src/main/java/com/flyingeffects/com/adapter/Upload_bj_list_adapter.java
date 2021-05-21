@@ -21,7 +21,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;

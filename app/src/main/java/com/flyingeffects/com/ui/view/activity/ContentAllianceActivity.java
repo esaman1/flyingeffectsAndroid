@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.fromKuaishou;
+import com.flyingeffects.com.entity.fromKuaishou;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.itr.ContentAllianceAdCallBack;

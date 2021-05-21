@@ -23,8 +23,7 @@ import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.commonlyModel.GetPathType;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.TemplateThumbItem;
+import com.flyingeffects.com.entity.TemplateThumbItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -34,7 +33,6 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.TemplateMvpCallback;
-import com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity;
 import com.flyingeffects.com.ui.view.activity.MemeKeepActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateAddStickerActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -519,17 +517,7 @@ public class TemplateMvpModel {
     }
 
 
-    /**
-     * description ：选择音乐
-     * creation date: 2020/5/9
-     * user : zhangtongju
-     */
-    public void chooseBj(NewFragmentTemplateItem templateItem) {
-        Intent intent = new Intent(context, ChooseBackgroundTemplateActivity.class);
-        intent.putExtra("templateItem", templateItem);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        context.startActivity(intent);
-    }
+
 
 
     public void getButtomIcon(String path) {

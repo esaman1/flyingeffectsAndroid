@@ -24,14 +24,11 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseWebActivity;
+import com.flyingeffects.com.databinding.ActWebviewBinding;
 import com.shixing.sxve.ui.view.WaitingDialog;
-
-import butterknife.BindView;
 
 /**
  * user :TongJu  ;描述：公共的webview
@@ -41,30 +38,30 @@ public class webViewActivity extends BaseWebActivity {
 
     private String webUrl;
 
-    @BindView(R.id.webView)
-    WebView webView;
-
-    @BindView(R.id.iv_back)
-    ImageView ivBack;
-
-
-
     public ValueCallback<Uri[]> uploadMessage;
     private ValueCallback<Uri> mUploadMessage;
     public static final int REQUEST_SELECT_FILE = 100;
     private final static int FILECHOOSER_RESULTCODE = 2;
+    private ActWebviewBinding mBinding;
 
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_webview;
+        return 0;
+    }
+
+    @Override
+    protected void initViewBinding() {
+        mBinding = ActWebviewBinding.inflate(getLayoutInflater());
+        View rootView = mBinding.getRoot();
+        setContentView(rootView);
     }
 
     @Override
     protected void initView() {
         WaitingDialog.openPragressDialog(this);
         webUrl = getIntent().getStringExtra("webUrl");
-        ivBack.setOnClickListener(new View.OnClickListener() {
+        mBinding.ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 webViewActivity.this.finish();
@@ -77,31 +74,31 @@ public class webViewActivity extends BaseWebActivity {
     @Override
     protected void initAction(String cacheUrl) {
         //设置js可以直接打开窗口，如window.open()，默认为false
-        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        mBinding.webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         //是否允许执行js，默认为false。设置true时，会提醒可能造成XSS漏洞
-        webView.getSettings().setJavaScriptEnabled(true);
+        mBinding.webView.getSettings().setJavaScriptEnabled(true);
         //是否可以缩放，默认true
-        webView.getSettings().setSupportZoom(true);
+        mBinding.webView.getSettings().setSupportZoom(true);
         //是否显示缩放按钮，默认false
-        webView.getSettings().setBuiltInZoomControls(true);
+        mBinding.webView.getSettings().setBuiltInZoomControls(true);
 
         // 打开本地缓存提供JS调用,至关重要
-        webView.getSettings().setDomStorageEnabled(true);
+        mBinding.webView.getSettings().setDomStorageEnabled(true);
         // 解决用户设置字体大小影响html5适配
-        webView.getSettings().setTextZoom(100);
+        mBinding.webView.getSettings().setTextZoom(100);
 
         //设置此属性，可任意比例缩放。大视图模式
-        webView.getSettings().setUseWideViewPort(true);
+        mBinding.webView.getSettings().setUseWideViewPort(true);
         //和setUseWideViewPort(true)一起解决网页自适应问题
-        webView.getSettings().setLoadWithOverviewMode(true);
+        mBinding.webView.getSettings().setLoadWithOverviewMode(true);
         // 实现8倍缓存
-        webView.getSettings().setAppCacheMaxSize(1024 * 1024 * 8);
+        mBinding.webView.getSettings().setAppCacheMaxSize(1024 * 1024 * 8);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //解决5.0 系统+ https 网页嵌套http  图片不显示的问题
-            webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+            mBinding.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         }
-        webView.addJavascriptInterface(new androidJs(), "androidJs"); //第二个参数为js 的调用对象
-        webView.setWebViewClient(new WebViewClient() {
+        mBinding.webView.addJavascriptInterface(new androidJs(), "androidJs"); //第二个参数为js 的调用对象
+        mBinding.webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(final WebView view, String url) {
                 if (url.contains("tel")) {
@@ -145,7 +142,7 @@ public class webViewActivity extends BaseWebActivity {
         });
 
         //设置支持弹出图片选择，input
-        webView.setWebChromeClient(new WebChromeClient() {
+        mBinding.webView.setWebChromeClient(new WebChromeClient() {
             // For 3.0+ Devices (Start)
             // onActivityResult attached before constructor
             protected void openFileChooser(ValueCallback uploadMsg, String acceptType) {
@@ -210,7 +207,7 @@ public class webViewActivity extends BaseWebActivity {
             }
 
         });
-        webView.loadUrl(webUrl);
+        mBinding.webView.loadUrl(webUrl);
     }
 
 
@@ -259,20 +256,20 @@ public class webViewActivity extends BaseWebActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        webView.onResume();
+        mBinding.webView.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        webView.onPause();
+        mBinding.webView.onPause();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //这是一个监听用的按键的方法，keyCode 监听用户的动作，如果是按了返回键，同时Webview要返回的话，WebView执行回退操作，因为mWebView.canGoBack()返回的是一个Boolean类型，所以我们把它返回为true
-        if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
-            webView.goBack();
+        if (keyCode == KeyEvent.KEYCODE_BACK && mBinding.webView.canGoBack()) {
+            mBinding.webView.goBack();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -290,9 +287,6 @@ public class webViewActivity extends BaseWebActivity {
         }
 
     }
-
-
-
 
 
 }

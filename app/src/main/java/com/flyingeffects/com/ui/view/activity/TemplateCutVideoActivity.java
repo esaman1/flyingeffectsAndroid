@@ -14,7 +14,7 @@ import com.flyingeffects.com.adapter.TimelineAdapterForCutVideo;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
-import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.entity.VideoInfo;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;

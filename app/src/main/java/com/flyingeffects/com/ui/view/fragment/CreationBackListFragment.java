@@ -2,8 +2,6 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.os.Handler;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,14 +9,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.CreationBackListAdapter;
-import com.flyingeffects.com.adapter.CreationBackListGridViewAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
-import com.flyingeffects.com.enity.ClearChooseStickerState;
-import com.flyingeffects.com.enity.HttpResult;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.ClearChooseStickerState;
+import com.flyingeffects.com.entity.HttpResult;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;

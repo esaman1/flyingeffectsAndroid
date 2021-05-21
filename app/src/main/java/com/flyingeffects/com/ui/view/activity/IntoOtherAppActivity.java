@@ -8,7 +8,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.view.View;
@@ -17,8 +16,6 @@ import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.ConfigForTemplateList;
-import com.flyingeffects.com.manager.SPHelper;
 import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.List;

@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.MessageReply;
+import com.flyingeffects.com.entity.MessageReply;
 import com.flyingeffects.com.ui.view.activity.UserHomepageActivity;
 
 import java.util.ArrayList;

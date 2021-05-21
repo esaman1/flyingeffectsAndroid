@@ -1,14 +1,10 @@
 package com.flyingeffects.com.ui.interfaces.contract;
 
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
-
-import com.flyco.tablayout.SlidingTabLayout;
 import com.flyingeffects.com.base.mvpBase.BaseModel;
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.base.mvpBase.BaseView;
-import com.flyingeffects.com.enity.StickerAnim;
-import com.flyingeffects.com.enity.StickerTypeEntity;
+import com.flyingeffects.com.entity.StickerAnim;
+import com.flyingeffects.com.entity.StickerTypeEntity;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.view.StickerView;
 

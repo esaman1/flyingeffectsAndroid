@@ -27,11 +27,11 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.SystemMessageDetailAllEnity;
-import com.flyingeffects.com.enity.UserInfo;
-import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.entity.BackgroundTemplateCollectionEvent;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.SystemMessageDetailAllEnity;
+import com.flyingeffects.com.entity.UserInfo;
+import com.flyingeffects.com.entity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -644,12 +644,12 @@ public class PreviewUpAndDownMvpModel {
         params.put("pageSize", perPageCount + "");
         switch (fromTo) {
             case FromToTemplate.ISHOMEFROMBJ:
-                params.put("to_user_id", BaseConstans.GetUserId());
+                params.put("to_user_id", BaseConstans.getUserId());
                 params.put("type", "1");
                 ob = Api.getDefault().uploadList(BaseConstans.getRequestHead(params));
                 break;
             case FromToTemplate.ISHOMEMYLIKE:
-                params.put("to_user_id", BaseConstans.GetUserId());
+                params.put("to_user_id", BaseConstans.getUserId());
                 params.put("type", "2");
                 ob = Api.getDefault().getMyProduction(BaseConstans.getRequestHead(params));
                 break;
@@ -843,7 +843,7 @@ public class PreviewUpAndDownMvpModel {
 
     public void requestUserInfo() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("to_user_id", BaseConstans.GetUserId());
+        params.put("to_user_id", BaseConstans.getUserId());
         // 启动时间
         Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(context) {

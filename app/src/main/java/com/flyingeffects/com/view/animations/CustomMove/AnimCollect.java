@@ -2,7 +2,7 @@ package com.flyingeffects.com.view.animations.CustomMove;
 
 
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.StickerAnim;
+import com.flyingeffects.com.entity.StickerAnim;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.Layer;

@@ -2,7 +2,7 @@ package com.flyingeffects.com.http;
 
 
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.enity.HttpResult;
+import com.flyingeffects.com.entity.HttpResult;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.utils.CheckNetwork;
 import com.flyingeffects.com.utils.ToastUtil;

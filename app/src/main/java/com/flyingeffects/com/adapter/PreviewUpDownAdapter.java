@@ -18,7 +18,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.ui.interfaces.VideoPlayerCallbackForTemplate;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.utils.ButtonJitterAnimatorUtil;
@@ -187,7 +187,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
             }
 
             if (BaseConstans.hasLogin()) {
-                if (item.getAdmin_id() != null && BaseConstans.GetUserId() != null && item.getAdmin_id().equals(BaseConstans.GetUserId())) {
+                if (item.getAdmin_id() != null && BaseConstans.getUserId() != null && item.getAdmin_id().equals(BaseConstans.getUserId())) {
                     tv_btn_follow.setVisibility(View.GONE);
                 } else {
                     //关注按键
@@ -267,7 +267,7 @@ public class PreviewUpDownAdapter extends BaseQuickAdapter<NewFragmentTemplateIt
     public void setIsFollow(int isFollow, String Admin_id) {
 
         if (BaseConstans.hasLogin()) {
-            if (Admin_id.equals(BaseConstans.GetUserId())) {
+            if (Admin_id.equals(BaseConstans.getUserId())) {
                 tv_btn_follow.setVisibility(View.GONE);
             } else {
                 //关注按键

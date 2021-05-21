@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.StickerAnim;
+import com.flyingeffects.com.entity.StickerAnim;
 
 import java.util.List;
 

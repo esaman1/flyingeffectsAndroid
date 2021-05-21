@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -34,14 +36,13 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.AplicationInitRetroposition;
-import com.flyingeffects.com.enity.Config;
-import com.flyingeffects.com.enity.ConfigForTemplateList;
-import com.flyingeffects.com.enity.HomeChoosePageListener;
-import com.flyingeffects.com.enity.RequestMessage;
-import com.flyingeffects.com.enity.UserInfo;
-import com.flyingeffects.com.enity.checkVersion;
-import com.flyingeffects.com.enity.messageCount;
+import com.flyingeffects.com.entity.Config;
+import com.flyingeffects.com.entity.ConfigForTemplateList;
+import com.flyingeffects.com.entity.HomeChoosePageListener;
+import com.flyingeffects.com.entity.RequestMessage;
+import com.flyingeffects.com.entity.UserInfo;
+import com.flyingeffects.com.entity.checkVersion;
+import com.flyingeffects.com.entity.messageCount;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -58,9 +59,10 @@ import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.ui.view.fragment.BackgroundFragment;
 import com.flyingeffects.com.ui.view.fragment.DressUpFragment;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
-import com.flyingeffects.com.ui.view.fragment.frag_user_center;
+import com.flyingeffects.com.ui.view.fragment.UserCenterFragment;
 import com.flyingeffects.com.utils.AssetsUtils;
 import com.flyingeffects.com.utils.ChannelUtil;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
@@ -106,7 +108,7 @@ public class HomeMainActivity extends FragmentActivity {
 
     private static final String[] CATCH_DIRECTORY = {"dynamic", "runCatch", "def", "imageCopy", "faceFolder", "faceMattingFolder",
             "soundFolder", "cacheMattingFolder", "ExtractFrame", "DownVideo", "TextFolder", "toHawei", "downVideoForMusic",
-            "downSoundForMusic", "downCutSoundForMusic", "fontStyle", "DressUpFolder","facePP"};
+            "downSoundForMusic", "downCutSoundForMusic", "fontStyle", "DressUpFolder", "facePP"};
 
     private final ImageView[] mIvMenuBack = new ImageView[4];
     private final TextView[] tv_main = new TextView[4];
@@ -121,6 +123,9 @@ public class HomeMainActivity extends FragmentActivity {
 
     private Context mContext;
 
+    private AppCompatTextView mTvVipFloatBtn;
+    private AppCompatImageView mIvVipFloatClose;
+
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
@@ -133,6 +138,8 @@ public class HomeMainActivity extends FragmentActivity {
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.act_home_main);
+
+
         EventBus.getDefault().register(this);
         message_count = findViewById(R.id.message_count);
         viewpager_home = findViewById(R.id.viewpager_home);
@@ -167,12 +174,6 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
-
-
-
-
-
     private void setOaid() {
         AppLog.setOaidObserver(new IOaidObserver() {
             @Override
@@ -182,7 +183,6 @@ public class HomeMainActivity extends FragmentActivity {
             }
         });
     }
-
 
     /**
      * 中台
@@ -203,10 +203,11 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void requestUserInfo() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("to_user_id", BaseConstans.GetUserId());
+        params.put("to_user_id", BaseConstans.getUserId());
         // 启动时间
         Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(this) {
+
             @Override
             protected void onSubError(String message) {
             }
@@ -215,8 +216,9 @@ public class HomeMainActivity extends FragmentActivity {
             protected void onSubNext(UserInfo data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM2", "requestUserInfo=" + str);
-                Hawk.put("UserInfo", data);
+                Hawk.put(UserInfo.USER_INFO_KEY, data);
             }
+
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
@@ -245,7 +247,7 @@ public class HomeMainActivity extends FragmentActivity {
         task = new TimerTask() {
             @Override
             public void run() {
-                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad" );
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad");
                 AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new AdManager.Callback() {
                     @Override
                     public void adShow() {
@@ -261,12 +263,12 @@ public class HomeMainActivity extends FragmentActivity {
 
                     @Override
                     public void onScreenAdShow() {
-                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_show" );
+                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_show");
                     }
 
                     @Override
                     public void onScreenAdError() {
-                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_error" );
+                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_error");
 
                     }
                 });
@@ -457,11 +459,11 @@ public class HomeMainActivity extends FragmentActivity {
         fragments.add(new BackgroundFragment());
         fragments.add(new FragForTemplate());
         fragments.add(new DressUpFragment());
-        menu3F = new frag_user_center();
+        menu3F = new UserCenterFragment();
         fragments.add(menu3F);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(), fragments);
         viewpager_home.setAdapter(adapter);
-        viewpager_home.setOffscreenPageLimit(1);
+        viewpager_home.setOffscreenPageLimit(3);
         whichMenuSelect(1);
         findViewById(R.id.iv_main_add).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -479,6 +481,44 @@ public class HomeMainActivity extends FragmentActivity {
             }
         });
         StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "默认页面不纳入统计");
+
+        mTvVipFloatBtn = findViewById(R.id.tv_vip_float_btn);
+        mIvVipFloatClose = findViewById(R.id.iv_close_float_btn);
+
+        if (CheckVipOrAdUtils.checkIsVip()){
+            mIvVipFloatClose.setVisibility(View.INVISIBLE);
+            mTvVipFloatBtn.setVisibility(View.INVISIBLE);
+        }
+        mTvVipFloatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startVipActivity();
+            }
+        });
+
+        mIvVipFloatClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIvVipFloatClose.setVisibility(View.GONE);
+                mTvVipFloatBtn.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void startVipActivity() {
+        if (BaseConstans.hasLogin()) {
+            Intent intent = new Intent(mContext, BuyVipActivity.class);
+            startActivity(intent);
+        } else {
+            toLogin();
+        }
+
+    }
+
+    private void toLogin() {
+        Intent intent = new Intent(mContext, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
 
 
@@ -587,7 +627,7 @@ public class HomeMainActivity extends FragmentActivity {
         MobclickAgent.onPause(this);
     }
 
-    private frag_user_center menu3F = null;
+    private UserCenterFragment menu3F = null;
 
     private void openMenu(int which) {
         setStatusBar();
@@ -706,7 +746,7 @@ public class HomeMainActivity extends FragmentActivity {
      */
     private void requestMessageCount() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("user_id", BaseConstans.GetUserId());
+        params.put("user_id", BaseConstans.getUserId());
         Observable ob = Api.getDefault().getAllMessageNum(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<messageCount>(this) {
                     @Override
@@ -885,7 +925,7 @@ public class HomeMainActivity extends FragmentActivity {
                             //1 表示能保存 0 表示不能保存
                             LogUtil.d("OOM3", "video_error_can_save=" + video_error_can_save);
                             BaseConstans.setAdShowErrorCanSave(video_error_can_save);
-                        }else if(id==75){
+                        } else if (id == 75) {
                             BaseConstans.setCreateVideoShowAdUserNum(config.getValue());
 
                         }

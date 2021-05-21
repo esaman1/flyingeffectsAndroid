@@ -11,8 +11,8 @@ import android.view.View;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.AllStickerData;
-import com.flyingeffects.com.enity.TransplationPos;
+import com.flyingeffects.com.entity.AllStickerData;
+import com.flyingeffects.com.entity.TransplationPos;
 import com.flyingeffects.com.manager.BitmapManager;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;

@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.FontEnity;
+import com.flyingeffects.com.entity.FontEnity;
 
 import java.util.ArrayList;
 

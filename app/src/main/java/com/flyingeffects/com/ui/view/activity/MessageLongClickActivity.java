@@ -10,8 +10,7 @@ import androidx.annotation.Nullable;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.DeleteMessage;
-import com.flyingeffects.com.enity.MessageData;
+import com.flyingeffects.com.entity.DeleteMessage;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -19,7 +18,6 @@ import com.flyingeffects.com.utils.ToastUtil;
 
 import java.util.HashMap;
 
-import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.subjects.PublishSubject;
@@ -61,7 +59,7 @@ public class MessageLongClickActivity extends Activity {
         message_id = getIntent().getStringExtra("message_id");
         templateId = getIntent().getStringExtra("templateId");
         position = getIntent().getIntExtra("position", 0);
-        if (!user_id.equals(BaseConstans.GetUserId())) {
+        if (!user_id.equals(BaseConstans.getUserId())) {
             //不是自己的评论
             ll_delete.setVisibility(View.GONE);
         }

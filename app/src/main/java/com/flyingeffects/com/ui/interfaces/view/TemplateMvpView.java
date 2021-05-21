@@ -2,7 +2,7 @@ package com.flyingeffects.com.ui.interfaces.view;
 
 import android.graphics.Bitmap;
 
-import com.flyingeffects.com.enity.TemplateThumbItem;
+import com.flyingeffects.com.entity.TemplateThumbItem;
 import com.shixing.sxve.ui.model.TemplateModel;
 
 import java.util.ArrayList;

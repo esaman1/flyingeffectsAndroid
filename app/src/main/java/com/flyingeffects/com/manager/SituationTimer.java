@@ -1,6 +1,6 @@
 package com.flyingeffects.com.manager;
 
-import com.flyingeffects.com.enity.RequestMessage;
+import com.flyingeffects.com.entity.RequestMessage;
 
 import java.util.Timer;
 import java.util.TimerTask;

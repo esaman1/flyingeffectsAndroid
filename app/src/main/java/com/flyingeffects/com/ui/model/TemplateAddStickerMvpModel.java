@@ -33,10 +33,10 @@ import com.flyingeffects.com.commonlyModel.GetVideoCover;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
-import com.flyingeffects.com.enity.AllStickerData;
-import com.flyingeffects.com.enity.StickerAnim;
-import com.flyingeffects.com.enity.StickerTypeEntity;
-import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.entity.AllStickerData;
+import com.flyingeffects.com.entity.StickerAnim;
+import com.flyingeffects.com.entity.StickerTypeEntity;
+import com.flyingeffects.com.entity.VideoInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -1427,8 +1427,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 

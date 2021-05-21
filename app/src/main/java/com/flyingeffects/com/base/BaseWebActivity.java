@@ -89,11 +89,9 @@ public abstract class BaseWebActivity extends Activity implements OnClickListene
         lifecycleSubject.onNext(ActivityLifeCycleEvent.CREATE);
         // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         // WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-
+        initViewBinding();
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, //去掉状态栏
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(getLayoutId());
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#00000000"), true);
         mContext = getApplicationContext();
         mActionBar = getActionBar();
@@ -127,6 +125,10 @@ public abstract class BaseWebActivity extends Activity implements OnClickListene
 
         // AppContext.INSTANCE.setFullScreen(true);
         // AppContext.INSTANCE.getNavigationReLayout().setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    protected void initViewBinding() {
+
     }
 
 //

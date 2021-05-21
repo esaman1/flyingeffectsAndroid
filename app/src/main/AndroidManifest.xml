@@ -272,6 +272,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.view.activity.BuyVipActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.view.activity.PrivacyPolicyActivity"
             android:exported="false"
             android:theme="@style/TransparentTheme" />
@@ -305,6 +310,12 @@
             android:name="com.flyingeffects.com.ui.view.activity.VideoClippingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
+
+        <!-- 微信登录和微信支付接收返回值的activity -->
+        <activity
+            android:name=".wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop" />
 
 
         <!--铠甲广告配置Start-->
@@ -457,6 +468,8 @@
             android:exported="true"
             android:launchMode="singleTask"
             android:taskAffinity="com.flyingeffects.com" />
+
+
         <receiver android:name=".douyinapi.DouYingBroadcast">
             <intent-filter>
                 <action android:name="com.aweme.opensdk.action.stay.in.dy" />

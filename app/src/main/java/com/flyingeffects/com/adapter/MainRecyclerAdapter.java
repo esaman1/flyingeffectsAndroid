@@ -29,8 +29,8 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
-import com.flyingeffects.com.enity.DownVideoPath;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.DownVideoPath;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -43,6 +43,7 @@ import com.flyingeffects.com.ui.view.activity.UploadMaterialActivity;
 import com.flyingeffects.com.ui.view.activity.VideoCropActivity;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.utils.LogUtil;
+import com.flyingeffects.com.utils.OpenWechatUtils;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.manager.FeedAdManager;
@@ -170,7 +171,8 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
                             }
 
                             constraintLayoutAddVideo.setOnClickListener(v -> {
-                                showMessageDialog();
+                                //showMessageDialog();
+                                OpenWechatUtils.showOpenWxDialog(mContext);
                             });
                         } else {
                             constraintLayoutAddVideo.setVisibility(View.GONE);
@@ -300,7 +302,7 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
                             }
                             constraintLayoutAddVideo.setVisibility(View.VISIBLE);
                             constraintLayoutAddVideo.setOnClickListener(v -> {
-                                showMessageDialog();
+                                OpenWechatUtils.showOpenWxDialog(mContext);
                             });
                         } else {
                             constraintLayoutAddVideo.setVisibility(View.GONE);
@@ -519,51 +521,51 @@ public class MainRecyclerAdapter extends BaseMultiItemQuickAdapter<NewFragmentTe
         }
     }
 
-
-    /**
-     * 弹出dialog
-     */
-    private void showMessageDialog() {
-        //复制到剪贴板
-        ClipboardManager tvCopy = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-        tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.getService_wxi()));
-        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_wechat");
-        //弹出dialog
-        CommonMessageDialog.getBuilder(mContext)
-                .setContentView(R.layout.dialog_common_message)
-                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
-                .setAdId(AdConfigs.AD_IMAGE_WX_DIALOG)
-                .setTitle(BaseConstans.configList.getTitle())
-                .setMessage(BaseConstans.configList.getContent())
-                .setMessage2(BaseConstans.configList.getCopydata())
-                .setMessage3(BaseConstans.configList.getDescription())
-                .setPositiveButton("立即打开微信获取")
-                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
-                    @Override
-                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
-                        openWx();
-                    }
-
-                    @Override
-                    public void onCancelBtnClick(CommonMessageDialog dialog) {
-                        dialog.dismiss();
-                    }
-                }).build()
-                .show();
-    }
-
-    private void openWx() {
-        try {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setComponent(cmp);
-            mContext.startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            ToastUtil.showToast(mContext.getString(R.string.check_login_notification));
-        }
-    }
+//
+//    /**
+//     * 弹出dialog
+//     */
+//    private void showMessageDialog() {
+//        //复制到剪贴板
+//        ClipboardManager tvCopy = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+//        tvCopy.setPrimaryClip(ClipData.newPlainText(null, BaseConstans.getService_wxi()));
+//        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "alert_wechat");
+//        //弹出dialog
+//        CommonMessageDialog.getBuilder(mContext)
+//                .setContentView(R.layout.dialog_common_message)
+//                .setAdStatus(CommonMessageDialog.AD_STATUS_MIDDLE)
+//                .setAdId(AdConfigs.AD_IMAGE_WX_DIALOG)
+//                .setTitle(BaseConstans.configList.getTitle())
+//                .setMessage(BaseConstans.configList.getContent())
+//                .setMessage2(BaseConstans.configList.getCopydata())
+//                .setMessage3(BaseConstans.configList.getDescription())
+//                .setPositiveButton("立即打开微信获取")
+//                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+//                    @Override
+//                    public void onPositiveBtnClick(CommonMessageDialog dialog) {
+//                        openWx();
+//                    }
+//
+//                    @Override
+//                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+//                        dialog.dismiss();
+//                    }
+//                }).build()
+//                .show();
+//    }
+//
+//    private void openWx() {
+//        try {
+//            Intent intent = new Intent(Intent.ACTION_MAIN);
+//            ComponentName cmp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI");
+//            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            intent.setComponent(cmp);
+//            mContext.startActivity(intent);
+//        } catch (ActivityNotFoundException e) {
+//            ToastUtil.showToast(mContext.getString(R.string.check_login_notification));
+//        }
+//    }
 
 
     /**
