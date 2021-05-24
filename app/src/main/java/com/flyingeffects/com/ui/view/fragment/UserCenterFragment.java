@@ -386,12 +386,13 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                 @Override
                 protected void onSubError(String message) {
                     mBinding.tvId.setText("未登录");
-                    BaseConstans.SetUserToken("");
+                    BaseConstans.setUserToken("");
                 }
 
                 @Override
                 protected void onSubNext(UserInfo data) {
                     Hawk.put(UserInfo.USER_INFO_KEY, data);
+                    LogUtil.d(TAG,"userInfo is refresh");
                     if (getActivity() != null) {
                         mBinding.tvId.setText("飞友号：" + data.getId());
                         if (!TextUtils.isEmpty(data.getNickname())) {
@@ -434,7 +435,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                             mBinding.tvIntroduction.setCompoundDrawablesRelativeWithIntrinsicBounds(R.mipmap.icon_edit, 0, 0, 0);
                         }
                     }
-                    BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
+                    BaseConstans.setUserId(data.getId(), data.getNickname(), data.getPhotourl());
                     startVipInfo(data);
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -454,12 +455,12 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
             switch (data.getVip_grade()) {
                 case CheckVipOrAdUtils.VIP_GRADE_MONTH:
                     vipBtnStr = "立即续费";
-                    vipDateStr = TimeUtils.formatTheDate(data.getVip_end_time());
+                    vipDateStr = TimeUtils.formatTheDate(data.getVip_end_time()) + "到期";
                     vipIconStr = "月";
                     break;
                 case CheckVipOrAdUtils.VIP_GRADE_YEAR:
                     vipBtnStr = "立即续费";
-                    vipDateStr = TimeUtils.formatTheDate(data.getVip_end_time());
+                    vipDateStr = TimeUtils.formatTheDate(data.getVip_end_time()) + "到期";
                     vipIconStr = "年";
                     break;
                 case CheckVipOrAdUtils.VIP_GRADE_FOREVER:
@@ -478,7 +479,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
             vipBtnStr = "立即开通";
             mBinding.tvAvatarVipIcon.setVisibility(View.INVISIBLE);
         }
-        mBinding.tvVipTimeText.setText(vipDateStr+"到期");
+        mBinding.tvVipTimeText.setText(vipDateStr);
         mBinding.tvVipBtn.setText(vipBtnStr);
         mBinding.tvAvatarVipIcon.setText(vipIconStr);
     }

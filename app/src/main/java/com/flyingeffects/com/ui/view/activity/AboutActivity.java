@@ -20,7 +20,6 @@ import com.flyingeffects.com.databinding.ViewTopBinding;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
-import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.PermissionUtil;
 import com.flyingeffects.com.utils.SystemUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -146,7 +145,7 @@ public class AboutActivity extends BaseActivity {
                 .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
-                        BaseConstans.SetUserToken("");
+                        BaseConstans.setUserToken("");
 //                        EventBus.getDefault().post(new ExitOrLogin());
                         findViewById(R.id.tv_top_submit).setVisibility(View.GONE);
                         dialog.dismiss();

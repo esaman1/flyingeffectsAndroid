@@ -88,7 +88,7 @@ public class SignoutActivity extends BaseActivity {
 
             @Override
             protected void onSubNext(Object data) {
-                BaseConstans.SetUserToken("");
+                BaseConstans.setUserToken("");
                 SignoutActivity.this.finish();
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, true);

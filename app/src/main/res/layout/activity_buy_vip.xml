@@ -14,7 +14,7 @@
         android:layout_marginStart="@dimen/dp_15"
         android:layout_marginTop="@dimen/dp_10"
         android:layout_marginEnd="@dimen/dp_15"
-        android:background="@drawable/shape_vip_user_back"
+        android:background="@mipmap/bg_vip_page_user"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/v_title_back" />

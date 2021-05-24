@@ -418,8 +418,8 @@ public class LoginActivity extends BaseActivity {
                 Hawk.put(UserInfo.USER_INFO_KEY, data);
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "requestLogin=" + str);
-                BaseConstans.SetUserToken(data.getToken());
-                BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
+                BaseConstans.setUserToken(data.getToken());
+                BaseConstans.setUserId(data.getId(), data.getNickname(), data.getPhotourl());
                 EventBus.getDefault().post(new LoginToAttentionUserEvent());
                 EventBus.getDefault().post(new BackgroundTemplateCollectionEvent());
                 closeThisAct();
@@ -467,8 +467,8 @@ public class LoginActivity extends BaseActivity {
                         Hawk.put(UserInfo.USER_INFO_KEY, data);
                         //String str = StringUtil.beanToJSONString(data);
                         LogUtil.d("OOM", "setToken=" + data.getToken());
-                        BaseConstans.SetUserToken(data.getToken());
-                        BaseConstans.SetUserId(data.getId(), data.getNickname(), data.getPhotourl());
+                        BaseConstans.setUserToken(data.getToken());
+                        BaseConstans.setUserId(data.getId(), data.getNickname(), data.getPhotourl());
                         disMissShanYanUi();
                         WaitingDialog.closeProgressDialog();
                         EventBus.getDefault().post(new LoginToAttentionUserEvent());

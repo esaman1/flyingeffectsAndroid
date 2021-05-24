@@ -90,8 +90,8 @@ public class BaseConstans {
         //getTimestamp()+""
         map.put("timestamp", nowTimestamp);
         map.put("imei", getUuid());
-        map.put("uuid", GetUserUuid());
-        map.put("token", GetUserToken());
+        map.put("uuid", getUserUuid());
+        map.put("token", getUserToken());
         map.put("sign", getSine(nowTimestamp, map));
 
         return map;
@@ -106,19 +106,19 @@ public class BaseConstans {
         //getTimestamp()+""
         map.put("timestamp", nowTimestamp);
         map.put("imei", getUuid());
-        map.put("uuid", GetUserUuid());
-        map.put("token", GetUserToken());
+        map.put("uuid", getUserUuid());
+        map.put("token", getUserToken());
         return abc.sign(map);
     }
 
 
-    public static String GetUserToken() {
+    public static String getUserToken() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("token", "");
     }
 
 
-    public static void SetUserToken(String token) {
+    public static void setUserToken(String token) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putString("token", token);
     }
@@ -130,7 +130,7 @@ public class BaseConstans {
     }
 
 
-    public static void SetUserId(String id, String userName, String headUrl) {
+    public static void setUserId(String id, String userName, String headUrl) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putString("userId", id);
         LogUtil.d("oom3", "设置的userId=" + id);
@@ -139,7 +139,7 @@ public class BaseConstans {
     }
 
 
-    public static String NickName() {
+    public static String nickName() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("userName", "");
     }
@@ -152,11 +152,11 @@ public class BaseConstans {
 
 
     public static boolean hasLogin() {
-        return GetUserToken() != null && !"".equals(GetUserToken());
+        return getUserToken() != null && !"".equals(getUserToken());
     }
 
 
-    static String GetUserUuid() {
+    static String getUserUuid() {
 
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("uuid", "");
@@ -432,7 +432,6 @@ public class BaseConstans {
     }
 
 
-
     public static void setFirstUseDownAndUpAct() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putBoolean("isFirstUseDownAndUp", false);
@@ -557,7 +556,6 @@ public class BaseConstans {
         spUtil.putString("DouyingTopic", topic);
     }
 
-
     /**
      * 获取自定义模板分享到抖音的话题
      */
@@ -592,6 +590,37 @@ public class BaseConstans {
         return spUtil.getString("oaid", "");
     }
 
+    public static void setVipServerShow(int isShow) {
+        SPHelper.getInstance().putInt("vip_server", isShow);
+    }
+
+    public static int getVipServerShow() {
+        return SPHelper.getInstance().getInt("vip_server", 1);
+    }
+
+    public static void setVipFloatWindowConfigShowTimes(int times) {
+        SPHelper.getInstance().putInt("vip_float_config_show_times", times);
+    }
+
+    public static int getVipFloatWindowConfigShowTimes() {
+        return SPHelper.getInstance().getInt("vip_float_config_show_times", 1);
+    }
+
+    public static void setVipFloatWindowShowTimes(int times) {
+        SPHelper.getInstance().putInt("vip_float_show_times", times);
+    }
+
+    public static int getVipFloatWindowShowTimes() {
+        return SPHelper.getInstance().getInt("vip_float_show_times", 0);
+    }
+
+    public static void setVipFloatWindowShowTime(long time) {
+        SPHelper.getInstance().putLong("vip_float_show_time", time);
+    }
+
+    public static long getVipFloatWindowShowTime() {
+        return SPHelper.getInstance().getLong("vip_float_show_time", 0);
+    }
 
     /**
      * 获取换装制作页面切换模板按钮加载视频广告的间隔次数
