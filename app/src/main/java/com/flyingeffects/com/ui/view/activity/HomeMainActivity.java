@@ -67,7 +67,6 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.SystemUtil;
-import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.NoSlidingViewPager;
 import com.githang.statusbar.StatusBarCompat;
@@ -487,35 +486,25 @@ public class HomeMainActivity extends FragmentActivity {
         StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "默认页面不纳入统计");
         mTvVipFloatBtn = findViewById(R.id.tv_vip_float_btn);
         mIvVipFloatClose = findViewById(R.id.iv_close_float_btn);
-        if(CheckVipOrAdUtils.checkIsVip()&&canShowVipLogo(true)){
+        if (!CheckVipOrAdUtils.checkIsVip() && CheckVipOrAdUtils.checkFloatWindowShow()) {
             mIvVipFloatClose.setVisibility(View.VISIBLE);
             mTvVipFloatBtn.setVisibility(View.VISIBLE);
             nowShowWindowType = 1;
-        }else{
+        } else {
             mIvVipFloatClose.setVisibility(View.INVISIBLE);
             mTvVipFloatBtn.setVisibility(View.INVISIBLE);
         }
         mTvVipFloatBtn.setOnClickListener(v -> startVipActivity());
         mIvVipFloatClose.setOnClickListener(v -> {
-
-        });
-
-        mIvVipFloatClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (nowShowWindowType == 1) {
-                    //当前关闭的按钮为vip
-                    BaseConstans.setVipCloseTime(System.currentTimeMillis());
-                    mIvVipFloatClose.setVisibility(View.GONE);
-                    mTvVipFloatBtn.setVisibility(View.GONE);
-                    //每关闭一次，浮窗展示次数+1
-                    BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
-
-
-                } else {
-                    //当前关闭的为浮动广告
-                    BaseConstans.setAdCloseTime(System.currentTimeMillis());
-                }
+            if (nowShowWindowType == 1) {
+                //当前关闭的按钮为vip
+                mIvVipFloatClose.setVisibility(View.GONE);
+                mTvVipFloatBtn.setVisibility(View.GONE);
+                //每关闭一次，浮窗展示次数+1
+                BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
+            } else {
+                //当前关闭的为浮动广告
+                BaseConstans.setAdCloseTime(System.currentTimeMillis());
             }
         });
         showVipOrEntranceAd();
@@ -985,7 +974,7 @@ public class HomeMainActivity extends FragmentActivity {
 
                     ll_ad_entrance.removeAllViews();
                     ll_ad_entrance.addView(adView);
-                    if(canShowVipLogo(false)){
+                    if (canShowVipLogo()) {
                         nowShowWindowType = 2;
                         mIvVipFloatClose.setVisibility(View.VISIBLE);
                     }
@@ -1024,24 +1013,17 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
-
     /**
      * description ：当前是否可以显示logo
      * creation date: 2021/5/21
      * user : zhangtongju
      */
-    private boolean canShowVipLogo(boolean isVip){
-        long nowCurrentTime=System.currentTimeMillis();
-        long lastCloseTime;
-        if(isVip){
-            lastCloseTime =BaseConstans.getVipCloseTime();
-        }else{
-            lastCloseTime =BaseConstans.getAdCloseTime();
-        }
-        long intervalTime=nowCurrentTime-lastCloseTime;
-        intervalTime=intervalTime/1000/60/60/24;
-        return intervalTime >=24;
+    private boolean canShowVipLogo() {
+        long nowCurrentTime = System.currentTimeMillis();
+        long lastCloseTime = BaseConstans.getAdCloseTime();
+        long intervalTime = nowCurrentTime - lastCloseTime;
+        intervalTime = intervalTime / 1000 / 60 / 60 / 24;
+        return intervalTime >= 24;
     }
 
 }
