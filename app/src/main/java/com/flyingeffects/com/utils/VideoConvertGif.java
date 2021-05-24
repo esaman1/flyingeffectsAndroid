@@ -4,9 +4,7 @@ package com.flyingeffects.com.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
-import android.os.Environment;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
@@ -27,7 +25,6 @@ import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 
 /**
@@ -90,33 +87,32 @@ public class VideoConvertGif {
 
 
     private void downImageForBitmap(Bitmap OriginBitmap, int frameCount) {
-        String fileName = extractFrameFolder + File.separator + frameCount + ".png";
-        Bitmap BP=getImageToChange(OriginBitmap);
-        BitmapManager.getInstance().saveBitmapToPath(BP, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
+        String fileName = extractFrameFolder + File.separator + frameCount + ".jpg";
+        BitmapManager.getInstance().saveBitmapToPathForJpg(OriginBitmap, fileName, isSuccess1 -> GlideBitmapPool.putBitmap(
                 OriginBitmap));
     }
 
 
-    public  Bitmap getImageToChange(Bitmap mBitmap) {
-        Bitmap createBitmap = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        int mWidth = mBitmap.getWidth();
-        int mHeight = mBitmap.getHeight();
-        for (int i = 0; i < mHeight; i++) {
-            for (int j = 0; j < mWidth; j++) {
-                int color = mBitmap.getPixel(j, i);
-                int g = Color.green(color);
-                int r = Color.red(color);
-                int b = Color.blue(color);
-                int a = Color.alpha(color);
-                if((g>=220&&g<=255)&&(r>=220&&r<=250)&&(b>=220&&b<=255)){
-                    a = 0;
-                }
-                color = Color.argb(a, r, g, b);
-                createBitmap.setPixel(j, i, color);
-            }
-        }
-        return createBitmap;
-    }
+//    public  Bitmap getImageToChange(Bitmap mBitmap) {
+//        Bitmap createBitmap = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+//        int mWidth = mBitmap.getWidth();
+//        int mHeight = mBitmap.getHeight();
+//        for (int i = 0; i < mHeight; i++) {
+//            for (int j = 0; j < mWidth; j++) {
+//                int color = mBitmap.getPixel(j, i);
+//                int g = Color.green(color);
+//                int r = Color.red(color);
+//                int b = Color.blue(color);
+//                int a = Color.alpha(color);
+//                if((g>=220&&g<=255)&&(r>=220&&r<=250)&&(b>=220&&b<=255)){
+//                    a = 0;
+//                }
+//                color = Color.argb(a, r, g, b);
+//                createBitmap.setPixel(j, i, color);
+//            }
+//        }
+//        return createBitmap;
+//    }
 
 
     /**
@@ -129,17 +125,16 @@ public class VideoConvertGif {
         localAnimatedGifEncoder.start(baos);//start
         localAnimatedGifEncoder.setRepeat(0);//设置生成gif的开始播放时间。0为立即开始播放
         localAnimatedGifEncoder.setDelay(0);
-        localAnimatedGifEncoder.setTransparent(0);
         localAnimatedGifEncoder.setFrameRate(20);
         for (int i = 0; i < getMattingList.size(); i++) {
             localAnimatedGifEncoder.addFrame(BitmapFactory.decodeFile(getMattingList.get(i).getPath()));
         }
         localAnimatedGifEncoder.finish();//finish
-        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/GIFMakerDemo");
-        if (!file.exists()) file.mkdir();
+//        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/GIFMakerDemo");
+//        if (!file.exists()) file.mkdir();
         String path = gifCatch+"/show.gif";
-        String path2 = gifCatch+"/show.png";
-        File fileFrom=new File(extractFrameFolder + File.separator + frameCount + ".png");
+        String path2 = gifCatch+"/show.jpg";
+        File fileFrom=new File(extractFrameFolder + File.separator + frameCount + ".jpg");
         FileUtil.copyFile(fileFrom ,path2);
 
         LogUtil.d("OOM2", "createGif: ---->" + path);
@@ -152,7 +147,6 @@ public class VideoConvertGif {
             fos.close();
             DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("ExtractFrame"));
             uploadDressUpImage(path2,callback,path);
-
 //            compressGif(path, path2, callback);
         } catch (IOException e) {
             if (callback != null) {
@@ -171,11 +165,6 @@ public class VideoConvertGif {
     public interface CreateGifCallback {
         void callback(boolean isSuccess, String path,String iconPath);
     }
-
-
-
-
-
 
     private String needGifPath;
     private void uploadDressUpImage(String path,CreateGifCallback callback,String orginPath) {
@@ -202,18 +191,5 @@ public class VideoConvertGif {
 
         }));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

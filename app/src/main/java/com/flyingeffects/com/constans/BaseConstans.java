@@ -193,6 +193,19 @@ public class BaseConstans {
     }
 
 
+    public static boolean isFirstIntoMainAct() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getBoolean("isFirstUseApp", true);
+    }
+
+    public static void setFirstIntoMainAct() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putBoolean("isFirstUseApp", false);
+    }
+
+
+
+
     /**
      * description ：获得时间戳
      * date: ：2019/5/27 10:49
