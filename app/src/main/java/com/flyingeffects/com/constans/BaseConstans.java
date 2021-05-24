@@ -525,22 +525,22 @@ public class BaseConstans {
     }
 
 
-    /**
-     * 关闭vip的时间
-     */
-    public static void setVipCloseTime(long time) {
-        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-        spUtil.putLong("closeVipTime", time);
-    }
+//    /**
+//     * 关闭vip的时间
+//     */
+//    public static void setVipCloseTime(long time) {
+//        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+//        spUtil.putLong("closeVipTime", time);
+//    }
 
 
-    /**
-     * 得到浮动弹窗的时间
-     */
-    public static long getVipCloseTime() {
-        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-        return spUtil.getLong("closeVipTime", 0);
-    }
+//    /**
+//     * 得到浮动弹窗的时间
+//     */
+//    public static long getVipCloseTime() {
+//        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+//        return spUtil.getLong("closeVipTime", 0);
+//    }
 
 
 

@@ -127,9 +127,9 @@ public class PreviewUpAndDownMvpModel {
         this.fromTo = fromTo;
         this.category_id = category_id;
         this.tc_id = tc_id;
-        mTTAdNative = TTAdManagerHolder.get().createAdNative(context);
-        //在合适的时机申请权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题
-        TTAdManagerHolder.get().requestPermissionIfNecessary(context);
+       mTTAdNative = TTAdManagerHolder.get().createAdNative(context);
+//        //在合适的时机申请权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题
+//        TTAdManagerHolder.get().requestPermissionIfNecessary(context);
         soundFolder = fileManager.getFileCachePath(context, "soundFolder");
     }
 
