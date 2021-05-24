@@ -96,10 +96,9 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
 
     private int mStickerType = CODE_STICKER_TYPE_NORMAL;
 
-    private boolean isFromStickerAnim = false;
-
     private float mMeasureWidth = 300;
     private float mMeasureHeight = 300;
+
     private String stickerText = "输入文本";
 
     /**
@@ -1047,7 +1046,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
             canvas.restore();
             RectUtil.scaleRect(mHelpBoxRect, mScale);
             drawFrame(canvas);
-
 
         } else if (currentDrawable != null) {
             //从闪图过来并且镜像bitmap不为空，将本身的图源换成镜像bitmap
@@ -2343,11 +2341,6 @@ public class StickerView<D extends Drawable> extends View implements TickerAnima
      */
     public void setIsfromAnim(boolean isFromAnim) {
         this.isFromAnim = isFromAnim;
-    }
-
-
-    public void setIsFromStickerAnim(boolean isFromStickerAnim) {
-        this.isFromStickerAnim = isFromStickerAnim;
     }
 
 

@@ -340,7 +340,8 @@
                     android:id="@+id/g_vip_show"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="v_vip_back,iv_vip_icon,tv_vip_btn,tv_avatar_vip_icon,tv_vip_time_text" />
+                    android:visibility="invisible"
+                    app:constraint_referenced_ids="v_vip_back,iv_vip_icon,tv_vip_btn,tv_vip_time_text" />
 
                 <View
                     android:id="@+id/v_vip_back"

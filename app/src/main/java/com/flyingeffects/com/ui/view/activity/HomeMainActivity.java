@@ -487,11 +487,12 @@ public class HomeMainActivity extends FragmentActivity {
         StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "默认页面不纳入统计");
         mTvVipFloatBtn = findViewById(R.id.tv_vip_float_btn);
         mIvVipFloatClose = findViewById(R.id.iv_close_float_btn);
-        if(CheckVipOrAdUtils.checkIsVip()&&canShowVipLogo(true)){
+
+        if (CheckVipOrAdUtils.checkIsVip() && canShowVipLogo(true)) {
             mIvVipFloatClose.setVisibility(View.VISIBLE);
             mTvVipFloatBtn.setVisibility(View.VISIBLE);
             nowShowWindowType = 1;
-        }else{
+        } else {
             mIvVipFloatClose.setVisibility(View.INVISIBLE);
             mTvVipFloatBtn.setVisibility(View.INVISIBLE);
         }
@@ -510,8 +511,6 @@ public class HomeMainActivity extends FragmentActivity {
                     mTvVipFloatBtn.setVisibility(View.GONE);
                     //每关闭一次，浮窗展示次数+1
                     BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
-
-
                 } else {
                     //当前关闭的为浮动广告
                     BaseConstans.setAdCloseTime(System.currentTimeMillis());
@@ -985,7 +984,7 @@ public class HomeMainActivity extends FragmentActivity {
 
                     ll_ad_entrance.removeAllViews();
                     ll_ad_entrance.addView(adView);
-                    if(canShowVipLogo(false)){
+                    if (canShowVipLogo(false)) {
                         nowShowWindowType = 2;
                         mIvVipFloatClose.setVisibility(View.VISIBLE);
                     }
@@ -1024,24 +1023,22 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
-
     /**
      * description ：当前是否可以显示logo
      * creation date: 2021/5/21
      * user : zhangtongju
      */
-    private boolean canShowVipLogo(boolean isVip){
-        long nowCurrentTime=System.currentTimeMillis();
+    private boolean canShowVipLogo(boolean isVip) {
+        long nowCurrentTime = System.currentTimeMillis();
         long lastCloseTime;
-        if(isVip){
-            lastCloseTime =BaseConstans.getVipCloseTime();
-        }else{
-            lastCloseTime =BaseConstans.getAdCloseTime();
+        if (isVip) {
+            lastCloseTime = BaseConstans.getVipCloseTime();
+        } else {
+            lastCloseTime = BaseConstans.getAdCloseTime();
         }
-        long intervalTime=nowCurrentTime-lastCloseTime;
-        intervalTime=intervalTime/1000/60/60/24;
-        return intervalTime >=24;
+        long intervalTime = nowCurrentTime - lastCloseTime;
+        intervalTime = intervalTime / 1000 / 60 / 60 / 24;
+        return intervalTime >= 24;
     }
 
 }

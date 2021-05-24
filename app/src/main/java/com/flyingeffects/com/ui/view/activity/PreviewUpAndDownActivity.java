@@ -520,7 +520,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             adapter.onDestroy();
         }
         GSYVideoManager.releaseAllVideos();
-
     }
 
 
@@ -625,7 +624,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         } else {
             hasLoginToNext();
         }
-
     }
 
     private void showVipDialog() {
@@ -807,7 +805,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         }
         adapter.notifyDataSetChanged();
     }
-
 
     /**
      * description ：第一次进入默认之后会下滑

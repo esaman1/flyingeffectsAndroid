@@ -183,6 +183,13 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
                 });
     }
 
+    @Override
+    public void hideBuyVipUi() {
+        mBinding.rvCostList.setVisibility(View.INVISIBLE);
+        mBinding.tvOpenVip.setVisibility(View.INVISIBLE);
+        mBinding.radioGroup.setVisibility(View.INVISIBLE);
+    }
+
     private void setOnClickListener() {
         mTopBinding.ivBack.setOnClickListener(this::onViewClicked);
         mBinding.tvOpenVip.setOnClickListener(this::onViewClicked);
@@ -201,9 +208,8 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
 
     private void showProblemDialog() {
         OpenWechatUtils.showOpenWxDialog(mContext, CommonMessageDialog.AD_STATUS_NONE
-                , "飞闪提示", "友友您好，已经为您复制微信号，留言说明问题", "打开微信");
+                , "飞闪提示", "友友您好，已经为您复制微信号" + BaseConstans.getService_wxi() + "，留言说明问题", "打开微信");
     }
-
 
     @Override
     public void updateCostList(List<PriceListEntity> data) {

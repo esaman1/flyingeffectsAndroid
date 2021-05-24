@@ -298,6 +298,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                 mBinding.tvEditInformation.setVisibility(View.GONE);
                 mBinding.gVipShow.setVisibility(View.INVISIBLE);
                 mBinding.gLoginShow.setVisibility(View.GONE);
+                mBinding.tvAvatarVipIcon.setVisibility(View.INVISIBLE);
                 mBinding.gNoLoginInfo.setVisibility(View.VISIBLE);
             }
 

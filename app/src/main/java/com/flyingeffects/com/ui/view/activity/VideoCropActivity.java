@@ -56,6 +56,7 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 public class VideoCropActivity extends BaseActivity implements VideoCropMVPView {
     private VideoCropMVPPresenter Presenter;
+
     @BindView(R.id.crop_preivew_icon)
     ImageView playIcon;
     @BindView(R.id.videocrop_drawpadView)

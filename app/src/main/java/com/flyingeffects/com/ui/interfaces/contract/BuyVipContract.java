@@ -56,6 +56,9 @@ public interface BuyVipContract {
         void startAlipay(String orderInfo);
 
         void startWeChatPay(PayEntity.Pay_data payData);
+
+        void hideBuyVipUi();
+
     }
 
     interface BuyVipMvpModel extends BaseModel {
