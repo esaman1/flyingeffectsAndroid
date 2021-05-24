@@ -511,6 +511,44 @@ public class BaseConstans {
         return spUtil.getInt("interstitial", 5);
     }
 
+
+    /**
+     * 关闭浮动弹窗的时间
+     */
+    public static void setAdCloseTime(long time) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putLong("closeAdTime", time);
+    }
+
+    /**
+     * 得到浮动弹窗的时间
+     */
+    public static long getAdCloseTime() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getLong("closeAdTime", 0);
+    }
+
+
+    /**
+     * 关闭vip的时间
+     */
+    public static void setVipCloseTime(long time) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putLong("closeVipTime", time);
+    }
+
+
+    /**
+     * 得到浮动弹窗的时间
+     */
+    public static long getVipCloseTime() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getLong("closeVipTime", 0);
+    }
+
+
+
+
     /**
      * 设置自定义模板分享到抖音的话题
      */
