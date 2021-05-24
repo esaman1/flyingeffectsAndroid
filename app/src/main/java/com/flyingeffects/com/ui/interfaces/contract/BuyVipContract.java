@@ -36,6 +36,8 @@ public interface BuyVipContract {
         public abstract void createOrder();
 
         public abstract String getVipGradeText(int is_vip, int vip_grade);
+
+        public abstract void refreshUserInfo();
     }
 
     interface BuyVipMvpView extends BaseView {

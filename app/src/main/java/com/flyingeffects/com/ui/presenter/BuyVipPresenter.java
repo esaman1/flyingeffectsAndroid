@@ -169,6 +169,11 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
         return vipGradeStr;
     }
 
+    @Override
+    public void refreshUserInfo() {
+        mBuyVipMvpModel.requestUserInfo();
+    }
+
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onDestroy() {

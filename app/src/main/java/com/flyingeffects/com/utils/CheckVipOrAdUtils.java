@@ -34,6 +34,7 @@ public class CheckVipOrAdUtils {
         } else {
             return false;
         }
+
     }
 
 
@@ -54,7 +55,7 @@ public class CheckVipOrAdUtils {
     public static boolean checkFloatWindowShow() {
         Date date = new Date();
         boolean isSameDay = TimeUtils.isSameDay(date.getTime(), BaseConstans.getVipFloatWindowShowTime(), TimeZone.getDefault());
-        if (!isSameDay) {
+        if (!isSameDay && BaseConstans.getVipFloatWindowConfigShowTimes() != 0) {
             BaseConstans.setVipFloatWindowShowTime(date.getTime());
             BaseConstans.setVipFloatWindowShowTimes(0);
             return true;

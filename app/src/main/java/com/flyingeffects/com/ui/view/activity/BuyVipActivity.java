@@ -156,6 +156,7 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
             LogUtils.d(TAG, "code = " + code);
             if (code == ALI_PAY_SUCCESS) {
                 ToastUtil.showToast(msg);
+                mPresenter.refreshUserInfo();
                 finish();
                 //mPresenter.requestMakeSurePay();
             } else if (code == ALI_PAY_CANCEL) {
@@ -174,6 +175,7 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
                     LogUtil.d(TAG, "code = " + code + " msg = " + msg);
                     if (code == WechatPay.SUCCESS_PAY) {
                         ToastUtil.showToast(msg);
+                        mPresenter.refreshUserInfo();
                         finish();
                     } else if (code == WechatPay.CANCEL_PAY) {
                         ToastUtil.showToast(getString(R.string.cancel_pay));

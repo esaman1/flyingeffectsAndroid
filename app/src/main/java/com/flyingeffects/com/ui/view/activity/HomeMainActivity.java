@@ -500,6 +500,7 @@ public class HomeMainActivity extends FragmentActivity {
                 //当前关闭的按钮为vip
                 mIvVipFloatClose.setVisibility(View.GONE);
                 mTvVipFloatBtn.setVisibility(View.GONE);
+                startVipActivity();
                 //每关闭一次，浮窗展示次数+1
                 BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
             } else {
