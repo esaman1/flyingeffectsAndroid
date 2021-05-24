@@ -96,6 +96,7 @@ public class AdManager {
     public void showImageAd(Context context, String id, LinearLayout ll_ad_container) {
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             imageAdManager = new ImageAdManager();
+            imageAdManager.setNtAdUserId(BaseConstans.getUserId());
             imageAdManager.showImageAd(context, id, ll_ad_container, null, new ImageAdCallBack() {
                 @Override
                 public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {

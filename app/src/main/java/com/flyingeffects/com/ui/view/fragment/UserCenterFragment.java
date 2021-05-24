@@ -115,7 +115,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
         setOnClickListener();
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, mBinding.llAdContent);
-            loadImageAd();
+//            loadImageAd();
         }
     }
 
@@ -301,9 +301,10 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                 mBinding.gNoLoginInfo.setVisibility(View.VISIBLE);
             }
 
-            if (imageAdManager != null) {
-                imageAdManager.adResume();
-            }
+//            if (imageAdManager != null) {
+//                imageAdManager.adResume();
+//            }
+            AdManager.getInstance().imageAdResume();
         }
         super.onResume();
     }
@@ -312,9 +313,10 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     @Override
     public void onPause() {
         super.onPause();
-        if (imageAdManager != null) {
-            imageAdManager.adPause();
-        }
+//        if (imageAdManager != null) {
+//            imageAdManager.adPause();
+//        }\
+        AdManager.getInstance().imageAdPause();
     }
 
     private void initTabData() {
@@ -627,9 +629,6 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        if (imageAdManager != null) {
-            imageAdManager.adDestroy();
-        }
     }
 
 
@@ -641,38 +640,6 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     }
 
 
-    /**
-     * 加载图片广告
-     */
-    ImageAdManager imageAdManager;
-
-    private void loadImageAd() {
-        imageAdManager = new ImageAdManager();
-        imageAdManager.showImageAd(getActivity(), AdConfigs.APP_FUDONG, mBinding.llAdEntrance, null, new ImageAdCallBack() {
-            @Override
-            public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {
-                if (adView != null) {
-                    mBinding.llAdEntrance.removeAllViews();
-                    mBinding.llAdEntrance.addView(adView);
-                }
-            }
-
-            @Override
-            public void onImageAdError(String error) {
-                LogUtil.e("ImageAdError = " + error);
-            }
-
-            @Override
-            public void onImageAdClose() {
-
-            }
-
-            @Override
-            public boolean onImageAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
-                return false;
-            }
-        });
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -689,9 +656,6 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
         if (deniedPermission.isEmpty()) {
             if (requestCode == CODE_PEELING) {
                 toPeeling();
-            } else {
-
-
             }
         } else {
             new AlertDialog.Builder(getActivity())

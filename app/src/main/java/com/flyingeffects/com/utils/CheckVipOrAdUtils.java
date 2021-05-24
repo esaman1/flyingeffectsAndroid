@@ -1,12 +1,6 @@
 package com.flyingeffects.com.utils;
 
-import android.content.Context;
-import android.text.TextUtils;
-
-import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.entity.UserInfo;
-import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.orhanobut.hawk.Hawk;
 import com.xj.anchortask.library.log.LogUtils;
 

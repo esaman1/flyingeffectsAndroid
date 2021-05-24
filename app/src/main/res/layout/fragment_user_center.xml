@@ -605,15 +605,29 @@
         android:background="#232323"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <LinearLayout
-        android:id="@+id/ll_ad_entrance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="50dp"
-        android:orientation="vertical"
-        android:visibility="visible" />
+<!--    <LinearLayout-->
+<!--        android:id="@+id/ll_ad_entrance"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="bottom|end"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        android:layout_marginBottom="50dp"-->
+<!--        android:orientation="vertical"-->
+<!--        android:visibility="visible" />-->
+
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:id="@+id/iv_close_float_btn"-->
+<!--        android:visibility="gone"-->
+<!--        android:layout_width="@dimen/dp_20"-->
+<!--        android:layout_height="@dimen/dp_20"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/ll_ad_entrance"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/ll_ad_entrance"-->
+<!--        android:src="@mipmap/ic_float_vip_close"-->
+<!--        android:layout_marginBottom="@dimen/dp_5"/>-->
+
+
+
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

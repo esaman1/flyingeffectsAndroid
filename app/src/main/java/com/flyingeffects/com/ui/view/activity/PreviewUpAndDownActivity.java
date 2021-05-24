@@ -616,11 +616,10 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     @Override
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
-
         Log.d(TAG, "isVip = " + templateItem.getIs_vip());
         if (!CheckVipOrAdUtils.checkIsVip()&&templateItem.getIs_vip() == 1) {
             showVipDialog();
-        } else if (!TextUtils.isEmpty(templateItem.getType()) && "1"
+        } else if (BaseConstans.getHasAdvertising() == 1&&!TextUtils.isEmpty(templateItem.getType()) && "1"
                 .equals(templateItem.getType()) && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && !CheckVipOrAdUtils.checkIsVip()) {
             showMessageDialog();
         } else {
@@ -1489,7 +1488,6 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         @Override
                         public void onRewardVerify() {
                             sHasReward = true;
-                            StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "video_ad_alert_request_fail");
                             BaseConstans.TemplateHasWatchingAd = true;
                             //hasLoginToNext();
                         }

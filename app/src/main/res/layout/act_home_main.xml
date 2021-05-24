@@ -44,6 +44,35 @@
         android:src="@mipmap/ic_float_vip_close"
         android:layout_marginBottom="@dimen/dp_5"/>
 
+
+
+
+
+
+
+    <LinearLayout
+        android:id="@+id/ll_ad_entrance"
+        android:layout_width="wrap_content"
+        android:layout_marginEnd="@dimen/dp_25"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_vip_float_btn"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="50dp"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+
+
+
+
+
+
+
+
+
+
     <ImageView
         android:id="@+id/iv_back_menu_0"
         android:layout_width="0dp"

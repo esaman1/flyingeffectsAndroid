@@ -15,8 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +27,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bytedance.applog.AppLog;
-import com.bytedance.applog.IOaidObserver;
 import com.bytedance.applog.InitConfig;
 import com.bytedance.applog.util.UriConfig;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
@@ -36,6 +35,7 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.entity.AplicationInitRetroposition;
 import com.flyingeffects.com.entity.Config;
 import com.flyingeffects.com.entity.ConfigForTemplateList;
 import com.flyingeffects.com.entity.HomeChoosePageListener;
@@ -67,18 +67,21 @@ import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.SystemUtil;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.NoSlidingViewPager;
 import com.githang.statusbar.StatusBarCompat;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.videoeditor.LanSongFileUtil;
+import com.nineton.ntadsdk.bean.AdInfoBean;
+import com.nineton.ntadsdk.itr.ImageAdCallBack;
+import com.nineton.ntadsdk.manager.ImageAdManager;
 import com.orhanobut.hawk.Hawk;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.xj.anchortask.library.log.LogUtils;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -120,16 +123,24 @@ public class HomeMainActivity extends FragmentActivity {
     private TimerTask task;
     private TextView message_count;
     private NoSlidingViewPager viewpager_home;
-
     private Context mContext;
-
     private AppCompatTextView mTvVipFloatBtn;
     private AppCompatImageView mIvVipFloatClose;
+    private LinearLayout ll_ad_entrance;
+    /**
+     * 加载图片广告
+     */
+    private ImageAdManager imageAdManager;
+    /**
+     * 0 当前无VIP弹窗 1 当前显示vip弹窗 2 当前显示的时互动入口
+     */
+    private int nowShowWindowType = 0;
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         Log.d(TAG, "Application start finished");
+        EventBus.getDefault().post(new AplicationInitRetroposition());
         mContext = HomeMainActivity.this;
         setTheme(R.style.AppTheme);
         //禁止休眠
@@ -137,9 +148,8 @@ public class HomeMainActivity extends FragmentActivity {
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.act_home_main);
-
-
         EventBus.getDefault().register(this);
+        ll_ad_entrance = findViewById(R.id.ll_ad_entrance);
         message_count = findViewById(R.id.message_count);
         viewpager_home = findViewById(R.id.viewpager_home);
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
@@ -170,16 +180,14 @@ public class HomeMainActivity extends FragmentActivity {
         initZt();
         requestConfig();
         setOaid();
+//        loadImageAd();
     }
 
 
     private void setOaid() {
-        AppLog.setOaidObserver(new IOaidObserver() {
-            @Override
-            public void onOaidLoaded(@NotNull final IOaidObserver.Oaid oaid) {
-                LogUtils.d(TAG, "oaid = " + oaid.id);
-                BaseConstans.setOaid(oaid.id);
-            }
+        AppLog.setOaidObserver(oaid -> {
+            LogUtils.d(TAG, "oaid = " + oaid.id);
+            BaseConstans.setOaid(oaid.id);
         });
     }
 
@@ -464,46 +472,53 @@ public class HomeMainActivity extends FragmentActivity {
         viewpager_home.setAdapter(adapter);
         viewpager_home.setOffscreenPageLimit(3);
         whichMenuSelect(1);
-        findViewById(R.id.iv_main_add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (BaseConstans.hasLogin()) {
-                    Intent intent = new Intent(HomeMainActivity.this, FUBeautyActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    StatisticsEventAffair.getInstance().setFlag(mContext, "12_Shoot");
-                    startActivity(intent);
-                } else {
-                    Intent intent = new Intent(HomeMainActivity.this, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
-                }
+        findViewById(R.id.iv_main_add).setOnClickListener(view -> {
+            if (BaseConstans.hasLogin()) {
+                Intent intent = new Intent(HomeMainActivity.this, FUBeautyActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                StatisticsEventAffair.getInstance().setFlag(mContext, "12_Shoot");
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(HomeMainActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
             }
         });
         StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "默认页面不纳入统计");
-
         mTvVipFloatBtn = findViewById(R.id.tv_vip_float_btn);
         mIvVipFloatClose = findViewById(R.id.iv_close_float_btn);
-
-        if (CheckVipOrAdUtils.checkIsVip()) {
+        if(CheckVipOrAdUtils.checkIsVip()&&canShowVipLogo(true)){
+            mIvVipFloatClose.setVisibility(View.VISIBLE);
+            mTvVipFloatBtn.setVisibility(View.VISIBLE);
+            nowShowWindowType = 1;
+        }else{
             mIvVipFloatClose.setVisibility(View.INVISIBLE);
             mTvVipFloatBtn.setVisibility(View.INVISIBLE);
         }
-        mTvVipFloatBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startVipActivity();
-            }
+        mTvVipFloatBtn.setOnClickListener(v -> startVipActivity());
+        mIvVipFloatClose.setOnClickListener(v -> {
+
         });
 
         mIvVipFloatClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mIvVipFloatClose.setVisibility(View.GONE);
-                mTvVipFloatBtn.setVisibility(View.GONE);
-                //每关闭一次，浮窗展示次数+1
-                BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
+                if (nowShowWindowType == 1) {
+                    //当前关闭的按钮为vip
+                    BaseConstans.setVipCloseTime(System.currentTimeMillis());
+                    mIvVipFloatClose.setVisibility(View.GONE);
+                    mTvVipFloatBtn.setVisibility(View.GONE);
+                    //每关闭一次，浮窗展示次数+1
+                    BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
+
+
+                } else {
+                    //当前关闭的为浮动广告
+                    BaseConstans.setAdCloseTime(System.currentTimeMillis());
+                }
             }
         });
+        showVipOrEntranceAd();
     }
 
     private void startVipActivity() {
@@ -551,32 +566,22 @@ public class HomeMainActivity extends FragmentActivity {
     private final NoDoubleClickListener listener = new NoDoubleClickListener() {
         @Override
         public void onNoDoubleClick(View v) {
-            switch (v.getId()) {
-                case R.id.iv_back_menu_0:
-                    whichMenuSelect(0);
-
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
-                    break;
-                case R.id.iv_back_menu_1:
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "2");
-
-                    whichMenuSelect(1);
-                    break;
-                case R.id.iv_back_menu_2:
-                    whichMenuSelect(2);
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "3");
-
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "12_news");
-                    break;
-                case R.id.iv_back_menu_3:
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "4");
-
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
-                    whichMenuSelect(3);
-                    break;
-                default:
-                    break;
+            int id = v.getId();
+            if (id == R.id.iv_back_menu_0) {
+                whichMenuSelect(0);
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
+            } else if (id == R.id.iv_back_menu_1) {
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "2");
+                whichMenuSelect(1);
+            } else if (id == R.id.iv_back_menu_2) {
+                whichMenuSelect(2);
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "3");
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "12_news");
+            } else if (id == R.id.iv_back_menu_3) {
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "4");
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
+                whichMenuSelect(3);
             }
         }
     };
@@ -620,6 +625,9 @@ public class HomeMainActivity extends FragmentActivity {
         } else {
             message_count.setVisibility(View.GONE);
         }
+        if (imageAdManager != null) {
+            imageAdManager.adResume();
+        }
     }
 
     @Override
@@ -638,22 +646,8 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-    private long exitTime = 0;
-
-
-    private void exitPressAgain() {
-        if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Toast.makeText(ThisMain, "再点一次退出程序", Toast.LENGTH_SHORT).show();
-            exitTime = System.currentTimeMillis();
-        } else {
-            finish();
-        }
-    }
-
-
     @Override
     public void onBackPressed() {
-        //exitPressAgain();
         showBackMessage();
     }
 
@@ -677,11 +671,7 @@ public class HomeMainActivity extends FragmentActivity {
                         dialog.dismiss();
                     }
                 })
-                .setDialogDismissListener(new CommonMessageDialog.DialogDismissListener() {
-                    @Override
-                    public void onDismiss() {
-
-                    }
+                .setDialogDismissListener(() -> {
                 })
                 .build();
         dialog.setCanceledOnTouchOutside(false);
@@ -873,17 +863,9 @@ public class HomeMainActivity extends FragmentActivity {
                         } else if (id == 24) {
                             //首次安装前几次无广告
                             int newUserIsVip = Integer.parseInt(config.getValue());
-                            LogUtil.d("OOM2", "newUserIsVip=" + newUserIsVip);
-                            if (BaseConstans.getOpenAppNum() < newUserIsVip - 1) {
-                                BaseConstans.setNextNewUser(true);
-                            } else {
-                                BaseConstans.setNextNewUser(false);
-                            }
-                            if (BaseConstans.getOpenAppNum() < newUserIsVip) { //新用户没广告
-                                BaseConstans.setIsNewUser(true);
-                            } else {
-                                BaseConstans.setIsNewUser(false);
-                            }
+                            BaseConstans.setNextNewUser(BaseConstans.getOpenAppNum() < newUserIsVip - 1);
+                            //新用户没广告
+                            BaseConstans.setIsNewUser(BaseConstans.getOpenAppNum() < newUserIsVip);
                         } else if (id == 25) {
                             //启动APP多少秒后显示插屏广告
                             int second = Integer.parseInt(config.getValue());
@@ -976,10 +958,8 @@ public class HomeMainActivity extends FragmentActivity {
                         } else {
                             BaseConstans.setHasAdvertising(0);
                         }
-
                         boolean video_ad_open = obArray.getBoolean("video_ad_open");
                         BaseConstans.setIncentiveVideo(video_ad_open);
-
                         boolean save_video_ad = obArray.getBoolean("save_video_ad");
                         BaseConstans.setSave_video_ad(save_video_ad);
                     }
@@ -988,8 +968,80 @@ public class HomeMainActivity extends FragmentActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
+
+    /**
+     * description ：请求互动广告入口
+     * creation date: 2021/5/21
+     * user : zhangtongju
+     */
+    private void loadImageAd() {
+        imageAdManager = new ImageAdManager();
+        imageAdManager.showImageAd(this, AdConfigs.APP_FUDONG, ll_ad_entrance, null, new ImageAdCallBack() {
+            @Override
+            public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {
+                if (adView != null) {
+
+                    ll_ad_entrance.removeAllViews();
+                    ll_ad_entrance.addView(adView);
+                    if(canShowVipLogo(false)){
+                        nowShowWindowType = 2;
+                        mIvVipFloatClose.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+            @Override
+            public void onImageAdError(String error) {
+                LogUtil.e("ImageAdError = " + error);
+            }
+
+            @Override
+            public void onImageAdClose() {
+            }
+
+            @Override
+            public boolean onImageAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                return false;
+            }
+        });
+    }
+
+
+    /**
+     * description ：互动广告逻辑：1.优先显示会员悬浮窗
+     * 2.用户关闭会员悬浮窗之后 、才显示互动广告
+     * 3、会员悬浮窗和互动悬浮窗每天只显示1次
+     * creation date: 2021/5/21
+     * user : zhangtongju
+     */
+    private void showVipOrEntranceAd() {
+        if (mTvVipFloatBtn.getVisibility() != View.VISIBLE) {
+            //如果vip 按钮没有显示，那么请求互动入口
+            loadImageAd();
+        }
+    }
+
+
+
+
+    /**
+     * description ：当前是否可以显示logo
+     * creation date: 2021/5/21
+     * user : zhangtongju
+     */
+    private boolean canShowVipLogo(boolean isVip){
+        long nowCurrentTime=System.currentTimeMillis();
+        long lastCloseTime;
+        if(isVip){
+            lastCloseTime =BaseConstans.getVipCloseTime();
+        }else{
+            lastCloseTime =BaseConstans.getAdCloseTime();
+        }
+        long intervalTime=nowCurrentTime-lastCloseTime;
+        intervalTime=intervalTime/1000/60/60/24;
+        return intervalTime >=24;
+    }
 
 }
