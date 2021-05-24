@@ -17,7 +17,6 @@ import com.flyingeffects.com.manager.huaweiObs;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ExtractVideoFrame;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.utils.AnimatedGifEncoder;
 
 import java.io.ByteArrayOutputStream;
@@ -38,10 +37,10 @@ import rx.functions.Action1;
  */
 public class VideoConvertGif {
     private ExtractVideoFrame mExtractFrame;
-    private String extractFrameFolder;
-    private String gifCatch;
+    private final String extractFrameFolder;
+    private final String gifCatch;
     private int frameCount;
-    private Context context;
+    private final Context context;
 
     public VideoConvertGif(Context context) {
         this.context = context;
@@ -196,20 +195,12 @@ public class VideoConvertGif {
      */
     private void uploadHuawei(String path, String copyPath,CreateGifCallback callback,String  orginPath) {
         LogUtil.d("OOM2", "needGifPath=" + needGifPath);
-        huaweiObs.getInstance().uploadFileToHawei(path, copyPath, new huaweiObs.Callback() {
-            @Override
-            public void isSuccess(String str) {
-                Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        if (callback != null) {
-                            callback.callback(true, orginPath,needGifPath);
-                        }
-
-                    }
-                });
+        huaweiObs.getInstance().uploadFileToHawei(path, copyPath, str -> Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+            if (callback != null) {
+                callback.callback(true, orginPath,needGifPath);
             }
-        });
+
+        }));
     }
 
 
