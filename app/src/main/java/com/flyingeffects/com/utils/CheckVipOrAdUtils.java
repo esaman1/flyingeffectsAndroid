@@ -1,5 +1,6 @@
 package com.flyingeffects.com.utils;
 
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.entity.UserInfo;
 import com.orhanobut.hawk.Hawk;
 import com.xj.anchortask.library.log.LogUtils;
