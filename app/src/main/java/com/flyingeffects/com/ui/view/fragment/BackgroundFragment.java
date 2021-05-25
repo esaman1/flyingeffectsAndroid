@@ -461,6 +461,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
     /**
      * 前往影集页面
+     *
      * @param item
      * @param templateFilePath
      */
@@ -472,7 +473,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     Intent intent = new Intent(getActivity(), TemplateActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putStringArrayList("paths", (ArrayList<String>) paths);
-                    LogUtil.d(TAG,"paths.size = "+paths.size());
+                    LogUtil.d(TAG, "paths.size = " + paths.size());
                     bundle.putInt("isPicNum", 20);
                     bundle.putString("fromTo", FromToTemplate.PICTUREALBUM);
                     bundle.putInt("picout", 0);
@@ -529,6 +530,9 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         int offset = Math.abs(verticalOffset);
         int total = appBarLayout.getTotalScrollRange();
         int alphaOut = (total - offset) < 0 ? 0 : total - offset;
+        if (total == 0) {
+            total = 1;
+        }
         float percentagef = alphaOut / (float) total;
         float percentage = percentagef * 100;
         int percent = (int) percentage;

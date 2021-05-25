@@ -1,7 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -10,6 +9,7 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.databinding.ActivityMain2Binding;
 import com.google.android.material.slider.Slider;
+import com.imaginstudio.imagetools.pixellab.TextObject.StickerItemOnitemclick;
 import com.imaginstudio.imagetools.pixellab.ZoomWidget;
 import com.imaginstudio.imagetools.pixellab.imageinfo.displayInfo;
 import com.imaginstudio.imagetools.pixellab.textContainer;
@@ -47,9 +47,25 @@ public class MainActivity2 extends AppCompatActivity implements textContainer.On
 
         this.workingArea.addView(this.textContain, new FrameLayout.LayoutParams(-1, -1));
         this.textContain.setSelectionListener(this);
-        this.textContain.addNewText(Color.parseColor("#252B3B"),helperClass,
-                ContextCompat.getDrawable(this, R.drawable.sticker_delete),
-                ContextCompat.getDrawable(this, R.mipmap.sticker_redact));
+        StickerItemOnitemclick stickerItemOnitemclick = new StickerItemOnitemclick() {
+            @Override
+            public void stickerOnclick(int type) {
+                textContain.removeView(textContain.getCurrentText());
+            }
+
+            @Override
+            public void stickerMove() {
+
+            }
+        };
+        this.workingArea.post(new Runnable() {
+            @Override
+            public void run() {
+                textContain.addNewText(Color.parseColor("#252B3B"), helperClass,
+                        ContextCompat.getDrawable(MainActivity2.this, R.drawable.sticker_delete),
+                        ContextCompat.getDrawable(MainActivity2.this, R.mipmap.sticker_redact), stickerItemOnitemclick);
+            }
+        });
 
         viewDataBinding.sizeSeek.addOnChangeListener(new Slider.OnChangeListener() {
             @Override

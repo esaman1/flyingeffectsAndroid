@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.imaginstudio.imagetools.pixellab.TextObject.StickerItemOnitemclick;
 import com.imaginstudio.imagetools.pixellab.TextObject.TextComponent;
 import com.imaginstudio.imagetools.pixellab.imageinfo.displayInfo;
 
@@ -24,7 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class textContainer extends RelativeLayout implements TextComponent.OnSelectEventListener{
+public class textContainer extends RelativeLayout implements TextComponent.OnSelectEventListener {
     public static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     static final int abLength = AB.length();
     static SecureRandom rnd = new SecureRandom();
@@ -121,13 +122,17 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         }
     }
 
-    public String addNewText(int initColor, displayInfo helperClass, Drawable leftTopDrawable,Drawable rightBottomDrawable) {
+    public String addNewText(int initColor, displayInfo helperClass, Drawable drawable, Drawable drawable1, StickerItemOnitemclick StickerItemOnitemclick) {
         this.lastInserted++;
         this.helperClass = helperClass;
         String reference = "上海自来水来自海上";
-        TextComponent new_text = new TextComponent(getContext(), initColor, reference,helperClass);
-        new_text.setLeftTopBitmap(leftTopDrawable);
-        new_text.setRightBottomBitmap(rightBottomDrawable);
+        TextComponent new_text = new TextComponent(getContext(),
+                initColor,
+                reference,
+                helperClass,
+                drawable,
+                drawable1
+        );
         this.texts.put(Integer.valueOf(this.lastInserted), new_text);
         new_text.assigned_id = this.lastInserted;
         selectShapeId(-1);
@@ -136,6 +141,7 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         PointF origin = helperClass.getViewOrigin();
         new_text.setX(origin.x);
         new_text.setY(origin.y);
+        new_text.setCallback(StickerItemOnitemclick);
         addView(new_text);
         if (this.mSelectionListener != null) {
             this.mSelectionListener.onTextCreate(reference);
@@ -153,7 +159,7 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
 //        selectShapeId(this.lastInserted_shape);
 //        shape.setTouchEventListener(this);
 //        if (atOrigin) {
-//            PointF origin = MainActivity.helperClass.getViewOrigin();
+//            PointF origin = helperClass.getViewOrigin();
 //            shape.setX(origin.x);
 //            shape.setY(origin.y);
 //        } else {
@@ -239,7 +245,8 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
                     shape.assigned_id_shape = this.lastInserted_shape;
                     shape.setTouchEventListener(this);
                     addView(shape, objectsIds.indexOf(objectId));
-                } else*/ if (objectId.contains("text")) {
+                } else*/
+                if (objectId.contains("text")) {
                     this.lastInserted++;
                     TextComponent text = new TextComponent(getContext(), objectsBundle.getBundle(objectId), false, getRandomString(5));
                     this.texts.put(Integer.valueOf(this.lastInserted), text);
@@ -328,7 +335,7 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         }
     }
 
-        @Override
+    @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         if (!(w == oldw && h == oldh) && this.willResize) {
@@ -351,7 +358,7 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         selectTextId(-1);
         selectShapeId(this.lastInserted_shape);
         shape.setTouchEventListener(this);
-        PointF origin = MainActivity.helperClass.getViewOrigin();
+        PointF origin = helperClass.getViewOrigin();
         shape.setX(origin.x);
         shape.setY(origin.y);
         addView(shape);
@@ -365,7 +372,7 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         String reference = getRandomString(5);
         TextComponent text = new TextComponent(getContext(), this.texts.get(Integer.valueOf(this.curr_id)).saveToBundle(), true, reference);
         this.texts.put(Integer.valueOf(this.lastInserted), text);
-        text.showFrame();
+//        text.showFrame();
         text.assigned_id = this.lastInserted;
         selectShapeId(-1);
         selectTextId(this.lastInserted);
