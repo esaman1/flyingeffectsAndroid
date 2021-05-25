@@ -973,7 +973,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "", (long) adapter.getVideoDuration(), templateItem.getTitle(), musicPath);
             }
         } else {
-            AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "");
+            AlbumManager.chooseAlbum(this, 1, SELECTALBUMFROMBJ, this, "returnSpliteMusic");
         }
     }
 

@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -24,9 +23,9 @@ import com.flyingeffects.com.commonlyModel.TemplateDown;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.FagBjBinding;
 import com.flyingeffects.com.entity.FirstLevelTypeEntity;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.entity.SecondChoosePageListener;
 import com.flyingeffects.com.entity.fromKuaishou;
-import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -52,30 +51,26 @@ import com.shixing.sxve.ui.AlbumType;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 
 /**
  * ;描述：背景页面
  * 时间：2018/4/24
- * @author  TongJu
+ *
+ * @author TongJu
  **/
 
 public class BackgroundFragment extends BaseFragment implements FagBjMvpView, AppBarLayout.OnOffsetChangedListener {
-    private static final String TAG = "BackgroundFragment";
 
+    private static final String TAG = "BackgroundFragment";
     private FagBjMvpPresenter presenter;
     public final static int SELECTALBUM = 1;
-
     private List<FirstLevelTypeEntity> data;
-
     private int lastViewPagerChoosePosition;
-
     private NewFragmentTemplateItem template_item;
     private LoadingDialog mLoadingDialog;
     private FagBjBinding mBinding;
@@ -87,7 +82,6 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
     @Override
     protected void initView() {
-
         presenter = new FagBjMvpPresenter(getActivity(), this);
         presenter.requestData();
         mLoadingDialog = buildLoadingDialog();
@@ -107,16 +101,21 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
     }
 
     private LoadingDialog buildLoadingDialog() {
-        LoadingDialog dialog = LoadingDialog.getBuilder(getActivity())
+        return LoadingDialog.getBuilder(getActivity())
                 .setHasAd(false)
                 .setTitle("加载中...")
                 .build();
-        return dialog;
     }
 
 
     @Override
     protected void initAction() {
+        mBinding.llCratePhotographAlbum.setOnClickListener(this::onViewClicked);
+        mBinding.ivAdd.setOnClickListener(this::onViewClicked);
+        mBinding.llClickCreateVideo2.setOnClickListener(this::onViewClicked);
+        mBinding.llCratePhotographAlbum2.setOnClickListener(this::onViewClicked);
+        mBinding.llClickCreateVideo.setOnClickListener(this::onViewClicked);
+        mBinding.ivSearch.setOnClickListener(this::onViewClicked);
     }
 
     @Override
@@ -139,7 +138,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         super.onPause();
     }
 
-    private ArrayList<Fragment> list = new ArrayList<>();
+    private final ArrayList<Fragment> list = new ArrayList<>();
 
     @Override
     public void setFragmentList(List<FirstLevelTypeEntity> data) {
@@ -148,9 +147,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
             this.data = data;
             if (data != null && data.size() > 0) {
                 list.clear();
-                //titles = new String[data.size()];
                 for (int i = 0; i < data.size(); i++) {
-                    //titles[i] = data.get(i).getName();
                     Bundle bundle = new Bundle();
                     if (TextUtils.equals("关注", data.get(i).getName()) || TextUtils.equals("收藏", data.get(i).getName())) {
                         bundle.putSerializable("id", data.get(i).getId());
@@ -214,9 +211,9 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                 });
                 mBinding.tlTabsBj.setupWithViewPager(mBinding.viewpager);
 
-                for (int i = 0; i <  mBinding.tlTabsBj.getTabCount(); i++) {
+                for (int i = 0; i < mBinding.tlTabsBj.getTabCount(); i++) {
                     mBinding.tlTabsBj.getTabAt(i).setCustomView(R.layout.item_home_tab);
-                    View view =  mBinding.tlTabsBj.getTabAt(i).getCustomView();
+                    View view = mBinding.tlTabsBj.getTabAt(i).getCustomView();
                     AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
                     tvTabText.setText(data.get(i).getName());
                     tvTabText.setTextColor(Color.parseColor("#797979"));
@@ -257,12 +254,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
     public void showProgress(int progress) {
         if (getActivity() != null && mLoadingDialog != null) {
-            Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-                @Override
-                public void call(Integer integer) {
-                    mLoadingDialog.setProgress(integer);
-                }
-            });
+            Observable.just(progress).subscribeOn(AndroidSchedulers.mainThread()).subscribe(integer -> mLoadingDialog.setProgress(integer));
         }
     }
 
@@ -324,45 +316,28 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         mBinding.viewpager.setCurrentItem(showWitch);
     }
 
-    private void setViewWidth(View mView, int width) {
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mView.getLayoutParams();
-        params.width = width;
-        mView.setLayoutParams(params);
-    }
 
-
-    @OnClick({R.id.ll_crate_photograph_album, R.id.iv_add, R.id.ll_click_create_video_2, R.id.ll_crate_photograph_album_2, R.id.ll_click_create_video, R.id.iv_search})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_add:
-            case R.id.ll_click_create_video:
-            case R.id.ll_click_create_video_2:
-                ActivityCompat
-                        .requestPermissions(getActivity()
-                                , PERMISSION_STORAGE, 2);
-                //toCreateVideo();
-                break;
-            case R.id.iv_search:
+    private void onViewClicked(View view) {
+        if (getActivity() != null) {
+            if (view == mBinding.ivSearch) {
                 //搜索栏目
                 StatisticsEventAffair.getInstance().setFlag(getActivity(), "20_search_bj");
-
                 Intent intent = new Intent(getActivity(), TemplateSearchActivity.class);
                 intent.putExtra("isFrom", 0);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                break;
-
-            case R.id.ll_crate_photograph_album:
-            case R.id.ll_crate_photograph_album_2:
+            } else if (view == mBinding.llCratePhotographAlbum || view == mBinding.llCratePhotographAlbum2) {
                 ActivityCompat
                         .requestPermissions(getActivity()
                                 , PERMISSION_STORAGE, 1);
-                //toMakeAlbum();
-                break;
-            default:
-                break;
+            } else {
+                ActivityCompat
+                        .requestPermissions(getActivity()
+                                , PERMISSION_STORAGE, 2);
+            }
         }
     }
+
 
     private void toCreateVideo() {
         if (BaseConstans.hasLogin()) {
@@ -377,37 +352,37 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        ArrayList<String> deniedPermission = new ArrayList<>();
-
-        deniedPermission.clear();
-        for (int i = 0; i < permissions.length; i++) {
-            String permission = permissions[i];
-            int result = grantResults[i];
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                deniedPermission.add(permission);
+        if (getActivity() != null) {
+            if (requestCode == 1 || requestCode == 2) {
+                ArrayList<String> deniedPermission = new ArrayList<>();
+                for (int i = 0; i < permissions.length; i++) {
+                    String permission = permissions[i];
+                    int result = grantResults[i];
+                    if (result != PackageManager.PERMISSION_GRANTED) {
+                        deniedPermission.add(permission);
+                    }
+                }
+                if (deniedPermission.isEmpty()) {
+                    LogUtil.d(TAG, "requestCode = " + 1);
+                    if (requestCode == 1) {
+                        toMakeAlbum();
+                    } else {
+                        toCreateVideo();
+                    }
+                } else {
+                    new AlertDialog.Builder(getActivity())
+                            .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
+                            .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                                dialog.dismiss();
+                            })
+                            .setPositiveButton("去授权", (dialog, which) -> {
+                                PermissionUtil.gotoPermission(getActivity());
+                                dialog.dismiss();
+                            }).create()
+                            .show();
+                }
             }
         }
-        if (deniedPermission.isEmpty()) {
-            LogUtil.d(TAG, "requestCode = " + 1);
-            if (requestCode == 1) {
-                toMakeAlbum();
-            } else {
-                toCreateVideo();
-            }
-        } else {
-            new AlertDialog.Builder(getActivity())
-                    .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
-                    .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
-                        dialog.dismiss();
-                    })
-                    .setPositiveButton("去授权", (dialog, which) -> {
-                        PermissionUtil.gotoPermission(getActivity());
-                        dialog.dismiss();
-                    }).create()
-                    .show();
-        }
-
-
     }
 
     private void toMakeAlbum() {
@@ -445,15 +420,12 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     });
                 }
             }
-        }, "");
+        }, "toAddSticker");
     }
 
 
     /**
      * 前往影集页面
-     *
-     * @param item
-     * @param templateFilePath
      */
     private void toPhotographAlbum(NewFragmentTemplateItem item, String templateFilePath) {
         mLoadingDialog.dismiss();
@@ -475,7 +447,6 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("Message", bundle);
                     intent.putExtra("person", item);
-
                     startActivity(intent);
                 }
             }, "pictureAlbum");
@@ -485,10 +456,8 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
 
     private void compressImage(String path) {
         if (getActivity() != null) {
-//            WaitingDialog.openPragressDialog(getActivity(), "飞闪极速抠图中");
             CompressionCuttingManage manage = new CompressionCuttingManage(getActivity(), "", true, tailorPaths -> {
                 if (getActivity() != null) {
-//                    WaitingDialog.closePragressDialog();
                     Intent intent = new Intent(getActivity(), CreationTemplateActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString("paths", tailorPaths.get(0));

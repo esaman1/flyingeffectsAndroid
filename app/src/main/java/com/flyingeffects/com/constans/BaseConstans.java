@@ -192,7 +192,7 @@ public class BaseConstans {
 
     public static boolean isFirstIntoMainAct() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-        return spUtil.getBoolean("isFirstUseApp", true);
+        return spUtil.getBoolean("isFirstUseApp", false);
     }
 
     public static void setFirstIntoMainAct() {
