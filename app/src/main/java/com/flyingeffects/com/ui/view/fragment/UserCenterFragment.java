@@ -476,7 +476,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                     break;
             }
         } else {
-            vipDateStr = "解锁模板，无视频无广告";
+            vipDateStr = "全场无广告，所有模板任意制作";
             vipBtnStr = "立即开通";
             mBinding.tvAvatarVipIcon.setVisibility(View.INVISIBLE);
         }

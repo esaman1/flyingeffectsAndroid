@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -14,6 +16,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.entity.MessageEnity;
 import com.flyingeffects.com.ui.view.activity.MessageLongClickActivity;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.view.MyListView;
 
 import java.util.List;
@@ -44,16 +47,20 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
     protected void convert(final BaseViewHolder helper, final MessageEnity item) {
         ImageView iv_comment_head = helper.getView(R.id.iv_comment_head);
         MyListView listView = helper.getView(R.id.listView);
+        AppCompatTextView tvUserId = helper.getView(R.id.tv_user_id);
         //主层用户头像
         Glide.with(context)
                 .load(item.getPhotourl())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(iv_comment_head);
+
         helper.addOnClickListener(R.id.ll_parent);
         helper.addOnLongClickListener(R.id.ll_parent);
         helper.addOnClickListener(R.id.iv_comment_head);
         helper.setText(R.id.tv_content, item.getContent());
         helper.setText(R.id.tv_user_id, item.getNickname());
+
+
         ll_more_comment = helper.getView(R.id.ll_more_comment);
 //        //显示第一个预览评论
 //        if (item.getReply() != null && item.getReply().size() > 0) {
@@ -68,6 +75,11 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
 //            ll_more_comment.setVisibility(View.GONE);
 //        }
 
+        if (item.getIs_vip() == CheckVipOrAdUtils.IS_VIP){
+            tvUserId.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.mipmap.ic_vip_mini,0);
+        }else {
+            tvUserId.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
+        }
         if (item.isOpenComment()) {
             adapter = new Comment_message_item_adapter(item.getReply(), context);
             listView.setAdapter(adapter);

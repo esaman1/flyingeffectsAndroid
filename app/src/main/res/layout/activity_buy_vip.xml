@@ -80,7 +80,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dp_12"
-        android:text="开通会员享解锁模版 去除广告> "
+        android:text="开通会员全场无广告，享受会员专属模板 >"
         android:textColor="@color/color_vip_price_list_text_checked"
         android:textSize="@dimen/sp_12"
         app:layout_constraintBottom_toBottomOf="@id/v_user_back"

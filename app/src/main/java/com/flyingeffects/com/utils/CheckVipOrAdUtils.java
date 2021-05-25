@@ -21,6 +21,8 @@ public class CheckVipOrAdUtils {
     public static final int VIP_GRADE_YEAR = 2;
     public static final int VIP_GRADE_FOREVER = 3;
 
+    public static boolean sVipFloatWindowIsClosed = false;
+
     private static final String TAG = "CheckVipOrAdUtils";
 
     /**
@@ -52,14 +54,18 @@ public class CheckVipOrAdUtils {
      * 检查是否显示悬浮窗
      */
     public static boolean checkFloatWindowShow() {
-        Date date = new Date();
-        boolean isSameDay = TimeUtils.isSameDay(date.getTime(), BaseConstans.getVipFloatWindowShowTime(), TimeZone.getDefault());
-        if (!isSameDay && BaseConstans.getVipFloatWindowConfigShowTimes() != 0) {
-            BaseConstans.setVipFloatWindowShowTime(date.getTime());
-            BaseConstans.setVipFloatWindowShowTimes(0);
-            return true;
+        if (BaseConstans.hasLogin()) {
+            Date date = new Date();
+            boolean isSameDay = TimeUtils.isSameDay(date.getTime(), BaseConstans.getVipFloatWindowShowTime(), TimeZone.getDefault());
+            if (!isSameDay && BaseConstans.getVipFloatWindowConfigShowTimes() != 0) {
+                BaseConstans.setVipFloatWindowShowTime(date.getTime());
+                BaseConstans.setVipFloatWindowShowTimes(0);
+                return true;
+            } else {
+                return BaseConstans.getVipFloatWindowShowTimes() < BaseConstans.getVipFloatWindowConfigShowTimes();
+            }
         } else {
-            return BaseConstans.getVipFloatWindowShowTimes() < BaseConstans.getVipFloatWindowConfigShowTimes();
+            return false;
         }
     }
 

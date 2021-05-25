@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.entity.UserInfo;
-import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.nineton.ntadsdk.bean.AdInfoBean;
@@ -24,12 +22,16 @@ import rx.android.schedulers.AndroidSchedulers;
 
 public class AdManager {
     private static final String TAG = "AdManager";
-    private static AdManager thisModel;
+    private static volatile AdManager thisModel;
     private BannerAdManager mBannerAdManager;
 
     public static AdManager getInstance() {
         if (thisModel == null) {
-            thisModel = new AdManager();
+            synchronized (AdManager.class) {
+                if (thisModel == null) {
+                    thisModel = new AdManager();
+                }
+            }
         }
         return thisModel;
     }
@@ -53,6 +55,7 @@ public class AdManager {
                     @Override
                     public void onScreenAdClose() {
                         LogUtil.d("OOM", "onScreenAdClose=");
+
                     }
 
                     @Override
@@ -95,7 +98,6 @@ public class AdManager {
                     }
                 });
             });
-
         }
     }
 
@@ -172,35 +174,33 @@ public class AdManager {
     }
 
 
-    public static View AdBannerCacheView;
-
 
     /**
      * 加载banner广告
      */
-    public void showBannerAd(Activity activity, String id, LinearLayout llAdContainer, boolean isNeedCache) {
+    public void showBannerAd(Activity activity, String id, LinearLayout llAdContainer,boolean isNeedCache) {
         if (!CheckVipOrAdUtils.checkIsVip()) {
-            if (isNeedCache) {
-                if (AdBannerCacheView != null) {
-                    llAdContainer.removeAllViews();
-                    if (AdBannerCacheView.getParent() != null) {
-                        ViewGroup vp = (ViewGroup) AdBannerCacheView.getParent();
-                        vp.removeAllViews();
-                    }
-                    llAdContainer.addView(AdBannerCacheView);
-                } else {
-                    llAdContainer.setVisibility(View.GONE);
-                }
-            } else {
+//            if (isNeedCache) {
+//                if (mAdBannerCacheView != null) {
+//                    llAdContainer.removeAllViews();
+//                    if (mAdBannerCacheView.getParent() != null) {
+//                        ViewGroup vp = (ViewGroup) mAdBannerCacheView.getParent();
+//                        vp.removeAllViews();
+//                    }
+//                    llAdContainer.addView(mAdBannerCacheView);
+//                } else {
+//                    llAdContainer.setVisibility(View.GONE);
+//                }
+//            } else {
                 mBannerAdManager = new BannerAdManager();
                 llAdContainer.setVisibility(View.VISIBLE);
                 llAdContainer.post(() -> mBannerAdManager.showBannerAd(activity, id, llAdContainer, new BannerAdCallBack() {
                     @Override
                     public void onBannerAdShow(View adView) {
                         if (adView != null) {
-                            AdBannerCacheView = adView;
+                            //mAdBannerCacheView = adView;
                             llAdContainer.removeAllViews();
-                            llAdContainer.addView(AdBannerCacheView);
+                            llAdContainer.addView(adView);
                         }
                     }
 
@@ -219,7 +219,7 @@ public class AdManager {
                         return false;
                     }
                 }));
-            }
+           // }
 
         }
 
