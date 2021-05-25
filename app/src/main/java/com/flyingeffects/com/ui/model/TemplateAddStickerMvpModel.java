@@ -997,7 +997,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
         }
 
-        stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAubum);
         if (isFromAubum) {
             stickView.setClipPath(path);

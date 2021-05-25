@@ -24,8 +24,8 @@ public class PriceListAdapter extends BaseQuickAdapter<PriceListEntity, BaseView
     @Override
     protected void convert(BaseViewHolder helper, PriceListEntity item) {
         helper.setText(R.id.tv_price_name, item.getName())
-                .setText(R.id.tv_price, item.getPrice())
-                .setText(R.id.tv_old_price, item.getOld_price());
+                .setText(R.id.tv_price, "￥"+item.getPrice())
+                .setText(R.id.tv_old_price, "￥"+item.getOld_price());
 
         if ("0".equals(item.getInfo())) {
             helper.setVisible(R.id.tv_left_top, false);
@@ -52,6 +52,7 @@ public class PriceListAdapter extends BaseQuickAdapter<PriceListEntity, BaseView
                     .setTextColor(R.id.tv_old_price,
                             ContextCompat.getColor(mContext, R.color.white));
         }
+
         TextView tvOldPrice = helper.getView(R.id.tv_old_price);
         //中划线
         tvOldPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);

@@ -704,7 +704,6 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
         stickView.setRightTopBitmap(ContextCompat.getDrawable(mContext, R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(ContextCompat.getDrawable(mContext, R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(ContextCompat.getDrawable(mContext, R.mipmap.sticker_redact));
-        stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAlbum);
 
         if (isFromAlbum) {

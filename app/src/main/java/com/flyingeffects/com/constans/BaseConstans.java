@@ -123,7 +123,6 @@ public class BaseConstans {
         spUtil.putString("token", token);
     }
 
-
     public static String getUserId() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("userId", "");
@@ -138,12 +137,10 @@ public class BaseConstans {
         spUtil.putString("headUrl", headUrl);
     }
 
-
     public static String nickName() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("userName", "");
     }
-
 
     public static String headUrl() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");

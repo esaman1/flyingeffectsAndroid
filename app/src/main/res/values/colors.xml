@@ -120,6 +120,8 @@
     <color name="color_vip_price_list_price_checked">#BF7709</color>
     <color name="color_vip_price_list_price_unchecked">#E1B17C</color>
 
+    <color name="color_vip_line">#14544435</color>
+
 
 
 </resources>

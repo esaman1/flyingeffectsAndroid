@@ -66,6 +66,7 @@ public class OpenWechatUtils {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         openWx(context);
+                        dialog.dismiss();
                     }
 
                     @Override
@@ -75,6 +76,7 @@ public class OpenWechatUtils {
 
                 }).build()
                 .show();
+
     }
 
 

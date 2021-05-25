@@ -36,6 +36,8 @@ public interface BuyVipContract {
         public abstract void createOrder();
 
         public abstract String getVipGradeText(int is_vip, int vip_grade);
+
+        public abstract void refreshUserInfo();
     }
 
     interface BuyVipMvpView extends BaseView {
@@ -56,6 +58,9 @@ public interface BuyVipContract {
         void startAlipay(String orderInfo);
 
         void startWeChatPay(PayEntity.Pay_data payData);
+
+        void hideBuyVipUi();
+
     }
 
     interface BuyVipMvpModel extends BaseModel {

@@ -1,7 +1,5 @@
 package com.flyingeffects.com.ui.presenter;
 
-import android.content.Context;
-
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -15,12 +13,7 @@ import com.flyingeffects.com.entity.UserInfo;
 import com.flyingeffects.com.ui.interfaces.contract.BuyVipContract;
 import com.flyingeffects.com.ui.model.BuyVipModel;
 import com.flyingeffects.com.utils.CheckVipOrAdUtils;
-import com.flyingeffects.com.utils.ToastUtil;
 import com.orhanobut.hawk.Hawk;
-import com.sweet.paylib.alipay.AliPayManager;
-import com.sweet.paylib.wechat.WechatPay;
-import com.sweet.paylib.wechat.WechatPayTools;
-import com.xj.anchortask.library.log.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,6 +155,9 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
                     break;
                 case CheckVipOrAdUtils.VIP_GRADE_FOREVER:
                     vipGradeStr = "永久会员";
+                    if (isViewAttached()){
+                        getView().hideBuyVipUi();
+                    }
                     break;
                 default:
                     vipGradeStr = "永久会员";
@@ -171,6 +167,11 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
             vipGradeStr = "暂未开通";
         }
         return vipGradeStr;
+    }
+
+    @Override
+    public void refreshUserInfo() {
+        mBuyVipMvpModel.requestUserInfo();
     }
 
 

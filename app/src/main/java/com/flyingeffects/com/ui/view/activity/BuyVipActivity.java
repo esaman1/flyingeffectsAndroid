@@ -156,6 +156,7 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
             LogUtils.d(TAG, "code = " + code);
             if (code == ALI_PAY_SUCCESS) {
                 ToastUtil.showToast(msg);
+                mPresenter.refreshUserInfo();
                 finish();
                 //mPresenter.requestMakeSurePay();
             } else if (code == ALI_PAY_CANCEL) {
@@ -174,6 +175,7 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
                     LogUtil.d(TAG, "code = " + code + " msg = " + msg);
                     if (code == WechatPay.SUCCESS_PAY) {
                         ToastUtil.showToast(msg);
+                        mPresenter.refreshUserInfo();
                         finish();
                     } else if (code == WechatPay.CANCEL_PAY) {
                         ToastUtil.showToast(getString(R.string.cancel_pay));
@@ -181,6 +183,13 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
                         ToastUtil.showToast(msg);
                     }
                 });
+    }
+
+    @Override
+    public void hideBuyVipUi() {
+        mBinding.rvCostList.setVisibility(View.INVISIBLE);
+        mBinding.tvOpenVip.setVisibility(View.INVISIBLE);
+        mBinding.radioGroup.setVisibility(View.INVISIBLE);
     }
 
     private void setOnClickListener() {
@@ -201,9 +210,8 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
 
     private void showProblemDialog() {
         OpenWechatUtils.showOpenWxDialog(mContext, CommonMessageDialog.AD_STATUS_NONE
-                , "飞闪提示", "友友您好，已经为您复制微信号，留言说明问题", "打开微信");
+                , "飞闪提示", "友友您好，已经为您复制微信号" + BaseConstans.getService_wxi() + "，留言说明问题", "打开微信");
     }
-
 
     @Override
     public void updateCostList(List<PriceListEntity> data) {

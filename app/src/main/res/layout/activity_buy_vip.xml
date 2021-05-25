@@ -30,10 +30,15 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_user_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_8"
+        android:ellipsize="end"
+        android:textColor="@color/color_vip_price_list_text_checked"
+        android:textSize="@dimen/sp_18"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/tv_user_id"
+        app:layout_constraintEnd_toStartOf="@id/tv_is_open"
         app:layout_constraintStart_toEndOf="@id/iv_avatar"
         app:layout_constraintTop_toTopOf="@id/iv_avatar" />
 
@@ -42,6 +47,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_8"
+        android:textColor="@color/color_vip_price_list_text_checked"
+        android:textSize="@dimen/sp_12"
         app:layout_constraintBottom_toBottomOf="@id/iv_avatar"
         app:layout_constraintStart_toEndOf="@id/iv_avatar"
         app:layout_constraintTop_toBottomOf="@id/tv_user_name" />
@@ -51,8 +58,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/dp_20"
-        android:textSize="@dimen/sp_12"
         android:textColor="@color/color_vip_price_list_text_checked"
+        android:textSize="@dimen/sp_12"
         app:layout_constraintBottom_toBottomOf="@id/tv_user_name"
         app:layout_constraintEnd_toEndOf="@id/v_user_back"
         app:layout_constraintTop_toTopOf="@id/tv_user_name" />
@@ -62,7 +69,7 @@
         android:layout_height="1dp"
         android:layout_marginStart="@dimen/dp_20"
         android:layout_marginEnd="@dimen/dp_20"
-        android:background="@color/color_vip_price_list_text_checked"
+        android:background="@color/color_vip_line"
         app:layout_constraintBottom_toTopOf="@id/tv_vip_intro"
         app:layout_constraintEnd_toEndOf="@id/v_user_back"
         app:layout_constraintStart_toStartOf="@id/v_user_back"
@@ -73,9 +80,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dp_12"
-        android:textSize="@dimen/sp_12"
-        android:textColor="@color/color_vip_price_list_text_checked"
         android:text="开通会员享解锁模版 去除广告> "
+        android:textColor="@color/color_vip_price_list_text_checked"
+        android:textSize="@dimen/sp_12"
         app:layout_constraintBottom_toBottomOf="@id/v_user_back"
         app:layout_constraintStart_toStartOf="@id/iv_avatar" />
 
@@ -96,9 +103,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_10"
+        app:layout_constraintBottom_toTopOf="@id/v_middle_line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/v_middle_line"
         app:layout_constraintTop_toBottomOf="@id/tv_vip_privilege_title" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -172,10 +179,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dp_15"
-        app:layout_constraintTop_toBottomOf="@id/v_middle_line"
         app:layout_constraintBottom_toTopOf="@id/radio_group"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_middle_line" />
 
     <View
         android:id="@+id/v_middle_line"
