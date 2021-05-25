@@ -79,7 +79,7 @@ public class AlbumManager {
                 .onReturnView(
                         (result, isFromCamera) -> {
                             if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
-                                requestAlbumAd(context, result,false);
+                                requestAlbumAd(context, result, false);
                             }
 
                         }
@@ -92,13 +92,13 @@ public class AlbumManager {
                     for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
-                    callback.resultFilePath(tag, paths, false, isFromCamera,result);
+                    callback.resultFilePath(tag, paths, false, isFromCamera, result);
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         AdManager.getInstance().releaseBannerManager();
                     }
                 })
                 .onCancel((result, isFromCamera) -> {
-                    callback.resultFilePath(tag, new ArrayList<>(), true, isFromCamera,new ArrayList<>());
+                    callback.resultFilePath(tag, new ArrayList<>(), true, isFromCamera, new ArrayList<>());
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         AdManager.getInstance().releaseBannerManager();
                     }
@@ -114,7 +114,7 @@ public class AlbumManager {
      */
     public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo, long duration) {
         int num = BaseConstans.getOpenPhotoAlbumNum();
-         if (num > Integer.MAX_VALUE - 1) {
+        if (num > Integer.MAX_VALUE - 1) {
             num = -1;
         }
         num++;
@@ -160,7 +160,7 @@ public class AlbumManager {
                 )
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
-                        requestAlbumAd(context, result,false);
+                        requestAlbumAd(context, result, false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -171,10 +171,10 @@ public class AlbumManager {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         AdManager.getInstance().releaseBannerManager();
                     }
-                    callback.resultFilePath(tag, paths, false,isFromCamera, result);
+                    callback.resultFilePath(tag, paths, false, isFromCamera, result);
                 })
                 .onCancel((result, isFromCamera) -> {
-                    callback.resultFilePath(tag, new ArrayList<>(), true,isFromCamera, new ArrayList<>());
+                    callback.resultFilePath(tag, new ArrayList<>(), true, isFromCamera, new ArrayList<>());
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         AdManager.getInstance().releaseBannerManager();
                     }
@@ -190,7 +190,7 @@ public class AlbumManager {
      */
     public static void chooseAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo, long duration, String title, String musicFolder) {
         int num = BaseConstans.getOpenPhotoAlbumNum();
-         if (num > Integer.MAX_VALUE - 1) {
+        if (num > Integer.MAX_VALUE - 1) {
             num = -1;
         }
         num++;
@@ -239,7 +239,7 @@ public class AlbumManager {
                 )
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
-                        requestAlbumAd(context, result,false);
+                        requestAlbumAd(context, result, false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -250,10 +250,10 @@ public class AlbumManager {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         AdManager.getInstance().releaseBannerManager();
                     }
-                    callback.resultFilePath(tag, paths, false,isFromCamera, result);
+                    callback.resultFilePath(tag, paths, false, isFromCamera, result);
                 })
                 .onCancel((result, isFromCamera) -> {
-                    callback.resultFilePath(tag, new ArrayList<>(), true, isFromCamera,new ArrayList<>());
+                    callback.resultFilePath(tag, new ArrayList<>(), true, isFromCamera, new ArrayList<>());
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         AdManager.getInstance().releaseBannerManager();
                     }
@@ -269,7 +269,7 @@ public class AlbumManager {
      */
     public static void chooseImageAlbum(Context context, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo) {
         int num = BaseConstans.getOpenPhotoAlbumNum();
-         if (num > Integer.MAX_VALUE - 1) {
+        if (num > Integer.MAX_VALUE - 1) {
             num = -1;
         }
         num++;
@@ -309,7 +309,7 @@ public class AlbumManager {
                                 .build())
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
-                        requestAlbumAd(context, result,false);
+                        requestAlbumAd(context, result, false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -320,10 +320,10 @@ public class AlbumManager {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         AdManager.getInstance().releaseBannerManager();
                     }
-                    callback.resultFilePath(tag, paths, false,isFromCamera, result);
+                    callback.resultFilePath(tag, paths, false, isFromCamera, result);
                 })
                 .onCancel((result, isFromCamera) -> {
-                    callback.resultFilePath(tag, new ArrayList<>(), true,isFromCamera, new ArrayList<>());
+                    callback.resultFilePath(tag, new ArrayList<>(), true, isFromCamera, new ArrayList<>());
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         AdManager.getInstance().releaseBannerManager();
                     }
@@ -339,7 +339,7 @@ public class AlbumManager {
      */
     public static void chooseVideo(Activity act, int selectNum, int tag, AlbumChooseCallback callback, String materialInfo) {
         int num = BaseConstans.getOpenPhotoAlbumNum();
-         if (num > Integer.MAX_VALUE - 1) {
+        if (num > Integer.MAX_VALUE - 1) {
             num = -1;
         }
         num++;
@@ -379,7 +379,7 @@ public class AlbumManager {
                                 .build())
                 .onReturnView((result, isFromCamera) -> {
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
-                        requestAlbumAd(act, result,false);
+                        requestAlbumAd(act, result, false);
                     }
                 })
                 .onResult((result, isFromCamera) -> {
@@ -387,13 +387,13 @@ public class AlbumManager {
                     for (AlbumFile albumFile : result) {
                         paths.add(albumFile.getPath());
                     }
-                    callback.resultFilePath(tag, paths, false, isFromCamera,result);
+                    callback.resultFilePath(tag, paths, false, isFromCamera, result);
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         AdManager.getInstance().releaseBannerManager();
                     }
                 })
                 .onCancel((result, isFromCamera) -> {
-                    callback.resultFilePath(tag, new ArrayList<>(), true,isFromCamera, new ArrayList<>());
+                    callback.resultFilePath(tag, new ArrayList<>(), true, isFromCamera, new ArrayList<>());
                     if (BaseConstans.getOpenPhotoAlbumNum() % BaseConstans.getIntervalNumShowAD() == 0) {
                         AdManager.getInstance().releaseBannerManager();
                     }
@@ -432,7 +432,7 @@ public class AlbumManager {
         LogUtil.d("xxxx", "attributes=" + attributes);
         String[] strList = {"image/gif", "image/svg+xml", "image/x-icon", "video/x-ms-wmv", "avi", "wmv", "WMV", "mov", "MOV", "mpg", "MPG", "3gp", "3GP", "lansongBox", "avi", "AVI", "gif", "mpeg", "svg+xml", "quicktime"};
         for (String str : strList) {
-            if (!TextUtils.isEmpty(attributes)&&attributes.contains(str)) {
+            if (!TextUtils.isEmpty(attributes) && attributes.contains(str)) {
                 LogUtil.d("xxxx", "过滤的值为=" + attributes);
                 return true;
             }
@@ -441,9 +441,9 @@ public class AlbumManager {
         return false;
     }
 
-    private static void requestAlbumAd(Context activity, LinearLayout llAdContainer,boolean isNeedCache) {
+    private static void requestAlbumAd(Context activity, LinearLayout llAdContainer, boolean isNeedCache) {
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
-            LogUtil.d("OOM2","开始请求相册广告");
+            LogUtil.d("OOM2", "开始请求相册广告");
             AdManager.getInstance().showBannerAd((Activity) activity, AdConfigs.AD_ALBUM, llAdContainer,isNeedCache);
         }
     }

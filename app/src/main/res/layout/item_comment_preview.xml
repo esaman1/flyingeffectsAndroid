@@ -38,12 +38,14 @@
             >
 
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_user_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#A3A3A5"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:drawablePadding="@dimen/dp_3"
+                android:drawableEnd="@mipmap/ic_vip_mini" />
 
             <TextView
                 android:id="@+id/tv_content"

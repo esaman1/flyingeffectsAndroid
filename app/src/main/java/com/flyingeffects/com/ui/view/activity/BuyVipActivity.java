@@ -153,9 +153,9 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
     @Override
     public void startAlipay(String orderInfo) {
         AliPayManager.aliPay(BuyVipActivity.this, orderInfo, (code, msg) -> {
-            LogUtils.d(TAG, "code = " + code);
+            LogUtil.d(TAG, "code = " + code+" msg = "+msg);
             if (code == ALI_PAY_SUCCESS) {
-                ToastUtil.showToast(msg);
+                ToastUtil.showToast(getString(R.string.pay_success));
                 mPresenter.refreshUserInfo();
                 finish();
                 //mPresenter.requestMakeSurePay();
@@ -174,7 +174,7 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
                 payData.getSign(), (code, msg) -> {
                     LogUtil.d(TAG, "code = " + code + " msg = " + msg);
                     if (code == WechatPay.SUCCESS_PAY) {
-                        ToastUtil.showToast(msg);
+                        ToastUtil.showToast(getString(R.string.pay_success));
                         mPresenter.refreshUserInfo();
                         finish();
                     } else if (code == WechatPay.CANCEL_PAY) {

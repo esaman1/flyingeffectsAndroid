@@ -630,7 +630,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
         CommonMessageDialog.getBuilder(mContext)
                 .setContentView(R.layout.dialog_common_message)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_NONE)
-                .setTitle("该模板为VIP专享")
+                .setTitle("您正在使用VIP模板")
                 .setPositiveButton("成为VIP立即制作")
                 .setNegativeButton("再想想")
                 .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {

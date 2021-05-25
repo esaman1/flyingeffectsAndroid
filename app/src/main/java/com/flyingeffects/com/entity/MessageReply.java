@@ -6,6 +6,15 @@ public class MessageReply implements Serializable {
 
     private String id;
     private int reply_id;
+    private int is_vip;
+
+    public int getIs_vip() {
+        return is_vip;
+    }
+
+    public void setIs_vip(int is_vip) {
+        this.is_vip = is_vip;
+    }
 
     public String getId() {
         return id;

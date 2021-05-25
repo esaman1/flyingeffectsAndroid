@@ -65,7 +65,7 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
     /**
      * 调起付款应用
      *
-     * @param tradeType
+     * @param tradeType 支付方式
      * @param data      订单信息
      */
     @Override
