@@ -126,20 +126,18 @@ public class HomeMainActivity extends FragmentActivity {
     private AppCompatTextView mTvVipFloatBtn;
     private AppCompatImageView mIvVipFloatClose;
     private LinearLayout ll_ad_entrance;
+    private AppCompatImageView iv_ad_close;
     /**
      * 加载图片广告
      */
     private ImageAdManager imageAdManager;
-    /**
-     * 0 当前无VIP弹窗 1 当前显示vip弹窗 2 当前显示的时互动入口
-     */
-    private int nowShowWindowType = 0;
+
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         Log.d(TAG, "Application start finished");
-        if(BaseConstans.isFirstIntoMainAct()){
+        if (BaseConstans.isFirstIntoMainAct()) {
             EventBus.getDefault().post(new AplicationInitRetroposition());
             BaseConstans.setFirstClickUseApp();
         }
@@ -153,6 +151,7 @@ public class HomeMainActivity extends FragmentActivity {
         EventBus.getDefault().register(this);
         ll_ad_entrance = findViewById(R.id.ll_ad_entrance);
         message_count = findViewById(R.id.message_count);
+        iv_ad_close = findViewById(R.id.iv_ad_close);
         viewpager_home = findViewById(R.id.viewpager_home);
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
         ThisMain = this;
@@ -182,7 +181,6 @@ public class HomeMainActivity extends FragmentActivity {
         initZt();
         requestConfig();
         setOaid();
-//        loadImageAd();
     }
 
 
@@ -490,20 +488,19 @@ public class HomeMainActivity extends FragmentActivity {
         mTvVipFloatBtn = findViewById(R.id.tv_vip_float_btn);
         mIvVipFloatClose = findViewById(R.id.iv_close_float_btn);
         showFloatWindow();
-
         mTvVipFloatBtn.setOnClickListener(v -> startVipActivity());
         mIvVipFloatClose.setOnClickListener(v -> {
-            if (nowShowWindowType == 1) {
-                //当前关闭的按钮为vip
-                mIvVipFloatClose.setVisibility(View.GONE);
-                mTvVipFloatBtn.setVisibility(View.GONE);
-                startVipActivity();
-                //每关闭一次，浮窗展示次数+1
-                BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
-            } else {
-                //当前关闭的为浮动广告
-                BaseConstans.setAdCloseTime(System.currentTimeMillis());
-            }
+            mIvVipFloatClose.setVisibility(View.GONE);
+            mTvVipFloatBtn.setVisibility(View.GONE);
+            startVipActivity();
+            //每关闭一次，浮窗展示次数+1
+            BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
+            showVipOrEntranceAd();
+        });
+        iv_ad_close.setOnClickListener(view -> {
+            BaseConstans.setAdCloseTime(System.currentTimeMillis());
+            iv_ad_close.setVisibility(View.GONE);
+            ll_ad_entrance.setVisibility(View.GONE);
         });
         showVipOrEntranceAd();
     }
@@ -584,12 +581,10 @@ public class HomeMainActivity extends FragmentActivity {
         if (!CheckVipOrAdUtils.checkIsVip() && CheckVipOrAdUtils.checkFloatWindowShow()) {
             mIvVipFloatClose.setVisibility(View.VISIBLE);
             mTvVipFloatBtn.setVisibility(View.VISIBLE);
-            nowShowWindowType = 1;
         } else {
             hideFloatWindow();
         }
     }
-
 
 
     private void setStatusBar() {
@@ -936,9 +931,12 @@ public class HomeMainActivity extends FragmentActivity {
         if (!CheckVipOrAdUtils.checkIsVip() && CheckVipOrAdUtils.checkFloatWindowShow()) {
             mIvVipFloatClose.setVisibility(View.VISIBLE);
             mTvVipFloatBtn.setVisibility(View.VISIBLE);
+            ll_ad_entrance.setVisibility(View.GONE);
+            iv_ad_close.setVisibility(View.GONE);
         } else {
             mIvVipFloatClose.setVisibility(View.INVISIBLE);
             mTvVipFloatBtn.setVisibility(View.INVISIBLE);
+            showVipOrEntranceAd();
         }
     }
 
@@ -989,13 +987,10 @@ public class HomeMainActivity extends FragmentActivity {
             @Override
             public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {
                 if (adView != null) {
-
                     ll_ad_entrance.removeAllViews();
                     ll_ad_entrance.addView(adView);
-                    if (canShowVipLogo()) {
-                        nowShowWindowType = 2;
-                        mIvVipFloatClose.setVisibility(View.VISIBLE);
-                    }
+                    ll_ad_entrance.setVisibility(View.VISIBLE);
+                    iv_ad_close.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -1024,7 +1019,7 @@ public class HomeMainActivity extends FragmentActivity {
      * user : zhangtongju
      */
     private void showVipOrEntranceAd() {
-        if (mTvVipFloatBtn.getVisibility() != View.VISIBLE) {
+        if (mTvVipFloatBtn.getVisibility() != View.VISIBLE && canShowVipLogo()) {
             //如果vip 按钮没有显示，那么请求互动入口
             loadImageAd();
         }
