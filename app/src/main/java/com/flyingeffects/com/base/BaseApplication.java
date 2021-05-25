@@ -59,6 +59,10 @@ public class BaseApplication extends MultiDexApplication {
         UMConfigure.preInit(BaseApplication.getInstance(),
                 BaseConstans.UMENGAPPID, ChannelUtil.getChannel(BaseApplication.getInstance()));
         EventBus.getDefault().register(this);
+        BaseConstans.getIsNewUser();
+        if(!BaseConstans.isFirstIntoMainAct()){
+            initAllSdk();
+        }
     }
 
 

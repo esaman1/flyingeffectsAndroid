@@ -29,8 +29,8 @@ import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.kwai.monitor.log.TurboAgent;
-import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
+import com.nineton.ntadsdk.manager.SplashAdManager;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -284,8 +284,9 @@ public class WelcomeActivity extends BaseActivity {
         Log.d(TAG, "Application start finished");
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
-            NTAdSDK.getInstance().showSplashAd(this, mBinding.rlAdContainer, mBinding.tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
-
+            SplashAdManager splashAdManager = new SplashAdManager();
+            splashAdManager.showSplashAd(AdConfigs.AD_SPLASH, this, mBinding.rlAdContainer, mBinding.tvSkip, ScreenUtil.dip2px(this, 0), new SplashAdCallBack() {
+                //            NTAdSDK.getInstance().showSplashAd(this, mBinding.rlAdContainer, mBinding.tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
                 @Override
                 public void onAdSuccess() {
                     isShow = true;

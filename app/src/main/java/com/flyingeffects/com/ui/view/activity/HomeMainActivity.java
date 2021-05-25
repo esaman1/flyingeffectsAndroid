@@ -139,7 +139,10 @@ public class HomeMainActivity extends FragmentActivity {
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         Log.d(TAG, "Application start finished");
-        EventBus.getDefault().post(new AplicationInitRetroposition());
+        if(BaseConstans.isFirstIntoMainAct()){
+            EventBus.getDefault().post(new AplicationInitRetroposition());
+            BaseConstans.setFirstClickUseApp();
+        }
         mContext = HomeMainActivity.this;
         setTheme(R.style.AppTheme);
         //禁止休眠
@@ -981,6 +984,7 @@ public class HomeMainActivity extends FragmentActivity {
      */
     private void loadImageAd() {
         imageAdManager = new ImageAdManager();
+        imageAdManager.setNtAdUserId(BaseConstans.getUserId());
         imageAdManager.showImageAd(this, AdConfigs.APP_FUDONG, ll_ad_entrance, null, new ImageAdCallBack() {
             @Override
             public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {
