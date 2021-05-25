@@ -486,14 +486,8 @@ public class HomeMainActivity extends FragmentActivity {
         StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "默认页面不纳入统计");
         mTvVipFloatBtn = findViewById(R.id.tv_vip_float_btn);
         mIvVipFloatClose = findViewById(R.id.iv_close_float_btn);
-        if (!CheckVipOrAdUtils.checkIsVip() && CheckVipOrAdUtils.checkFloatWindowShow()) {
-            mIvVipFloatClose.setVisibility(View.VISIBLE);
-            mTvVipFloatBtn.setVisibility(View.VISIBLE);
-            nowShowWindowType = 1;
-        } else {
-            mIvVipFloatClose.setVisibility(View.INVISIBLE);
-            mTvVipFloatBtn.setVisibility(View.INVISIBLE);
-        }
+        showFloatWindow();
+
         mTvVipFloatBtn.setOnClickListener(v -> startVipActivity());
         mIvVipFloatClose.setOnClickListener(v -> {
             if (nowShowWindowType == 1) {
@@ -557,6 +551,7 @@ public class HomeMainActivity extends FragmentActivity {
         @Override
         public void onNoDoubleClick(View v) {
             int id = v.getId();
+            showFloatWindow();
             if (id == R.id.iv_back_menu_0) {
                 whichMenuSelect(0);
                 StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
@@ -572,9 +567,27 @@ public class HomeMainActivity extends FragmentActivity {
                 StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "4");
                 StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
                 whichMenuSelect(3);
+                hideFloatWindow();
             }
         }
     };
+
+    private void hideFloatWindow() {
+        mIvVipFloatClose.setVisibility(View.INVISIBLE);
+        mTvVipFloatBtn.setVisibility(View.INVISIBLE);
+    }
+
+    private void showFloatWindow() {
+        if (!CheckVipOrAdUtils.checkIsVip() && CheckVipOrAdUtils.checkFloatWindowShow()) {
+            mIvVipFloatClose.setVisibility(View.VISIBLE);
+            mTvVipFloatBtn.setVisibility(View.VISIBLE);
+            nowShowWindowType = 1;
+        } else {
+            hideFloatWindow();
+        }
+    }
+
+
 
     private void setStatusBar() {
         changeBottomTab();

@@ -28,13 +28,12 @@ public class CheckVipOrAdUtils {
      */
     public static boolean checkIsVip() {
         UserInfo userInfo = Hawk.get(UserInfo.USER_INFO_KEY);
-        if (userInfo != null) {
+        if (BaseConstans.hasLogin() && userInfo != null) {
             return checkVipWithTime(userInfo.getVip_end_time()
                     , userInfo.getIs_vip());
         } else {
             return false;
         }
-
     }
 
 
