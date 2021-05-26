@@ -324,7 +324,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     refreshData();
                     if (!DoubleClick.getInstance().isFastZDYDoubleClick(2000)) {
                         if (position >= insertMaxNum || position <= insertMinNum) {
-                            if (isSlideViewpager) {
+                            if (isSlideViewpager && !CheckVipOrAdUtils.checkIsVip()) {
                                 mMvpPresenter.requestAD();
                                 LogUtil.d("OOM", "开始请求广告position=" + position + "insertMaxNum=" + insertMaxNum + "insertMinNum=" + insertMinNum);
                             }
@@ -673,7 +673,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 .setTitle("亲爱的友友")
                 .setMessage("模板需要观看几秒广告")
                 .setMessage2("「看完后就能制作飞闪视频」")
-                .setPositiveButton("成为VIP立即制作")
+                .setPositiveButton("去除广告并制作")
                 .setNegativeButton("观看广告并制作")
                 .setVipBtnClickListener(new CommonMessageDialog.DialogVipBtnClickListener() {
                     @Override
@@ -802,7 +802,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             insertMinNum = 0;
         } else {
             //如果当前页面需要广告，则插入广告
-            if (isNeedAddaD && allData.size() > randomPosition) {
+            if (!CheckVipOrAdUtils.checkIsVip() && isNeedAddaD && allData.size() > randomPosition) {
                 isNeedAddaD = false;
                 NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                 item.setAd(ad);
@@ -1453,7 +1453,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
             if (event != null && "PreviewActivity".equals(event.getIsFrom())) {
                 //需要激励视频
                 BaseConstans.TemplateHasWatchingAd = false;
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                if (!CheckVipOrAdUtils.checkIsVip() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     VideoAdManager videoAdManager = new VideoAdManager();
                     String adId;
                     if (TextUtils.equals(mOldFromTo, FromToTemplate.DRESSUP)) {

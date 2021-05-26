@@ -34,6 +34,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_8"
         android:ellipsize="end"
+        android:maxLines="1"
+        android:text="的肌肤四代机覅的飞机东方基督教粉丝大家覅东方基督教覅打击敌方基地副"
         android:textColor="@color/color_vip_price_list_text_checked"
         android:textSize="@dimen/sp_18"
         android:textStyle="bold"

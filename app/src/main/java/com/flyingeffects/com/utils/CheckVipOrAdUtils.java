@@ -54,7 +54,11 @@ public class CheckVipOrAdUtils {
      * 检查是否显示悬浮窗
      */
     public static boolean checkFloatWindowShow() {
-        if (BaseConstans.hasLogin()) {
+        LogUtil.d(TAG, "vip float show sVipFloatWindowIsClosed = " + sVipFloatWindowIsClosed +
+                " BaseConstans.getVipFloatWindowShowTime() = " + BaseConstans.getVipFloatWindowShowTime() +
+                " BaseConstans.getVipFloatWindowConfigShowTimes()" + BaseConstans.getVipFloatWindowConfigShowTimes());
+
+        if (BaseConstans.hasLogin() && !sVipFloatWindowIsClosed) {
             Date date = new Date();
             boolean isSameDay = TimeUtils.isSameDay(date.getTime(), BaseConstans.getVipFloatWindowShowTime(), TimeZone.getDefault());
             if (!isSameDay && BaseConstans.getVipFloatWindowConfigShowTimes() != 0) {

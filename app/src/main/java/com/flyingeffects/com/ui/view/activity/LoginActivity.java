@@ -30,6 +30,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActLoginBinding;
 import com.flyingeffects.com.entity.BackgroundTemplateCollectionEvent;
+import com.flyingeffects.com.entity.BuyVipEvent;
 import com.flyingeffects.com.entity.HttpResult;
 import com.flyingeffects.com.entity.LoginToAttentionUserEvent;
 import com.flyingeffects.com.entity.UserInfo;
@@ -416,6 +417,8 @@ public class LoginActivity extends BaseActivity {
             @Override
             protected void onSubNext(UserInfo data) {
                 Hawk.put(UserInfo.USER_INFO_KEY, data);
+                //通知会员浮窗刷新
+                EventBus.getDefault().post(new BuyVipEvent());
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "requestLogin=" + str);
                 BaseConstans.setUserToken(data.getToken());
@@ -466,6 +469,8 @@ public class LoginActivity extends BaseActivity {
                     if (!isOnDestroy) {
                         Hawk.put(UserInfo.USER_INFO_KEY, data);
                         //String str = StringUtil.beanToJSONString(data);
+                        //通知会员浮窗刷新
+                        EventBus.getDefault().post(new BuyVipEvent());
                         LogUtil.d("OOM", "setToken=" + data.getToken());
                         BaseConstans.setUserToken(data.getToken());
                         BaseConstans.setUserId(data.getId(), data.getNickname(), data.getPhotourl());

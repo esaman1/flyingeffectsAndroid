@@ -35,6 +35,7 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.entity.BuyVipEvent;
 import com.flyingeffects.com.entity.Config;
 import com.flyingeffects.com.entity.ConfigForTemplateList;
 import com.flyingeffects.com.entity.HomeChoosePageListener;
@@ -98,7 +99,6 @@ import rx.Observable;
 import rx.subjects.PublishSubject;
 
 import static com.flyingeffects.com.constans.BaseConstans.getChannel;
-
 
 /****
  * 修改主界面
@@ -166,7 +166,7 @@ public class HomeMainActivity extends FragmentActivity {
         getUserPhoneInfo();
         getPushPermission();
         initTiktok();
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+        if (!CheckVipOrAdUtils.checkIsVip()&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             requestCPad();
         }
         if (BaseConstans.hasLogin()) {
@@ -498,17 +498,22 @@ public class HomeMainActivity extends FragmentActivity {
         mIvVipFloatClose.setOnClickListener(v -> {
             mIvVipFloatClose.setVisibility(View.GONE);
             mTvVipFloatBtn.setVisibility(View.GONE);
+            CheckVipOrAdUtils.sVipFloatWindowIsClosed = true;
             startVipActivity();
             //每关闭一次，浮窗展示次数+1
             BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
             showVipOrEntranceAd();
-            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_vip_hover_cancel_touch", TITLE_TEXT[mLastWhichMenu]);
+            StatisticsEventAffair.getInstance()
+                    .setFlag(BaseApplication.getInstance(), "hp_vip_hover_cancel_touch",
+                            TITLE_TEXT[mLastWhichMenu]);
         });
 
         iv_ad_close.setOnClickListener(view -> {
             BaseConstans.setAdCloseTime(System.currentTimeMillis());
             iv_ad_close.setVisibility(View.GONE);
             ll_ad_entrance.setVisibility(View.GONE);
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),
+                    "hp_ad_hover_cancel_touch", TITLE_TEXT[mLastWhichMenu]);
         });
 
         showVipOrEntranceAd();
@@ -560,7 +565,7 @@ public class HomeMainActivity extends FragmentActivity {
         @Override
         public void onNoDoubleClick(View v) {
             int id = v.getId();
-            showFloatWindow();
+            showFloatWindow();//change tab
             if (id == R.id.iv_back_menu_0) {
 
                 whichMenuSelect(0);
@@ -678,6 +683,7 @@ public class HomeMainActivity extends FragmentActivity {
                 .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        CheckVipOrAdUtils.sVipFloatWindowIsClosed = false;
                         dialog.dismiss();
                         finish();
                     }
@@ -784,6 +790,16 @@ public class HomeMainActivity extends FragmentActivity {
         if (BaseConstans.hasLogin()) {
             requestMessageCount();
         }
+    }
+
+    /**
+     * 购买会员后刷新浮窗状态
+     * @param event
+     */
+    @Subscribe
+    public void onEventMainThread(BuyVipEvent event) {
+        LogUtil.d(TAG,"refresh float status");
+        showFloatWindow();
     }
 
     @Override
@@ -1017,7 +1033,7 @@ public class HomeMainActivity extends FragmentActivity {
 
             @Override
             public void onImageAdClose() {
-                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_ad_hover_cancel_touch", TITLE_TEXT[mLastWhichMenu]);
+
             }
 
             @Override

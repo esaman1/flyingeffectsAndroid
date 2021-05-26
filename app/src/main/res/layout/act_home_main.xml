@@ -27,7 +27,7 @@
         android:paddingTop="@dimen/dp_6"
         android:paddingEnd="@dimen/dp_10"
         android:paddingBottom="@dimen/dp_6"
-        android:text="VIP免广告"
+        android:text="VIP去广告"
         android:textColor="@color/color_vip_text"
         android:textSize="@dimen/sp_12"
         app:layout_constraintBottom_toBottomOf="parent"

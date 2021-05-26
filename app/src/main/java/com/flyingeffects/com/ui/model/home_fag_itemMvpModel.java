@@ -10,6 +10,7 @@ import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.ui.interfaces.model.homeItemMvpCallback;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -140,7 +141,7 @@ public class home_fag_itemMvpModel {
                     smartRefreshLayout.setEnableLoadMore(false);
                 }
 
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && data.size() > BaseConstans.NOWADSHOWPOSITION) {
+                if (!CheckVipOrAdUtils.checkIsVip()&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && data.size() > BaseConstans.NOWADSHOWPOSITION) {
                     NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                     item.setHasShowAd(true);
                     //设置当前是导流，进入抖音列表页就会自动过滤
@@ -150,7 +151,7 @@ public class home_fag_itemMvpModel {
                 listData.addAll(data);
                 callback.showData(listData);
 
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+                if (!CheckVipOrAdUtils.checkIsVip()&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
                     callback.needRequestFeedAd();
                 }
             }

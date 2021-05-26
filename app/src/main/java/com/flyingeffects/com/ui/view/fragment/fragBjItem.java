@@ -29,6 +29,7 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.webViewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -287,7 +288,7 @@ public class fragBjItem extends BaseFragment {
                 } else {
                     showNoData(false);
                 }
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && data.size() > BaseConstans.NOWADSHOWPOSITION) {
+                if (!CheckVipOrAdUtils.checkIsVip() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && data.size() > BaseConstans.NOWADSHOWPOSITION) {
                     NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                     item.setHasShowAd(true);
                     //设置当前是导流，进入抖音列表页就会自动过滤
@@ -315,7 +316,7 @@ public class fragBjItem extends BaseFragment {
 
     private void requestFeedAd() {
         LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum + "NowSecondChooseNum=" + NowSecondChooseNum + "actTag" + nowPageNum);
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && NowHomePageChooseNum == 0 && nowPageNum == NowSecondChooseNum) {
+        if (!CheckVipOrAdUtils.checkIsVip() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && NowHomePageChooseNum == 0 && nowPageNum == NowSecondChooseNum) {
 //            LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+nowPageNum);
             HasShowAd = true;
             requestFeedAd(mAdManager, new RequestFeedBack() {

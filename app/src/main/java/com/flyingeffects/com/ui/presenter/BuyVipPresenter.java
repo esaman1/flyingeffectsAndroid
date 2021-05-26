@@ -7,6 +7,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.PrivilegeListAdapter;
 import com.flyingeffects.com.base.BaseApplication;
+import com.flyingeffects.com.entity.BuyVipEvent;
 import com.flyingeffects.com.entity.PayEntity;
 import com.flyingeffects.com.entity.PriceListEntity;
 import com.flyingeffects.com.entity.PrivilegeEntity;
@@ -19,6 +20,8 @@ import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements LifecycleObserver {
     private static final String TAG = "BuyVipPresenter";
@@ -75,7 +78,7 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
     public void toPay(String tradeType, PayEntity data) {
         int type = Integer.parseInt(tradeType);
         PayEntity.Pay_data payData = data.getPay_data();
-        if (isViewAttached()){
+        if (isViewAttached()) {
             if (type == TRADE_TYPE_WECHAT) {
                 getView().startWeChatPay(payData);
             } else if (type == TRADE_TYPE_ALIPAY) {
@@ -102,7 +105,7 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
     public void getUserInfo() {
         UserInfo userInfo = Hawk.get("UserInfo");
         if (userInfo != null) {
-            if (isViewAttached()){
+            if (isViewAttached()) {
                 getView().updateUserInfo(userInfo);
             }
         } else {
@@ -112,7 +115,7 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
 
     @Override
     public void returnUserInfo(UserInfo data) {
-        if (isViewAttached()){
+        if (isViewAttached()) {
             getView().updateUserInfo(data);
         }
     }
@@ -126,8 +129,8 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
         priceListEntity.setChecked(true);
         mCheckedPriceId = priceListEntity.getId();
         mCheckedPriceName = priceListEntity.getName();
-        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_shangpin_touch",priceListEntity.getName());
-        if (isViewAttached()){
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_shangpin_touch", priceListEntity.getName());
+        if (isViewAttached()) {
             getView().updateOpenBtnText(priceListEntity.getPrice());
         }
     }
@@ -144,7 +147,7 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
     @Override
     public void createOrder() {
         mBuyVipMvpModel.requestPay(mCheckedPriceId + "", mTradeType + "");
-        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_buy_touch",mCheckedPriceName);
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_buy_touch", mCheckedPriceName);
     }
 
 
@@ -161,7 +164,7 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
                     break;
                 case CheckVipOrAdUtils.VIP_GRADE_FOREVER:
                     vipGradeStr = "永久会员";
-                    if (isViewAttached()){
+                    if (isViewAttached()) {
                         getView().hideBuyVipUi();
                     }
                     break;
@@ -177,8 +180,9 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
 
     @Override
     public void refreshUserInfo() {
-        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_buy_success",mCheckedPriceName);
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_buy_success", mCheckedPriceName);
         mBuyVipMvpModel.requestUserInfo();
+
     }
 
 

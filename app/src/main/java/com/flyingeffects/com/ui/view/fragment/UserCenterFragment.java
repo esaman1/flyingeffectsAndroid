@@ -95,6 +95,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     String systemMessageId = "";
     private FragmentUserCenterBinding mBinding;
 
+
     @Override
     protected int getContentLayout() {
         return 0;
@@ -111,7 +112,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     protected void initView() {
         options = UCropOption.getInstance().getUcropOption();
         setOnClickListener();
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+        if (!CheckVipOrAdUtils.checkIsVip() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, mBinding.llAdContent);
         }
     }
@@ -127,7 +128,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
         mBinding.tvIntroduction.setOnClickListener(this::onViewClicked);
         mBinding.tvGoLogin.setOnClickListener(this::onViewClicked);
         mBinding.ivAbout.setOnClickListener(this::onViewClicked);
-        mBinding.tvVipBtn.setOnClickListener(this::onViewClicked);
+        mBinding.vVipBack.setOnClickListener(this::onViewClicked);
     }
 
     private void onViewClicked(View view) {
@@ -149,7 +150,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
             toLogin();
         } else if (view == mBinding.ivAbout) {
             openAboutPage();
-        } else if (view == mBinding.tvVipBtn) {
+        } else if (view == mBinding.vVipBack) {
             startBuyVipActivity();
         }
     }
@@ -437,6 +438,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                     }
                     BaseConstans.setUserId(data.getId(), data.getNickname(), data.getPhotourl());
                     startVipInfo(data);
+
                 }
             }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
         }
@@ -474,8 +476,9 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                     vipIconStr = "永久";
                     break;
             }
+            mBinding.llAdContent.setVisibility(View.GONE);
         } else {
-            vipDateStr = "全场无广告，所有模板任意制作";
+            vipDateStr = "解锁模板，全场无广告";
             vipBtnStr = "立即开通";
             mBinding.tvAvatarVipIcon.setVisibility(View.INVISIBLE);
         }
