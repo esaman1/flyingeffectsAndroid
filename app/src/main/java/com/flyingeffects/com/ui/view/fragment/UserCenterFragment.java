@@ -61,9 +61,6 @@ import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.UCropOption;
 import com.google.android.material.appbar.AppBarLayout;
 import com.lansosdk.videoeditor.LanSongFileUtil;
-import com.nineton.ntadsdk.bean.AdInfoBean;
-import com.nineton.ntadsdk.itr.ImageAdCallBack;
-import com.nineton.ntadsdk.manager.ImageAdManager;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
 import com.yalantis.ucrop.UCrop;
@@ -115,7 +112,6 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
         setOnClickListener();
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             AdManager.getInstance().showImageAd(getActivity(), AdConfigs.AD_IMAGE_message, mBinding.llAdContent);
-//            loadImageAd();
         }
     }
 
@@ -200,6 +196,8 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
             startActivity(intent);
         }
     }
+
+    ;
 
 
     private void onAttentionCount() {
@@ -301,10 +299,6 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                 mBinding.tvAvatarVipIcon.setVisibility(View.INVISIBLE);
                 mBinding.gNoLoginInfo.setVisibility(View.VISIBLE);
             }
-
-//            if (imageAdManager != null) {
-//                imageAdManager.adResume();
-//            }
             AdManager.getInstance().imageAdResume();
         }
         super.onResume();
@@ -314,9 +308,6 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     @Override
     public void onPause() {
         super.onPause();
-//        if (imageAdManager != null) {
-//            imageAdManager.adPause();
-//        }\
         AdManager.getInstance().imageAdPause();
     }
 
@@ -345,8 +336,14 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     }
 
 
+    /**
+     * description ：换皮肤
+     * creation date: 2021/5/25
+     * user : zhangtongju
+     */
     private void toPeeling() {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            LogUtil.d("OOM2", "toPeeling");
             StatisticsEventAffair.getInstance().setFlag(getActivity(), "3_background");
             AlbumManager.chooseImageAlbum(getContext(), 1, SELECTALBUMFROMUSETCENTERBJ, this, "");
         }
@@ -393,7 +390,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                 @Override
                 protected void onSubNext(UserInfo data) {
                     Hawk.put(UserInfo.USER_INFO_KEY, data);
-                    LogUtil.d(TAG,"userInfo is refresh");
+                    LogUtil.d(TAG, "userInfo is refresh");
                     if (getActivity() != null) {
                         mBinding.tvId.setText("飞友号：" + data.getId());
                         if (!TextUtils.isEmpty(data.getNickname())) {
@@ -641,34 +638,33 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
     }
 
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        ArrayList<String> deniedPermission = new ArrayList<>();
-        deniedPermission.clear();
-        for (int i = 0; i < permissions.length; i++) {
-            String permission = permissions[i];
-            int result = grantResults[i];
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                deniedPermission.add(permission);
+        if (requestCode == CODE_PEELING) {
+            ArrayList<String> deniedPermission = new ArrayList<>();
+            deniedPermission.clear();
+            for (int i = 0; i < permissions.length; i++) {
+                String permission = permissions[i];
+                int result = grantResults[i];
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    deniedPermission.add(permission);
+                }
             }
-        }
-        if (deniedPermission.isEmpty()) {
-            if (requestCode == CODE_PEELING) {
+            if (deniedPermission.isEmpty()) {
                 toPeeling();
+            } else {
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
+                        .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                            dialog.dismiss();
+                        })
+                        .setPositiveButton("去授权", (dialog, which) -> {
+                            PermissionUtil.gotoPermission(getActivity());
+                            dialog.dismiss();
+                        }).create()
+                        .show();
             }
-        } else {
-            new AlertDialog.Builder(getActivity())
-                    .setMessage("读取相册必须获取存储权限，如需使用接下来的功能，请同意授权~")
-                    .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
-                        dialog.dismiss();
-                    })
-                    .setPositiveButton("去授权", (dialog, which) -> {
-                        PermissionUtil.gotoPermission(getActivity());
-                        dialog.dismiss();
-                    }).create()
-                    .show();
         }
     }
 }

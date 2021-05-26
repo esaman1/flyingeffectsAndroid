@@ -1,6 +1,8 @@
 package com.flyingeffects.com.base;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +31,7 @@ import com.xj.anchortask.library.monitor.OnGetMonitorRecordCallback;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
@@ -53,6 +56,11 @@ public class BaseApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        String curProcessName = getCurrentProcessName(this);
+        if (!curProcessName.equals(getPackageName())) {
+            //android  多进程会多次进入application,其中一个是极光推送的，为了防止重复初始化数据
+            return;
+        }
         baseApp = this;
         registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
         //准备初始化，不进行任何网络请求
@@ -227,6 +235,25 @@ public class BaseApplication extends MultiDexApplication {
 
 
 
+    /**
+     * 获取当前的进程名
+     * @param context:上下文
+     * @return :返回值
+     */
+    public String getCurrentProcessName(Context context) {
+        int pid = android.os.Process.myPid();
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningApps = am.getRunningAppProcesses();
+        if (runningApps == null) {
+            return null;
+        }
+        for (ActivityManager.RunningAppProcessInfo procInfo : runningApps) {
+            if (procInfo.pid == pid) {
+                return procInfo.processName;
+            }
+        }
+        return null;
+    }
 
 
 }
