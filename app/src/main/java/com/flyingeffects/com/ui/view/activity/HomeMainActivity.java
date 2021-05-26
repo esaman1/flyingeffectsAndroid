@@ -578,8 +578,11 @@ public class HomeMainActivity extends FragmentActivity {
         if (!CheckVipOrAdUtils.checkIsVip() && CheckVipOrAdUtils.checkFloatWindowShow()) {
             mIvVipFloatClose.setVisibility(View.VISIBLE);
             mTvVipFloatBtn.setVisibility(View.VISIBLE);
+            ll_ad_entrance.setVisibility(View.GONE);
+            iv_ad_close.setVisibility(View.GONE);
         } else {
             hideFloatWindow();
+            showVipOrEntranceAd();
         }
     }
 
@@ -626,6 +629,7 @@ public class HomeMainActivity extends FragmentActivity {
         if (imageAdManager != null) {
             imageAdManager.adResume();
         }
+//        showVipOrEntranceAd();
     }
 
     @Override
@@ -1016,7 +1020,7 @@ public class HomeMainActivity extends FragmentActivity {
      * user : zhangtongju
      */
     private void showVipOrEntranceAd() {
-        if (mTvVipFloatBtn.getVisibility() != View.VISIBLE && canShowVipLogo()) {
+        if (mTvVipFloatBtn.getVisibility() != View.VISIBLE && canShowVipLogo()&&ll_ad_entrance.getVisibility()!=View.VISIBLE) {
             //如果vip 按钮没有显示，那么请求互动入口
             loadImageAd();
         }
