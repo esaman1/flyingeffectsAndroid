@@ -196,6 +196,8 @@ public class WelcomeActivity extends BaseActivity {
         }
         if (BaseConstans.getIsNewUser()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "新用户");
+        }else{
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "其他原因");
         }
     }
 
