@@ -19,11 +19,13 @@ import androidx.lifecycle.OnLifecycleEvent;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 
 
 public class CommonMessageDialog extends Dialog implements LifecycleObserver {
     public static final int AD_STATUS_MIDDLE = 1;
     public static final int AD_STATUS_BOTTOM = 2;
+    public static final int AD_VIP_STATUS_BOTTOM = 3;
     public static final int AD_STATUS_NONE = 0;
 
     protected CommonMessageDialog(@NonNull Context context, int themeResId) {
@@ -51,6 +53,7 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
         private String mAdId;
         private DialogBtnClickListener mDialogBtnClickListener;
         private DialogDismissListener mDialogDismissListener;
+        private DialogVipBtnClickListener mDialogVipBtnClickListener;
         private Group groupAdDialog;
 
         public Builder(Context context) {
@@ -165,6 +168,11 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
             return this;
         }
 
+        public Builder setVipBtnClickListener(DialogVipBtnClickListener listener) {
+            mDialogVipBtnClickListener = listener;
+            return this;
+        }
+
         public CommonMessageDialog build() {
             // instantiate the dialog with the custom Theme
             final CommonMessageDialog dialog = new CommonMessageDialog(mContext);
@@ -180,19 +188,13 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
             if (mAdStatus == AD_STATUS_BOTTOM) {
                 groupAdDialog = mView.findViewById(R.id.group_ad_dialog);
 
-                mView.findViewById(R.id.iv_dialog_ad_close).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        groupAdDialog.setVisibility(View.GONE);
-                    }
-                });
+                mView.findViewById(R.id.iv_dialog_ad_close).setOnClickListener(v ->
+                        groupAdDialog.setVisibility(View.GONE));
 
-                mView.findViewById(R.id.iv_dialog_close).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mDialogBtnClickListener.onCancelBtnClick(dialog);
-                    }
-                });
+                if (mDialogBtnClickListener != null) {
+                    mView.findViewById(R.id.iv_dialog_close).setOnClickListener(v ->
+                            mDialogBtnClickListener.onCancelBtnClick(dialog));
+                }
             }
 
             if (!TextUtils.isEmpty(mTitle)) {
@@ -216,6 +218,15 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
                         .setOnClickListener(v -> mDialogBtnClickListener.onPositiveBtnClick(dialog));
                 mView.findViewById(R.id.tv_cancel_button)
                         .setOnClickListener(v -> mDialogBtnClickListener.onCancelBtnClick(dialog));
+            }
+
+            if (mDialogVipBtnClickListener != null) {
+                mView.findViewById(R.id.tv_positive_button)
+                        .setOnClickListener(v -> mDialogVipBtnClickListener.onPositiveBtnClick(dialog));
+                mView.findViewById(R.id.tv_cancel_button)
+                        .setOnClickListener(v -> mDialogVipBtnClickListener.onVideoBtnClick(dialog));
+                mView.findViewById(R.id.iv_dialog_close)
+                        .setOnClickListener(v -> mDialogVipBtnClickListener.onCancelBtnClick(dialog));
             }
 
             if (!TextUtils.isEmpty(mMessage)) {
@@ -301,6 +312,15 @@ public class CommonMessageDialog extends Dialog implements LifecycleObserver {
     public interface DialogBtnClickListener {
 
         void onPositiveBtnClick(CommonMessageDialog dialog);
+
+        void onCancelBtnClick(CommonMessageDialog dialog);
+    }
+
+    public interface DialogVipBtnClickListener {
+
+        void onPositiveBtnClick(CommonMessageDialog dialog);
+
+        void onVideoBtnClick(CommonMessageDialog dialog);
 
         void onCancelBtnClick(CommonMessageDialog dialog);
     }

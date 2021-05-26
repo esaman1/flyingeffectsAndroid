@@ -24,6 +24,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.FragmentUserCenterBinding;
@@ -155,6 +156,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
 
 
     private void startBuyVipActivity() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "me_vipicon_touch");
         Intent intent = new Intent(getActivity(), BuyVipActivity.class);
         startActivity(intent);
     }

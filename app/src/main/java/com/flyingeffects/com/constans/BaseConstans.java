@@ -54,7 +54,7 @@ public class BaseConstans {
     /**
      * 是否是正式环境
      */
-    public static final boolean PRODUCTION = true;
+    public static final boolean PRODUCTION = false;
     public static final boolean DEBUG = BuildConfig.DEBUG;
     private static String channel = "";
     private static String versionCode = "";
@@ -67,14 +67,17 @@ public class BaseConstans {
      * 是否有广告，0表示没得，1表示有，全局控制
      */
     private static int hasAdvertising = 0;
+
     /**
      * 退出后台后多少秒后会重新显示插屏
      */
     public static int showAgainKaipingAd = 60;
+
     /**
      * 只是用前几次的新用户
      */
     private static boolean isNewUserForAdvertising = false;
+
     public static final String PROTOCOL = Url.BASE_URL + "/fly/FS-Agreement.html";
 
     public static final String FILE_PATH;

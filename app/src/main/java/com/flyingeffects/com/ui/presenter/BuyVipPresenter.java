@@ -6,10 +6,12 @@ import androidx.lifecycle.OnLifecycleEvent;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.PrivilegeListAdapter;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.entity.PayEntity;
 import com.flyingeffects.com.entity.PriceListEntity;
 import com.flyingeffects.com.entity.PrivilegeEntity;
 import com.flyingeffects.com.entity.UserInfo;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.contract.BuyVipContract;
 import com.flyingeffects.com.ui.model.BuyVipModel;
 import com.flyingeffects.com.utils.CheckVipOrAdUtils;
@@ -39,6 +41,7 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
 
     private int mCheckedPriceId;
     private int mTradeType;
+    private String mCheckedPriceName;
 
     public BuyVipPresenter() {
         mBuyVipMvpModel = new BuyVipModel(this);
@@ -122,6 +125,8 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
         PriceListEntity priceListEntity = data.get(position);
         priceListEntity.setChecked(true);
         mCheckedPriceId = priceListEntity.getId();
+        mCheckedPriceName = priceListEntity.getName();
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_shangpin_touch",priceListEntity.getName());
         if (isViewAttached()){
             getView().updateOpenBtnText(priceListEntity.getPrice());
         }
@@ -139,12 +144,13 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
     @Override
     public void createOrder() {
         mBuyVipMvpModel.requestPay(mCheckedPriceId + "", mTradeType + "");
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_buy_touch",mCheckedPriceName);
     }
 
 
     @Override
     public String getVipGradeText(int isVip, int vipGrade) {
-        String vipGradeStr = "";
+        String vipGradeStr;
         if (isVip == CheckVipOrAdUtils.IS_VIP) {
             switch (vipGrade) {
                 case CheckVipOrAdUtils.VIP_GRADE_MONTH:
@@ -171,6 +177,7 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
 
     @Override
     public void refreshUserInfo() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_buy_success",mCheckedPriceName);
         mBuyVipMvpModel.requestUserInfo();
     }
 

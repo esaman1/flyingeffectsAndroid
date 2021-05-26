@@ -35,7 +35,6 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.entity.AplicationInitRetroposition;
 import com.flyingeffects.com.entity.Config;
 import com.flyingeffects.com.entity.ConfigForTemplateList;
 import com.flyingeffects.com.entity.HomeChoosePageListener;
@@ -112,11 +111,13 @@ public class HomeMainActivity extends FragmentActivity {
             "soundFolder", "cacheMattingFolder", "ExtractFrame", "DownVideo", "TextFolder", "toHawei", "downVideoForMusic",
             "downSoundForMusic", "downCutSoundForMusic", "fontStyle", "DressUpFolder", "facePP"};
 
-    private final ImageView[] mIvMenuBack = new ImageView[4];
-    private final TextView[] tv_main = new TextView[4];
-    private final int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
+    private static final ImageView[] IV_MENU_BACK = new ImageView[4];
+    private static final TextView[] TV_MAIN = new TextView[4];
+    private static final int[] IM_BACK_ID = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
     public HomeMainActivity ThisMain;
-    private final int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
+    private static final int[] TV_MAIN_BUTTON = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
+    private static final String[] TITLE_TEXT = {"背景", "模板", "闪图", "我的"};
+
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private Timer timer;
     private TimerTask task;
@@ -131,6 +132,7 @@ public class HomeMainActivity extends FragmentActivity {
      * 加载图片广告
      */
     private ImageAdManager imageAdManager;
+    private int mSelectedMenu = 0;
 
 
     @Override
@@ -248,6 +250,7 @@ public class HomeMainActivity extends FragmentActivity {
             task = null;
         }
         timer = new Timer();
+
         task = new TimerTask() {
             @Override
             public void run() {
@@ -273,8 +276,8 @@ public class HomeMainActivity extends FragmentActivity {
                     @Override
                     public void onScreenAdError() {
                         StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_error");
-
                     }
+
                 });
                 destroyTimer();
             }
@@ -410,6 +413,7 @@ public class HomeMainActivity extends FragmentActivity {
                     .setMessage(R.string.permission_content)
                     .setPositiveButton(getString(R.string.toGetPermission), (dialog, which) -> goToSetting())
                     .show();
+
             spUtil.putBoolean("isFirst", false);
         }
     }
@@ -454,10 +458,10 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     public void initView() {
-        for (int i = 0; i < mIvMenuBack.length; i++) {
-            mIvMenuBack[i] = findViewById(mImBackId[i]);
-            tv_main[i] = findViewById(tv_main_button[i]);
-            mIvMenuBack[i].setOnClickListener(listener);
+        for (int i = 0; i < IV_MENU_BACK.length; i++) {
+            IV_MENU_BACK[i] = findViewById(IM_BACK_ID[i]);
+            TV_MAIN[i] = findViewById(TV_MAIN_BUTTON[i]);
+            IV_MENU_BACK[i].setOnClickListener(listener);
         }
         List<Fragment> fragments = new ArrayList<>();
         fragments.add(new BackgroundFragment());
@@ -482,10 +486,16 @@ public class HomeMainActivity extends FragmentActivity {
             }
         });
         StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "默认页面不纳入统计");
+
         mTvVipFloatBtn = findViewById(R.id.tv_vip_float_btn);
         mIvVipFloatClose = findViewById(R.id.iv_close_float_btn);
         showFloatWindow();
-        mTvVipFloatBtn.setOnClickListener(v -> startVipActivity());
+
+        mTvVipFloatBtn.setOnClickListener(v -> {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_vip_hover_touch", TITLE_TEXT[mLastWhichMenu]);
+            startVipActivity();
+        });
+
         mIvVipFloatClose.setOnClickListener(v -> {
             mIvVipFloatClose.setVisibility(View.GONE);
             mTvVipFloatBtn.setVisibility(View.GONE);
@@ -493,13 +503,17 @@ public class HomeMainActivity extends FragmentActivity {
             //每关闭一次，浮窗展示次数+1
             BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
             showVipOrEntranceAd();
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_vip_hover_cancel_touch", TITLE_TEXT[mLastWhichMenu]);
         });
+
         iv_ad_close.setOnClickListener(view -> {
             BaseConstans.setAdCloseTime(System.currentTimeMillis());
             iv_ad_close.setVisibility(View.GONE);
             ll_ad_entrance.setVisibility(View.GONE);
         });
+
         showVipOrEntranceAd();
+
     }
 
     private void startVipActivity() {
@@ -509,7 +523,6 @@ public class HomeMainActivity extends FragmentActivity {
         } else {
             toLogin();
         }
-
     }
 
     private void toLogin() {
@@ -517,7 +530,6 @@ public class HomeMainActivity extends FragmentActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
     }
-
 
     @Override
     protected void onDestroy() {
@@ -541,6 +553,7 @@ public class HomeMainActivity extends FragmentActivity {
                 DataCleanManager.deleteFilesByDirectory(getExternalFilesDir(s));
             }
         }
+
     }
 
 
@@ -550,6 +563,7 @@ public class HomeMainActivity extends FragmentActivity {
             int id = v.getId();
             showFloatWindow();
             if (id == R.id.iv_back_menu_0) {
+
                 whichMenuSelect(0);
                 StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
                 StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
@@ -576,6 +590,7 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void showFloatWindow() {
         if (!CheckVipOrAdUtils.checkIsVip() && CheckVipOrAdUtils.checkFloatWindowShow()) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_vip_hover_show", TITLE_TEXT[mLastWhichMenu]);
             mIvVipFloatClose.setVisibility(View.VISIBLE);
             mTvVipFloatBtn.setVisibility(View.VISIBLE);
             ll_ad_entrance.setVisibility(View.GONE);
@@ -597,19 +612,19 @@ public class HomeMainActivity extends FragmentActivity {
      * 时间：2018/6/6
      **/
     private void changeBottomTab() {
-        for (int i = 0; i < mIvMenuBack.length; i++) {
-            tv_main[i].setTextColor(ContextCompat.getColor(this, R.color.white));
+        for (int i = 0; i < IV_MENU_BACK.length; i++) {
+            TV_MAIN[i].setTextColor(ContextCompat.getColor(this, R.color.white));
         }
-        tv_main[LastWhichMenu].setTextColor(ContextCompat.getColor(this, R.color.new_base_blue));
+        TV_MAIN[mLastWhichMenu].setTextColor(ContextCompat.getColor(this, R.color.new_base_blue));
     }
 
     /**
      * 记录当前页面id
      */
-    private int LastWhichMenu = -1;
+    private int mLastWhichMenu = 0;
 
     public void whichMenuSelect(int whichMenu) {
-        this.LastWhichMenu = whichMenu;
+        this.mLastWhichMenu = whichMenu;
         openMenu(whichMenu);
     }
 
@@ -992,6 +1007,7 @@ public class HomeMainActivity extends FragmentActivity {
                     ll_ad_entrance.addView(adView);
                     ll_ad_entrance.setVisibility(View.VISIBLE);
                     iv_ad_close.setVisibility(View.VISIBLE);
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_ad_hover_show", TITLE_TEXT[mLastWhichMenu]);
                 }
             }
 
@@ -1002,10 +1018,12 @@ public class HomeMainActivity extends FragmentActivity {
 
             @Override
             public void onImageAdClose() {
+                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_ad_hover_cancel_touch", TITLE_TEXT[mLastWhichMenu]);
             }
 
             @Override
             public boolean onImageAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_ad_hover_touch", TITLE_TEXT[mLastWhichMenu]);
                 return false;
             }
         });

@@ -35,13 +35,11 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
     private LinearLayout ll_more_comment;
     private CommentOnItemClick callback;
 
-
     public Comment_message_adapter(int layoutResId, List<MessageEnity> data, Context context, CommentOnItemClick callback) {
         super(layoutResId, data);
         this.context = context;
         this.callback = callback;
     }
-
 
     @Override
     protected void convert(final BaseViewHolder helper, final MessageEnity item) {
@@ -75,18 +73,18 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
 //            ll_more_comment.setVisibility(View.GONE);
 //        }
 
-        if (item.getIs_vip() == CheckVipOrAdUtils.IS_VIP){
-            tvUserId.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.mipmap.ic_vip_mini,0);
-        }else {
-            tvUserId.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
+        if (item.getIs_vip() == CheckVipOrAdUtils.IS_VIP) {
+            tvUserId.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.mipmap.ic_vip_mini, 0);
+        } else {
+            tvUserId.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
         }
         if (item.isOpenComment()) {
             adapter = new Comment_message_item_adapter(item.getReply(), context);
             listView.setAdapter(adapter);
             adapter.setCommentListener(new Comment_message_item_adapter.OnItemCommentListener() {
                 @Override
-                public void clickComment(String id,String nickName) {
-                    callback.clickItemComment(id,item.getId(),helper.getAdapterPosition(),nickName);
+                public void clickComment(String id, String nickName) {
+                    callback.clickItemComment(id, item.getId(), helper.getAdapterPosition(), nickName);
                 }
 
                 @Override
@@ -100,15 +98,16 @@ public class Comment_message_adapter extends BaseQuickAdapter<MessageEnity, Base
                     context.startActivity(intent);
                 }
             });
+
             listView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             listView.setVisibility(View.GONE);
         }
     }
 
 
     public interface CommentOnItemClick {
-        void clickItemComment(String id,String firstMessageId,int position,String nickname);
+        void clickItemComment(String id, String firstMessageId, int position, String nickname);
     }
 }
 

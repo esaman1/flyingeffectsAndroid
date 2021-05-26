@@ -616,9 +616,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     public void hasLogin(boolean hasLogin) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
         Log.d(TAG, "isVip = " + templateItem.getIs_vip());
-        if (!CheckVipOrAdUtils.checkIsVip()&&templateItem.getIs_vip() == 1) {
+        if (!CheckVipOrAdUtils.checkIsVip() && templateItem.getIs_vip() == 1) {
             showVipDialog();
-        } else if (BaseConstans.getHasAdvertising() == 1&&!TextUtils.isEmpty(templateItem.getType()) && "1"
+        } else if (BaseConstans.getHasAdvertising() == 1 && !TextUtils.isEmpty(templateItem.getType()) && "1"
                 .equals(templateItem.getType()) && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && !CheckVipOrAdUtils.checkIsVip()) {
             showMessageDialog();
         } else {
@@ -627,6 +627,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
     private void showVipDialog() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "mb_vip_popup_show", templateItem.getTitle());
         CommonMessageDialog.getBuilder(mContext)
                 .setContentView(R.layout.dialog_common_message)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_NONE)
@@ -636,6 +637,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "mb_vip_popup_buy_touch", templateItem.getTitle());
                         Intent intent = new Intent(mContext, BuyVipActivity.class);
                         startActivity(intent);
                         dialog.dismiss();
@@ -643,7 +645,8 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
                     @Override
                     public void onCancelBtnClick(CommonMessageDialog dialog) {
-                                          dialog.dismiss();
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "mb_vip_popup_cancel_touch", templateItem.getTitle());
+                        dialog.dismiss();
                     }
 
                 }).build().show();
@@ -672,7 +675,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 .setMessage2("「看完后就能制作飞闪视频」")
                 .setPositiveButton("成为VIP立即制作")
                 .setNegativeButton("观看广告并制作")
-                .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
+                .setVipBtnClickListener(new CommonMessageDialog.DialogVipBtnClickListener() {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         Intent intent = new Intent(mContext, BuyVipActivity.class);
@@ -681,16 +684,19 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     }
 
                     @Override
-                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                    public void onVideoBtnClick(CommonMessageDialog dialog) {
                         StatisticsEventAffair.getInstance().setFlag(mContext, "bj_ad_open", templateItem.getTitle());
                         StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_confirm");
                         EventBus.getDefault().post(new showAdCallback("PreviewActivity"));
                         dialog.dismiss();
-//                        StatisticsEventAffair.getInstance().setFlag(mContext, "mb_ad_cancel", templateItem.getTitle());
-//                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_cancel");
-//                        dialog.dismiss();
                     }
 
+                    @Override
+                    public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "mb_ad_cancel", templateItem.getTitle());
+                        StatisticsEventAffair.getInstance().setFlag(mContext, "video_ad_alert_click_cancel");
+                        dialog.dismiss();
+                    }
                 })
                 .setDialogDismissListener(() -> mAdDialogIsShow = false)
                 .build().show();
