@@ -8,7 +8,6 @@ import android.graphics.BlurMaskFilter;
 import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.EmbossMaskFilter;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
@@ -27,8 +26,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextPaint;
 import android.util.Log;
 import android.util.TypedValue;
@@ -37,8 +34,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+
 import com.imaginstudio.imagetools.pixellab.DrawingPanelRenderer;
-import com.imaginstudio.imagetools.pixellab.RectUtil;
 import com.imaginstudio.imagetools.pixellab.appStateConstants;
 import com.imaginstudio.imagetools.pixellab.commonFuncs;
 import com.imaginstudio.imagetools.pixellab.font.customTypeface;
@@ -59,108 +56,14 @@ import androidx.core.view.ViewCompat;
  * Created by Try sven775288@gmail.com on 2021/5/18
  */
 public class TextComponent extends View {
+
+    private static final String TAG = "TextComponent";
+
+    private displayInfo helperClass;
     public static final int FILL_TYPE_COLOR = 1;
     public static final int FILL_TYPE_GRADIENT = 2;
     public static final int threeD_TYPE_OBLIQUE = 3;
     public static final int threeD_TYPE_PERSPECTIVE = 1;
-
-
-    public static final int STICKER_BTN_HALF_SIZE = 30;
-    // 控件的几种模式
-    /**
-     * 正常
-     */
-    protected static final int IDLE_MODE = 2;
-    /**
-     * 移动模式
-     */
-    protected static final int MOVE_MODE = 3;
-    /**
-     * 左上角动作
-     */
-    protected static final int LEFT_TOP_MODE = 6;
-
-    /**
-     * 左下角动作
-     */
-    protected static final int LEFT_BOTTOM_MODE = 7;
-    /**
-     * 右上角动作
-     */
-    protected static final int RIGHT_TOP_MODE = 8;
-
-    /**
-     * 右下角动作
-     */
-    protected static final int RIGHT_BOTTOM_MODE = 9;
-
-    /**
-     * 右中间动作
-     */
-    protected static final int RIGHT_CENTER_MODE = 10;
-
-    /**
-     * 双指动作
-     */
-    protected static final int NEW_POINTER_DOWN_MODE = 11;
-
-    /**
-     * 右侧滑动动作
-     */
-    protected static final int RIGHT_MODE = 12;
-    /**
-     * 边框自动消息时长
-     */
-    private static final long AUTO_FADE_FRAME_TIMEOUT = 5000;
-    /**
-     * 显示边框事件ID
-     */
-    private static final int SHOW_FRAME = 1;
-    /**
-     * 消失边框事件ID
-     */
-    private static final int DISMISS_FRAME = 2;
-
-    /**
-     * 按钮大小
-     */
-    protected Rect leftTopRect = new Rect();
-    protected Rect leftBottomRect = new Rect();
-    protected Rect rightBottomRect = new Rect();
-    protected Rect rightCenterRect = new Rect();
-    protected Rect rightTopRect = new Rect();
-    protected Rect rightRect = new Rect();
-
-    /**
-     * 按钮位置
-     */
-    protected Drawable leftTopBitmap;
-    protected Drawable rightTopBitmap;
-    protected Drawable leftBottomBitmap;
-    protected Drawable rightBottomBitmap;
-    protected Drawable rightCenterBitmap;
-    protected Drawable rightBitmap;
-    protected RectF leftTopDstRect = new RectF();
-    protected RectF rightBottomDstRect = new RectF();
-    protected RectF rightCenterDstRect = new RectF();
-    protected RectF rightTopDstRect = new RectF();
-    protected RectF leftBottomDstRect = new RectF();
-    protected RectF rightDstRect = new RectF();
-
-
-    private Paint mHelpPaint = new Paint();
-    private int mCurrentMode = IDLE_MODE;
-    public float mRotateAngle = 0;
-    private RectF mHelpBoxRect = new RectF();
-    private int rotateLocation = RIGHT_BOTTOM_MODE;
-    /**
-     * 缩放比
-     */
-    public float mScale = 1;
-
-
-
-
     int ADDITIONAL_SPACE_HANDLE = dpToPixels(this.ADDITIONAL_SPACE_HANDLE_DP);
     int ADDITIONAL_SPACE_HANDLE_DP = 0;
     int DRAG_ID_MAX_WIDTHER = 1;
@@ -182,7 +85,7 @@ public class TextComponent extends View {
     private int background_border_radius = 0;
     private int background_color = Color.argb(180, 0, 0, 0);
     private int background_fill_type = 1;
-//    GradientMaker.GradientFill background_usedGradient = new GradientMaker.GradientFill();
+    //    GradientMaker.GradientFill background_usedGradient = new GradientMaker.GradientFill();
     public Bundle bezierMaskBundle = null;
     private boolean bezierMaskConfirmed = false;
     public boolean bezierMaskEnabled = true;
@@ -234,6 +137,11 @@ public class TextComponent extends View {
     private int outer_shadow_padding = 0;
     private float outer_shadow_radius = 10.0f;
     private Paint paint;
+    Paint paintHandles = new Paint(1);
+    Paint paintHandlesBorder = new Paint(1);
+    Paint paintHandlesHighlight = new Paint(1);
+    Paint paintSelected = new Paint(1);
+    Paint paintSelectedBg = new Paint(1);
     Paint paintSelectedBorder = new Paint(1);
     float previousX;
     float previousY;
@@ -272,7 +180,7 @@ public class TextComponent extends View {
     int threeDDepthColorFill = -16776961;
     int threeDDepthDarken = 30;
     int threeDDepthFillType = 1;
-//    GradientMaker.GradientFill threeDDepthGradientFill = new GradientMaker.GradientFill();
+    //    GradientMaker.GradientFill threeDDepthGradientFill = new GradientMaker.GradientFill();
     boolean threeDEnabled = false;
     boolean threeDLightingEnabled = true;
     int threeDLightingIntensity = 80;
@@ -285,9 +193,10 @@ public class TextComponent extends View {
     Canvas tmpCanvas = new Canvas();
     private boolean tmpHidden = false;
     int top_padding = 0;
-//    GradientMaker.GradientFill usedGradient = new GradientMaker.GradientFill();
+    //    GradientMaker.GradientFill usedGradient = new GradientMaker.GradientFill();
     PointF viewCenter;
-    displayInfo helperClass;
+    private boolean firstInflate = true;
+
 
     public interface OnSelectEventListener {
         void onEvent_MoveMaxText(float f, float f2, float f3, boolean z, String str);
@@ -535,11 +444,20 @@ public class TextComponent extends View {
         return this.locked;
     }
 
+    /* access modifiers changed from: package-private */
     public void init(Context context) {
-        this.paintSelectedBorder.setColor(Color.WHITE);
+        this.paintSelected.setColor(-1);
+        this.paintSelected.setStyle(Paint.Style.STROKE);
+        this.paintSelected.setStrokeWidth(commonFuncs.dpToPx(1));
+        this.paintSelectedBorder.setColor(Color.argb(70, 0, 0, 0));
         this.paintSelectedBorder.setStyle(Paint.Style.STROKE);
         this.paintSelectedBorder.setStrokeWidth(commonFuncs.dpToPx(2));
-        this.paintSelectedBorder.setPathEffect(new DashPathEffect(new float[]{30, 30}, 0));
+        this.paintSelectedBg.setColor(Color.argb(40, 255, 255, 255));
+        this.paintHandles.setColor(-1);
+        this.paintHandlesBorder.setColor(Color.argb(60, 0, 0, 0));
+        this.paintHandlesBorder.setStyle(Paint.Style.FILL_AND_STROKE);
+        this.paintHandlesBorder.setStrokeWidth(commonFuncs.dpToPx(1));
+        this.paintHandlesHighlight.setColor(Color.parseColor("#4db8f3"));
         this.textDraw = new CustomTextView(context, Math.max(helperClass.getContainerHeight(), helperClass.getContainerWidth()) * 2);
         this.textDraw.setLayoutParams(new ViewGroup.LayoutParams(-2, -2));
         this.textDraw.setTypeface(Typeface.DEFAULT);
@@ -550,18 +468,28 @@ public class TextComponent extends View {
         this.maxWidther = new HandleBall(context, pt);
         this.mMatrix = new Matrix();
         this.paint = new Paint();
-        mHelpPaint.setColor(Color.TRANSPARENT);
+
         initFrameBitmap();
+
     }
 
     @SuppressLint({"NewApi"})
-    public TextComponent(Context context, int initialColor, String reference2, displayInfo helperClass) {
+    public TextComponent(Context context, int initialColor, String reference2) {
         super(context);
-        this.helperClass = helperClass;
         init(context);
         this.reference = reference2;
         setColorFill(initialColor);
-        handler = new GestureHandler();
+    }
+
+    @SuppressLint({"NewApi"})
+    public TextComponent(Context context, int initialColor, String reference2, displayInfo helperClass, Drawable leftTopBitmap, Drawable rightBottomBitmap) {
+        super(context);
+        this.helperClass = helperClass;
+        this.leftTopBitmap = leftTopBitmap;
+        this.rightBottomBitmap = rightBottomBitmap;
+        init(context);
+        this.reference = reference2;
+        setColorFill(initialColor);
     }
 
     public TextComponent(Context context, Bundle bundle, boolean copy, String reference2) {
@@ -574,7 +502,6 @@ public class TextComponent extends View {
         }
         this.neverEdited = false;
         applyBundle(bundle, copy);
-        handler = new GestureHandler();
     }
 
     public int getEmbossAmbient() {
@@ -940,96 +867,51 @@ public class TextComponent extends View {
         this.lastClick = System.currentTimeMillis();
     }
 
-    /**
-     * 控制边框的显隐
-     */
-    private final GestureHandler handler;
-    /**
-     * 是否显示
-     */
-    private boolean frameShow = false;
-
-    private class GestureHandler extends Handler {
-
-        GestureHandler() {
-            super();
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SHOW_FRAME:
-                    if (!frameShow) {
-                        frameShow = true;
-                        invalidate();
-                    }
-                    break;
-                case DISMISS_FRAME:
-                    if (frameShow) {
-                        frameShow = false;
-                        invalidate();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-        int pointerCount = event.getPointerCount();
-        float X = event.getRawX();
-        float Y = event.getRawY();
+        if (this.locked || (isHidden() && !this.isSelected)) {
+            return false;
+        }
+        float rx = event.getRawX();
+        float ry = event.getRawY();
+
+        float x = event.getX();
+        float y = event.getY();
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-                this.downX = X;
-                this.downY = Y;
-                this.dX = 0.0f;
-                this.dY = 0.0f;
-                this.previousX = X;
-                this.previousY = Y;
-                if (this.SelectListener != null && !this.isSelected) {
-                    this.SelectListener.onEvent_SelectText(this.assigned_id);
-                }
-                if (!(Math.abs(this.maxWidther.getX() - event.getX()) <= ((float) getBiggerRadius()) && this.handleEnabled) || this.isCurved) {
-                    this.dragID = this.DRAG_ID_WHOLE;
-                } else {
-                    this.dragID = this.DRAG_ID_MAX_WIDTHER;
-                }
 
-                mCurrentMode = adjustMode(event.getX(), event.getY(), pointerCount, false);
-                if (mCurrentMode == IDLE_MODE) {
-                    return false;
-                } else if (mCurrentMode == LEFT_TOP_MODE) {
-                    Log.d("ZHHZHH", "左上角点击");
-                    return true;
-                } else if (mCurrentMode == RIGHT_TOP_MODE) {
-
-                    return true;
-                } else if (mCurrentMode == LEFT_BOTTOM_MODE) {
-
-                    return true;
-                } else if (mCurrentMode == RIGHT_CENTER_MODE) {
-
-                    return true;
-                } else if (mCurrentMode == RIGHT_BOTTOM_MODE) {
-
-                }
-
-                if (!frameShow) {
-                    frameShow = true;
+                if (leftTopDstRect.contains(x,y)) {
+                    Log.d(TAG, "leftTopDstRect() called with: event = [" + event + "]");
+                    if (callback != null) {
+                        callback.stickerOnclick(LEFT_TOP_MODE);
+                    }
+                }else {
+                    this.downX = rx;
+                    this.downY = ry;
+                    this.dX = 0.0f;
+                    this.dY = 0.0f;
+                    this.previousX = rx;
+                    this.previousY = ry;
+                    if (this.SelectListener != null && !this.isSelected) {
+                        this.SelectListener.onEvent_SelectText(this.assigned_id);
+                    }
+                    if (!(Math.abs(this.maxWidther.getX() - event.getX()) <= ((float) getBiggerRadius()) && this.handleEnabled) || this.isCurved) {
+                        this.dragID = this.DRAG_ID_WHOLE;
+                    } else {
+                        this.dragID = this.DRAG_ID_MAX_WIDTHER;
+                    }
                     invalidate();
+                    this.oldMaxW = (float) this.textDraw.userMaxWidth;
+                    this.oldPosX = getX();
+                    this.oldPosY = getY();
                 }
-                handler.removeMessages(DISMISS_FRAME);
-                this.oldMaxW = (float) this.textDraw.userMaxWidth;
-                this.oldPosX = getX();
-                this.oldPosY = getY();
+
+                lastX = x;
+                lastY = y;
+
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (Math.abs(this.downX - X) <= this.clickTolerance && Math.abs(this.downY - Y) <= this.clickTolerance) {
+                if (Math.abs(this.downX - rx) <= this.clickTolerance && Math.abs(this.downY - ry) <= this.clickTolerance) {
                     clicked();
                 }
                 helperClass.motionActionUp();
@@ -1040,380 +922,42 @@ public class TextComponent extends View {
                     this.SelectListener.onEvent_MoveMaxText(this.oldPosX, this.oldPosY, this.oldMaxW, this.dragID == this.DRAG_ID_WHOLE, this.reference);
                 }
                 this.dragID = -1;
-                handler.removeMessages(DISMISS_FRAME);
-                handler.sendEmptyMessageDelayed(DISMISS_FRAME, AUTO_FADE_FRAME_TIMEOUT);
                 invalidate();
-                mCurrentMode = IDLE_MODE;
                 break;
             case MotionEvent.ACTION_MOVE:
-//                if (this.dragID != this.DRAG_ID_WHOLE) {
-//                    if (this.dragID == this.DRAG_ID_MAX_WIDTHER) {
-//                        float difference = (float) this.textWidth;
-//                        setMax(((int) this.angle) == 0 ? helperClass.snapPosX(event.getX() + getX(), false) - getX() : event.getX());
-//                        this.textDraw.measure(0, 0);
-//                        setX(getX() + ((difference - ((float) this.textDraw.getMeasuredWidth())) * Math.signum(this.angle) * (this.angle / 180.0f)));
+                Log.d(TAG, "ACTION_MOVE() called with: event = [" + event + "]");
+                if (rightBottomDstRect.contains(x,y)) {
+                    Log.d(TAG, "rightBottomDstRect() called with: event = [" + event + "]");
+                    // 旋转 缩放文字操作
+                    // 旋转 缩放文字操作
+                    float dx = x - lastX;
+                    float dy = y - lastY;
+                    updateRotateAndScale(dx, dy);
+//                    invalidate();
+                    lastX = x;
+                    lastY = y;
+                }else {
+//                    if (this.dragID != this.DRAG_ID_WHOLE) {
+//                        if (this.dragID == this.DRAG_ID_MAX_WIDTHER) {
+//                            float difference = (float) this.textWidth;
+//                            setMax(((int) this.angle) == 0 ? helperClass.snapPosX(event.getX() + getX(), false) - getX() : event.getX());
+//                            this.textDraw.measure(0, 0);
+//                            setX(getX() + ((difference - ((float) this.textDraw.getMeasuredWidth())) * Math.signum(this.angle) * (this.angle / 180.0f)));
+//                            break;
+//                        }
+//                    } else {
+//                        this.dX = (rx - this.previousX) / getZoomFactor();
+//                        this.dY = (ry - this.previousY) / getZoomFactor();
+//                        setX(helperClass.snapPosX(getX() + this.dX, ((float) this.textWidth) * 0.5f, true));
+//                        setY(helperClass.snapPosY(getY() + this.dY, ((float) this.textHeight) * 0.5f, true));
+//                        this.previousX = rx;
+//                        this.previousY = ry;
 //                        break;
 //                    }
-//        }
-                if (mCurrentMode == IDLE_MODE) {
-                    return false;
-                }
-                if (mCurrentMode == MOVE_MODE) {
-                    this.dX = (X - this.previousX) / getZoomFactor();
-                    this.dY = (Y - this.previousY) / getZoomFactor();
-                    setX(helperClass.snapPosX(getX() + this.dX, ((float) this.textWidth) * 0.5f, true));
-                    setY(helperClass.snapPosY(getY() + this.dY, ((float) this.textHeight) * 0.5f, true));
-                    this.previousX = X;
-                    this.previousY = Y;
-                    break;
-                } else if (mCurrentMode == rotateLocation) {
-                    // 旋转 缩放文字操作
-                    float dx = event.getX() - this.previousX;
-                    float dy = event.getY() - this.previousY;
-                    updateRotateAndScale(dx, dy);
-                    invalidate();
-                    this.previousX = event.getX();
-                    this.previousY = event.getY();
                 }
                 break;
         }
         return true;
-    }
-
-
-    public void showFrame() {
-        handler.sendEmptyMessage(SHOW_FRAME);
-        handler.sendEmptyMessageDelayed(DISMISS_FRAME, AUTO_FADE_FRAME_TIMEOUT);
-    }
-
-    public void disMissFrame() {
-        handler.sendEmptyMessage(DISMISS_FRAME);
-    }
-
-    public void destory() {
-        if (handler != null) {
-            handler.removeMessages(SHOW_FRAME);
-            handler.removeMessages(DISMISS_FRAME);
-            handler.removeCallbacksAndMessages(null);
-        }
-    }
-
-    /**
-     * 调整当前的模式
-     *
-     * @param x
-     * @param y
-     * @param pointerCount
-     * @param pointerUp
-     * @return
-     */
-    protected int adjustMode(float x, float y, int pointerCount, boolean pointerUp) {
-        if (leftTopDstRect != null && leftTopDstRect.contains(x, y)) {
-            return LEFT_TOP_MODE;
-        } else if (leftBottomDstRect != null && leftBottomDstRect.contains(x, y)) {
-            return LEFT_BOTTOM_MODE;
-        } else if (rightTopDstRect != null && rightTopDstRect.contains(x, y)) {
-            return RIGHT_TOP_MODE;
-        } else if (rightBottomDstRect != null && rightBottomDstRect.contains(x, y)) {
-            return RIGHT_BOTTOM_MODE;
-        } else if (rightCenterDstRect != null && rightCenterDstRect.contains(x, y)) {
-            return RIGHT_CENTER_MODE;
-        } else if (rightDstRect != null && rightDstRect.contains(x, y)) {
-            return RIGHT_MODE;
-        } else if (isIn(mHelpBoxRect, x, y, mRotateAngle) && (pointerCount == 1) && !pointerUp) {
-            return MOVE_MODE;
-        } else if (pointerCount > 1) {
-            return NEW_POINTER_DOWN_MODE;
-        } else {
-            return IDLE_MODE;
-        }
-    }
-
-    public boolean isIn(RectF source, float x, float y, float angle) {
-        RectF rectF = new RectF(source);
-        if (angle != 0) {
-            Matrix matrix = new Matrix();
-            //设置旋转角度时，一定要记得设置旋转的中心，该中心与绘图时的中心点是一致的。
-            matrix.setRotate(angle, rectF.centerX(), rectF.centerY());
-            matrix.mapRect(rectF);
-        }
-        return rectF.contains(x, y);
-    }
-
-    /**
-     * 旋转 缩放 更新
-     *
-     * @param dx X坐标距离
-     * @param dy Y坐标距离
-     */
-    public void updateRotateAndScale(final float dx, final float dy) {
-        float cx = mHelpBoxRect.centerX();
-        float cy = mHelpBoxRect.centerY();
-
-        float x = rightBottomDstRect.centerX();
-        float y = rightBottomDstRect.centerY();
-
-        float nx = x + dx;
-        float ny = y + dy;
-
-        float xa = x - cx;
-        float ya = y - cy;
-
-        float xb = nx - cx;
-        float yb = ny - cy;
-
-        float srcLen = (float) Math.sqrt(xa * xa + ya * ya);
-        float curLen = (float) Math.sqrt(xb * xb + yb * yb);
-        // 计算缩放比
-        float scale = curLen / srcLen;
-
-        mScale *= scale;
-
-        float newWidth = mHelpBoxRect.width() * mScale;
-
-        if (newWidth < 70) {
-            mScale /= scale;
-            return;
-        }
-
-        double cos = (xa * xb + ya * yb) / (srcLen * curLen);
-        if (cos > 1 || cos < -1) {
-            return;
-        }
-        float angle = (float) Math.toDegrees(Math.acos(cos));
-        // 行列式计算 确定转动方向
-        float calMatrix = xa * yb - xb * ya;
-
-        int flag = calMatrix > 0 ? 1 : -1;
-        angle = flag * angle;
-
-        //+= angle;
-        mRotateAngle = mRotateAngle + angle;
-    }
-
-    public void setScale(float scale) {
-        this.mScale = scale;
-    }
-
-    public void setRotate(float rotate) {
-        this.mRotateAngle = rotate;
-    }
-
-    public void setDegree(float degree) {
-        this.mRotateAngle = degree;
-    }
-
-    public float getScale() {
-        return mScale;
-    }
-
-    public void setRightBottomBitmap(Drawable rightBottomBitmap) {
-        if (rightBottomBitmap != null) {
-            this.rightBottomBitmap = rightBottomBitmap;
-            rightBottomRect.set(0, 0, rightBottomBitmap.getIntrinsicWidth(),
-                    rightBottomBitmap.getIntrinsicHeight());
-            rightBottomDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-    }
-
-    public void setRightBitmap(Drawable rightBitmap) {
-        if (rightBitmap != null) {
-            this.rightBitmap = rightBitmap;
-            rightRect.set(0, 0, rightBitmap.getIntrinsicWidth(),
-                    rightBitmap.getIntrinsicHeight());
-            rightDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-    }
-
-    public void setRightCenterBitmap(Drawable rightCenterBitmap) {
-        if (rightCenterBitmap != null) {
-            this.rightCenterBitmap = rightCenterBitmap;
-            rightCenterRect.set(0, 0, rightCenterBitmap.getIntrinsicWidth(),
-                    rightCenterBitmap.getIntrinsicHeight());
-            rightCenterDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-    }
-
-    public void setRightCenterBitmapForChangeIcon(Drawable rightCenterBitmap) {
-        if (rightCenterBitmap != null) {
-            this.rightCenterBitmap = rightCenterBitmap;
-        }
-    }
-
-
-    public void setLeftTopBitmap(Drawable leftTopBitmap) {
-        if (leftTopBitmap != null) {
-            this.leftTopBitmap = leftTopBitmap;
-            leftTopDstRect.set(0, 0, leftTopBitmap.getIntrinsicWidth(),
-                    leftTopBitmap.getIntrinsicHeight());
-            leftTopDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-    }
-
-    public void setLeftBottomBitmap(Drawable leftBottomBitmap) {
-        if (leftBottomBitmap != null) {
-            this.leftBottomBitmap = leftBottomBitmap;
-            leftBottomDstRect.set(0, 0, leftBottomBitmap.getIntrinsicWidth(),
-                    leftBottomBitmap.getIntrinsicHeight());
-            leftBottomDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-    }
-
-    public void setRightTopBitmap(Drawable rightTopBitmap) {
-        if (rightTopBitmap != null) {
-            this.rightTopBitmap = rightTopBitmap;
-            rightTopDstRect.set(0, 0, rightTopBitmap.getIntrinsicWidth(),
-                    rightTopBitmap.getIntrinsicHeight());
-            rightTopDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-    }
-
-    /**
-     * 框架上按钮初始化
-     */
-    private void initFrameBitmap() {
-
-        if (leftTopBitmap != null) {
-            leftTopRect.set(0, 0, leftTopBitmap.getIntrinsicWidth(),
-                    leftTopBitmap.getIntrinsicHeight());
-            //相当于STICKER_BTN_HALF_SIZE*2 左移运算符
-            leftTopDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-
-        if (rightBottomBitmap != null) {
-            rightBottomRect.set(0, 0, rightBottomBitmap.getIntrinsicWidth(),
-                    rightBottomBitmap.getIntrinsicHeight());
-            rightBottomDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-
-        if (rightBitmap != null) {
-            rightRect.set(0, 0, rightBitmap.getIntrinsicWidth(),
-                    rightBitmap.getIntrinsicHeight());
-            rightDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-
-        if (rightCenterBitmap != null) {
-            rightCenterRect.set(0, 0, rightCenterBitmap.getIntrinsicWidth(),
-                    rightCenterBitmap.getIntrinsicHeight());
-            rightCenterDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-
-        if (leftBottomBitmap != null) {
-            leftBottomRect.set(0, 0, leftBottomBitmap.getIntrinsicWidth(), leftBottomBitmap.getIntrinsicHeight());
-            leftBottomDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-
-        if (rightTopBitmap != null) {
-            rightTopRect.set(0, 0, rightTopBitmap.getIntrinsicWidth(), rightTopBitmap.getIntrinsicHeight());
-            rightTopDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
-                    STICKER_BTN_HALF_SIZE << 1);
-        }
-    }
-
-    /**
-     * 绘制框架
-     *
-     * @param canvas 画布
-     */
-    private void drawFrame(Canvas canvas) {
-        //显示编辑框
-        if (frameShow) {
-            canvas.drawRoundRect(mHelpBoxRect, 10, 10, this.paintSelectedBorder);
-
-            int offsetValue = 0;
-            if (leftTopBitmap != null) {
-                offsetValue = ((int) leftTopDstRect.width()) >> 1;
-            } else if (rightTopBitmap != null) {
-                offsetValue = ((int) rightTopDstRect.width()) >> 1;
-            } else if (leftBottomBitmap != null) {
-                offsetValue = ((int) leftBottomDstRect.width()) >> 1;
-            } else if (rightBottomBitmap != null) {
-                offsetValue = ((int) rightBottomDstRect.width()) >> 1;
-            } else if (rightCenterBitmap != null) {
-                offsetValue = ((int) rightCenterDstRect.width()) >> 1;
-            } else if (rightBitmap != null) {
-                offsetValue = ((int) rightDstRect.width()) >> 1;
-            }
-
-            leftTopDstRect.offsetTo(mHelpBoxRect.left - offsetValue / 1.5f,
-                    mHelpBoxRect.top - offsetValue  / 1.5f);
-
-            rightBottomDstRect.offsetTo(mHelpBoxRect.right -  offsetValue / 1.5f,
-                    mHelpBoxRect.bottom -  offsetValue / 1.5f);
-
-            rightDstRect.offsetTo(mHelpBoxRect.right -  offsetValue / 1.5f,
-                    mHelpBoxRect.top +  offsetValue / 1.5f);
-            leftBottomDstRect.offsetTo(mHelpBoxRect.left -  offsetValue / 1.5f,
-                    mHelpBoxRect.bottom -  offsetValue / 1.5f);
-            rightTopDstRect.offsetTo(mHelpBoxRect.right -  offsetValue / 1.5f,
-                    mHelpBoxRect.top -  offsetValue / 1.5f);
-            float center = (mHelpBoxRect.bottom - mHelpBoxRect.top) / (float) 2;
-
-            // 音量按键位置
-            rightCenterDstRect.offsetTo(mHelpBoxRect.left - offsetValue,
-                    mHelpBoxRect.top + center - offsetValue);
-
-            RectUtil.rotateRect(leftTopDstRect, mHelpBoxRect.centerX(),
-                    mHelpBoxRect.centerY(), mRotateAngle);
-            RectUtil.rotateRect(rightBottomDstRect, mHelpBoxRect.centerX(),
-                    mHelpBoxRect.centerY(), mRotateAngle);
-            RectUtil.rotateRect(rightDstRect, mHelpBoxRect.centerX(),
-                    mHelpBoxRect.centerY(), mRotateAngle);
-            RectUtil.rotateRect(leftBottomDstRect, mHelpBoxRect.centerX(),
-                    mHelpBoxRect.centerY(), mRotateAngle);
-            RectUtil.rotateRect(rightTopDstRect, mHelpBoxRect.centerX(),
-                    mHelpBoxRect.centerY(), mRotateAngle);
-            RectUtil.rotateRect(rightCenterDstRect, mHelpBoxRect.centerX(),
-                    mHelpBoxRect.centerY(), mRotateAngle);
-
-
-            canvas.save();
-            canvas.rotate(mRotateAngle, mHelpBoxRect.centerX(),
-                    mHelpBoxRect.centerY());
-            canvas.drawRoundRect(mHelpBoxRect, 10, 10, mHelpPaint);
-            canvas.restore();
-
-            if (leftTopBitmap != null) {
-                leftTopBitmap.setBounds((int) leftTopDstRect.left, (int) leftTopDstRect.top, (int) leftTopDstRect.right, (int) leftTopDstRect.bottom);
-                leftTopBitmap.draw(canvas);
-            }
-
-            if (rightBitmap != null) {
-                rightBitmap.setBounds((int) rightDstRect.left, (int) rightDstRect.top, (int) rightDstRect.right, (int) rightDstRect.bottom);
-                rightBitmap.draw(canvas);
-            }
-
-            if (rightBottomBitmap != null) {
-                rightBottomBitmap.setBounds((int) rightBottomDstRect.left, (int) rightBottomDstRect.top, (int) rightBottomDstRect.right, (int) rightBottomDstRect.bottom);
-                rightBottomBitmap.draw(canvas);
-            }
-
-            if (leftBottomBitmap != null) {
-                leftBottomBitmap.setBounds((int) leftBottomDstRect.left, (int) leftBottomDstRect.top, (int) leftBottomDstRect.right, (int) leftBottomDstRect.bottom);
-                leftBottomBitmap.draw(canvas);
-            }
-
-            if (rightTopBitmap != null) {
-                rightTopBitmap.setBounds((int) rightTopDstRect.left, (int) rightTopDstRect.top, (int) rightTopDstRect.right, (int) rightTopDstRect.bottom);
-                rightTopBitmap.draw(canvas);
-            }
-
-            if (rightCenterBitmap != null) {
-                rightCenterBitmap.setBounds((int) rightCenterDstRect.left, (int) rightCenterDstRect.top, (int) rightCenterDstRect.right, (int) rightCenterDstRect.bottom);
-                rightCenterBitmap.draw(canvas);
-            }
-        }
     }
 
     /* access modifiers changed from: package-private */
@@ -1584,7 +1128,7 @@ public class TextComponent extends View {
         }
     }
 
-        @Override
+    @Override
     protected void onDraw(Canvas canvas) {
         Paint paint2;
         this.viewCenter = new PointF(((float) ((getWidth() - getPaddingLeft()) - getPaddingRight())) / 2.0f, ((float) ((getHeight() - getPaddingTop()) - getPaddingBottom())) / 2.0f);
@@ -1603,10 +1147,6 @@ public class TextComponent extends View {
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setColor(Color.parseColor("#007de3"));
         this.textDraw.layout(0, 0, this.textWidth + this.textDraw.getPaddingRight(), this.textHeight);
-
-        canvas.scale(mScale, mScale, viewCenter.x, viewCenter.y);
-        canvas.rotate(mRotateAngle, viewCenter.x, viewCenter.y);
-
         Camera rotation3d = new Camera();
         rotation3d.rotateY((float) clipAngle(this.textRotationY));
         rotation3d.rotateX((float) clipAngle(this.textRotationX));
@@ -1688,7 +1228,8 @@ public class TextComponent extends View {
                     this.textDraw.drawMaskListener = new CustomTextView.onFinishDraw() {
                         /* class com.imaginstudio.imagetools.pixellab.TextObject.TextComponent.AnonymousClass1 */
 
-                        @Override // com.imaginstudio.imagetools.pixellab.TextObject.CustomTextView.onFinishDraw
+                        @Override
+                        // com.imaginstudio.imagetools.pixellab.TextObject.CustomTextView.onFinishDraw
                         public void done(Canvas tmpCanvas) {
                             tmpCanvas.save();
                             tmpCanvas.scale(((float) TextComponent.this.textWidth) / TextComponent.this.bezierMaskRect.width(), ((float) TextComponent.this.textHeight) / TextComponent.this.bezierMaskRect.height());
@@ -1899,16 +1440,13 @@ public class TextComponent extends View {
             canvas.drawBitmap(this.bitmap_cache, (Rect) null, new Rect(0, 0, this.textWidth, this.textHeight), this.paint);
             resetAlphaToPaint(this.paint);
         }
-            canvas.restore();
-            RectF rectF = new RectF(0, 0, boundingWidth, boundingHeight);
-            mHelpBoxRect.set(rectF);
-            RectUtil.scaleRect(mHelpBoxRect, mScale);
-            drawFrame(canvas);
-//        if (this.isSelected && !this.renderMode) {
-//            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBg);
-//            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelected);
-//        }
-//        if (this.handleEnabled && this.isSelected && !this.isCurved && !this.renderMode) {
+        canvas.restore();
+        if (this.isSelected && !this.renderMode) {
+            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBg);
+            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBorder);
+            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelected);
+        }
+        if (this.handleEnabled && this.isSelected && !this.isCurved && !this.renderMode) {
 //            canvas.drawCircle(this.maxWidther.getX(), this.maxWidther.getY(), (float) getBiggerRadius(), this.paintHandlesBorder);
 //            float x = this.maxWidther.getX();
 //            float y = this.maxWidther.getY();
@@ -1919,7 +1457,27 @@ public class TextComponent extends View {
 //                paint2 = this.paintHandles;
 //            }
 //            canvas.drawCircle(x, y, biggerRadius, paint2);
-//        }
+
+            RectF rectF = new RectF(0, 0, mMeasureWidth, mMeasureHeight);
+//            rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
+            mHelpBoxRect.set(rectF);
+//
+            if (leftTopBitmap != null) {
+                int offsetValue = ((int) leftTopDstRect.width()) >> 1;
+                leftTopDstRect.offsetTo(mHelpBoxRect.left - offsetValue,
+                        mHelpBoxRect.top - offsetValue);
+                leftTopBitmap.setBounds((int) leftTopDstRect.left, (int) leftTopDstRect.top, (int) leftTopDstRect.right, (int) leftTopDstRect.bottom);
+                leftTopBitmap.draw(canvas);
+            }
+
+            if (rightBottomBitmap != null) {
+                int offsetValue = ((int) rightBottomDstRect.width()) >> 1;
+                rightBottomDstRect.offsetTo(mHelpBoxRect.right - offsetValue,
+                        mHelpBoxRect.bottom - offsetValue);
+                rightBottomBitmap.setBounds((int) rightBottomDstRect.left, (int) rightBottomDstRect.top, (int) rightBottomDstRect.right, (int) rightBottomDstRect.bottom);
+                rightBottomBitmap.draw(canvas);
+            }
+        }
     }
 
     /* access modifiers changed from: package-private */
@@ -2333,7 +1891,7 @@ public class TextComponent extends View {
         return bmOut;
     }
 
-        @Override
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         this.textDraw.measure(0, 0);
         this.textWidth = this.textDraw.getMeasuredWidth();
@@ -2343,6 +1901,21 @@ public class TextComponent extends View {
         setMeasuredDimension(this.boundingWidth + this.smallBallRadiusPx + this.ADDITIONAL_SPACE_HANDLE, this.boundingHeight);
         setPivotX(((float) this.textWidth) / 2.0f);
         setPivotY(((float) this.textHeight) / 2.0f);
+
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (firstInflate) {
+            int x = ((helperClass.getContainerWidth() - getWidth()) / 2);
+            int y = ((helperClass.getContainerHeight() - getHeight()) / 2);
+            setX(x);
+            setY(y);
+            firstInflate = false;
+        }
+        mMeasureWidth = getWidth();
+        mMeasureHeight = getHeight();
     }
 
     private void updateHandlePos() {
@@ -2365,7 +1938,6 @@ public class TextComponent extends View {
         setRotation(this.angle);
     }
 
-    @Override
     public boolean isSelected() {
         return this.isSelected;
     }
@@ -2466,7 +2038,7 @@ public class TextComponent extends View {
         }
     }
 
-        @Override
+    @Override
     protected void dispatchDraw(Canvas canvas) {
         canvas.setDrawFilter(new PaintFlagsDrawFilter(1, 1));
         super.dispatchDraw(canvas);
@@ -2956,21 +2528,18 @@ public class TextComponent extends View {
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
     public void requestLayout() {
         if (!this.frozen) {
             super.requestLayout();
         }
     }
 
-    @Override
     public void postInvalidate() {
         if (!this.frozen) {
             super.postInvalidate();
         }
     }
 
-    @Override
     public void postInvalidate(int left, int top, int right, int bottom) {
         if (!this.frozen) {
             super.postInvalidate(left, top, right, bottom);
@@ -2983,7 +2552,6 @@ public class TextComponent extends View {
         }
     }
 
-    @Override
     public void invalidate() {
         if (!this.frozen) {
             super.invalidate();
@@ -2991,7 +2559,6 @@ public class TextComponent extends View {
         }
     }
 
-    @Override
     public void invalidate(Rect rect) {
         if (!this.frozen) {
             super.invalidate(rect);
@@ -2999,7 +2566,6 @@ public class TextComponent extends View {
         }
     }
 
-    @Override
     public void invalidate(int l, int t, int r, int b) {
         if (!this.frozen) {
             super.invalidate(l, t, r, b);
@@ -3008,7 +2574,7 @@ public class TextComponent extends View {
     }
 
     public static Bitmap renderPreview(Bundle bundle, Context context, int height) {
-        TextComponent text = new TextComponent(context, 0, "0",null);
+        TextComponent text = new TextComponent(context, 0, "0");
         text.applyBundle(bundle, false, true);
         text.setTextSize((float) height);
         text.setText("SAMPLE", false);
@@ -3026,5 +2592,149 @@ public class TextComponent extends View {
             return null;
         }
         return DrawingPanelRenderer.autoCropBitmap(bmOut, boundingBox);
+    }
+
+    public PointF getViewCenter() {
+        return viewCenter;
+    }
+
+    public void setViewCenter(PointF viewCenter) {
+        this.viewCenter = viewCenter;
+    }
+
+
+    private Rect leftTopRect = new Rect();
+    private Rect rightBottomRect = new Rect();
+
+    private RectF leftTopDstRect = new RectF();
+    private RectF rightBottomDstRect = new RectF();
+    private RectF mHelpBoxRect = new RectF();
+
+    private float mMeasureWidth;
+    private float mMeasureHeight;
+
+    private Drawable leftTopBitmap;
+    private Drawable rightBottomBitmap;
+
+    public float mScale = 1;
+    /**
+     * 旋转角度
+     */
+    public float mRotateAngle = 0;
+
+    private float moveX;
+    private float moveY;
+    private float lastX = 0;
+    private float lastY = 0;
+
+    private StickerItemOnitemclick callback;
+    private StickerItemOnDragListener dragCallback;
+
+
+    /**
+     * 左上角动作
+     */
+    public static final int LEFT_TOP_MODE = 6;
+    /**
+     * 右下角动作
+     */
+    public static final int RIGHT_BOTTOM_MODE = 9;
+
+    public static final int STICKER_BTN_HALF_SIZE = 30;
+
+    /**
+     * 框架上按钮初始化
+     */
+    private void initFrameBitmap() {
+        if (leftTopBitmap != null) {
+            leftTopRect.set(0, 0, leftTopBitmap.getIntrinsicWidth(),
+                    leftTopBitmap.getIntrinsicHeight());
+            //相当于STICKER_BTN_HALF_SIZE*2 左移运算符
+            leftTopDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
+                    STICKER_BTN_HALF_SIZE << 1);
+        }
+
+        if (rightBottomBitmap != null) {
+            rightBottomRect.set(0, 0, rightBottomBitmap.getIntrinsicWidth(),
+                    rightBottomBitmap.getIntrinsicHeight());
+            rightBottomDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
+                    STICKER_BTN_HALF_SIZE << 1);
+        }
+    }
+
+    public StickerItemOnitemclick getCallback() {
+        return callback;
+    }
+
+    public void setCallback(StickerItemOnitemclick callback) {
+        this.callback = callback;
+    }
+
+    /**
+     * 旋转 缩放 更新
+     *
+     * @param dx X坐标距离
+     * @param dy Y坐标距离
+     */
+    public void updateRotateAndScale(final float dx, final float dy) {
+        float cx = mHelpBoxRect.centerX();
+        float cy = mHelpBoxRect.centerY();
+
+        float x = rightBottomDstRect.centerX();
+        float y = rightBottomDstRect.centerY();
+
+        float nx = x + dx;
+        float ny = y + dy;
+
+        float xa = x - cx;
+        float ya = y - cy;
+
+        float xb = nx - cx;
+        float yb = ny - cy;
+
+        float srcLen = (float) Math.sqrt(xa * xa + ya * ya);
+        float curLen = (float) Math.sqrt(xb * xb + yb * yb);
+        // 计算缩放比
+        float scale = curLen / srcLen;
+
+        mScale *= scale;
+
+        float newWidth = mHelpBoxRect.width() * mScale;
+
+        if (newWidth < 70) {
+            mScale /= scale;
+            return;
+        }
+
+        double cos = (xa * xb + ya * yb) / (srcLen * curLen);
+        if (cos > 1 || cos < -1) {
+            return;
+        }
+        float angle = (float) Math.toDegrees(Math.acos(cos));
+        // 行列式计算 确定转动方向
+        float calMatrix = xa * yb - xb * ya;
+
+        int flag = calMatrix > 0 ? 1 : -1;
+        angle = flag * angle;
+
+        //+= angle;
+        mRotateAngle = adjustDegree(mRotateAngle, angle);
+
+        moveX = mHelpBoxRect.right;
+        moveY = mHelpBoxRect.bottom;
+
+
+        rotateText(mRotateAngle);
+    }
+
+    /**
+     * 辅助居中
+     *
+     * @param currentDegree 当前角度
+     * @param newDegree     新角度
+     * @return degree
+     */
+    private float adjustDegree(float currentDegree, float newDegree) {
+        return currentDegree + newDegree;
     }
 }
