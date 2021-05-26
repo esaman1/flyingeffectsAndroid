@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.entity.BuyVipEvent;
 import com.flyingeffects.com.entity.HttpResult;
 import com.flyingeffects.com.entity.PayEntity;
 import com.flyingeffects.com.entity.PriceListEntity;
@@ -27,6 +28,7 @@ import com.xj.anchortask.library.log.LogUtils;
 import java.util.HashMap;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -104,6 +106,7 @@ public class BuyVipModel implements BuyVipContract.BuyVipMvpModel {
             @Override
             protected void onSubNext(UserInfo data) {
                 Hawk.put(UserInfo.USER_INFO_KEY, data);
+                EventBus.getDefault().post(new BuyVipEvent());
                 mPresenter.returnUserInfo(data);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, PublishSubject.create(), false, true, false);
