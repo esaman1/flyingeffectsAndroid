@@ -167,7 +167,7 @@ public class HomeMainActivity extends FragmentActivity {
         getUserPhoneInfo();
         getPushPermission();
         initTiktok();
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+        if (!CheckVipOrAdUtils.checkIsVip()&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             requestCPad();
         }
         if (BaseConstans.hasLogin()) {

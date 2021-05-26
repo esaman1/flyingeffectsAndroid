@@ -52,6 +52,7 @@ import com.flyingeffects.com.ui.interfaces.model.TemplateAddStickerMvpCallback;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.ui.view.fragment.StickerFragment;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -180,10 +181,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             initSingleThumbSize(720, 1280, defaultVideoDuration, defaultVideoDuration / 2, "");
         }
     }
-
-
-
-
 
 
     private List<Long> perSticker = new ArrayList<>();
@@ -993,7 +990,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         stickView.setRightTopBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(ContextCompat.getDrawable(context, R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_redact));
-        if (stickerType!=StickerView.CODE_STICKER_TYPE_TEXT) {
+        if (stickerType != StickerView.CODE_STICKER_TYPE_TEXT) {
             stickView.setRightBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_updown));
         }
 
@@ -1001,11 +998,8 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
         if (isFromAubum) {
             stickView.setClipPath(path);
             stickView.setOriginalPath(originalPath);
-            if (AlbumType.isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath()))) {
-                stickView.setNowMaterialIsVideo(true);
-            } else {
-                stickView.setNowMaterialIsVideo(false);
-            }
+            stickView.setNowMaterialIsVideo(AlbumType
+                    .isVideo(GetPathType.getInstance().getPathType(stickView.getOriginalPath())));
             stickView.setIsmaterial(true);
         } else {
             stickView.setIsmaterial(false);
@@ -1034,7 +1028,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.sticker_change));
         }
 
-        if (stickerType==StickerView.CODE_STICKER_TYPE_TEXT) {
+        if (stickerType == StickerView.CODE_STICKER_TYPE_TEXT) {
             stickView.setLeftBottomBitmap(ContextCompat.getDrawable(context, R.mipmap.shader_edit));
             nowChooseStickerView = stickView;
             if (!isCopy) {
@@ -1193,7 +1187,7 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
     public String getKeepOutput() {
         String product = android.os.Build.MANUFACTURER; //获得手机厂商
-        if (product != null && "vivo".equals(product)) {
+        if ("vivo".equals(product)) {
             File file_camera = new File(Environment.getExternalStorageDirectory() + "/相机");
             if (file_camera.exists()) {
                 return file_camera.getPath() + File.separator + System.currentTimeMillis() + "synthetic.mp4";
@@ -1246,7 +1240,6 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
 
 
         } else {
-
 
             new Handler().postDelayed(() -> {
                 if (!isIntoSaveVideo) {
@@ -1411,7 +1404,9 @@ public class TemplateAddStickerMvpModel implements StickerFragment.StickerListen
     private void saveToAlbum(String path) {
         StimulateControlManage.getInstance().InitRefreshStimulate();
         outputPathForVideoSaveToPhoto = path;
-        if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
+        if (!CheckVipOrAdUtils.checkIsVip() && BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() &&
+                !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() &&
+                !BaseConstans.TemplateHasWatchingAd) {
             showMessageDialog();
         } else {
             try {

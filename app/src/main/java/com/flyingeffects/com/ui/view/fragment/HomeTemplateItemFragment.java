@@ -111,11 +111,13 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
     private void initRecycler() {
         adapter = new MainRecyclerAdapter(allData, fromType, false, mAdManager);
+
         adapter.setDressUPTabNameFavorites(tabName);
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick() && !allData.get(position).isHasShowAd()) {
                 if (allData.get(position).getIs_ad_recommend() == 1) {
