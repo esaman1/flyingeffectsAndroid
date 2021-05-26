@@ -1092,19 +1092,27 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
         if (!DoubleClick.getInstance().isFastZDYDoubleClick(1000)) {
             adapter.pauseVideo();
-            if (mOldFromTo.equals(FromToTemplate.ISBJ) || mOldFromTo.equals(FromToTemplate.ISHOMEFROMBJ)) {
-                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_Make", templateItem.getTitle());
-                UiStep.isFromDownBj = true;
-            } else if (mOldFromTo.equals(FromToTemplate.DRESSUP)) {
-                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "21_face_made", templateItem.getTitle());
-            } else if (mOldFromTo.equals(FromToTemplate.CHOOSEBJ)) {
-                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_bj_make", templateItem.getTitle());
-            } else if (mOldFromTo.equals(FromToTemplate.FACEGIF)) {
-                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_bqb_make", templateItem.getTitle());
-            } else if (mOldFromTo.equals(FromToTemplate.SPECIAL)) {
-                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_ft_make", templateItem.getTitle());
-            } else {
-                StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_make", templateItem.getTitle());
+            switch (mOldFromTo) {
+                case FromToTemplate.ISBJ:
+                case FromToTemplate.ISHOMEFROMBJ:
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "5_bj_Make", templateItem.getTitle());
+                    UiStep.isFromDownBj = true;
+                    break;
+                case FromToTemplate.DRESSUP:
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "21_face_made", templateItem.getTitle());
+                    break;
+                case FromToTemplate.CHOOSEBJ:
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_bj_make", templateItem.getTitle());
+                    break;
+                case FromToTemplate.FACEGIF:
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_bqb_make", templateItem.getTitle());
+                    break;
+                case FromToTemplate.SPECIAL:
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "st_ft_make", templateItem.getTitle());
+                    break;
+                default:
+                    StatisticsEventAffair.getInstance().setFlag(PreviewUpAndDownActivity.this, "1_mb_make", templateItem.getTitle());
+                    break;
             }
             if (BaseConstans.hasLogin()) {
                 //登录可能被挤下去，所以这里加个用户信息刷新请求
@@ -1336,12 +1344,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 .buildIntent(mContext, paths, originalImagePath, defaultnum,
                         mOldFromTo, templateItem.getIs_picout(), templateItem, templateFilePath);
         startActivity(intent);
-        Observable.just(200).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer integer) {
-                new Handler().postDelayed(() -> adapter.pauseVideo(), 200);
-            }
-        });
+        Observable.just(200).observeOn(AndroidSchedulers.mainThread()).subscribe(integer -> new Handler().postDelayed(() -> adapter.pauseVideo(), 200));
 
     }
 

@@ -132,7 +132,6 @@ public class HomeMainActivity extends FragmentActivity {
      * 加载图片广告
      */
     private ImageAdManager imageAdManager;
-    private int mSelectedMenu = 0;
 
 
     @Override
@@ -1038,7 +1037,7 @@ public class HomeMainActivity extends FragmentActivity {
      * user : zhangtongju
      */
     private void showVipOrEntranceAd() {
-        if (mTvVipFloatBtn.getVisibility() != View.VISIBLE && canShowVipLogo()&&ll_ad_entrance.getVisibility()!=View.VISIBLE) {
+        if (mTvVipFloatBtn.getVisibility() != View.VISIBLE && canShowVipLogo()&&ll_ad_entrance.getVisibility()!=View.VISIBLE&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             //如果vip 按钮没有显示，那么请求互动入口
             loadImageAd();
         }
