@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#1E1E1E"
+    android:id="@+id/rl_creation_container">
+
+    <RelativeLayout
+        android:id="@+id/relative_top"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/iv_top_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:contentDescription="@string/app_name"
+            android:padding="10dp"
+            android:src="@mipmap/back"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/ll_Matting"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="智能抠像"
+                android:textColor="@color/white" />
+
+
+            <com.suke.widget.SwitchButton
+                android:id="@+id/switch_button"
+                android:layout_width="40dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
+                app:sb_border_width="@dimen/dp_0"
+                app:sb_button_color="@color/home_base_blue_color"
+                app:sb_checked="true"
+                app:sb_checked_color="@color/white"
+                app:sb_show_indicator="false"
+                app:sb_uncheck_color="@color/black"
+                app:sb_uncheckcircle_color="@color/dark_gray" />
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_top_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/base_blue_bk"
+            android:padding="8dp"
+            android:text="保存"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_16sp_size" />
+
+
+    </RelativeLayout>
+
+    <!--没有任何作用的view,用来测量控件大小-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginTop="50dp"
+        android:gravity="center">
+
+
+        <LinearLayout
+            android:id="@+id/ll_space"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative_content_all_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_progress"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp">
+
+
+        <RelativeLayout
+            android:id="@+id/relative_content_all_content2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true">
+
+
+            <RelativeLayout
+                android:id="@+id/relative_playerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <com.flyingeffects.com.view.MyScrollView
+                    android:id="@+id/scrollView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <com.google.android.exoplayer2.ui.PlayerView
+                            android:id="@+id/exo_player"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:surface_type="texture_view"
+                            app:use_controller="false" />
+
+                    </LinearLayout>
+
+                </com.flyingeffects.com.view.MyScrollView>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_back_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="invisible">
+
+                <com.flyingeffects.com.view.MyScrollView
+                    android:id="@+id/sv_back_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_back_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop" />
+
+                    </LinearLayout>
+
+                </com.flyingeffects.com.view.MyScrollView>
+
+
+
+            </RelativeLayout>
+
+
+
+            <RelativeLayout
+                android:id="@+id/ll_content_patents"
+                android:layout_width="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.lansosdk.box.ViewLayerRelativeLayout
+                    android:id="@+id/id_vview_realtime_gllayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:gravity="center" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/iv_change_ui"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="50dp"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/change_ui" />
+
+    <TextView
+        android:id="@+id/tv_current_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_progress"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="10dp"
+        android:text="00:00s"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/tv_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_progress"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="00:00s"
+        android:textColor="@color/white" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rl_seek_bar"
+        android:background="#101010"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/ll_play"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_play"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/iv_play_creation" />
+
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="13dp"
+                android:layout_toEndOf="@+id/ll_play"
+                android:gravity="center">
+
+
+                <com.flyingeffects.com.view.drag.CreationTemplateProgressBarView
+                    android:id="@+id/progressBarView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#101010" />
+
+                <ImageView
+                    android:id="@+id/iv_add_sticker"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="@string/app_name"
+                    android:visibility="gone"
+                    android:src="@mipmap/bj_add" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="2.5dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="#5496FF" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <com.flyingeffects.com.view.NoSlidingViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:layout_above="@+id/ll_bottom"
+        android:background="@color/black"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/rl_seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:layout_above="@+id/ll_bottom"
+        android:background="#101010">
+
+        <com.flyingeffects.com.view.drag.JakeFontMakeSeekBarView
+            android:id="@+id/jake_font_SeekBarView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="2dp" />
+
+        <View
+            android:layout_width="2.5dp"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="#5496FF" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="#151515">
+
+        <TextView
+            android:id="@+id/tv_add_word"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="加字"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_identify_subtitles"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="识别字幕"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_change_music"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="换音乐"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+</RelativeLayout>

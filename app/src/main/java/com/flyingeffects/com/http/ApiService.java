@@ -8,6 +8,7 @@ import com.flyingeffects.com.enity.FirstLevelTypeEntity;
 import com.flyingeffects.com.enity.FontEnity;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.HumanMerageResult;
+import com.flyingeffects.com.enity.IdentifySubtitleEntity;
 import com.flyingeffects.com.enity.ImageFrameEntity;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MineCommentEnity;
@@ -29,6 +30,7 @@ import com.flyingeffects.com.enity.systemessagelist;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
@@ -423,9 +425,10 @@ public interface ApiService {
     Observable<HttpResult<DressUpSpecial>> ApiTest(@FieldMap Map<String,String> params);
 
 
-
-
-
+    /**识别音频中的字幕*/
+    @FormUrlEncoded
+    @POST("/api/yitu/identify")
+    Observable<HttpResult<IdentifySubtitleEntity>> identifySubtitle(@Field("audiourl")String audiourl);
 
 
 }

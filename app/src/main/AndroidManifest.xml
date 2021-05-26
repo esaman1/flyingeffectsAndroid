@@ -237,6 +237,11 @@
             android:windowSoftInputMode="adjustNothing" />
 
         <activity
+            android:name="com.flyingeffects.com.ui.view.activity.JadeFontMakeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
+
+        <activity
             android:name="com.flyingeffects.com.ui.view.activity.TemplateSearchActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />

@@ -10,26 +10,20 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.TemplateDown;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
+import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.enity.SecondChoosePageListener;
 import com.flyingeffects.com.enity.fromKuaishou;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
+import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
@@ -37,6 +31,7 @@ import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.ContentAllianceActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
+import com.flyingeffects.com.ui.view.activity.JadeFontMakeActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
@@ -47,10 +42,17 @@ import com.flyingeffects.com.utils.PermissionUtil;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.shixing.sxve.ui.AlbumType;
+import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -341,7 +343,8 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
     }
 
 
-    @OnClick({R.id.ll_crate_photograph_album, R.id.iv_add, R.id.ll_click_create_video_2, R.id.ll_crate_photograph_album_2, R.id.ll_click_create_video, R.id.iv_search})
+    @OnClick({R.id.ll_crate_photograph_album, R.id.iv_add, R.id.ll_click_create_video_2, R.id.ll_crate_photograph_album_2,
+            R.id.ll_click_create_video, R.id.iv_search,R.id.ll_jade_font,R.id.ll_jade_font_2})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_add:
@@ -368,6 +371,12 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                         .requestPermissions(getActivity()
                                 , PERMISSION_STORAGE, 1);
                 //toMakeAlbum();
+                break;
+            case R.id.ll_jade_font:
+            case R.id.ll_jade_font_2:
+                ActivityCompat
+                        .requestPermissions(getActivity()
+                                , PERMISSION_STORAGE, 3);
                 break;
             default:
                 break;
@@ -401,6 +410,8 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
             LogUtil.d(TAG, "requestCode = " + 1);
             if (requestCode == 1) {
                 toMakeAlbum();
+            } else if (requestCode == 3) {
+                joinJadeFontMakeActivity();
             } else {
                 toCreateVideo();
             }
@@ -456,6 +467,36 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
                 }
             }
         }, "");
+    }
+
+    /**
+     * 玉体字制作
+     */
+    private void joinJadeFontMakeActivity() {
+        if (BaseConstans.hasLogin()) {
+            AlbumManager.chooseAlbum(getActivity(), 1, SELECTALBUM, new AlbumChooseCallback() {
+                @Override
+                public void resultFilePath(int tag, List<String> paths, boolean isCancel, boolean isFromCamera, ArrayList<AlbumFile> albumFileList) {
+                    if (!isCancel) {
+                        if (!TextUtils.isEmpty(paths.get(0))) {
+                            String pathType = GetPathTypeModel.getInstance().getMediaType(paths.get(0));
+                            Intent intent = new Intent(getActivity(), JadeFontMakeActivity.class);
+                            if (AlbumType.isVideo(pathType)) {
+                                intent.putExtra("videoPath", paths.get(0));
+                            } else if (AlbumType.isImage(pathType)) {
+                                intent.putExtra("imagePath", paths.get(0));
+                            }
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
+                    }
+                }
+            }, "");
+        } else {
+            Intent intentToLogin = new Intent(getActivity(), LoginActivity.class);
+            intentToLogin.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intentToLogin);
+        }
     }
 
 

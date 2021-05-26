@@ -40,6 +40,8 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
     long startTime = 0;
     long endTime = 0;
 
+    public int progressTotalWidth;
+
     public CreationTemplateProgressBarView(Context context) {
         super(context);
         initView();
@@ -103,7 +105,7 @@ public class CreationTemplateProgressBarView extends RelativeLayout implements T
         materialItemView = new TemplateMaterialItemView(getContext());
         materialItemView.setIdentityID(0);
         materialItemView.isShowArrow(false);
-        materialItemView.setResPathAndDuration(resPath,duration,frameContainerHeight,false,"");
+        progressTotalWidth = materialItemView.setResPathAndDuration(resPath,duration,frameContainerHeight,false,"");
         materialItemView.setWidthAndHeight((int) (duration / PER_MS_IN_PX), frameContainerHeight);
         materialItemView.isNeedOverallDrag(false);
 

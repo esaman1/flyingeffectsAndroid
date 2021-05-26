@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shape_rect_16_white"
+    android:gravity="center_horizontal">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:src="@mipmap/icon_identify_subtitle" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="自动识别字幕"
+        android:textColor="#22292C"
+        android:textSize="@dimen/sp_18"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
+
+        <CheckBox
+            android:id="@+id/check_box_subtitle"
+            android:layout_width="@dimen/dp_16"
+            android:layout_height="@dimen/dp_16"
+            android:button="@null"
+            android:focusable="true"
+            android:background="@drawable/signout_button_confirm"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="11dp"
+            android:text="同时清空已识别的字幕"
+            android:textSize="14sp"
+            android:textColor="#22292C"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_start_identify"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/shape_dialog_btn"
+        android:textColor="@color/white"
+        android:text="开始识别"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/tv_close"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="12dp"
+        android:textColor="#787878"
+        android:text="关闭"
+        android:textSize="16sp"
+        android:gravity="center"/>
+</LinearLayout>
