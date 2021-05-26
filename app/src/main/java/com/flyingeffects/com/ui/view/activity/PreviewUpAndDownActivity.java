@@ -627,6 +627,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
     }
 
     private void showVipDialog() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "mb_vip_popup_show", templateItem.getTitle());
         CommonMessageDialog.getBuilder(mContext)
                 .setContentView(R.layout.dialog_common_message)
                 .setAdStatus(CommonMessageDialog.AD_STATUS_NONE)
@@ -636,6 +637,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "mb_vip_popup_buy_touch", templateItem.getTitle());
                         Intent intent = new Intent(mContext, BuyVipActivity.class);
                         startActivity(intent);
                         dialog.dismiss();
@@ -643,6 +645,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
                     @Override
                     public void onCancelBtnClick(CommonMessageDialog dialog) {
+                        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "mb_vip_popup_cancel_touch", templateItem.getTitle());
                         dialog.dismiss();
                     }
 

@@ -15,12 +15,14 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.PriceListAdapter;
 import com.flyingeffects.com.adapter.PrivilegeListAdapter;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActivityBuyVipBinding;
 import com.flyingeffects.com.databinding.ViewCommonTitleBinding;
 import com.flyingeffects.com.entity.PayEntity;
 import com.flyingeffects.com.entity.PriceListEntity;
 import com.flyingeffects.com.entity.UserInfo;
+import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.contract.BuyVipContract;
 import com.flyingeffects.com.ui.presenter.BuyVipPresenter;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
@@ -64,6 +66,7 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
         View rootView = mBinding.getRoot();
         mTopBinding = ViewCommonTitleBinding.bind(rootView);
         setContentView(rootView);
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_show");
 
         mPresenter = new BuyVipPresenter();
         getLifecycle().addObserver(mPresenter);
@@ -209,6 +212,7 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
     }
 
     private void showProblemDialog() {
+        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_buy_problem_touch");
         OpenWechatUtils.showOpenWxDialog(mContext, CommonMessageDialog.AD_STATUS_NONE
                 , "飞闪提示", "友友您好，已经为您复制微信号" + BaseConstans.getService_wxi() + "，留言说明问题", "打开微信");
     }
@@ -245,6 +249,5 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
     public void showError() {
 
     }
-
 
 }
