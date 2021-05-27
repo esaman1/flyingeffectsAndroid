@@ -382,6 +382,7 @@ public class TemplateMvpModel {
         } else {
             if (isSucceed && !isOnDestroy) {
                 if (nowIsGifTemplate) {
+                    LogUtil.d("oom22","templateName="+templateName);
                     Intent intent = new Intent(context, MemeKeepActivity.class);
                     intent.putExtra("templateType",templateType);
                     intent.putExtra("videoPath", outputPath);

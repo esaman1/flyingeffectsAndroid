@@ -191,6 +191,7 @@ public class DressUpPreviewActivity extends BaseActivity {
 
                 if(isSpecial){
                     StatisticsEventAffair.getInstance().setFlag(this, "st_ft_save", templateTitle);
+                    StatisticsEventAffair.getInstance().setFlag(this, "st_ft_save1");
                 }else{
                     StatisticsEventAffair.getInstance().setFlag(this, "21_face_save", templateTitle);
                 }

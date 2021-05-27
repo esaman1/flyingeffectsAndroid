@@ -83,7 +83,8 @@ public class MemeKeepActivity extends BaseActivity {
         videoPath = getIntent().getStringExtra("videoPath");
         templateId = getIntent().getStringExtra("templateId");
         templateType = getIntent().getStringExtra("templateType");
-        title = getIntent().getStringExtra(title);
+        title = getIntent().getStringExtra("title");
+        LogUtil.d("oom22","title="+title);
         if (AlbumType.isVideo(GetPathTypeModel.getInstance().getMediaType(videoPath))) {
             Typematerial = 0;
             mediaInfo = new MediaInfo(videoPath);
@@ -162,6 +163,8 @@ public class MemeKeepActivity extends BaseActivity {
 
     public void onViewClick(View view) {
         if (view == mBinding.llSendFriends) {
+            StatisticsEventAffair.getInstance().setFlag(MemeKeepActivity.this, "st_bqb_wechat", title);
+            StatisticsEventAffair.getInstance().setFlag(MemeKeepActivity.this, "st_bqb_wechat1");
             uploadDressUpImage(keepGifName);
         } else if (view == mBinding.ivBack) {
             finish();
@@ -169,6 +172,7 @@ public class MemeKeepActivity extends BaseActivity {
             LogUtil.d("OOM22", "埋点st_bqb_save" + title);
             TemplateKeepStatistics.getInstance().statisticsToSave(templateId, title, templateType);
             StatisticsEventAffair.getInstance().setFlag(MemeKeepActivity.this, "st_bqb_save", title);
+            StatisticsEventAffair.getInstance().setFlag(MemeKeepActivity.this, "st_bqb_save1");
             //保存到本地
             String keepPath = SaveAlbumPathModel.getInstance().getKeepOutputForGif();
             try {
