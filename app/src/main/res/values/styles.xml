@@ -19,8 +19,6 @@
         <!--<item name="RCLightColor">#F7F7F7</item>-->
         <!--<item name="RCButtonRadius">10dp</item>-->
         <!--<item name="RCHeadBG">@color/white</item>-->
-
-
     </style>
 
     <style name="launcher" parent="AppTheme">
@@ -210,7 +208,6 @@
     </style>
 
 
-
     <style name="gaussianDialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item><!-- 边框 -->
         <item name="android:windowIsFloating">false</item><!-- 是否浮现在activity之上 -->
@@ -232,16 +229,15 @@
     </style>
 
 
-
     <!--<style name="preview_dialog" parent="@android:style/Theme.Dialog">   //剪切视频-->
-        <!--<item name="android:windowFrame">@null</item>&lt;!&ndash; 边框 &ndash;&gt;-->
-        <!--<item name="android:windowIsFloating">true</item>&lt;!&ndash; 是否浮现在activity之上 &ndash;&gt;-->
-        <!--<item name="android:windowIsTranslucent">false</item>&lt;!&ndash; 半透明 &ndash;&gt;-->
-        <!--<item name="android:windowNoTitle">true</item>&lt;!&ndash; 无标题 &ndash;&gt;-->
-        <!--&lt;!&ndash;<item name="android:windowBackground">#90000000</item>&lt;!&ndash; 自己想要的背景 &ndash;&gt;&ndash;&gt;-->
-        <!--<item name="android:backgroundDimEnabled">false</item>&lt;!&ndash; 模糊 &ndash;&gt;-->
-        <!--<item name="windowNoTitle">true</item>-->
-        <!--<item name="android:windowFullscreen">true</item>-->
+    <!--<item name="android:windowFrame">@null</item>&lt;!&ndash; 边框 &ndash;&gt;-->
+    <!--<item name="android:windowIsFloating">true</item>&lt;!&ndash; 是否浮现在activity之上 &ndash;&gt;-->
+    <!--<item name="android:windowIsTranslucent">false</item>&lt;!&ndash; 半透明 &ndash;&gt;-->
+    <!--<item name="android:windowNoTitle">true</item>&lt;!&ndash; 无标题 &ndash;&gt;-->
+    <!--&lt;!&ndash;<item name="android:windowBackground">#90000000</item>&lt;!&ndash; 自己想要的背景 &ndash;&gt;&ndash;&gt;-->
+    <!--<item name="android:backgroundDimEnabled">false</item>&lt;!&ndash; 模糊 &ndash;&gt;-->
+    <!--<item name="windowNoTitle">true</item>-->
+    <!--<item name="android:windowFullscreen">true</item>-->
     <!--</style>-->
 
 
@@ -295,6 +291,20 @@
         <item name="android:windowIsFloating">true</item>
         <!--是否模糊-->
         <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+    <style name="TransBottomSheetDialogStyle" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+
+    <style name="JadeTabLayoutTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
 </resources>
