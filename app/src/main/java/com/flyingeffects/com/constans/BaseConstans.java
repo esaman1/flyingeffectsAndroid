@@ -63,6 +63,7 @@ public class BaseConstans {
     public static String service_wxi;
     public static boolean TemplateHasWatchingAd = false;
     public static ConfigForTemplateList configList;
+
     /**
      * 是否有广告，0表示没得，1表示有，全局控制
      */
