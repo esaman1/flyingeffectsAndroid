@@ -158,7 +158,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
 
     private void startBuyVipActivity() {
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "me_vipicon_touch");
-        Intent intent = new Intent(getActivity(), BuyVipActivity.class);
+        Intent intent = BuyVipActivity.buildIntent(getActivity(),"会员中心");
         startActivity(intent);
     }
 
@@ -199,8 +199,6 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
             startActivity(intent);
         }
     }
-
-    ;
 
 
     private void onAttentionCount() {
@@ -299,8 +297,12 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                 mBinding.tvEditInformation.setVisibility(View.GONE);
                 mBinding.gVipShow.setVisibility(View.INVISIBLE);
                 mBinding.gLoginShow.setVisibility(View.GONE);
+                mBinding.tvCommentCountAdd.setVisibility(View.GONE);
                 mBinding.tvAvatarVipIcon.setVisibility(View.INVISIBLE);
                 mBinding.gNoLoginInfo.setVisibility(View.VISIBLE);
+                mBinding.tvZan.setVisibility(View.GONE);
+                mBinding.tvCommentCount.setVisibility(View.GONE);
+                mBinding.tvPrivateMessage.setVisibility(View.GONE);
             }
             AdManager.getInstance().imageAdResume();
         }
@@ -539,7 +541,6 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                             uploadUserSkin(s);
                         }
                     });
-
                 }
             }
         })).start();

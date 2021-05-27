@@ -7,7 +7,6 @@ import androidx.lifecycle.OnLifecycleEvent;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.PrivilegeListAdapter;
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.entity.BuyVipEvent;
 import com.flyingeffects.com.entity.PayEntity;
 import com.flyingeffects.com.entity.PriceListEntity;
 import com.flyingeffects.com.entity.PrivilegeEntity;
@@ -20,8 +19,6 @@ import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements LifecycleObserver {
     private static final String TAG = "BuyVipPresenter";
@@ -45,6 +42,9 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
     private int mCheckedPriceId;
     private int mTradeType;
     private String mCheckedPriceName;
+    private String mFrom;
+    private String mTemplateId;
+    private String mTemplateName;
 
     public BuyVipPresenter() {
         mBuyVipMvpModel = new BuyVipModel(this);
@@ -130,9 +130,11 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
         mCheckedPriceId = priceListEntity.getId();
         mCheckedPriceName = priceListEntity.getName();
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_shangpin_touch", priceListEntity.getName());
+
         if (isViewAttached()) {
             getView().updateOpenBtnText(priceListEntity.getPrice());
         }
+
     }
 
     @Override
@@ -180,14 +182,30 @@ public class BuyVipPresenter extends BuyVipContract.BuyVipPresenter implements L
 
     @Override
     public void refreshUserInfo() {
-        StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_buy_success", mCheckedPriceName);
-        mBuyVipMvpModel.requestUserInfo();
+        StatisticsEventAffair.getInstance()
+                .setFlag(BaseApplication.getInstance(), "vip_buy_success", mCheckedPriceName);
 
+        StatisticsEventAffair.getInstance()
+                .setFlag(BaseApplication.getInstance(), "vip_buy_success_source", mFrom);
+
+        if ("模板".equals(mFrom)) {
+            StatisticsEventAffair.getInstance()
+                    .setFlag(BaseApplication.getInstance(), "vip_buy_success_source_mb", mFrom + "_" + mTemplateId + "_" + mTemplateName);
+        }
+
+        mBuyVipMvpModel.requestUserInfo();
     }
 
+    @Override
+    public void setIntentValue(String from, String templateId, String templateName) {
+        mFrom = from;
+        mTemplateId = templateId;
+        mTemplateName = templateName;
+    }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onDestroy() {
         detachView();
     }
+
 }
