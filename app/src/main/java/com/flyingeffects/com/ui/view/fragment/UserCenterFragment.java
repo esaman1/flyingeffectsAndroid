@@ -200,8 +200,6 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
         }
     }
 
-    ;
-
 
     private void onAttentionCount() {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
@@ -299,8 +297,12 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                 mBinding.tvEditInformation.setVisibility(View.GONE);
                 mBinding.gVipShow.setVisibility(View.INVISIBLE);
                 mBinding.gLoginShow.setVisibility(View.GONE);
+                mBinding.tvCommentCountAdd.setVisibility(View.GONE);
                 mBinding.tvAvatarVipIcon.setVisibility(View.INVISIBLE);
                 mBinding.gNoLoginInfo.setVisibility(View.VISIBLE);
+                mBinding.tvZan.setVisibility(View.GONE);
+                mBinding.tvCommentCount.setVisibility(View.GONE);
+                mBinding.tvPrivateMessage.setVisibility(View.GONE);
             }
             AdManager.getInstance().imageAdResume();
         }
