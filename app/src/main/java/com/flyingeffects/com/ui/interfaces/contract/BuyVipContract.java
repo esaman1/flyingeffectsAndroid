@@ -38,6 +38,8 @@ public interface BuyVipContract {
         public abstract String getVipGradeText(int is_vip, int vip_grade);
 
         public abstract void refreshUserInfo();
+
+        public abstract void setIntentValue(String from, String templateId, String templateName);
     }
 
     interface BuyVipMvpView extends BaseView {

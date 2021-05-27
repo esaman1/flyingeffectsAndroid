@@ -132,7 +132,8 @@ public class HomeMainActivity extends FragmentActivity {
      * 加载图片广告
      */
     private ImageAdManager imageAdManager;
-    private int mSelectedMenu = 0;
+
+    private String mFrom = "浮窗_背景";
 
 
     @Override
@@ -167,7 +168,7 @@ public class HomeMainActivity extends FragmentActivity {
         getUserPhoneInfo();
         getPushPermission();
         initTiktok();
-        if (!CheckVipOrAdUtils.checkIsVip()&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+        if (!CheckVipOrAdUtils.checkIsVip() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             requestCPad();
         }
         if (BaseConstans.hasLogin()) {
@@ -523,7 +524,7 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void startVipActivity() {
         if (BaseConstans.hasLogin()) {
-            Intent intent = new Intent(mContext, BuyVipActivity.class);
+            Intent intent = BuyVipActivity.buildIntent(mContext, mFrom);
             startActivity(intent);
         } else {
             toLogin();
@@ -568,7 +569,6 @@ public class HomeMainActivity extends FragmentActivity {
             int id = v.getId();
             showFloatWindow();//change tab
             if (id == R.id.iv_back_menu_0) {
-
                 whichMenuSelect(0);
                 StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
                 StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
@@ -603,11 +603,9 @@ public class HomeMainActivity extends FragmentActivity {
         }
     }
 
-
     private void setStatusBar() {
         changeBottomTab();
     }
-
 
     /**
      * user :TongJu  ;描述：底部栏改变
@@ -627,7 +625,25 @@ public class HomeMainActivity extends FragmentActivity {
 
     public void whichMenuSelect(int whichMenu) {
         this.mLastWhichMenu = whichMenu;
+        setFromstr();
         openMenu(whichMenu);
+    }
+
+    private void setFromstr() {
+        switch (mLastWhichMenu) {
+            case 0:
+                mFrom = "浮窗_背景";
+                break;
+            case 1:
+                mFrom = "浮窗_模板";
+                break;
+            case 2:
+                mFrom = "浮窗_闪图";
+                break;
+            default:
+                mFrom = "浮窗_背景";
+                break;
+        }
     }
 
 
@@ -669,7 +685,6 @@ public class HomeMainActivity extends FragmentActivity {
         showBackMessage();
     }
 
-
     private void showBackMessage() {
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_quit_app");
         CommonMessageDialog dialog = CommonMessageDialog.getBuilder(mContext)
@@ -693,6 +708,7 @@ public class HomeMainActivity extends FragmentActivity {
                 .setDialogDismissListener(() -> {
                 })
                 .build();
+
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
@@ -791,11 +807,12 @@ public class HomeMainActivity extends FragmentActivity {
 
     /**
      * 购买会员后刷新浮窗状态
+     *
      * @param event
      */
     @Subscribe
     public void onEventMainThread(BuyVipEvent event) {
-        LogUtil.d(TAG,"refresh float status");
+        LogUtil.d(TAG, "refresh float status");
         showFloatWindow();
     }
 

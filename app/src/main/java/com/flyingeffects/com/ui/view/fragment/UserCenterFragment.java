@@ -158,7 +158,7 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
 
     private void startBuyVipActivity() {
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "me_vipicon_touch");
-        Intent intent = new Intent(getActivity(), BuyVipActivity.class);
+        Intent intent = BuyVipActivity.buildIntent(getActivity(),"会员中心");
         startActivity(intent);
     }
 
@@ -539,7 +539,6 @@ public class UserCenterFragment extends BaseFragment implements AlbumChooseCallb
                             uploadUserSkin(s);
                         }
                     });
-
                 }
             }
         })).start();

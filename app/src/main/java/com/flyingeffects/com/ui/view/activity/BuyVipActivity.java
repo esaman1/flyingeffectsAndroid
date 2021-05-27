@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.view.View;
 import android.widget.RadioGroup;
@@ -47,6 +48,10 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
     public static final int ALI_PAY_SUCCESS = 9000;
     public static final int ALI_PAY_CANCEL = 6001;
 
+    public static final String INTENT_KEY_FROM = "from";
+    public static final String INTENT_KEY_TEMPLATE_ID = "templateId";
+    public static final String INTENT_KEY_TEMPLATE_NAME = "templateName";
+
     private ActivityBuyVipBinding mBinding;
     private ViewCommonTitleBinding mTopBinding;
     private BuyVipPresenter mPresenter;
@@ -72,6 +77,8 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
         getLifecycle().addObserver(mPresenter);
         mPresenter.attachView(this);
 
+        initIntentData();
+
         setOnClickListener();
 
         setOnCheckListener();
@@ -82,6 +89,19 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
 
         checkVipServerShow();
     }
+
+    private void initIntentData() {
+        String templateName = "";
+        String templateId = "";
+        String from = getIntent().getStringExtra(INTENT_KEY_FROM);
+        if ("模板".equals(from)) {
+            templateId = getIntent().getStringExtra(INTENT_KEY_TEMPLATE_ID);
+            templateName = getIntent().getStringExtra(INTENT_KEY_TEMPLATE_NAME);
+        }
+        mPresenter.setIntentValue(from,templateId,templateName);
+
+    }
+
 
     /**
      * 判断客服按键显隐
@@ -156,7 +176,7 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
     @Override
     public void startAlipay(String orderInfo) {
         AliPayManager.aliPay(BuyVipActivity.this, orderInfo, (code, msg) -> {
-            LogUtil.d(TAG, "code = " + code+" msg = "+msg);
+            LogUtil.d(TAG, "code = " + code + " msg = " + msg);
             if (code == ALI_PAY_SUCCESS) {
                 ToastUtil.showToast(getString(R.string.pay_success));
                 mPresenter.refreshUserInfo();
@@ -214,7 +234,8 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
     private void showProblemDialog() {
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "vip_buy_problem_touch");
         OpenWechatUtils.showOpenWxDialog(mContext, CommonMessageDialog.AD_STATUS_NONE
-                , "飞闪提示", "友友您好，已经为您复制微信号" + BaseConstans.getService_wxi() + "，留言说明问题", "打开微信");
+                , "飞闪提示", "友友您好，已经为您复制微信号"
+                        + BaseConstans.getService_wxi() + "，留言说明问题", "打开微信");
     }
 
     @Override
@@ -249,5 +270,22 @@ public class BuyVipActivity extends BaseActivity implements BuyVipContract.BuyVi
     public void showError() {
 
     }
+
+    public static Intent buildIntent(Context context, String from) {
+        Intent intent = new Intent(context, BuyVipActivity.class);
+        intent.putExtra(INTENT_KEY_FROM, from);
+
+        return intent;
+    }
+
+    public static Intent buildIntent(Context context, String from, String templateId, String templateName) {
+        Intent intent = new Intent(context, BuyVipActivity.class);
+        intent.putExtra(INTENT_KEY_FROM, from);
+        intent.putExtra(INTENT_KEY_TEMPLATE_ID, templateId);
+        intent.putExtra(INTENT_KEY_TEMPLATE_NAME, templateName);
+
+        return intent;
+    }
+
 
 }

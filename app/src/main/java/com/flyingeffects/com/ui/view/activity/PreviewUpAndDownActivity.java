@@ -638,7 +638,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
                         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "mb_vip_popup_buy_touch", templateItem.getTitle());
-                        Intent intent = new Intent(mContext, BuyVipActivity.class);
+                        Intent intent;
+                        if (mOldFromTo.equals(FromToTemplate.ISTEMPLATE)) {
+                            intent = BuyVipActivity.buildIntent(mContext, "模板", templateItem.getId() + "", templateItem.getTitle());
+                        }else if (mOldFromTo.equals(FromToTemplate.ISBJ)){
+                            intent = BuyVipActivity.buildIntent(mContext, "背景");
+                        }else {
+                            intent = BuyVipActivity.buildIntent(mContext, "闪图");
+                        }
                         startActivity(intent);
                         dialog.dismiss();
                     }
@@ -678,7 +685,14 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                 .setVipBtnClickListener(new CommonMessageDialog.DialogVipBtnClickListener() {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
-                        Intent intent = new Intent(mContext, BuyVipActivity.class);
+                        Intent intent;
+                        if (mOldFromTo.equals(FromToTemplate.ISTEMPLATE)) {
+                            intent = BuyVipActivity.buildIntent(mContext, "模板", templateItem.getId() + "", templateItem.getTitle());
+                        }else if (mOldFromTo.equals(FromToTemplate.ISBJ)){
+                            intent = BuyVipActivity.buildIntent(mContext, "背景");
+                        }else {
+                            intent = BuyVipActivity.buildIntent(mContext, "闪图");
+                        }
                         startActivity(intent);
                         dialog.dismiss();
                     }
@@ -1263,6 +1277,7 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                                     }
                                 }
                             }
+
                         } else {
                             LogUtil.d("OOM6", "进入到了intoTemplate");
                             intoTemplateActivity(paths, TemplateFilePath);
