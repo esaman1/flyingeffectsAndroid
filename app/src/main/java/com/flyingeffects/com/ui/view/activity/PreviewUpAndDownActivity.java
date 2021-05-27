@@ -628,9 +628,11 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
 
     private void showVipDialog() {
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "mb_vip_popup_show", templateItem.getTitle());
+        int showAd = BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() ?
+                CommonMessageDialog.AD_STATUS_BOTTOM : CommonMessageDialog.AD_STATUS_NONE;
         CommonMessageDialog.getBuilder(mContext)
-                .setContentView(R.layout.dialog_common_message)
-                .setAdStatus(CommonMessageDialog.AD_STATUS_NONE)
+                .setContentView(R.layout.dialog_common_message_ad_under)
+                .setAdStatus(showAd)
                 .setTitle("您正在使用VIP模板")
                 .setPositiveButton("成为VIP立即制作")
                 .setNegativeButton("再想想")
@@ -641,9 +643,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         Intent intent;
                         if (mOldFromTo.equals(FromToTemplate.ISTEMPLATE)) {
                             intent = BuyVipActivity.buildIntent(mContext, "模板", templateItem.getId() + "", templateItem.getTitle());
-                        }else if (mOldFromTo.equals(FromToTemplate.ISBJ)){
+                        } else if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
                             intent = BuyVipActivity.buildIntent(mContext, "背景");
-                        }else {
+                        } else {
                             intent = BuyVipActivity.buildIntent(mContext, "闪图");
                         }
                         startActivity(intent);
@@ -688,9 +690,9 @@ public class PreviewUpAndDownActivity extends BaseActivity implements PreviewUpA
                         Intent intent;
                         if (mOldFromTo.equals(FromToTemplate.ISTEMPLATE)) {
                             intent = BuyVipActivity.buildIntent(mContext, "模板", templateItem.getId() + "", templateItem.getTitle());
-                        }else if (mOldFromTo.equals(FromToTemplate.ISBJ)){
+                        } else if (mOldFromTo.equals(FromToTemplate.ISBJ)) {
                             intent = BuyVipActivity.buildIntent(mContext, "背景");
-                        }else {
+                        } else {
                             intent = BuyVipActivity.buildIntent(mContext, "闪图");
                         }
                         startActivity(intent);
