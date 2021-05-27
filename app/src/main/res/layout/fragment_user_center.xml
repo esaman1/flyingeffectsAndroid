@@ -95,6 +95,7 @@
                     android:paddingTop="@dimen/dp_3"
                     android:paddingEnd="@dimen/dp_5"
                     android:paddingBottom="@dimen/dp_3"
+                    android:visibility="invisible"
                     android:text="月"
                     android:textColor="@color/color_vip_text"
                     android:textSize="@dimen/sp_12"
