@@ -2,34 +2,40 @@ package com.flyingeffects.com.ui.view.fragment;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.JadePagerAdapter;
+import com.flyingeffects.com.base.ActivityLifeCycleEvent;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.FragmentJadeAdjustBinding;
-import com.flyingeffects.com.utils.screenUtil;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.flyingeffects.com.enity.FontColor;
+import com.flyingeffects.com.http.Api;
+import com.flyingeffects.com.http.HttpUtil;
+import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import rx.Observable;
+import rx.subjects.PublishSubject;
 
 /**
  * 玉体字调节fragment
@@ -40,7 +46,27 @@ public class JadeAdjustFragment extends Fragment {
     private static final String TAG = "JadeAdjustFragment";
 
     private FragmentJadeAdjustBinding binding;
+
     private String[] stringArray;
+
+    private TabLayout tabLayout;
+
+    public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
+
+    private JadePagerAdapter jadePagerAdapter;
+
+    public JadeAdjustFragment(JadeAdjustFragment.onAdjustParamsChangeCallBack onAdjustParamsChangeCallBack) {
+        this.onAdjustParamsChangeCallBack = onAdjustParamsChangeCallBack;
+    }
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,7 +86,10 @@ public class JadeAdjustFragment extends Fragment {
         stringArray = getResources().getStringArray(R.array.jade_option);
         initTabLayoutWithViewPager();
         initInputEditText();
+
+        getColors();
     }
+
 
     private void initInputEditText() {
         binding.input.addTextChangedListener(new TextWatcher() {
@@ -81,23 +110,31 @@ public class JadeAdjustFragment extends Fragment {
 
             }
         });
+        binding.input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+            }
+        });
     }
 
     private void initTabLayoutWithViewPager() {
 
-        binding.tlTabsBj.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout = binding.tlTabsBj;
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 View view = tab.getCustomView();
                 if (view != null) {
                     AppCompatTextView tvTabText = view.findViewById(R.id.tv_tab_item_text);
-                    tvTabText.setTextSize(24);
+                    tvTabText.setTextSize(18);
                     tvTabText.setTextColor(Color.parseColor("#ffffff"));
                 }
                 if (tab.getPosition() == 0) {
                     showSoftInput(binding.input);
                 } else {
                     hideSoftInput();
+                    binding.input.clearFocus();
                 }
             }
 
@@ -117,7 +154,9 @@ public class JadeAdjustFragment extends Fragment {
             }
         });
 
-        JadePagerAdapter jadePagerAdapter = new JadePagerAdapter(stringArray);
+        jadePagerAdapter = new JadePagerAdapter(stringArray);
+        jadePagerAdapter.setOnAdjustParamsChangeCallBack(onAdjustParamsChangeCallBack);
+        binding.viewpager.setOffscreenPageLimit(10);
         binding.viewpager.setAdapter(jadePagerAdapter);
         new TabLayoutMediator(binding.tlTabsBj, binding.viewpager, true, true, (tab, position) -> {
             LinearLayout customView = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.item_home_tab, null);
@@ -125,13 +164,32 @@ public class JadeAdjustFragment extends Fragment {
             tvTabText.setText(stringArray[position]);
             tvTabText.setTextColor(Color.parseColor("#797979"));
             if (position == 0) {
-                tvTabText.setTextSize(24);
+                tvTabText.setTextSize(18);
                 tvTabText.setTextColor(Color.parseColor("#ffffff"));
-                showSoftInput(binding.input);
             }
             tab.setCustomView(customView);
         }).attach();
     }
+
+    @Override
+    public void onPause() {
+        lifecycleSubject.onNext(ActivityLifeCycleEvent.PAUSE);
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        lifecycleSubject.onNext(ActivityLifeCycleEvent.STOP);
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        lifecycleSubject.onNext(ActivityLifeCycleEvent.DESTROY);
+//        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
 
     private void showSoftInput(View view) {
         if (view.requestFocus()) {
@@ -141,7 +199,6 @@ public class JadeAdjustFragment extends Fragment {
     }
 
     private void hideSoftInput() {
-        binding.input.clearFocus();
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(binding.input.getWindowToken(), 0);
     }
@@ -156,7 +213,44 @@ public class JadeAdjustFragment extends Fragment {
         return OnInputChangeCallBack;
     }
 
+    private onAdjustParamsChangeCallBack onAdjustParamsChangeCallBack;
+
+    public interface onAdjustParamsChangeCallBack {
+        void onInnerColorChange(boolean enabled, float radius, float dx, float dy, int color);
+    }
+
+    public onAdjustParamsChangeCallBack getOnAdjustParamsChange() {
+        return onAdjustParamsChangeCallBack;
+    }
+
+    public void setOnAdjustParamsChange(onAdjustParamsChangeCallBack onAdjustParamsChangeCallBack) {
+        this.onAdjustParamsChangeCallBack = onAdjustParamsChangeCallBack;
+    }
+
     public void setOnInputChangeCallBack(JadeAdjustFragment.OnInputChangeCallBack onInputChangeCallBack) {
         OnInputChangeCallBack = onInputChangeCallBack;
+    }
+
+    public TabLayout getTabLayout() {
+        return tabLayout;
+    }
+
+    private void getColors() {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("type", "1");
+        Observable ob = Api.getDefault().fontColor(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FontColor>>(getActivity()) {
+            @Override
+            protected void onSubError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void onSubNext(List<FontColor> data) {
+                jadePagerAdapter.setInnerSimpleColors(data);
+                jadePagerAdapter.notifyDataSetChanged();
+//                jadePagerAdapter.notifyItemChanged(4);
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 }

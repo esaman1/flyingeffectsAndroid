@@ -5,6 +5,7 @@ import com.flyingeffects.com.enity.Config;
 import com.flyingeffects.com.enity.ConfigForTemplateList;
 import com.flyingeffects.com.enity.DressUpSpecial;
 import com.flyingeffects.com.enity.FirstLevelTypeEntity;
+import com.flyingeffects.com.enity.FontColor;
 import com.flyingeffects.com.enity.FontEnity;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.HumanMerageResult;
@@ -428,6 +429,11 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/yitu/identify")
     Observable<HttpResult<List<SubtitleEntity>>> identifySubtitle(@FieldMap Map<String,String> params);
+
+  /**识别音频中的字幕*/
+    @FormUrlEncoded
+    @POST("/api/message/fontcolor")
+    Observable<HttpResult<List<FontColor>>> fontColor(@FieldMap Map<String,String> params);
 
 
 }

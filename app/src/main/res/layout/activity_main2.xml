@@ -73,7 +73,8 @@
 
                             </TextView>
 
-                            <com.google.android.material.slider.Slider
+                                 <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
+
                                     android:stepSize="1"
                                 android:id="@+id/sizeSeek"
                                 android:layout_width="match_parent"
@@ -119,7 +120,8 @@
                                     android:text="半径"
                                     android:textColor="@color/black" />
 
-                                <com.google.android.material.slider.Slider
+                                     <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
+
                                     android:stepSize="1"
                                     android:id="@+id/inner_radius"
                                     android:layout_width="match_parent"
@@ -145,7 +147,8 @@
                                     android:text="x偏移"
                                     android:textColor="@color/black" />
 
-                                <com.google.android.material.slider.Slider
+                                     <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
+
                                     android:stepSize="1"
                                     android:id="@+id/inner_dx"
                                     android:layout_width="match_parent"
@@ -171,7 +174,8 @@
                                     android:text="y偏移"
                                     android:textColor="@color/black" />
 
-                                <com.google.android.material.slider.Slider
+                                     <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
+
                                     android:stepSize="1"
                                     android:id="@+id/inner_dy"
                                     android:layout_width="match_parent"
@@ -216,7 +220,8 @@
                                     android:text="光照角度"
                                     android:textColor="@color/black" />
 
-                                <com.google.android.material.slider.Slider
+                                     <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
+
                                     android:stepSize="1"
                                     android:id="@+id/emoss_arc"
                                     android:layout_width="match_parent"
@@ -242,7 +247,8 @@
                                     android:textColor="@color/black"
                                     />
 
-                                <com.google.android.material.slider.Slider
+                                     <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
+
                                     android:stepSize="1"
                                     android:id="@+id/emoss_qiangdu"
                                     android:layout_width="match_parent"
@@ -267,7 +273,8 @@
                                     android:text="斜角"
                                     android:textColor="@color/black" />
 
-                                <com.google.android.material.slider.Slider
+                                     <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
+
                                     android:stepSize="1"
                                     android:id="@+id/emoss_xieijiao"
                                     android:layout_width="match_parent"
@@ -313,7 +320,8 @@
                                     android:text="深度"
                                     android:textColor="@color/black" />
 
-                                <com.google.android.material.slider.Slider
+                                     <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
+
                                     android:stepSize="1"
                                     android:id="@+id/ddd_shengdu"
                                     android:layout_width="match_parent"
