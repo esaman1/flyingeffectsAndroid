@@ -248,7 +248,7 @@ dependencies {
     //腾讯游戏SDK需要支持包end
 
 
-
+    //变现猫游戏SDK
     implementation(name: 'bxmsdk-release-3.4.7', ext: 'aar')
 
     //  小满
