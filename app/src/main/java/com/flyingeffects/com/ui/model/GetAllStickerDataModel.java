@@ -4,8 +4,8 @@ import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
-import com.flyingeffects.com.enity.AllStickerData;
-import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.entity.AllStickerData;
+import com.flyingeffects.com.entity.VideoInfo;
 import com.flyingeffects.com.utils.ScreenCaptureUtil;
 import com.flyingeffects.com.view.StickerView;
 import com.shixing.sxve.ui.AlbumType;

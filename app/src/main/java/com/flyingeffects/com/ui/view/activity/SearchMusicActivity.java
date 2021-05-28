@@ -9,13 +9,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.music_recent_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
@@ -23,11 +18,12 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.DoubleClick;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.ChooseMusic;
-import com.flyingeffects.com.enity.CutSuccess;
-import com.flyingeffects.com.enity.DownVideoPath;
-import com.flyingeffects.com.enity.SearchKeyWord;
-import com.flyingeffects.com.enity.SelectMusicCollet;
+import com.flyingeffects.com.databinding.ActSearchMusicBinding;
+import com.flyingeffects.com.entity.ChooseMusic;
+import com.flyingeffects.com.entity.CutSuccess;
+import com.flyingeffects.com.entity.DownVideoPath;
+import com.flyingeffects.com.entity.SearchKeyWord;
+import com.flyingeffects.com.entity.SelectMusicCollet;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -36,8 +32,6 @@ import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.view.WarpLinearLayout;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,7 +42,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import rx.Observable;
@@ -57,67 +50,50 @@ import rx.Observable;
 /**
  * description ：搜索页面，背景音乐搜索
  * creation date: 2020/9/2
- * user : zhangtongju
+ * @author zhangtongju
  */
 public class SearchMusicActivity extends BaseActivity {
-
-    @BindView(R.id.smart_refresh_layout)
-    SmartRefreshLayout smartRefreshLayout;
-
-    private boolean isRefresh = true;
-    private int selectPage = 1;
-    private int perPageCount = 10;
-
-
-    @BindView(R.id.RecyclerView)
-    RecyclerView recyclerView;
 
     private int nowClickPosition;
 
     private music_recent_adapter adapter;
 
-    private List<ChooseMusic> listData = new ArrayList<>();
-
-    @BindView(R.id.ed_search)
-    EditText ed_search;
+    private final List<ChooseMusic> listData = new ArrayList<>();
 
     private long needDuration;
 
     private String searchText;
 
-    @BindView(R.id.iv_back)
-    ImageView iv_back;
-
-    @BindView(R.id.AutoNewLineLayout)
-    WarpLinearLayout autoNewLineLayout;
-
-    private ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
+    private final ArrayList<SearchKeyWord> listSearchKey = new ArrayList<>();
     private int isFrom;
 
     private boolean isFromShoot;
+    private boolean isRefresh = true;
+    private int selectPage = 1;
+    private int perPageCount = 10;
+    private ActSearchMusicBinding mBinding;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_search_music;
+        return 0;
     }
 
     @Override
     protected void initView() {
+        mBinding = ActSearchMusicBinding.inflate(getLayoutInflater());
+        View rootView = mBinding.getRoot();
+        setContentView(rootView);
+
         EventBus.getDefault().register(this);
 
         initSmartRefreshLayout();
         initRecycler();
-        findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        mBinding.ivBack.setOnClickListener(view -> finish());
 
         //键盘的搜索按钮
-        ed_search.setOnEditorActionListener((v, actionId, event) -> {
+        mBinding.edSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) { //键盘的搜索按钮
-                String nowShowText = ed_search.getText().toString().trim();
+                String nowShowText = mBinding.edSearch.getText().toString().trim();
                 if (!"".equals(nowShowText)) {
                     searchText = nowShowText;
                     requestFagData();
@@ -125,13 +101,6 @@ public class SearchMusicActivity extends BaseActivity {
                 return true;
             }
             return false;
-        });
-
-        iv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
         });
         requestKeywordList();
     }
@@ -175,7 +144,7 @@ public class SearchMusicActivity extends BaseActivity {
 
 
     private void setKeyWordList(ArrayList<SearchKeyWord> listSearchKey) {
-        autoNewLineLayout.removeAllViews();
+        mBinding.autoNewLineLayout.removeAllViews();
         for (int i = 0; i < listSearchKey.size(); i++) {
             String nowChooseColor = ColorCorrectionManager.getInstance().getChooseColor(i);
             TextView tv = (TextView) LayoutInflater.from(SearchMusicActivity.this).inflate(R.layout.textview_recommend, null);
@@ -186,28 +155,29 @@ public class SearchMusicActivity extends BaseActivity {
                 if (!com.flyingeffects.com.manager.DoubleClick.getInstance().isFastDoubleClick()) {
                     if (listSearchKey.size() >= finalI + 1) {
                         searchText = listSearchKey.get(finalI).getName();
-                        ed_search.setText(searchText);
+                        mBinding.edSearch.setText(searchText);
                         isRefresh = true;
                         selectPage = 1;
-                        smartRefreshLayout.setEnableLoadMore(true);
+                        mBinding.smartRefreshLayout.setEnableLoadMore(true);
                         requestFagData();
                         cancelFocus();
                     }
                 }
             });
-            GradientDrawable view_ground = (GradientDrawable) tv.getBackground(); //获取控件的背
-            view_ground.setStroke(2, Color.parseColor(nowChooseColor));
-            autoNewLineLayout.addView(tv);
+            //获取控件的背
+            GradientDrawable viewGround = (GradientDrawable) tv.getBackground();
+            viewGround.setStroke(2, Color.parseColor(nowChooseColor));
+            mBinding.autoNewLineLayout.addView(tv);
         }
 
     }
 
 
     private void cancelFocus() {
-        ed_search.setFocusable(true);
-        ed_search.setFocusableInTouchMode(true);
-        ed_search.requestFocus();
-        ed_search.clearFocus();//失去焦点
+        mBinding.edSearch.setFocusable(true);
+        mBinding.edSearch.setFocusableInTouchMode(true);
+        mBinding.edSearch.requestFocus();
+        mBinding.edSearch.clearFocus();//失去焦点
     }
 
     @Override
@@ -219,7 +189,7 @@ public class SearchMusicActivity extends BaseActivity {
 
 
     public void initSmartRefreshLayout() {
-        smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
+        mBinding.smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             if (!TextUtils.isEmpty(searchText)) {
                 isRefresh = true;
                 refreshLayout.setEnableLoadMore(true);
@@ -229,7 +199,7 @@ public class SearchMusicActivity extends BaseActivity {
                 new Handler().postDelayed(() -> finishData(), 500);
             }
         });
-        smartRefreshLayout.setOnLoadMoreListener(refresh -> {
+        mBinding.smartRefreshLayout.setOnLoadMoreListener(refresh -> {
             if (!TextUtils.isEmpty(searchText)) {
                 isRefresh = false;
                 selectPage++;
@@ -245,8 +215,8 @@ public class SearchMusicActivity extends BaseActivity {
     private void initRecycler() {
         adapter = new music_recent_adapter(R.layout.list_music_recent_item, listData, this, 3);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setHasFixedSize(true);
+        mBinding.rvSearchMusic.setLayoutManager(linearLayoutManager);
+        mBinding.rvSearchMusic.setHasFixedSize(true);
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick()) {
                 nowClickPosition = position;
@@ -279,7 +249,7 @@ public class SearchMusicActivity extends BaseActivity {
                 }
             }
         });
-        recyclerView.setAdapter(adapter);
+        mBinding.rvSearchMusic.setAdapter(adapter);
     }
 
     private int lastPosition;
@@ -325,9 +295,9 @@ public class SearchMusicActivity extends BaseActivity {
         }
     }
 
-    public void clickCollect(String music_id, int isCollect) {
+    public void clickCollect(String musicId, int isCollect) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("music_id", music_id);
+        params.put("music_id", musicId);
         // 启动时间
         Observable ob = Api.getDefault().collectMusic(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<Object>(this) {
@@ -340,13 +310,13 @@ public class SearchMusicActivity extends BaseActivity {
             protected void onSubNext(Object data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM", "收藏音乐返回的值为" + str);
-                updateCollect(isCollect, music_id);
+                updateCollect(isCollect, musicId);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
-    private void updateCollect(int oldIsCollect, String music_id) {
+    private void updateCollect(int oldIsCollect, String musicId) {
         if (oldIsCollect == 0) {
             oldIsCollect = 1;
         } else {
@@ -356,7 +326,7 @@ public class SearchMusicActivity extends BaseActivity {
         chooseMusic.setIs_collection(oldIsCollect);
         listData.set(nowClickPosition, chooseMusic);
         adapter.notifyItemChanged(nowClickPosition);
-        EventBus.getDefault().post(new SelectMusicCollet(music_id));
+        EventBus.getDefault().post(new SelectMusicCollet(musicId));
     }
 
 
@@ -401,7 +371,7 @@ public class SearchMusicActivity extends BaseActivity {
                 }
 
                 if (data.size() < perPageCount) {
-                    smartRefreshLayout.setEnableLoadMore(false);
+                    mBinding.smartRefreshLayout.setEnableLoadMore(false);
                 }
 
                 listData.addAll(data);
@@ -441,8 +411,8 @@ public class SearchMusicActivity extends BaseActivity {
     }
 
     private void finishData() {
-        smartRefreshLayout.finishRefresh();
-        smartRefreshLayout.finishLoadMore();
+        mBinding.smartRefreshLayout.finishRefresh();
+        mBinding.smartRefreshLayout.finishLoadMore();
     }
 
     @Subscribe

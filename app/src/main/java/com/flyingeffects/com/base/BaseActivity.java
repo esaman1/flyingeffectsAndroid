@@ -3,9 +3,7 @@ package com.flyingeffects.com.base;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,20 +13,13 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
-import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.ui.interfaces.PermissionListener;
 import com.githang.statusbar.StatusBarCompat;
 import com.umeng.analytics.MobclickAgent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import rx.subjects.PublishSubject;
@@ -44,11 +35,11 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     public final PublishSubject<ActivityLifeCycleEvent> mLifecycleSubject = PublishSubject.create();
     protected static final String[] PERMISSION_READ_PHONE_STATE = new String[]{Manifest.permission.READ_PHONE_STATE};
     protected static final int CODE_PERMISSION_READ_PHONE_STATE = 2;
-    protected static final String[] PERMISSION_LOCATION = new String[]{Manifest.permission.ACCESS_FINE_LOCATION
-            , Manifest.permission.ACCESS_COARSE_LOCATION};
+//    protected static final String[] PERMISSION_LOCATION = new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+//            , Manifest.permission.ACCESS_COARSE_LOCATION};
     protected static final int CODE_PERMISSION_LOCATION = 3;
 
-    private PermissionListener mlistener;
+//    private PermissionListener mlistener;
 
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     /**

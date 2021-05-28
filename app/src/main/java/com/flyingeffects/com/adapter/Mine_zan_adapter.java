@@ -11,7 +11,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.MineZanEnity;
+import com.flyingeffects.com.entity.MineZanEnity;
 import com.flyingeffects.com.utils.TimeUtils;
 
 import java.util.List;

@@ -11,9 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.flyingeffects.com.enity.CommonNewsBean;
-import com.flyingeffects.com.enity.HomeChoosePageListener;
-import com.flyingeffects.com.enity.SecondChoosePageListener;
+import com.flyingeffects.com.entity.CommonNewsBean;
+import com.flyingeffects.com.entity.HomeChoosePageListener;
+import com.flyingeffects.com.entity.SecondChoosePageListener;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.screenUtil;
@@ -45,9 +45,9 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     public final PublishSubject<ActivityLifeCycleEvent> mLifecycleSubject = PublishSubject.create();
     protected static final String[] PERMISSION_READ_PHONE_STATE = new String[]{Manifest.permission.READ_PHONE_STATE};
     protected static final int CODE_PERMISSION_READ_PHONE_STATE = 2;
-    protected static final String[] PERMISSION_LOCATION = new String[]{Manifest.permission.ACCESS_FINE_LOCATION
-            ,Manifest.permission.ACCESS_COARSE_LOCATION};
-    protected static final int CODE_PERMISSION_LOCATION = 3;
+//    protected static final String[] PERMISSION_LOCATION = new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+//            ,Manifest.permission.ACCESS_COARSE_LOCATION};
+//    protected static final int CODE_PERMISSION_LOCATION = 3;
 
     protected View contentView = null;
     protected Unbinder unbinder;
@@ -66,21 +66,31 @@ public abstract class BaseFragment extends Fragment implements IActivity {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (contentView == null) {
+        if (getContentLayout() != 0) {
             contentView = inflater.inflate(getContentLayout(), null);
-            unbinder = ButterKnife.bind(this, contentView);
-            initView();
-            EventBus.getDefault().register(this);
         } else {
-            ViewGroup vp = (ViewGroup) contentView.getParent();
-            if (null != vp) {
-                vp.removeView(contentView);
-            }
+            contentView = getBindingView(inflater, container);
         }
+        unbinder = ButterKnife.bind(this, contentView);
+        initView();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+//        if (contentView == null) {
+//        }else {
+//            ViewGroup vp = (ViewGroup) contentView.getParent();
+//            if (null != vp) {
+//                vp.removeView(contentView);
+//            }
+//        }
         initAction();
         initData();
 
         return contentView;
+    }
+
+    protected View getBindingView(LayoutInflater inflater, ViewGroup container) {
+        return null;
     }
 
 

@@ -12,8 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.ImageFrameEntity;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.ImageFrameEntity;
 import com.flyingeffects.com.manager.GlideRoundTransform;
 
 import java.util.List;

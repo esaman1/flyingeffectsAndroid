@@ -14,13 +14,13 @@ import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.AttentionChange;
-import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
-import com.flyingeffects.com.enity.DownVideoPath;
-import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.TemplateDataCollectRefresh;
-import com.flyingeffects.com.enity.templateDataZanRefresh;
+import com.flyingeffects.com.entity.AttentionChange;
+import com.flyingeffects.com.entity.BackgroundTemplateCollectionEvent;
+import com.flyingeffects.com.entity.DownVideoPath;
+import com.flyingeffects.com.entity.ListForUpAndDown;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.TemplateDataCollectRefresh;
+import com.flyingeffects.com.entity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -29,6 +29,7 @@ import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.view.activity.PreviewUpAndDownActivity;
 import com.flyingeffects.com.ui.view.activity.webViewActivity;
 import com.flyingeffects.com.utils.BackgroundExecutor;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -287,7 +288,7 @@ public class fragBjItem extends BaseFragment {
                 } else {
                     showNoData(false);
                 }
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && data.size() > BaseConstans.NOWADSHOWPOSITION) {
+                if (!CheckVipOrAdUtils.checkIsVip() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && data.size() > BaseConstans.NOWADSHOWPOSITION) {
                     NewFragmentTemplateItem item = new NewFragmentTemplateItem();
                     item.setHasShowAd(true);
                     //设置当前是导流，进入抖音列表页就会自动过滤
@@ -315,7 +316,7 @@ public class fragBjItem extends BaseFragment {
 
     private void requestFeedAd() {
         LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum + "NowSecondChooseNum=" + NowSecondChooseNum + "actTag" + nowPageNum);
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && NowHomePageChooseNum == 0 && nowPageNum == NowSecondChooseNum) {
+        if (!CheckVipOrAdUtils.checkIsVip() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser() && NowHomePageChooseNum == 0 && nowPageNum == NowSecondChooseNum) {
 //            LogUtil.d("page2Change", "背景请求广告NowHomePageChooseNum=" + NowHomePageChooseNum+"NowSecondChooseNum="+NowSecondChooseNum+"actTag"+nowPageNum);
             HasShowAd = true;
             requestFeedAd(mAdManager, new RequestFeedBack() {

@@ -14,6 +14,7 @@ android {
         }
 
         realse {
+            //storeFile file('D:\\key2\\feishan.jks')
             storeFile file('feishan.jks')
             storePassword 'android'
             keyAlias = 'jujuname'
@@ -37,8 +38,8 @@ android {
         multiDexEnabled true  //分包支持
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 35
-        versionName "4.8.0"
+        versionCode 36
+        versionName "4.9.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [UMENG_CHANNEL_VALUE: "umeng"]//添加一个默认渠道号  2018-6-19
         flavorDimensions "versionCode" //版本名后面添加一句话，意思就是flavor dimension 它的维度就是该版本号，这样维度就是都是统一的了
@@ -101,8 +102,10 @@ dependencies {
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation project(path: ':faceunity')
     implementation project(path: ':horizontalselectedviewlibrary')
+    implementation project(path: ':paylib')
     implementation project(path: ':TextEffect')
-    testImplementation 'junit:junit:4.12'
+
+    testImplementation 'junit:junit:4.13.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
@@ -155,13 +158,18 @@ dependencies {
     //仿ios 开关  https://github.com/zcweng/SwitchButton
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     //友盟统计
+//    implementation 'com.umeng.umsdk:analytics:8.1.6'
     implementation 'com.umeng.umsdk:common:9.3.8'
     implementation 'com.umeng.umsdk:crash:0.0.4'
     implementation 'com.umeng.umsdk:asms:1.2.2'
+//    implementation 'com.umeng.umsdk:utdid:1.1.5.3'
     implementation 'com.umeng.umsdk:share-core:7.1.4'
     implementation 'com.umeng.umsdk:share-wx:7.1.4'
-    //微信官方SDK依赖库
-    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:6.6.5'
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:6.6.5'//微信官方SDK依赖库
+    //exo视频播放器
+//    implementation 'com.google.android.exoplayer:exoplayer-core:2.10.8'
+//    implementation 'com.google.android.exoplayer:exoplayer-dash:2.6.1'
+//    implementation 'com.google.android.exoplayer:exoplayer-ui:2.10.8'
     //极光
     implementation 'cn.jiguang.sdk:jpush:3.5.8'
     implementation 'cn.jiguang.sdk:jcore:2.2.8'
@@ -182,7 +190,7 @@ dependencies {
     //开屏广告
     implementation(name: 'GDTSDK.unionNormal.4.333.1203', ext: 'aar')
     // 广告sdk
-    implementation(name: 'NTADSDK-v2.6.5', ext: 'aar')
+    implementation(name: 'NTADSDK-v2.6.6', ext: 'aar')//
     // 百度联盟
     implementation(name: 'Baidu_MobAds_SDK-release_v5.98', ext: 'aar')
     // 穿山甲
@@ -240,6 +248,19 @@ dependencies {
     implementation(name: 'klevinSDK_1.3.1.12', ext: 'aar')
     //腾讯游戏SDK需要支持包end
     implementation 'com.google.android.material:material:1.3.0'
+
+
+    //变现猫游戏SDK
+    implementation(name: 'bxmsdk-release-3.4.7', ext: 'aar')
+
+    //  小满
+    implementation("com.bx:adsdk:1.4.2.3") {
+        transitive = true
+        changing = true
+        exclude group:"com.miit.sdk"
+    }
+
+
 }
 
 

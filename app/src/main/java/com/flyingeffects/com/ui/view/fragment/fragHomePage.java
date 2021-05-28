@@ -14,8 +14,8 @@ import com.flyingeffects.com.adapter.frag_home_page_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.ListForUpAndDown;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -171,7 +171,7 @@ public class fragHomePage extends BaseFragment {
         HashMap<String, String> params = new HashMap<>();
         params.put("page", selectPage + "");
         if(!TextUtils.isEmpty(fromTo)&&fromTo.equals(FromToTemplate.ISHOMEMYLIKE)){
-            params.put("to_user_id", BaseConstans.GetUserId());
+            params.put("to_user_id", BaseConstans.getUserId());
         }else{
             params.put("to_user_id", toUserId);
         }

@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseFragment;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.SecondaryTypeEntity;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.SecondaryTypeEntity;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.utils.screenUtil;
 

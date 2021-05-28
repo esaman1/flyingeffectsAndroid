@@ -2,8 +2,10 @@ package com.flyingeffects.com.manager;
 
 import android.text.TextUtils;
 
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.entity.UserInfo;
+import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.orhanobut.hawk.Hawk;
 
@@ -26,8 +28,10 @@ public class StimulateControlManage {
 
 
     private int isVideoadvertisingId;
+    private boolean nowAppIsInReview = false;
 
     public void InitRefreshStimulate() {
+        String appChannel = ChannelUtil.getChannel(BaseApplication.getInstance());
         String str = Hawk.get("AuditModeConfig");
         UserInfo userInfo = Hawk.get("UserInfo");
         if (userInfo != null && !TextUtils.isEmpty(str)) {
@@ -45,6 +49,17 @@ public class StimulateControlManage {
                             if ("isVideoadvertising".equals(Channel)) { //控制了版本号
                                 isVideoadvertisingId = obArray.getInt("id");
                             }
+                            if (!appChannel.equals(nowUserChannel) && appChannel.equals(Channel)) {
+                                int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
+                                boolean audit_on = obArray.getBoolean("audit_on");
+                                if (audit_on || isVideoadvertisingId != NowVersion) {
+                                    nowAppIsInReview = false;
+                                } else {
+                                    nowAppIsInReview = true;
+                                }
+                            }
+
+
                             if (Channel.equals(nowUserChannel)) { //最新版的审核模式
                                 boolean audit_on = obArray.getBoolean("audit_on");
                                 int NowVersion = Integer.parseInt(BaseConstans.getVersionCode());
@@ -69,8 +84,9 @@ public class StimulateControlManage {
             }
         }
 
-
+        if (nowAppIsInReview) {
+            //当前版本的审核状态
+            BaseConstans.setHasAdvertising(0);
+        }
     }
-
-
 }

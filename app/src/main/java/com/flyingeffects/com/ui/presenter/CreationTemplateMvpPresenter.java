@@ -3,8 +3,8 @@ package com.flyingeffects.com.ui.presenter;
 import android.content.Context;
 import android.view.View;
 
-import com.flyingeffects.com.enity.StickerAnim;
-import com.flyingeffects.com.enity.StickerTypeEntity;
+import com.flyingeffects.com.entity.StickerAnim;
+import com.flyingeffects.com.entity.StickerTypeEntity;
 import com.flyingeffects.com.ui.interfaces.contract.ICreationTemplateMvpContract;
 import com.flyingeffects.com.ui.model.AnimStickerModel;
 import com.flyingeffects.com.ui.model.CreationTemplateMvpModel;

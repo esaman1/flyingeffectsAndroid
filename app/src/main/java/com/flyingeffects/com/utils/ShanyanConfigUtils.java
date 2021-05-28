@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import com.chuanglan.shanyan_sdk.tool.ShanYanUIConfig;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.WxLogin;
+import com.flyingeffects.com.entity.WxLogin;
 
 import de.greenrobot.event.EventBus;
 

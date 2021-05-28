@@ -32,11 +32,11 @@ import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
-import com.flyingeffects.com.enity.AllStickerData;
-import com.flyingeffects.com.enity.StickerAnim;
-import com.flyingeffects.com.enity.StickerTypeEntity;
-import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.enity.VideoType;
+import com.flyingeffects.com.entity.AllStickerData;
+import com.flyingeffects.com.entity.StickerAnim;
+import com.flyingeffects.com.entity.StickerTypeEntity;
+import com.flyingeffects.com.entity.VideoInfo;
+import com.flyingeffects.com.entity.VideoType;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -704,7 +704,6 @@ public class CreationTemplateMvpModel implements ICreationTemplateMvpContract.IC
         stickView.setRightTopBitmap(ContextCompat.getDrawable(mContext, R.mipmap.sticker_copy));
         stickView.setLeftTopBitmap(ContextCompat.getDrawable(mContext, R.drawable.sticker_delete));
         stickView.setRightBottomBitmap(ContextCompat.getDrawable(mContext, R.mipmap.sticker_redact));
-        stickView.setIsFromStickerAnim(isFromShowAnim);
         stickView.setComeFromAlbum(isFromAlbum);
 
         if (isFromAlbum) {

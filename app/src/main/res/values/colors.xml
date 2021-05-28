@@ -111,6 +111,19 @@
     <color name="color_progress_track">#E7E7E7</color>
     <color name="color_progress">#53b0ff</color>
 
+    <color name="color_vip_back">#3B4047</color>
+    <color name="color_vip_btn_back">#FFD39E</color>
+    <color name="color_vip_title_text">#F0D7BE</color>
+    <color name="color_vip_text">#FFD39E</color>
+
+    <color name="color_vip_price_list_text_checked">#544435</color>
+    <color name="color_vip_price_list_price_checked">#BF7709</color>
+    <color name="color_vip_price_list_price_unchecked">#E1B17C</color>
+
+    <color name="color_vip_line">#14544435</color>
+
+
+
     <color name="jade_bunker">#2D2D2D</color>
     <color name="jade_adjust_background">#232323</color>
     <color name="jade_text_unselect">#787878</color>

@@ -1,20 +1,18 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TimelineAdapterForCutVideo;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
-import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.databinding.ActTemplateCutVideoBinding;
+import com.flyingeffects.com.entity.VideoInfo;
 import com.flyingeffects.com.manager.DataCleanManager;
 import com.flyingeffects.com.ui.model.VideoMattingModel;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;
@@ -32,7 +30,6 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
@@ -47,8 +44,6 @@ import java.util.TimerTask;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -60,30 +55,11 @@ import rx.android.schedulers.AndroidSchedulers;
  * user : zhangtongju
  */
 public class TemplateCutVideoActivity extends BaseActivity {
-    private static final String TAG = "TemplateCutVideoActivit";
-    @BindView(R.id.tv_kt)
-    TextView tv_kt;
-
-    @BindView(R.id.tv_no_kt)
-    TextView tv_no_kt;
-
-    @BindView(R.id.list_thumb)
-    RecyclerView list_thumb;
+    private static final String TAG = "TemplateCutVideoActivity";
 
     private LoadingDialog mLoadingDialog;
 
     private TimelineAdapterForCutVideo mTimelineAdapter;
-
-    private boolean nowIsPhotographAlbum;
-
-    @BindView(R.id.relative_select_duration)
-    RelativeLayout relative_select_duration;
-
-    @BindView(R.id.duration)
-    TextView tv_duration;
-
-    @BindView(R.id.view_line_progress)
-    View view_line_progress;
 
     private int mTotalWidth;
 
@@ -101,12 +77,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
     private String templateName;
 
-    //0 表示不需要抠图，1 表示需要抠图
-    private int picout;
-
-
-    @BindView(R.id.exo_player)
-    PlayerView playerView;
 
     VideoInfo videoInfo;
     private int mScrollX;
@@ -134,21 +104,23 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
 
     private boolean nowActivityIsDestroy = false;
-    private Context mContext;
+
+
+    private ActTemplateCutVideoBinding mBinding;
 
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_template_cut_video;
+        return 0;
     }
 
     @Override
     protected void initView() {
-        mContext = TemplateCutVideoActivity.this;
+        mBinding = ActTemplateCutVideoBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
         isIntoOnpause = false;
         mLoadingDialog = buildLoadingDialog();
         getLifecycle().addObserver(mLoadingDialog);
-
         DataCleanManager.deleteFilesByDirectory(getExternalFilesDir("cacheMattingFolder"));
         videoPath = getIntent().getStringExtra("videoPath");
         needDuration = getIntent().getFloatExtra("needCropDuration", 1);
@@ -157,50 +129,48 @@ public class TemplateCutVideoActivity extends BaseActivity {
         LogUtil.d(TAG, "needDuration = " + needDuration);
         isFrom = getIntent().getIntExtra("isFrom", 0);
         LogUtil.d(TAG, "isFrom = " + isFrom);
-        nowIsPhotographAlbum = getIntent().getBooleanExtra("nowIsPhotographAlbum", false);
-        picout = getIntent().getIntExtra("picout", 0);
+        boolean nowIsPhotographAlbum = getIntent().getBooleanExtra("nowIsPhotographAlbum", false);
+        int picout = getIntent().getIntExtra("picout", 0);
         videoInfo = getVideoInfo.getInstance().getRingDuring(videoPath);
         mEndDuration = (int) (needDuration * 1000);
-        tv_duration.setText("模板时长 " + needDuration + "s");
+//        mBinding.duration.setText("模板时长 " + needDuration + "s");
+        //0 表示不需要抠图，1 表示需要抠图
         if (picout == 0 || nowIsPhotographAlbum) {
-            tv_kt.setVisibility(View.GONE);
-            tv_no_kt.setText("下一步");
+            mBinding.tvKt.setVisibility(View.GONE);
+            mBinding.tvNoKt.setText("下一步");
         }
+        mBinding.ivClose.setOnClickListener(this::onViewClick);
+        mBinding.ivCorrect.setOnClickListener(this::onViewClick);
+        mBinding.tvKt.setOnClickListener(this::onViewClick);
+        mBinding.tvNoKt.setOnClickListener(this::onViewClick);
+        mBinding.ivBack.setOnClickListener(this::onViewClick);
     }
 
     private LoadingDialog buildLoadingDialog() {
-        LoadingDialog dialog = LoadingDialog.getBuilder(mContext)
+        return LoadingDialog.getBuilder(this)
                 .setHasAd(true)
                 .setTitle("飞闪预览处理中")
                 .setMessage("请耐心等待，不要离开")
                 .build();
-        return dialog;
     }
 
     @Override
     protected void initAction() {
         initThumbList();
-        list_thumb.post(() -> initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), needDuration, videoInfo.getDuration() / (float) 1000, videoPath));
-
-    }
-
-
-    private void startVideo() {
-
+        mBinding.listThumb.post(() -> initSingleThumbSize(videoInfo.getVideoWidth(), videoInfo.getVideoHeight(), needDuration, videoInfo.getDuration() / (float) 1000, videoPath));
     }
 
 
     private void initExo(String videoPath, float duration) {
-        LogUtil.d("OOM2", "STATE_READY-videoPath=" + videoPath);
-        tv_duration.setText(String.format(Locale.US, "%.1fs", duration));
+        mBinding.duration.setText(String.format(Locale.US, "%.1fs", duration));
         if (TextUtils.isEmpty(videoPath)) {
             return;
         }
+        LogUtil.d("OOM2", "videoPath="+videoPath);
         exoPlayer = ExoPlayerFactory.newSimpleInstance(BaseApplication.getInstance(), new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
-        playerView.setPlayer(exoPlayer);
-
+        mBinding.exoPlayer.setPlayer(exoPlayer);
         //不使用控制器
-        playerView.setUseController(false);
+        mBinding.exoPlayer.setUseController(false);
         exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF);
         exoPlayer.addListener(new Player.EventListener() {
             @Override
@@ -219,6 +189,11 @@ public class TemplateCutVideoActivity extends BaseActivity {
                     case Player.STATE_BUFFERING:
                     case Player.STATE_IDLE:
                         LogUtil.d("OOM2", "STATE_BUFFERING-STATE_IDLE");
+//                        new Handler().postDelayed(() -> {
+//                            if (!isIntoOnpause) {
+//                                videoPlay();
+//                            }
+//                        },500);
                     default:
                         break;
                 }
@@ -228,13 +203,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
                 new DefaultDataSourceFactory(TemplateCutVideoActivity.this, "exoplayer-codelab")).
                 createMediaSource(Uri.fromFile(new File(videoPath)));
         exoPlayer.prepare(mediaSource, true, false);
-
-//
-//        ProgressiveMediaSource.Factory factory = new ProgressiveMediaSource.Factory(new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName())));
-//        MediaSource    mediaSource = factory.createMediaSource(Uri.fromFile(new File(videoPath)));
-//        exoPlayer.prepare(mediaSource);
-
-
         videoPause();
         LogUtil.d("OOM2", "initEnd--");
     }
@@ -262,61 +230,46 @@ public class TemplateCutVideoActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         initExo(videoPath, needDuration);
-//        if(isIntoOnpause){
-//            videoStop();
-//            endTimer();
-//            isIntoOnpause=false;
-//        }
-
-
     }
 
-    @OnClick({R.id.iv_close, R.id.iv_correct, R.id.tv_kt, R.id.tv_no_kt, R.id.iv_back})
-    public void onMyClick(View v) {
-        switch (v.getId()) {
-            case R.id.iv_close:
-            case R.id.iv_back:
-                this.finish();
-                break;
 
-            case R.id.iv_correct:
-                File file = new File(videoPath);
-                if (file.exists()) {
-                    WaitingDialog.openPragressDialog(this);
-                } else {
-                    ToastUtil.showToast(getResources().getString(R.string.write_error));
+    public void onViewClick(View view) {
+        if (view == mBinding.ivClose || view == mBinding.ivBack) {
+            this.finish();
+        } else if (view == mBinding.ivCorrect) {
+            File file = new File(videoPath);
+            if (file.exists()) {
+                WaitingDialog.openPragressDialog(this);
+            } else {
+                ToastUtil.showToast(getResources().getString(R.string.write_error));
+            }
+        } else if (view == mBinding.tvKt) {
+            if (!isFastDoubleClick()) {
+                videoStop();
+                endTimer();
+                if (!nowActivityIsDestroy) {
+                    showLoadingDialog();
                 }
-                break;
-
-            case R.id.tv_kt:
-                if (!isFastDoubleClick()) {
-                    videoStop();
-                    endTimer();
-                    if (!nowActivityIsDestroy) {
-                        showLoadingDialog();
-                    }
-                    ktStart(true);
+                ktStart(true);
+            }
+        } else if (view == mBinding.tvNoKt) {
+            if (!isFastDoubleClick()) {
+                videoStop();
+                endTimer();
+                if (!nowActivityIsDestroy) {
+                    showLoadingDialog();
                 }
-                break;
-            case R.id.tv_no_kt:
-                if (!isFastDoubleClick()) {
-                    videoStop();
-                    endTimer();
-                    if (!nowActivityIsDestroy) {
-                        showLoadingDialog();
-                    }
-                    ktStart(false);
-                }
-                break;
+                ktStart(false);
+            }
         }
     }
+
 
     private void showLoadingDialog() {
         mLoadingDialog.show();
     }
 
     private void ktStart(boolean isKt) {
-        LogUtil.d("OOM", "needDuration" + needDuration);
         long duration = (long) (needDuration * 1000);
         new Thread(() -> videoCutDurationForVideoOneDo.getInstance().cutVideoForDrawPadAllExecute2(TemplateCutVideoActivity.this, false, duration, videoPath, mStartDuration, new videoCutDurationForVideoOneDo.isSuccess() {
             @Override
@@ -329,22 +282,18 @@ public class TemplateCutVideoActivity extends BaseActivity {
 
             @Override
             public void isSuccess(boolean isSuccess, String path) {
-                LogUtil.d("OOM", "裁剪的后地址为" + path);
                 if (isSuccess) {
                     if (isKt) {
                         gotoMattingVideo(path);
-
                         Observable.just(isSuccess).subscribeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> new Handler().postDelayed(() -> {
                             if (!nowActivityIsDestroy) {
                                 dismissLoadingDialog();
                             }
                         }, 500));
-
                     } else {
                         if (!nowActivityIsDestroy) {
                             dismissLoadingDialog();
                         }
-                        LogUtil.d("OOM", "MattingVideoEnityisFrom=" + isFrom);
                         EventBus.getDefault().post(new MattingVideoEnity(null, path, path, isFrom));
                         TemplateCutVideoActivity.this.finish();
                     }
@@ -381,24 +330,22 @@ public class TemplateCutVideoActivity extends BaseActivity {
     private VideoMattingModel videoMattingModel;
 
     private void gotoMattingVideo(String originalPath) {
-        initFaceSdkModel.getHasLoadSdkOk(() -> {
-            Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
-                videoMattingModel = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path, noMakingPath) -> {
-                    EventBus.getDefault().post(new MattingVideoEnity(noMakingPath, path, originalPath, isFrom));
-                    TemplateCutVideoActivity.this.finish();
-                });
-                videoMattingModel.ToExtractFrame(templateName);
+        initFaceSdkModel.getHasLoadSdkOk(() -> Observable.just(originalPath).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+            videoMattingModel = new VideoMattingModel(originalPath, TemplateCutVideoActivity.this, (isSuccess, path, noMakingPath) -> {
+                EventBus.getDefault().post(new MattingVideoEnity(noMakingPath, path, originalPath, isFrom));
+                TemplateCutVideoActivity.this.finish();
             });
-        }, this);
+            videoMattingModel.ToExtractFrame(templateName);
+        }), this);
     }
 
 
     private void initThumbList() {
-        list_thumb.setLayoutManager(new LinearLayoutManager(TemplateCutVideoActivity.this, LinearLayoutManager.HORIZONTAL, false));
+        mBinding.listThumb.setLayoutManager(new LinearLayoutManager(TemplateCutVideoActivity.this, LinearLayoutManager.HORIZONTAL, false));
         mTimelineAdapter = new TimelineAdapterForCutVideo();
-        list_thumb.setAdapter(mTimelineAdapter);
-        list_thumb.setHasFixedSize(true);
-        list_thumb.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mBinding.listThumb.setAdapter(mTimelineAdapter);
+        mBinding.listThumb.setHasFixedSize(true);
+        mBinding.listThumb.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NotNull RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
@@ -435,16 +382,14 @@ public class TemplateCutVideoActivity extends BaseActivity {
     private void initSingleThumbSize(int width, int height, float mTemplateDuration, float duration, String mVideoPath) {
         this.mVideoDuration = (int) duration;
         // 需要截取的listWidth宽度
-        int listWidth = list_thumb.getWidth() - list_thumb.getPaddingLeft() - list_thumb.getPaddingRight();
-        int listHeight = list_thumb.getHeight();
+        int listWidth = mBinding.listThumb.getWidth() - mBinding.listThumb.getPaddingLeft() - mBinding.listThumb.getPaddingRight();
+        int listHeight = mBinding.listThumb.getHeight();
         float scale = (float) listHeight / height;
         int thumbWidth = (int) (scale * width);
         mTimelineAdapter.setBitmapSize(thumbWidth, listHeight);
         //其中listWidth表示当前截取的大小
         int thumbCount = (int) (listWidth * (duration / mTemplateDuration / thumbWidth));
-//        int thumbCount = (int) (listWidth * (duration / mTemplateDuration) / thumbWidth);
-        thumbCount = thumbCount > 0 ? thumbCount : 0;
-        LogUtil.d("OOM2", "thumbCount=" + thumbCount);
+        thumbCount = Math.max(thumbCount, 0);
         //每帧所占的时间
         final int interval = (int) (duration / thumbCount * 1000);
         int[] mTimeUs = new int[thumbCount];
@@ -455,7 +400,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
         mTimelineAdapter.setVideoUri(Uri.fromFile(new File(mVideoPath)));
         mTimelineAdapter.setData(mTimeUs, mData);
         mTotalWidth = thumbWidth * thumbCount;
-        startVideo();
     }
 
     /**
@@ -487,7 +431,6 @@ public class TemplateCutVideoActivity extends BaseActivity {
     private TimerTask task;
 
     private void startTimer() {
-
         if (timer != null) {
             timer.purge();
             timer.cancel();
@@ -530,12 +473,11 @@ public class TemplateCutVideoActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         if (videoMattingModel != null) {
             videoMattingModel.nowActivityIsDestroy(true);
         }
+        nowActivityIsDestroy = true;
         exoPlayer = null;
-
         videoStop();
         GlideBitmapPool.clearMemory();
         endTimer();

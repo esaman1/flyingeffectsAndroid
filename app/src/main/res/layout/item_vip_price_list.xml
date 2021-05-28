@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/v_vip_cost_back"
+        android:layout_width="@dimen/dp_106"
+        android:layout_height="@dimen/dp_113"
+        android:background="@drawable/shape_price_list_item_checked"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_left_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_vip_price_left_top"
+        android:paddingStart="@dimen/dp_6"
+        android:paddingTop="@dimen/dp_1"
+        android:paddingEnd="@dimen/dp_6"
+        android:paddingBottom="@dimen/dp_1"
+        android:text="新用户"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_12"
+        app:layout_constraintStart_toStartOf="@id/v_vip_cost_back"
+        app:layout_constraintTop_toTopOf="@id/v_vip_cost_back" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_price_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_22"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="@id/v_vip_cost_back"
+        app:layout_constraintStart_toStartOf="@id/v_vip_cost_back"
+        app:layout_constraintTop_toTopOf="@id/v_vip_cost_back" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_12"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_16"
+        app:layout_constraintEnd_toEndOf="@id/v_vip_cost_back"
+        app:layout_constraintStart_toStartOf="@id/v_vip_cost_back"
+        app:layout_constraintTop_toBottomOf="@id/tv_price_name" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_old_price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_7"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_13"
+        app:layout_constraintEnd_toEndOf="@id/v_vip_cost_back"
+        app:layout_constraintStart_toStartOf="@id/v_vip_cost_back"
+        app:layout_constraintTop_toBottomOf="@id/tv_price" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

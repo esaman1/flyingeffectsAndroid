@@ -13,7 +13,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.VideoTimelineAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.enity.VideoInfo;
+import com.flyingeffects.com.entity.VideoInfo;
 import com.flyingeffects.com.ui.interfaces.model.CreationTemplatePreviewMvpCallback;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.utils.LogUtil;

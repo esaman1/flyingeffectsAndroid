@@ -20,7 +20,7 @@ import com.flyingeffects.com.adapter.CreateTemplateTextFrameAdapter;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.FontEnity;
+import com.flyingeffects.com.entity.FontEnity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;

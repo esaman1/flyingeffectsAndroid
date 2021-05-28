@@ -5,8 +5,8 @@ import android.content.Context;
 
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.DownImg;
-import com.flyingeffects.com.enity.DownImgDataList;
+import com.flyingeffects.com.entity.DownImg;
+import com.flyingeffects.com.entity.DownImgDataList;
 import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.model.initFaceSdkModel;
 import com.flyingeffects.com.utils.LogUtil;

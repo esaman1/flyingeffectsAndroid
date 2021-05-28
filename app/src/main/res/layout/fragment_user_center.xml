@@ -1,0 +1,640 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#181818"
+            android:fitsSystemWindows="true"
+            android:minHeight="40dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_user_skin"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/dp_210"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:text="飞闪号："
+                    android:textColor="#858A8D"
+                    app:layout_constraintStart_toStartOf="@id/iv_user_skin"
+                    app:layout_constraintTop_toTopOf="@id/iv_user_skin" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/home_page_gradient"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_user_skin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_about"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:contentDescription="@string/app_name"
+                    android:padding="10dp"
+                    android:src="@mipmap/more"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_Peeling"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:contentDescription="@string/app_name"
+                    android:padding="10dp"
+                    android:src="@mipmap/icon_peeling"
+                    app:layout_constraintEnd_toStartOf="@id/iv_about"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_head"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginStart="@dimen/dp_12"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_user_skin"
+                    app:layout_constraintStart_toStartOf="@id/iv_user_skin"
+                    app:layout_constraintTop_toTopOf="@id/iv_user_skin"
+                    app:layout_constraintVertical_bias="0.35" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_avatar_vip_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_vip_float_button"
+                    android:drawableStart="@mipmap/ic_vip_mini"
+                    android:drawablePadding="@dimen/dp_3"
+                    android:paddingStart="@dimen/dp_5"
+                    android:paddingTop="@dimen/dp_3"
+                    android:paddingEnd="@dimen/dp_5"
+                    android:paddingBottom="@dimen/dp_3"
+                    android:visibility="invisible"
+                    android:text="月"
+                    android:textColor="@color/color_vip_text"
+                    android:textSize="@dimen/sp_12"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_head"
+                    app:layout_constraintEnd_toEndOf="@id/iv_head"
+                    app:layout_constraintStart_toStartOf="@id/iv_head"
+                    app:layout_constraintTop_toBottomOf="@id/iv_head" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_edit_information"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/message_focus_gray20"
+                    android:paddingStart="10dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="6dp"
+                    android:text="编辑资料"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_head"
+                    app:layout_constraintEnd_toEndOf="@id/iv_user_skin"
+                    app:layout_constraintTop_toTopOf="@id/iv_head" />
+
+                <com.flyingeffects.com.view.MarqueTextView
+                    android:id="@+id/tv_no_login_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
+                    android:text="Hi~欢迎来到飞闪"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/tv_no_login_text_detail"
+                    app:layout_constraintEnd_toStartOf="@id/tv_edit_information"
+                    app:layout_constraintStart_toEndOf="@id/iv_head"
+                    app:layout_constraintTop_toTopOf="@id/iv_head" />
+
+                <com.flyingeffects.com.view.MarqueTextView
+                    android:id="@+id/tv_no_login_text_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:ellipsize="marquee"
+                    android:singleLine="true"
+                    android:text="点击登录 和友友们一起嗨吧"
+                    android:textColor="#FEFEFE"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_head"
+                    app:layout_constraintEnd_toStartOf="@id/tv_edit_information"
+                    app:layout_constraintStart_toEndOf="@id/iv_head"
+                    app:layout_constraintTop_toBottomOf="@id/tv_no_login_text" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_go_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="26.5dp"
+                    android:background="@drawable/message_focus_20"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/dp_30"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="@dimen/dp_30"
+                    android:paddingBottom="5dp"
+                    android:text="点击登录"
+                    android:textColor="#46AAFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_user_skin"
+                    app:layout_constraintEnd_toEndOf="@id/iv_user_skin"
+                    app:layout_constraintStart_toStartOf="@id/iv_user_skin" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/g_no_login_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="tv_no_login_text,
+                    tv_no_login_text_detail,tv_go_login" />
+
+                <com.flyingeffects.com.view.MarqueTextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_10"
+                    android:ellipsize="marquee"
+                    android:focusableInTouchMode="true"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/tv_introduction"
+                    app:layout_constraintEnd_toStartOf="@id/tv_edit_information"
+                    app:layout_constraintStart_toEndOf="@id/iv_head"
+                    app:layout_constraintTop_toTopOf="@id/iv_head" />
+
+                <com.flyingeffects.com.view.MarqueTextView
+                    android:id="@+id/tv_introduction"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawableStart="@mipmap/icon_edit"
+                    android:drawablePadding="@dimen/dp_6"
+                    android:ellipsize="marquee"
+                    android:focusableInTouchMode="true"
+                    android:paddingRight="3dp"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_head"
+                    app:layout_constraintEnd_toEndOf="@id/tv_name"
+                    app:layout_constraintStart_toStartOf="@id/tv_name"
+                    app:layout_constraintTop_toBottomOf="@id/tv_name" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_video_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toTopOf="@id/tv_video"
+                    app:layout_constraintEnd_toEndOf="@id/v_video"
+                    app:layout_constraintStart_toStartOf="@id/v_video"
+                    app:layout_constraintTop_toTopOf="@id/v_video" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_video"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2.5dp"
+                    android:text="作品"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@id/v_video"
+                    app:layout_constraintEnd_toEndOf="@id/v_video"
+                    app:layout_constraintStart_toStartOf="@id/v_video"
+                    app:layout_constraintTop_toBottomOf="@id/tv_video_count" />
+
+                <View
+                    android:id="@+id/v_video"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/dp_40"
+                    android:layout_marginTop="@dimen/dp_10"
+                    app:layout_constraintEnd_toStartOf="@id/v_attention"
+                    app:layout_constraintStart_toStartOf="@id/iv_user_skin"
+                    app:layout_constraintTop_toBottomOf="@id/iv_head" />
+
+                <View
+                    android:id="@+id/v_attention"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/dp_40"
+                    app:layout_constraintBottom_toBottomOf="@id/v_video"
+                    app:layout_constraintEnd_toStartOf="@id/v_fans"
+                    app:layout_constraintStart_toEndOf="@id/v_video"
+                    app:layout_constraintTop_toTopOf="@id/v_video" />
+
+                <View
+                    android:id="@+id/v_fans"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/dp_40"
+                    app:layout_constraintBottom_toBottomOf="@id/v_video"
+                    app:layout_constraintEnd_toEndOf="@id/iv_user_skin"
+                    app:layout_constraintStart_toEndOf="@id/v_attention"
+                    app:layout_constraintTop_toTopOf="@id/v_video" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_attention_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toTopOf="@id/tv_attention"
+                    app:layout_constraintEnd_toEndOf="@id/v_attention"
+                    app:layout_constraintStart_toStartOf="@id/v_attention"
+                    app:layout_constraintTop_toTopOf="@id/v_attention" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_attention"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2.5dp"
+                    android:text="关注"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@id/v_attention"
+                    app:layout_constraintEnd_toEndOf="@id/v_attention"
+                    app:layout_constraintStart_toStartOf="@id/v_attention"
+                    app:layout_constraintTop_toBottomOf="@id/tv_attention_count" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_fans_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toTopOf="@id/tv_fans"
+                    app:layout_constraintEnd_toEndOf="@id/v_fans"
+                    app:layout_constraintStart_toStartOf="@id/v_fans"
+                    app:layout_constraintTop_toTopOf="@id/v_fans" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_fans"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2.5dp"
+                    android:gravity="center_horizontal"
+                    android:text="粉丝"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="@id/v_fans"
+                    app:layout_constraintEnd_toEndOf="@id/v_fans"
+                    app:layout_constraintStart_toStartOf="@id/v_fans"
+                    app:layout_constraintTop_toBottomOf="@id/tv_fans_count" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_comment_count_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/strok_message_count"
+                    android:paddingStart="@dimen/dp_5"
+                    android:paddingEnd="@dimen/dp_5"
+                    android:paddingTop="@dimen/dp_2"
+                    android:paddingBottom="@dimen/dp_2"
+                    android:text="1"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/tv_fans_count"
+                    app:layout_constraintEnd_toEndOf="@id/tv_fans_count"
+                    app:layout_constraintStart_toEndOf="@id/tv_fans_count"
+                    app:layout_constraintTop_toTopOf="@id/tv_fans_count" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/g_login_show"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="tv_video_count,tv_video,
+                    tv_attention_count,tv_attention,tv_fans_count,
+                    tv_fans,v_video,v_attention,v_fans
+                    ,tv_name,tv_introduction" />
+
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/g_vip_show"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    app:constraint_referenced_ids="v_vip_back,iv_vip_icon,tv_vip_btn,tv_vip_time_text" />
+
+                <View
+                    android:id="@+id/v_vip_back"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/dp_53"
+                    android:layout_marginStart="@dimen/dp_15"
+                    android:layout_marginTop="@dimen/dp_15"
+                    android:layout_marginEnd="@dimen/dp_15"
+                    android:background="@drawable/shape_user_center_vip_back"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/v_video" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_vip_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_20"
+                    android:src="@mipmap/ic_user_vip"
+                    app:layout_constraintBottom_toBottomOf="@id/v_vip_back"
+                    app:layout_constraintStart_toStartOf="@id/v_vip_back"
+                    app:layout_constraintTop_toTopOf="@id/v_vip_back" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_vip_time_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_5"
+                    android:text="VIP会员"
+                    android:textColor="@color/color_vip_text"
+                    android:textSize="@dimen/sp_12"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_vip_icon"
+                    app:layout_constraintEnd_toStartOf="@id/tv_vip_btn"
+                    app:layout_constraintStart_toEndOf="@id/iv_vip_icon"
+                    app:layout_constraintTop_toTopOf="@id/iv_vip_icon" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_vip_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/dp_15"
+                    android:background="@drawable/shape_vip_button"
+                    android:paddingStart="@dimen/dp_8"
+                    android:paddingTop="@dimen/dp_3"
+                    android:paddingEnd="@dimen/dp_8"
+                    android:paddingBottom="@dimen/dp_3"
+                    android:text="购买会员"
+                    android:textColor="#33302D"
+                    android:textSize="@dimen/sp_12"
+                    app:layout_constraintBottom_toBottomOf="@id/v_vip_back"
+                    app:layout_constraintEnd_toEndOf="@id/v_vip_back"
+                    app:layout_constraintTop_toTopOf="@id/v_vip_back" />
+
+                <LinearLayout
+                    android:id="@+id/ll_message"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_rect_12_gray"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/v_vip_back">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="14dp"
+                        android:text="我的消息"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="16dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/ll_icon_zan"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center">
+
+                            <RelativeLayout
+                                android:layout_width="50dp"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:id="@+id/iv_icon_zan"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    android:layout_marginTop="10dp"
+                                    android:src="@mipmap/fans" />
+
+                                <TextView
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/iv_icon_zan"
+                                    android:layout_marginTop="6dp"
+                                    android:gravity="center_horizontal"
+                                    android:text="获赞"
+                                    android:textColor="@color/white" />
+
+                                <TextView
+                                    android:id="@+id/tv_zan"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:background="@drawable/strok_message_count"
+                                    android:paddingStart="5dp"
+                                    android:paddingTop="1dp"
+                                    android:paddingEnd="5dp"
+                                    android:paddingBottom="1dp"
+                                    android:text="10"
+                                    android:textColor="@color/white"
+                                    android:textSize="12sp"
+                                    android:visibility="gone" />
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_comment"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center">
+
+                            <RelativeLayout
+                                android:layout_width="50dp"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:id="@+id/iv_icon_comment"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    android:layout_marginTop="10dp"
+                                    android:src="@mipmap/comment" />
+
+                                <TextView
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/iv_icon_comment"
+                                    android:layout_marginTop="6dp"
+                                    android:gravity="center_horizontal"
+                                    android:text="评论"
+                                    android:textColor="@color/white" />
+
+                                <TextView
+                                    android:id="@+id/tv_comment_count"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:background="@drawable/strok_message_count"
+                                    android:paddingStart="5dp"
+                                    android:paddingTop="1dp"
+                                    android:paddingEnd="5dp"
+                                    android:paddingBottom="1dp"
+                                    android:text="10"
+                                    android:textColor="@color/white"
+                                    android:textSize="12sp"
+                                    android:visibility="gone" />
+
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_private_message"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center">
+
+                            <RelativeLayout
+                                android:layout_width="50dp"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:id="@+id/iv_private_message"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    android:layout_marginTop="10dp"
+                                    android:src="@mipmap/private_message" />
+
+                                <TextView
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/iv_private_message"
+                                    android:layout_marginTop="6dp"
+                                    android:gravity="center_horizontal"
+                                    android:text="私信"
+                                    android:textColor="@color/white" />
+
+                                <TextView
+                                    android:id="@+id/tv_private_message"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:background="@drawable/strok_message_count"
+                                    android:paddingStart="5dp"
+                                    android:paddingTop="1dp"
+                                    android:paddingEnd="5dp"
+                                    android:paddingBottom="1dp"
+                                    android:text="10"
+                                    android:textColor="@color/white"
+                                    android:textSize="12sp"
+                                    android:visibility="gone" />
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_ad_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ll_message" />
+
+
+                <com.flyco.tablayout.SlidingTabLayout
+                    android:id="@+id/tl_tabs"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/dp_40"
+                    android:background="@drawable/shape_top_half_12_rect_gray"
+                    app:layout_collapseMode="pin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ll_ad_content"
+                    app:tl_divider_padding="@dimen/dp_5"
+                    app:tl_indicator_color="#5496FF"
+                    app:tl_indicator_corner_radius="@dimen/dp_5"
+                    app:tl_indicator_height="@dimen/dp_6"
+                    app:tl_indicator_width="@dimen/dp_20"
+                    app:tl_tab_padding="@dimen/dp_7"
+                    app:tl_textAllCaps="true"
+                    app:tl_textBold="BOTH"
+                    app:tl_textSelectColor="@color/white"
+                    app:tl_textUnselectColor="#A3A3A5"
+                    app:tl_textsize="@dimen/sp_16" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#232323"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+<!--    <LinearLayout-->
+<!--        android:id="@+id/ll_ad_entrance"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="bottom|end"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        android:layout_marginBottom="50dp"-->
+<!--        android:orientation="vertical"-->
+<!--        android:visibility="visible" />-->
+
+<!--    <androidx.appcompat.widget.AppCompatImageView-->
+<!--        android:id="@+id/iv_close_float_btn"-->
+<!--        android:visibility="gone"-->
+<!--        android:layout_width="@dimen/dp_20"-->
+<!--        android:layout_height="@dimen/dp_20"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/ll_ad_entrance"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/ll_ad_entrance"-->
+<!--        android:src="@mipmap/ic_float_vip_close"-->
+<!--        android:layout_marginBottom="@dimen/dp_5"/>-->
+
+
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+

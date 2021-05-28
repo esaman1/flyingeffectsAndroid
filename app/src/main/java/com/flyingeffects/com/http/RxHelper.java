@@ -4,7 +4,7 @@ package com.flyingeffects.com.http;
 import androidx.annotation.NonNull;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
-import com.flyingeffects.com.enity.HttpResult;
+import com.flyingeffects.com.entity.HttpResult;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 

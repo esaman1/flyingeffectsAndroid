@@ -16,12 +16,14 @@ import android.widget.TextView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.entity.AplicationInitRetroposition;
 
 import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 
 /**
  * description ：隐私政策
@@ -113,6 +115,10 @@ public class PrivacyPolicyActivity extends Activity {
 
 
             case R.id.tv_agree:
+                if (BaseConstans.isFirstIntoMainAct()) {
+                    EventBus.getDefault().post(new AplicationInitRetroposition());
+                    BaseConstans.setFirstClickUseApp();
+                }
                 callback(true);
                 break;
 

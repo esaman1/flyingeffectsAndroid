@@ -91,5 +91,8 @@
     <string name="close">关闭</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="vip_center">会员中心</string>
+    <string name="cancel_pay">尚未支付成功，请重新支付</string>
+    <string name="pay_success">支付成功</string>
 
 </resources>

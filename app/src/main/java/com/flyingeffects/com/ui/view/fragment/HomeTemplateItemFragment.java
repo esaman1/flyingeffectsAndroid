@@ -13,11 +13,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.BaseFragment;
-import com.flyingeffects.com.enity.BackgroundTemplateCollectionEvent;
-import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.TemplateDataCollectRefresh;
-import com.flyingeffects.com.enity.templateDataZanRefresh;
+import com.flyingeffects.com.entity.BackgroundTemplateCollectionEvent;
+import com.flyingeffects.com.entity.ListForUpAndDown;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.TemplateDataCollectRefresh;
+import com.flyingeffects.com.entity.templateDataZanRefresh;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.HomeItemMvpView;
@@ -111,11 +111,13 @@ public class HomeTemplateItemFragment extends BaseFragment implements HomeItemMv
 
     private void initRecycler() {
         adapter = new MainRecyclerAdapter(allData, fromType, false, mAdManager);
+
         adapter.setDressUPTabNameFavorites(tabName);
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+
         adapter.setOnItemClickListener((adapter, view, position) -> {
             if (!DoubleClick.getInstance().isFastDoubleClick() && !allData.get(position).isHasShowAd()) {
                 if (allData.get(position).getIs_ad_recommend() == 1) {

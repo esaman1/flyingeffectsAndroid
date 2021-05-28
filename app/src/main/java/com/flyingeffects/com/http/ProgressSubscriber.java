@@ -25,21 +25,27 @@ public abstract class ProgressSubscriber<T> extends Subscriber<T> implements Pro
         this.context = context;
     }
 
+    public ProgressSubscriber() {
+    }
+
     @Override
     public void onCompleted() {
-        if(isShowDialog){
+        if (isShowDialog) {
             dismissProgressDialog();
         }
     }
 
 
     private boolean isShowDialog;
+
     /**
      * 显示Dialog
      */
-    public void showProgressDialog( boolean isShowDialog) {
-        this.isShowDialog=isShowDialog;
-        WaitingDialog.openPragressDialog(context);
+    public void showProgressDialog(boolean isShowDialog) {
+        this.isShowDialog = isShowDialog;
+        if (context != null) {
+            WaitingDialog.openPragressDialog(context);
+        }
     }
 
     @Override
@@ -84,12 +90,14 @@ public abstract class ProgressSubscriber<T> extends Subscriber<T> implements Pro
 
     /**
      * onNext
+     *
      * @param t
      */
     protected abstract void onSubNext(T t);
 
     /**
      * onError
+     *
      * @param message
      */
     protected abstract void onSubError(String message);

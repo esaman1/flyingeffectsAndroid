@@ -1,5 +1,7 @@
 package com.flyingeffects.com.adapter;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -16,7 +18,7 @@ public class home_vp_frg_adapter extends FragmentPagerAdapter {
     private final List<Fragment> list;
 
     public home_vp_frg_adapter(FragmentManager fm, List<Fragment> list) {
-        super(fm,FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT);
+        super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.list = list;
     }
 

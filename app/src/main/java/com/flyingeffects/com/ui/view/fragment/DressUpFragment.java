@@ -11,15 +11,14 @@ import android.widget.TextView;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.BaseFragment;
-import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.enity.SecondChoosePageListener;
+import com.flyingeffects.com.entity.FirstLevelTypeEntity;
+import com.flyingeffects.com.entity.SecondChoosePageListener;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.DressUpMvpView;
 import com.flyingeffects.com.ui.presenter.DressUpMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
 import com.google.android.material.tabs.TabLayout;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

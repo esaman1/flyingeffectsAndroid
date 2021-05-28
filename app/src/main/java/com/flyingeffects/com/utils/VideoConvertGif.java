@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.os.Environment;
 import android.text.TextUtils;
 
 import com.flyingeffects.com.base.BaseApplication;
@@ -16,7 +15,6 @@ import com.flyingeffects.com.manager.huaweiObs;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.box.ExtractVideoFrame;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.shixing.sxve.ui.view.WaitingDialog;
 import com.shuyu.gsyvideoplayer.utils.AnimatedGifEncoder;
 
 import java.io.ByteArrayOutputStream;
@@ -27,7 +25,6 @@ import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 
 /**
@@ -37,10 +34,10 @@ import rx.functions.Action1;
  */
 public class VideoConvertGif {
     private ExtractVideoFrame mExtractFrame;
-    private String extractFrameFolder;
-    private String gifCatch;
+    private final String extractFrameFolder;
+    private final String gifCatch;
     private int frameCount;
-    private Context context;
+    private final Context context;
 
     public VideoConvertGif(Context context) {
         this.context = context;
@@ -95,6 +92,29 @@ public class VideoConvertGif {
                 OriginBitmap));
     }
 
+
+//    public  Bitmap getImageToChange(Bitmap mBitmap) {
+//        Bitmap createBitmap = Bitmap.createBitmap(mBitmap.getWidth(), mBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+//        int mWidth = mBitmap.getWidth();
+//        int mHeight = mBitmap.getHeight();
+//        for (int i = 0; i < mHeight; i++) {
+//            for (int j = 0; j < mWidth; j++) {
+//                int color = mBitmap.getPixel(j, i);
+//                int g = Color.green(color);
+//                int r = Color.red(color);
+//                int b = Color.blue(color);
+//                int a = Color.alpha(color);
+//                if((g>=220&&g<=255)&&(r>=220&&r<=250)&&(b>=220&&b<=255)){
+//                    a = 0;
+//                }
+//                color = Color.argb(a, r, g, b);
+//                createBitmap.setPixel(j, i, color);
+//            }
+//        }
+//        return createBitmap;
+//    }
+
+
     /**
      * 生成gif图
      */
@@ -110,8 +130,8 @@ public class VideoConvertGif {
             localAnimatedGifEncoder.addFrame(BitmapFactory.decodeFile(getMattingList.get(i).getPath()));
         }
         localAnimatedGifEncoder.finish();//finish
-        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/GIFMakerDemo");
-        if (!file.exists()) file.mkdir();
+//        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/GIFMakerDemo");
+//        if (!file.exists()) file.mkdir();
         String path = gifCatch+"/show.gif";
         String path2 = gifCatch+"/show.jpg";
         File fileFrom=new File(extractFrameFolder + File.separator + frameCount + ".jpg");
@@ -127,7 +147,6 @@ public class VideoConvertGif {
             fos.close();
             DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("ExtractFrame"));
             uploadDressUpImage(path2,callback,path);
-
 //            compressGif(path, path2, callback);
         } catch (IOException e) {
             if (callback != null) {
@@ -147,11 +166,6 @@ public class VideoConvertGif {
         void callback(boolean isSuccess, String path,String iconPath);
     }
 
-
-
-
-
-
     private String needGifPath;
     private void uploadDressUpImage(String path,CreateGifCallback callback,String orginPath) {
         new Thread(() -> {
@@ -170,33 +184,12 @@ public class VideoConvertGif {
      */
     private void uploadHuawei(String path, String copyPath,CreateGifCallback callback,String  orginPath) {
         LogUtil.d("OOM2", "needGifPath=" + needGifPath);
-        huaweiObs.getInstance().uploadFileToHawei(path, copyPath, new huaweiObs.Callback() {
-            @Override
-            public void isSuccess(String str) {
-                Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        if (callback != null) {
-                            callback.callback(true, orginPath,needGifPath);
-                        }
-
-                    }
-                });
+        huaweiObs.getInstance().uploadFileToHawei(path, copyPath, str -> Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
+            if (callback != null) {
+                callback.callback(true, orginPath,needGifPath);
             }
-        });
+
+        }));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

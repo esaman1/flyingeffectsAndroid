@@ -1,6 +1,8 @@
 package com.flyingeffects.com.base;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +13,8 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.anchortask.AnchorTaskCreator;
 import com.flyingeffects.com.base.anchortask.TaskNameConstants;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.isIntoBackground;
+import com.flyingeffects.com.entity.AplicationInitRetroposition;
+import com.flyingeffects.com.entity.isIntoBackground;
 import com.flyingeffects.com.ui.view.activity.WelcomeActivity;
 import com.flyingeffects.com.utils.ChannelUtil;
 import com.flyingeffects.com.utils.CrashHandler;
@@ -19,6 +22,7 @@ import com.flyingeffects.com.utils.DateUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.umeng.commonsdk.UMConfigure;
 import com.xj.anchortask.library.AnchorProject;
 import com.xj.anchortask.library.OnProjectExecuteListener;
 import com.xj.anchortask.library.log.LogUtils;
@@ -27,10 +31,11 @@ import com.xj.anchortask.library.monitor.OnGetMonitorRecordCallback;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import rx.subjects.PublishSubject;
 
 /**
@@ -42,7 +47,6 @@ public class BaseApplication extends MultiDexApplication {
     private static final String TAG = "BaseApplication";
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private static BaseApplication baseApp;
-    private ArrayList<Activity> list = new ArrayList<>();
     private boolean isActive = true;
     /**
      * 默认从APP退到后台值为true
@@ -52,12 +56,40 @@ public class BaseApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "Application start");
+        String curProcessName = getCurrentProcessName(this);
+        if (!curProcessName.equals(getPackageName())) {
+            //android  多进程会多次进入application,其中一个是极光推送的，为了防止重复初始化数据
+            return;
+        }
         baseApp = this;
+        registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
+        //准备初始化，不进行任何网络请求
+        UMConfigure.preInit(BaseApplication.getInstance(),
+                BaseConstans.UMENGAPPID, ChannelUtil.getChannel(BaseApplication.getInstance()));
+        EventBus.getDefault().register(this);
+        BaseConstans.getIsNewUser();
+        if(!BaseConstans.isFirstIntoMainAct()){
+            initAllSdk();
+        }
+    }
+
+
+
+    @Subscribe
+    public void onEventMainThread(AplicationInitRetroposition cutSuccess) {
+        initAllSdk();
+    }
+
+
+    /**
+     * description ：工信部要求，在接受我们协议前，不能进行任何初始化的情况，所以初始化需要后移
+     * creation date: 2021/5/19
+     * user : zhangtongju
+     */
+    private void initAllSdk(){
         @NotNull AnchorProject project = new AnchorProject.Builder().setContext(this)
                 .setLogLevel(LogUtils.LogLevel.DEBUG)
                 .setAnchorTaskCreator(new AnchorTaskCreator())
-                .addTask(TaskNameConstants.INIT_YOU_MENG)
                 .addTask(TaskNameConstants.MULTI_DEX)
                 .addTask(TaskNameConstants.INIT_LAN_SONG)
                 .addTask(TaskNameConstants.INIT_HAWK)
@@ -73,9 +105,7 @@ public class BaseApplication extends MultiDexApplication {
                 .addTask(TaskNameConstants.INIT_FU)
                 .addTask(TaskNameConstants.INIT_KUAI_SHOU_MONITOR)
                 .build();
-
         project.start().await(3000);
-
         project.addListener(new OnProjectExecuteListener() {
             @Override
             public void onProjectStart() {
@@ -104,25 +134,9 @@ public class BaseApplication extends MultiDexApplication {
 
             }
         });
-
-        registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
-        Log.d(TAG, "Application onCreate end");
-
-
     }
 
 
-//    /**
-//     * description ：设置系统字体不跟随用户的改变而改变
-//     * creation date: 2021/4/2
-//     * user : zhangtongju
-//     */
-//    private void setSystemFont() {
-//        Resources res = super.getResources();
-//        Configuration config = new Configuration();
-//        config.setToDefaults();
-//        res.updateConfiguration(config, res.getDisplayMetrics());
-//    }
 
 
     /***
@@ -150,18 +164,17 @@ public class BaseApplication extends MultiDexApplication {
 
         @Override
         public void onActivityResumed(Activity activity) {
-
             if (!isActive && BaseConstans.getHasAdvertising() == 1) {
                 isActive = true;
                 LogUtil.d("BASEACTIVITY2", "进入了前台");
                 isBackHome = false;
                 intoKaiPing(System.currentTimeMillis() - onStopTime);
-                //  EventBus.getDefault().post(new isIntoBackground(false));  //消息通知
             }
         }
 
         @Override
         public void onActivityPaused(Activity activity) {
+
         }
 
         @Override
@@ -219,6 +232,28 @@ public class BaseApplication extends MultiDexApplication {
 
 
 
+
+
+
+    /**
+     * 获取当前的进程名
+     * @param context:上下文
+     * @return :返回值
+     */
+    public String getCurrentProcessName(Context context) {
+        int pid = android.os.Process.myPid();
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningApps = am.getRunningAppProcesses();
+        if (runningApps == null) {
+            return null;
+        }
+        for (ActivityManager.RunningAppProcessInfo procInfo : runningApps) {
+            if (procInfo.pid == pid) {
+                return procInfo.processName;
+            }
+        }
+        return null;
+    }
 
 
 }

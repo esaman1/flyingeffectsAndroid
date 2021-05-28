@@ -1,6 +1,6 @@
 package com.flyingeffects.com.ui.interfaces.view;
 
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
 
 import java.util.ArrayList;
 

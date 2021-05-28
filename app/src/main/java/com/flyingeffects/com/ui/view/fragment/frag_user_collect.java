@@ -16,9 +16,9 @@ import com.flyingeffects.com.adapter.MainRecyclerAdapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.ListForUpAndDown;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.templateDataZanRefresh;
+import com.flyingeffects.com.entity.ListForUpAndDown;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.templateDataZanRefresh;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -103,7 +103,7 @@ public class frag_user_collect extends BaseFragment {
     private void requestCollectionList(boolean isShowDialog) {
         tv_hint.setVisibility(View.GONE);
         HashMap<String, String> params = new HashMap<>();
-        params.put("token", BaseConstans.GetUserToken());
+        params.put("token", BaseConstans.getUserToken());
         params.put("page", selectPage + "");
         params.put("template_type", template_type + "");
         params.put("pageSize", perPageCount + "");

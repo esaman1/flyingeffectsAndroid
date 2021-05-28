@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
-import com.flyingeffects.com.enity.SearchTemplateInfoEntity;
+import com.flyingeffects.com.entity.SearchTemplateInfoEntity;
 import com.flyingeffects.com.utils.StringUtil;
 
 /**

@@ -2,7 +2,6 @@ package com.flyingeffects.com.http;
 
 
 import com.flyingeffects.com.http.encryption.AuthCode;
-import com.flyingeffects.com.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,10 +18,8 @@ public class abc {
 
     public static final boolean isEncryption = false;
 
-
     public static final String API_SALT = "123456ABCDEFGHIJKL{(&#!,.&*)}MNOPQRSTUVWXYZ7890";
     public static final String API_AES_KEY = "362DA87FA3E89A95";
-
 
     public static  String sign(Map<String, String> par) {
         StringBuilder result = new StringBuilder();

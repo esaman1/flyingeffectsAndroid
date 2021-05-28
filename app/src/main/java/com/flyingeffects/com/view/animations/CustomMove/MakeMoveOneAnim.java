@@ -3,7 +3,7 @@ package com.flyingeffects.com.view.animations.CustomMove;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 
-import com.flyingeffects.com.enity.TransplationPos;
+import com.flyingeffects.com.entity.TransplationPos;
 import com.flyingeffects.com.view.StickerView;
 import com.lansosdk.box.Layer;
 import com.lansosdk.box.SubLayer;

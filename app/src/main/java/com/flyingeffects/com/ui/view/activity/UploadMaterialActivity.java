@@ -27,7 +27,7 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
-import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.entity.UserInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -187,8 +187,8 @@ public class UploadMaterialActivity extends BaseActivity implements UploadMateri
         huaweiFolder = fileManager.getFileCachePath(this, "toHawei");
         StatisticsEventAffair.getInstance().setFlag(UploadMaterialActivity.this, "6_customize_bj_Crop");
         ed_nickname.addTextChangedListener(textpassWatcher);
-        if (!TextUtils.isEmpty(BaseConstans.NickName())) {
-            ed_nickname.setText(BaseConstans.NickName());
+        if (!TextUtils.isEmpty(BaseConstans.nickName())) {
+            ed_nickname.setText(BaseConstans.nickName());
         }
         if (!TextUtils.isEmpty(BaseConstans.headUrl())) {
             Glide.with(UploadMaterialActivity.this)

@@ -17,8 +17,7 @@ import com.flyingeffects.com.commonlyModel.SaveAlbumPathModel;
 import com.flyingeffects.com.commonlyModel.getVideoInfo;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.constans.UiStep;
-import com.flyingeffects.com.enity.VideoInfo;
-import com.flyingeffects.com.enity.showAdCallback;
+import com.flyingeffects.com.entity.VideoInfo;
 import com.flyingeffects.com.manager.AdConfigs;
 import com.flyingeffects.com.manager.AdManager;
 import com.flyingeffects.com.manager.DoubleClick;
@@ -28,10 +27,12 @@ import com.flyingeffects.com.ui.interfaces.view.CreationTemplatePreviewMvpView;
 import com.flyingeffects.com.ui.model.ShowPraiseModel;
 import com.flyingeffects.com.ui.presenter.CreationTemplatePreviewPresenter;
 import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.TimeUtils;
+import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.utils.record.SaveShareDialog;
 import com.flyingeffects.com.view.RangeSeekBarView;
 import com.flyingeffects.com.view.RoundImageView;
@@ -262,7 +263,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                         needWatchAd = true;
                     } else {
                         String[] str = config.split(",");
-                        String id = BaseConstans.GetUserId();
+                        String id = BaseConstans.getUserId();
                         String lastNum = (id.substring(id.length() - 1));
                         LogUtil.d("OOM2", "lastNum=" + lastNum);
                         for (String s : str) {
@@ -272,7 +273,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                             }
                         }
                     }
-                    if (needWatchAd) {
+                    if (!CheckVipOrAdUtils.checkIsVip() && needWatchAd) {
                         showMessageDialog();
                     } else {
                         // 表示不需要广告
@@ -281,7 +282,7 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
                         mPresenter.toSaveVideo(false, nowUiIsLandscape);
                     }
                 } else {
-                    if (BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
+                    if (!CheckVipOrAdUtils.checkIsVip() && BaseConstans.getHasAdvertising() == 1 && BaseConstans.getIncentiveVideo() && !BaseConstans.getIsNewUser() && BaseConstans.getSave_video_ad() && !BaseConstans.TemplateHasWatchingAd) {
                         showMessageDialog();
                     } else {
                         videoPause();
@@ -464,9 +465,6 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
     }
 
 
-
-
-
     boolean isOndesTroy = false;
 
     @Override
@@ -498,18 +496,14 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
         }
     }
 
+    boolean hasAward = false;
 
     private void toWatchAd() {
+        hasAward = false;
         if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             videoPause();
             VideoAdManager videoAdManager = new VideoAdManager();
-            String adId;
-            if (BaseConstans.getOddNum()) {
-                adId = AdConfigs.AD_save_video;
-            } else {
-                adId = AdConfigs.AD_save_video2;
-            }
-            videoAdManager.showVideoAd(this, adId, new VideoAdCallBack() {
+            videoAdManager.showVideoAd(this, AdConfigs.AD_save_video, new VideoAdCallBack() {
                 @Override
                 public void onVideoAdSuccess() {
                     onPause();
@@ -527,11 +521,15 @@ public class CreationTemplatePreviewActivity extends BaseActivity implements Cre
 
                 @Override
                 public void onVideoAdClose() {
+                    if (!hasAward) {
+                        ToastUtil.showToast("看完广告才能获得权益");
+                    }
 
                 }
 
                 @Override
                 public void onRewardVerify() {
+                    hasAward = true;
                     videoPause();
                     mPresenter.toSaveVideo(true, nowUiIsLandscape);
                 }

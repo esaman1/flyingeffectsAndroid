@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+
     package="com.flyingeffects.com">
 
 
@@ -48,9 +49,9 @@
 
     <!--apk 安装权限-->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <!--广告 以下权限用于精准推广，不强制获取，但是没有以下权限可能会造成部分广告填充失败，导致ecpm降低-->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<!--    &lt;!&ndash;广告 以下权限用于精准推广，不强制获取，但是没有以下权限可能会造成部分广告填充失败，导致ecpm降低&ndash;&gt;-->
+<!--    <uses-permission android:name="android.permission.WAKE_LOCK" />-->
+<!--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
 
     <!--禁止息屏-->
     <uses-permission
@@ -284,6 +285,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.view.activity.BuyVipActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.view.activity.PrivacyPolicyActivity"
             android:exported="false"
             android:theme="@style/TransparentTheme" />
@@ -317,6 +323,12 @@
             android:name="com.flyingeffects.com.ui.view.activity.VideoClippingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
+
+        <!-- 微信登录和微信支付接收返回值的activity -->
+        <activity
+            android:name=".wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop" />
 
 
         <!--铠甲广告配置Start-->
@@ -469,6 +481,8 @@
             android:exported="true"
             android:launchMode="singleTask"
             android:taskAffinity="com.flyingeffects.com" />
+
+
         <receiver android:name=".douyinapi.DouYingBroadcast">
             <intent-filter>
                 <action android:name="com.aweme.opensdk.action.stay.in.dy" />

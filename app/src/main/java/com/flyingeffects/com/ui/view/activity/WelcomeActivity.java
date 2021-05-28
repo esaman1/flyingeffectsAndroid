@@ -19,7 +19,8 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActWelcomeBinding;
-import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.entity.Config;
+import com.flyingeffects.com.entity.ConfigForTemplateList;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -31,8 +32,13 @@ import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.kwai.monitor.log.TurboAgent;
-import com.nineton.ntadsdk.NTAdSDK;
 import com.nineton.ntadsdk.itr.SplashAdCallBack;
+import com.nineton.ntadsdk.manager.SplashAdManager;
+import com.orhanobut.hawk.Hawk;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,18 +53,14 @@ public class WelcomeActivity extends BaseActivity {
     private final int BUILD_VERSION = 23;
     private final int PERMISSION_REQUEST_CODE = 1024;
     private static final int RESULT_CODE = 3;
-
     private boolean isShow = false;
-
+    public boolean canJump = false;
+    private boolean hasPermission = false;
+    private ActWelcomeBinding mBinding;
     /**
      * 是否来自后台进入
      */
     boolean fromBackstage = false;
-
-    public boolean canJump = false;
-
-    private boolean hasPermission = false;
-    private ActWelcomeBinding mBinding;
 
 
     @Override
@@ -68,10 +70,10 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        LogUtil.d("OOM","进入了WelcomeActivity");
         mBinding = ActWelcomeBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         setContentView(rootView);
-        BaseConstans.setOddNum();
         //快手集成sdk 应用活跃事件
         TurboAgent.onAppActive();
         checkNextDayStay();
@@ -107,13 +109,9 @@ public class WelcomeActivity extends BaseActivity {
         if (BaseConstans.getFirstUseAppTime() != 0) {
             long t1 = TimeUtils.millis2Days(date.getTime(), TimeZone.getDefault());
             long t2 = TimeUtils.millis2Days(BaseConstans.getFirstUseAppTime(), TimeZone.getDefault());
-
             if (t1 - t2 == 1) {
                 TurboAgent.onNextDayStay();
             }
-//            else if (t1 - t2 == 6) {
-//                TurboAgent.onWeekStay();
-//            }
         }
     }
 
@@ -126,19 +124,16 @@ public class WelcomeActivity extends BaseActivity {
         if (!(checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.READ_PHONE_STATE);
         }
-
         if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
-
         // 权限都已经有了，那么直接调用SDK
         if (lackedPermission.size() == 0) {
             if (!fromBackstage || BaseConstans.getNextIsNewUser()) {
-//                requestConfig();
                 requestConfigForTemplateList();
             }
             hasPermission = true;
-            if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
+            if (BaseConstans.getHasAdvertising() == 1 ) {
                 StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_6_requestAd");
                 showSplashAd();
             } else {
@@ -160,14 +155,14 @@ public class WelcomeActivity extends BaseActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE && hasAllPermissionsGranted(grantResults)) {
             hasPermission = true;
-            gotoNext();
+            if (BaseConstans.getHasAdvertising() == 1 ) {
+                showSplashAd();
+            }
         } else {
             hasPermission = false;
             // 如果用户没有授权，那么应该说明意图，引导用户去设置里面授权。
             ToastUtil.showToast(this.getString(R.string.Permissions_repulse));
-            new Handler().postDelayed(() -> {
-                gotoNext();
-            }, 0);
+            new Handler().postDelayed(this::gotoNext, 0);
         }
     }
 
@@ -177,13 +172,12 @@ public class WelcomeActivity extends BaseActivity {
      * user : zhangtongju
      */
     private void gotoNext() {
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+        if (BaseConstans.getHasAdvertising() == 1 ) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_requestPermiss_6_requestAd");
             showSplashAd();
         } else {
-            noQueryAdReason();
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_requestPermiss_6_no_requestAd");
-            intoMain();
+            noQueryAdReason();
         }
     }
 
@@ -199,7 +193,10 @@ public class WelcomeActivity extends BaseActivity {
         }
         if (BaseConstans.getIsNewUser()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "新用户");
+        } else {
+            StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "其他原因");
         }
+        intoMain();
     }
 
 
@@ -221,7 +218,7 @@ public class WelcomeActivity extends BaseActivity {
             } else {
                 hasPermission = true;
                 StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6");
-                if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getNextIsNewUser()) {
+                if (BaseConstans.getHasAdvertising() == 1 ) {
                     StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6_requestAd");
                     showSplashAd();
                 } else {
@@ -230,7 +227,6 @@ public class WelcomeActivity extends BaseActivity {
                 }
             }
         });
-
         mBinding.rlAdContainer.postDelayed(() -> {
             if (!isShow && hasPermission) {
                 intoMain();
@@ -264,10 +260,8 @@ public class WelcomeActivity extends BaseActivity {
         if (requestCode == 1 && resultCode == RESULT_CODE) {
             boolean agree = data.getBooleanExtra("agree", true);
             if (agree) {
-                BaseConstans.setFirstClickUseApp();
-                getPermission();
-                Date date = new Date();
-                BaseConstans.setFirstUseAppTime(date.getTime());
+                checkConfigInfoState();
+                requestConfig();
             } else {
                 this.finish();
             }
@@ -275,23 +269,41 @@ public class WelcomeActivity extends BaseActivity {
     }
 
 
+
+    /**
+     * description ：检查配置信息，如果5s内没请求到配置，进入到app内部
+     * creation date: 2021/5/26
+     * user : zhangtongju
+     */
+    private  boolean hasGetConfigInfo=false;
+    private void checkConfigInfoState(){
+        new Handler().postDelayed(() -> {
+            if(!hasGetConfigInfo){
+                toGetPermission();
+            }
+        },5000);
+    }
+
+
     /**
      * 展示开屏广告
      */
     private void showSplashAd() {
-        Log.d(TAG, "Application start finished");
+        Log.d("OOM2", "Application start finished");
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request");
-            NTAdSDK.getInstance().showSplashAd(this, mBinding.rlAdContainer, mBinding.tvSkip, ScreenUtil.dip2px(this, 0), AdConfigs.AD_SPLASH, new SplashAdCallBack() {
-
+            SplashAdManager splashAdManager = new SplashAdManager();
+            splashAdManager.showSplashAd(AdConfigs.AD_SPLASH, this, mBinding.rlAdContainer, mBinding.tvSkip, ScreenUtil.dip2px(this, 0), new SplashAdCallBack() {
                 @Override
                 public void onAdSuccess() {
+                    Log.d(TAG, "onAdSuccess");
                     isShow = true;
                     StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_ad_request_success");
                 }
 
                 @Override
                 public void onAdError(String errorMsg) {
+                    Log.d(TAG, "errorMsg="+errorMsg);
                     isShow = false;
                     intoMain();
                     finish();
@@ -312,7 +324,6 @@ public class WelcomeActivity extends BaseActivity {
                     next();
                 }
             });
-
         }
     }
 
@@ -398,6 +409,93 @@ public class WelcomeActivity extends BaseActivity {
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
+
+
+    /**
+     * description ：这个配置是请求关于界面的联系我们
+     * creation date: 2020/4/8
+     * user : zhangtongju
+     */
+    private void requestConfig() {
+        HashMap<String, String> params = new HashMap<>();
+        // 启动时间
+        Observable ob = Api.getDefault().configList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<Config>>(WelcomeActivity.this) {
+            @Override
+            protected void onSubError(String message) {
+                hasGetConfigInfo=true;
+                toGetPermission();
+            }
+
+            @Override
+            protected void onSubNext(List<Config> data) {
+                hasGetConfigInfo=true;
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < data.size(); i++) {
+                    String tet = StringUtil.beanToJSONString(data.get(i));
+                    sb.append(tet);
+                }
+                if (data.size() > 0) {
+                    for (int i = 0; i < data.size(); i++) {
+                        Config config = data.get(i);
+                        int id = config.getId();
+                        if (id == 20) {
+                            //android 审核数据
+                            String AuditModeJson = config.getValue();
+                            auditModeConfig(AuditModeJson);
+                        }
+                    }
+                }
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+    private void auditModeConfig(String str) {
+        LogUtil.d("oom2","auditModeConfig="+str);
+        Hawk.put("AuditModeConfig", str);
+        int isVideoadvertisingId = 0;
+        JSONArray jsonArray;
+        try {
+            jsonArray = new JSONArray(str);
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obArray = jsonArray.getJSONObject(i);
+                    String channel = obArray.getString("channel");
+                    if ("isVideoadvertising".equals(channel)) { //控制了版本号
+                        isVideoadvertisingId = obArray.getInt("id");
+                    }
+                    if (channel.equals(BaseConstans.getChannel())) { //最新版的审核模式
+                        boolean auditOn = obArray.getBoolean("audit_on");
+                        int nowVersion = Integer.parseInt(BaseConstans.getVersionCode());
+                        if (auditOn || nowVersion != isVideoadvertisingId) {
+                            BaseConstans.setHasAdvertising(1);
+                        } else {
+                            BaseConstans.setHasAdvertising(0);
+                        }
+                        boolean video_ad_open = obArray.getBoolean("video_ad_open");
+                        BaseConstans.setIncentiveVideo(video_ad_open);
+                        boolean save_video_ad = obArray.getBoolean("save_video_ad");
+                        BaseConstans.setSave_video_ad(save_video_ad);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        toGetPermission();
+    }
+
+
+    private void toGetPermission(){
+        BaseConstans.setFirstClickUseApp();
+        getPermission();
+        Date date = new Date();
+        BaseConstans.setFirstUseAppTime(date.getTime());
+    }
+
+
+
+
 
 
 }

@@ -1,22 +1,15 @@
 package com.flyingeffects.com.ui.model;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.view.View;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.commonlyModel.getVideoInfo;
-import com.flyingeffects.com.enity.VideoInfo;
 import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.lansosdk.box.AudioLayer;
 import com.lansosdk.box.AudioPad;
-import com.lansosdk.box.CanvasLayer;
-import com.lansosdk.box.LSOAudioLayer;
 import com.lansosdk.box.LSOScaleType;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.OnAudioPadExecuteCompletedListener;
@@ -27,7 +20,6 @@ import com.lansosdk.box.VideoFrameLayer;
 import com.lansosdk.box.onAudioPadProgressListener;
 import com.lansosdk.videoeditor.AudioPadExecute;
 import com.lansosdk.videoeditor.DrawPadAllExecute2;
-import com.lansosdk.videoeditor.MediaInfo;
 import com.lansosdk.videoeditor.VideoOneDo2;
 
 import java.io.File;

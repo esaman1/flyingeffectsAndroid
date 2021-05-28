@@ -13,7 +13,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath 'com.android.tools.build:gradle:4.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 
@@ -26,6 +26,7 @@ allprojects {
 //        maven { url "https://maven.google.com" }
         maven { url "https://jitpack.io" }
         maven { url 'https://repo1.maven.org/maven2/' }
+        maven { url "http://47.97.184.214:8081/nexus/content/groups/public" }
         maven { url 'https://dl.bintray.com/aweme-open-sdk-team/public' }
         maven {
             url 'http://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/'
@@ -34,6 +35,10 @@ allprojects {
             url 'http://mirrors.huaweicloud.com/repository/maven/'
         }
         mavenCentral()
+        // 支付宝 SDK AAR 包所需的配置
+        flatDir {
+            dirs '../libs','libs'
+        }
     }
 }
 

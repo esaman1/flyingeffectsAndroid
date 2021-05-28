@@ -1,6 +1,6 @@
 include ':horizontalselectedviewlibrary'
 include ':faceunity'
 include ':DownAndUpLibrary'
-include ':app', ':sxve', ':album', ':LanSongSDK'
+include ':app', ':sxve', ':album', ':LanSongSDK',':paylib'
 include ':sxve_engine'
 include ':TextEffect'

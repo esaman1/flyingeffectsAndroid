@@ -2,6 +2,7 @@ package com.flyingeffects.com.ui.view.activity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,13 +15,16 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter2;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.AttentionChange;
-import com.flyingeffects.com.enity.UserInfo;
+import com.flyingeffects.com.databinding.ActUserHomePageBinding;
+import com.flyingeffects.com.entity.AttentionChange;
+import com.flyingeffects.com.entity.UserInfo;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.view.fragment.fragHomePage;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
+import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.flyingeffects.com.view.MarqueTextView;
 
@@ -30,6 +34,7 @@ import java.util.HashMap;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -42,79 +47,48 @@ import rx.Observable;
  * user : zhangtongju
  */
 public class UserHomepageActivity extends BaseActivity {
-
     private String toUserId;
-
-    @BindView(R.id.iv_head)
-    ImageView iv_head;
-
-
-    @BindView(R.id.tv_name)
-    MarqueTextView tv_name;
-
-    @BindView(R.id.fans_count)
-    TextView fans_count;
-
-    @BindView(R.id.attention_count)
-    TextView attention_count;
-
-
-    @BindView(R.id.tv_video_count)
-    TextView tv_video_count;
-
-
-    @BindView(R.id.viewpager)
-    ViewPager viewpager;
-
-//    @BindView(R.id.tv_create_count)
-//    TextView tv_create_count;
-
-    @BindView(R.id.tv_like_count)
-    TextView tv_like_count;
-
-    @BindView(R.id.view_line_head_1)
-    View view_line_head_1;
-
-    @BindView(R.id.view_line_head)
-    View view_line_head;
-
-
-    @BindView(R.id.tv_name_bj_head)
-    TextView tv_name_bj_head;
-
-    @BindView(R.id.tv_focus)
-    TextView tv_focus;
-
-
-    @BindView(R.id.tv_like)
-    TextView tv_like;
-
-    @BindView(R.id.iv_back)
-    ImageView iv_back;
-    @BindView(R.id.tv_number)
-    TextView tvNumber;
-    @BindView(R.id.im_user_skin_other)
-    ImageView imSkin;
-    @BindView(R.id.tv_Introduction)
-    MarqueTextView tvIntroduction;
-
-
-
     //是否已经关注
-    private boolean isFocus=false;
+    private boolean isFocus = false;
+    private ActUserHomePageBinding mBinding;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.act_user_home_page;
+        return 0;
     }
 
     @Override
     protected void initView() {
+        mBinding = ActUserHomePageBinding.inflate(getLayoutInflater());
+        View rootView = mBinding.getRoot();
+        setContentView(rootView);
+
+        setOnClickListener();
 
         StatisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_Homepage");
         toUserId = getIntent().getStringExtra("toUserId");
-        if(toUserId.equals(BaseConstans.GetUserId())){
-            tv_focus.setVisibility(View.GONE);
+        if (toUserId.equals(BaseConstans.getUserId())) {
+            mBinding.tvFocus.setVisibility(View.GONE);
+        }
+
+    }
+
+    private void setOnClickListener() {
+        mBinding.tvNameBjHead.setOnClickListener(this::onViewClick);
+        mBinding.tvLike.setOnClickListener(this::onViewClick);
+        mBinding.ivBack.setOnClickListener(this::onViewClick);
+        mBinding.tvFocus.setOnClickListener(this::onViewClick);
+    }
+
+    private void onViewClick(View view) {
+        if (view == mBinding.tvNameBjHead) {
+            mBinding.viewpager.setCurrentItem(0);
+        } else if (view == mBinding.tvLike) {
+            mBinding.viewpager.setCurrentItem(1);
+        } else if (view == mBinding.ivBack) {
+            finish();
+        } else if (view == mBinding.tvFocus) {
+            requestFocus();
         }
     }
 
@@ -123,43 +97,6 @@ public class UserHomepageActivity extends BaseActivity {
         requestUserInfo();
         addViewPager();
     }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
-
-
-    @Override
-    @OnClick({R.id.ll_0, R.id.ll_1,R.id.tv_focus,R.id.iv_back})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.ll_1:
-                viewpager.setCurrentItem(1);
-                break;
-
-            case R.id.ll_0:
-                viewpager.setCurrentItem(0);
-                break;
-
-            case R.id.iv_back:
-                this.finish();
-                break;
-
-            case R.id.tv_focus:
-                requestFocus();
-                break;
-            default:
-                break;
-        }
-
-    }
-
-
-
-
 
     /**
      * description ：请求用户信息
@@ -170,10 +107,10 @@ public class UserHomepageActivity extends BaseActivity {
         HashMap<String, String> params = new HashMap<>();
         params.put("to_user_id", toUserId);
 
-        if(isFocus){
+        if (isFocus) {
             //取消关注
             StatisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_unsubscribe");
-        }else{
+        } else {
             StatisticsEventAffair.getInstance().setFlag(UserHomepageActivity.this, "12_Attention");
         }
 
@@ -187,12 +124,12 @@ public class UserHomepageActivity extends BaseActivity {
 
             @Override
             protected void onSubNext(Object data) {
-                if(isFocus){
-                    tv_focus.setText("关注");
-                    isFocus=false;
-                }else{
-                    tv_focus.setText("取消关注");
-                    isFocus=true;
+                if (isFocus) {
+                    mBinding.tvFocus.setText("关注");
+                    isFocus = false;
+                } else {
+                    mBinding.tvFocus.setText("取消关注");
+                    isFocus = true;
                 }
                 EventBus.getDefault().post(new AttentionChange());
                 requestUserInfo();
@@ -219,42 +156,69 @@ public class UserHomepageActivity extends BaseActivity {
 
             @Override
             protected void onSubNext(UserInfo data) {
-                tv_name.setText(data.getNickname());
+                mBinding.tvName.setText(data.getNickname());
                 Glide.with(UserHomepageActivity.this)
                         .load(data.getPhotourl())
                         .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                        .into(iv_head);
+                        .into(mBinding.ivHead);
                 //点赞数
-                fans_count.setText(data.getUser_praise());
+                mBinding.tvZanCount.setText(data.getUser_praise());
                 //我关注的数量
-                attention_count.setText(data.getUser_watch());
+                mBinding.tvAttentionCount.setText(data.getUser_watch());
                 //关注我的数量
-                tv_video_count.setText(data.getUser_follower());
-                tvNumber.setText("飞友号：" + data.getId());
-                String is_has_follow=data.getIs_has_follow();
-                if(!TextUtils.isEmpty(is_has_follow)&& "0".equals(is_has_follow)){
-                    tv_focus.setText("关注");
-                    isFocus=false;
-                }else{
-                    tv_focus.setText("取消关注");
-                    isFocus=true;
+                mBinding.tvFansCount.setText(data.getUser_follower());
+
+                mBinding.tvNumber.setText("飞友号：" + data.getId());
+                String isHasFollow = data.getIs_has_follow();
+                if (!TextUtils.isEmpty(isHasFollow) && "0".equals(isHasFollow)) {
+                    mBinding.tvFocus.setText("关注");
+                    isFocus = false;
+                } else {
+                    mBinding.tvFocus.setText("取消关注");
+                    isFocus = true;
                 }
-                if(TextUtils.isEmpty(data.getSkin())){
+                if (TextUtils.isEmpty(data.getSkin())) {
                     Glide.with(UserHomepageActivity.this)
                             .load(R.mipmap.home_page_bj)
-                            .into(imSkin);
-                }else {
+                            .into(mBinding.ivUserSkin);
+                } else {
                     Glide.with(UserHomepageActivity.this)
                             .load(data.getSkin())
-                            .into(imSkin);
+                            .into(mBinding.ivUserSkin);
                 }
                 if (!TextUtils.isEmpty(data.getRemark())) {
-                    tvIntroduction.setText(data.getRemark());
-                }else {
-                    tvIntroduction.setText("这位友友很懒，什么也没留下");
+                    mBinding.tvIntroduction.setText(data.getRemark());
+                } else {
+                    mBinding.tvIntroduction.setText("这位友友很懒，什么也没留下");
                 }
+
+                startVipIcon(data.getIs_vip(),data.getVip_grade());
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+    private void startVipIcon(int isVip, int vipGrade) {
+        String vipIconStr = "";
+        if (isVip == CheckVipOrAdUtils.IS_VIP) {
+            mBinding.tvAvatarVipIcon.setVisibility(View.VISIBLE);
+            switch (vipGrade) {
+                case CheckVipOrAdUtils.VIP_GRADE_MONTH:
+                    vipIconStr = "月";
+                    break;
+                case CheckVipOrAdUtils.VIP_GRADE_YEAR:
+                    vipIconStr = "年";
+                    break;
+                case CheckVipOrAdUtils.VIP_GRADE_FOREVER:
+                    vipIconStr = "永久";
+                    break;
+                default:
+                    vipIconStr = "月";
+                    break;
+            }
+        } else {
+            mBinding.tvAvatarVipIcon.setVisibility(View.INVISIBLE);
+        }
+        mBinding.tvAvatarVipIcon.setText(vipIconStr);
     }
 
 
@@ -274,8 +238,8 @@ public class UserHomepageActivity extends BaseActivity {
         list.add(fag_1);
         list.add(fag_0);
         home_vp_frg_adapter2 adapter = new home_vp_frg_adapter2(manager, list);
-        viewpager.setAdapter(adapter);
-        viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mBinding.viewpager.setAdapter(adapter);
+        mBinding.viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {
 
@@ -297,13 +261,13 @@ public class UserHomepageActivity extends BaseActivity {
     private void showWitchBtn(int showWitch) {
         if (showWitch == 0) {
             //选中的是我的作品
-            view_line_head_1.setVisibility(View.INVISIBLE);
-            view_line_head.setVisibility(View.VISIBLE);
+            mBinding.viewLineHead1.setVisibility(View.INVISIBLE);
+            mBinding.viewLineHead.setVisibility(View.VISIBLE);
         } else {
-            view_line_head_1.setVisibility(View.VISIBLE);
-            view_line_head.setVisibility(View.INVISIBLE);
+            mBinding.viewLineHead1.setVisibility(View.VISIBLE);
+            mBinding.viewLineHead.setVisibility(View.INVISIBLE);
         }
-        viewpager.setCurrentItem(showWitch);
+        mBinding.viewpager.setCurrentItem(showWitch);
     }
 
 }

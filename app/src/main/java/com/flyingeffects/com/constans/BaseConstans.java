@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.flyingeffects.com.BuildConfig;
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.enity.ConfigForTemplateList;
+import com.flyingeffects.com.entity.ConfigForTemplateList;
 import com.flyingeffects.com.http.Url;
 import com.flyingeffects.com.http.abc;
 import com.flyingeffects.com.manager.SPHelper;
@@ -30,6 +30,7 @@ public class BaseConstans {
      * 抖音分享ClientKey
      */
     public static final String DOUYINSHARE_CLIENTKEY = "awikd2g333hd0ien";
+    public static final int MAP_DEFAULT_INITIAL_CAPACITY = 16;
 
 
     /**
@@ -62,18 +63,22 @@ public class BaseConstans {
     public static String service_wxi;
     public static boolean TemplateHasWatchingAd = false;
     public static ConfigForTemplateList configList;
+
     /**
      * 是否有广告，0表示没得，1表示有，全局控制
      */
     private static int hasAdvertising = 0;
+
     /**
      * 退出后台后多少秒后会重新显示插屏
      */
     public static int showAgainKaipingAd = 60;
+
     /**
      * 只是用前几次的新用户
      */
     private static boolean isNewUserForAdvertising = false;
+
     public static final String PROTOCOL = Url.BASE_URL + "/fly/FS-Agreement.html";
 
     public static final String FILE_PATH;
@@ -89,8 +94,8 @@ public class BaseConstans {
         //getTimestamp()+""
         map.put("timestamp", nowTimestamp);
         map.put("imei", getUuid());
-        map.put("uuid", GetUserUuid());
-        map.put("token", GetUserToken());
+        map.put("uuid", getUserUuid());
+        map.put("token", getUserToken());
         map.put("sign", getSine(nowTimestamp, map));
 
         return map;
@@ -105,31 +110,30 @@ public class BaseConstans {
         //getTimestamp()+""
         map.put("timestamp", nowTimestamp);
         map.put("imei", getUuid());
-        map.put("uuid", GetUserUuid());
-        map.put("token", GetUserToken());
+        map.put("uuid", getUserUuid());
+        map.put("token", getUserToken());
         return abc.sign(map);
     }
 
 
-    public static String GetUserToken() {
+    public static String getUserToken() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("token", "");
     }
 
 
-    public static void SetUserToken(String token) {
+    public static void setUserToken(String token) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putString("token", token);
     }
 
-
-    public static String GetUserId() {
+    public static String getUserId() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("userId", "");
     }
 
 
-    public static void SetUserId(String id, String userName, String headUrl) {
+    public static void setUserId(String id, String userName, String headUrl) {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putString("userId", id);
         LogUtil.d("oom3", "设置的userId=" + id);
@@ -137,12 +141,10 @@ public class BaseConstans {
         spUtil.putString("headUrl", headUrl);
     }
 
-
-    public static String NickName() {
+    public static String nickName() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("userName", "");
     }
-
 
     public static String headUrl() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
@@ -151,11 +153,11 @@ public class BaseConstans {
 
 
     public static boolean hasLogin() {
-        return GetUserToken() != null && !"".equals(GetUserToken());
+        return getUserToken() != null && !"".equals(getUserToken());
     }
 
 
-    static String GetUserUuid() {
+    static String getUserUuid() {
 
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         return spUtil.getString("uuid", "");
@@ -190,6 +192,19 @@ public class BaseConstans {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putBoolean("isFirstUseApp", false);
     }
+
+
+    public static boolean isFirstIntoMainAct() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getBoolean("isFirstUseApp", true);
+    }
+
+    public static void setFirstIntoMainAct() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putBoolean("isFirstUseApp", false);
+    }
+
+
 
 
     /**
@@ -431,18 +446,6 @@ public class BaseConstans {
     }
 
 
-    public static void setOddNum() {
-        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-        boolean oddNum = spUtil.getBoolean("oddNum", true);
-        spUtil.putBoolean("oddNum", !oddNum);
-    }
-
-    public static boolean getOddNum() {
-        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
-        return spUtil.getBoolean("oddNum", true);
-    }
-
-
     public static void setFirstUseDownAndUpAct() {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putBoolean("isFirstUseDownAndUp", false);
@@ -521,6 +524,44 @@ public class BaseConstans {
         return spUtil.getInt("interstitial", 5);
     }
 
+
+    /**
+     * 关闭浮动弹窗的时间
+     */
+    public static void setAdCloseTime(long time) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putLong("closeAdTime", time);
+    }
+
+    /**
+     * 得到浮动弹窗的时间
+     */
+    public static long getAdCloseTime() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getLong("closeAdTime", 0);
+    }
+
+
+//    /**
+//     * 关闭vip的时间
+//     */
+//    public static void setVipCloseTime(long time) {
+//        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+//        spUtil.putLong("closeVipTime", time);
+//    }
+
+
+//    /**
+//     * 得到浮动弹窗的时间
+//     */
+//    public static long getVipCloseTime() {
+//        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+//        return spUtil.getLong("closeVipTime", 0);
+//    }
+
+
+
+
     /**
      * 设置自定义模板分享到抖音的话题
      */
@@ -528,7 +569,6 @@ public class BaseConstans {
         SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
         spUtil.putString("DouyingTopic", topic);
     }
-
 
     /**
      * 获取自定义模板分享到抖音的话题
@@ -564,6 +604,37 @@ public class BaseConstans {
         return spUtil.getString("oaid", "");
     }
 
+    public static void setVipServerShow(int isShow) {
+        SPHelper.getInstance().putInt("vip_server", isShow);
+    }
+
+    public static int getVipServerShow() {
+        return SPHelper.getInstance().getInt("vip_server", 1);
+    }
+
+    public static void setVipFloatWindowConfigShowTimes(int times) {
+        SPHelper.getInstance().putInt("vip_float_config_show_times", times);
+    }
+
+    public static int getVipFloatWindowConfigShowTimes() {
+        return SPHelper.getInstance().getInt("vip_float_config_show_times", 1);
+    }
+
+    public static void setVipFloatWindowShowTimes(int times) {
+        SPHelper.getInstance().putInt("vip_float_show_times", times);
+    }
+
+    public static int getVipFloatWindowShowTimes() {
+        return SPHelper.getInstance().getInt("vip_float_show_times", 0);
+    }
+
+    public static void setVipFloatWindowShowTime(long time) {
+        SPHelper.getInstance().putLong("vip_float_show_time", time);
+    }
+
+    public static long getVipFloatWindowShowTime() {
+        return SPHelper.getInstance().getLong("vip_float_show_time", 0);
+    }
 
     /**
      * 获取换装制作页面切换模板按钮加载视频广告的间隔次数

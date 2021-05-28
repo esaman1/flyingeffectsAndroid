@@ -15,17 +15,18 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.bytedance.applog.AppLog;
-import com.bytedance.applog.IOaidObserver;
 import com.bytedance.applog.InitConfig;
 import com.bytedance.applog.util.UriConfig;
 import com.chuanglan.shanyan_sdk.OneKeyLoginManager;
@@ -34,13 +35,14 @@ import com.flyingeffects.com.adapter.home_vp_frg_adapter;
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
-import com.flyingeffects.com.enity.Config;
-import com.flyingeffects.com.enity.ConfigForTemplateList;
-import com.flyingeffects.com.enity.HomeChoosePageListener;
-import com.flyingeffects.com.enity.RequestMessage;
-import com.flyingeffects.com.enity.UserInfo;
-import com.flyingeffects.com.enity.checkVersion;
-import com.flyingeffects.com.enity.messageCount;
+import com.flyingeffects.com.entity.BuyVipEvent;
+import com.flyingeffects.com.entity.Config;
+import com.flyingeffects.com.entity.ConfigForTemplateList;
+import com.flyingeffects.com.entity.HomeChoosePageListener;
+import com.flyingeffects.com.entity.RequestMessage;
+import com.flyingeffects.com.entity.UserInfo;
+import com.flyingeffects.com.entity.checkVersion;
+import com.flyingeffects.com.entity.messageCount;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -57,9 +59,10 @@ import com.flyingeffects.com.ui.view.dialog.CommonMessageDialog;
 import com.flyingeffects.com.ui.view.fragment.BackgroundFragment;
 import com.flyingeffects.com.ui.view.fragment.DressUpFragment;
 import com.flyingeffects.com.ui.view.fragment.FragForTemplate;
-import com.flyingeffects.com.ui.view.fragment.frag_user_center;
+import com.flyingeffects.com.ui.view.fragment.UserCenterFragment;
 import com.flyingeffects.com.utils.AssetsUtils;
 import com.flyingeffects.com.utils.ChannelUtil;
+import com.flyingeffects.com.utils.CheckVipOrAdUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.NoDoubleClickListener;
 import com.flyingeffects.com.utils.StringUtil;
@@ -69,13 +72,15 @@ import com.flyingeffects.com.view.NoSlidingViewPager;
 import com.githang.statusbar.StatusBarCompat;
 import com.glidebitmappool.GlideBitmapPool;
 import com.lansosdk.videoeditor.LanSongFileUtil;
+import com.nineton.ntadsdk.bean.AdInfoBean;
+import com.nineton.ntadsdk.itr.ImageAdCallBack;
+import com.nineton.ntadsdk.manager.ImageAdManager;
 import com.orhanobut.hawk.Hawk;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.xj.anchortask.library.log.LogUtils;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,7 +100,6 @@ import rx.subjects.PublishSubject;
 
 import static com.flyingeffects.com.constans.BaseConstans.getChannel;
 
-
 /****
  * 修改主界面
  * @author zhang
@@ -105,25 +109,38 @@ public class HomeMainActivity extends FragmentActivity {
 
     private static final String[] CATCH_DIRECTORY = {"dynamic", "runCatch", "def", "imageCopy", "faceFolder", "faceMattingFolder",
             "soundFolder", "cacheMattingFolder", "ExtractFrame", "DownVideo", "TextFolder", "toHawei", "downVideoForMusic",
-            "downSoundForMusic", "downCutSoundForMusic", "fontStyle", "DressUpFolder","facePP"};
+            "downSoundForMusic", "downCutSoundForMusic", "fontStyle", "DressUpFolder", "facePP"};
 
-    private final ImageView[] mIvMenuBack = new ImageView[4];
-    private final TextView[] tv_main = new TextView[4];
-    private final int[] mImBackId = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
+    private static final ImageView[] IV_MENU_BACK = new ImageView[4];
+    private static final TextView[] TV_MAIN = new TextView[4];
+    private static final int[] IM_BACK_ID = {R.id.iv_back_menu_0, R.id.iv_back_menu_1, R.id.iv_back_menu_2, R.id.iv_back_menu_3};
     public HomeMainActivity ThisMain;
-    private final int[] tv_main_button = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
+    private static final int[] TV_MAIN_BUTTON = {R.id.tv_main_0, R.id.tv_main_1, R.id.tv_main_2, R.id.tv_main_3};
+    private static final String[] TITLE_TEXT = {"背景", "模板", "闪图", "我的"};
+
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
     private Timer timer;
     private TimerTask task;
     private TextView message_count;
     private NoSlidingViewPager viewpager_home;
-
     private Context mContext;
+    private AppCompatTextView mTvVipFloatBtn;
+    private AppCompatImageView mIvVipFloatClose;
+    private LinearLayout ll_ad_entrance;
+    private AppCompatImageView iv_ad_close;
+    /**
+     * 加载图片广告
+     */
+    private ImageAdManager imageAdManager;
+
+    private String mFrom = "浮窗_背景";
+
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         Log.d(TAG, "Application start finished");
+
         mContext = HomeMainActivity.this;
         setTheme(R.style.AppTheme);
         //禁止休眠
@@ -132,7 +149,9 @@ public class HomeMainActivity extends FragmentActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.act_home_main);
         EventBus.getDefault().register(this);
+        ll_ad_entrance = findViewById(R.id.ll_ad_entrance);
         message_count = findViewById(R.id.message_count);
+        iv_ad_close = findViewById(R.id.iv_ad_close);
         viewpager_home = findViewById(R.id.viewpager_home);
         StatusBarCompat.setStatusBarColor(this, Color.parseColor("#181818"));
         ThisMain = this;
@@ -149,7 +168,7 @@ public class HomeMainActivity extends FragmentActivity {
         getUserPhoneInfo();
         getPushPermission();
         initTiktok();
-        if (BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+        if (!CheckVipOrAdUtils.checkIsVip() && BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
             requestCPad();
         }
         if (BaseConstans.hasLogin()) {
@@ -165,22 +184,12 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-
-
-
-
-
-
     private void setOaid() {
-        AppLog.setOaidObserver(new IOaidObserver() {
-            @Override
-            public void onOaidLoaded(@NotNull final IOaidObserver.Oaid oaid) {
-                LogUtils.d(TAG, "oaid = " + oaid.id);
-                BaseConstans.setOaid(oaid.id);
-            }
+        AppLog.setOaidObserver(oaid -> {
+            LogUtils.d(TAG, "oaid = " + oaid.id);
+            BaseConstans.setOaid(oaid.id);
         });
     }
-
 
     /**
      * 中台
@@ -201,10 +210,11 @@ public class HomeMainActivity extends FragmentActivity {
 
     private void requestUserInfo() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("to_user_id", BaseConstans.GetUserId());
+        params.put("to_user_id", BaseConstans.getUserId());
         // 启动时间
         Observable ob = Api.getDefault().getOtherUserinfo(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<UserInfo>(this) {
+
             @Override
             protected void onSubError(String message) {
             }
@@ -213,8 +223,9 @@ public class HomeMainActivity extends FragmentActivity {
             protected void onSubNext(UserInfo data) {
                 String str = StringUtil.beanToJSONString(data);
                 LogUtil.d("OOM2", "requestUserInfo=" + str);
-                Hawk.put("UserInfo", data);
+                Hawk.put(UserInfo.USER_INFO_KEY, data);
             }
+
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
@@ -240,10 +251,11 @@ public class HomeMainActivity extends FragmentActivity {
             task = null;
         }
         timer = new Timer();
+
         task = new TimerTask() {
             @Override
             public void run() {
-                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad" );
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad");
                 AdManager.getInstance().showCpAd(HomeMainActivity.this, AdConfigs.AD_SCREEN, new AdManager.Callback() {
                     @Override
                     public void adShow() {
@@ -259,14 +271,14 @@ public class HomeMainActivity extends FragmentActivity {
 
                     @Override
                     public void onScreenAdShow() {
-                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_show" );
+                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_show");
                     }
 
                     @Override
                     public void onScreenAdError() {
-                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_error" );
-
+                        StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "go_home_start_request_alert_ad_error");
                     }
+
                 });
                 destroyTimer();
             }
@@ -402,6 +414,7 @@ public class HomeMainActivity extends FragmentActivity {
                     .setMessage(R.string.permission_content)
                     .setPositiveButton(getString(R.string.toGetPermission), (dialog, which) -> goToSetting())
                     .show();
+
             spUtil.putBoolean("isFirst", false);
         }
     }
@@ -446,39 +459,83 @@ public class HomeMainActivity extends FragmentActivity {
 
 
     public void initView() {
-        for (int i = 0; i < mIvMenuBack.length; i++) {
-            mIvMenuBack[i] = findViewById(mImBackId[i]);
-            tv_main[i] = findViewById(tv_main_button[i]);
-            mIvMenuBack[i].setOnClickListener(listener);
+        for (int i = 0; i < IV_MENU_BACK.length; i++) {
+            IV_MENU_BACK[i] = findViewById(IM_BACK_ID[i]);
+            TV_MAIN[i] = findViewById(TV_MAIN_BUTTON[i]);
+            IV_MENU_BACK[i].setOnClickListener(listener);
         }
         List<Fragment> fragments = new ArrayList<>();
         fragments.add(new BackgroundFragment());
         fragments.add(new FragForTemplate());
         fragments.add(new DressUpFragment());
-        menu3F = new frag_user_center();
+        menu3F = new UserCenterFragment();
         fragments.add(menu3F);
         home_vp_frg_adapter adapter = new home_vp_frg_adapter(getSupportFragmentManager(), fragments);
         viewpager_home.setAdapter(adapter);
-        viewpager_home.setOffscreenPageLimit(1);
+        viewpager_home.setOffscreenPageLimit(3);
         whichMenuSelect(1);
-        findViewById(R.id.iv_main_add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (BaseConstans.hasLogin()) {
-                    Intent intent = new Intent(HomeMainActivity.this, FUBeautyActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    StatisticsEventAffair.getInstance().setFlag(mContext, "12_Shoot");
-                    startActivity(intent);
-                } else {
-                    Intent intent = new Intent(HomeMainActivity.this, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
-                }
+        findViewById(R.id.iv_main_add).setOnClickListener(view -> {
+            if (BaseConstans.hasLogin()) {
+                Intent intent = new Intent(HomeMainActivity.this, FUBeautyActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                StatisticsEventAffair.getInstance().setFlag(mContext, "12_Shoot");
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(HomeMainActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
             }
         });
         StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "默认页面不纳入统计");
+
+        mTvVipFloatBtn = findViewById(R.id.tv_vip_float_btn);
+        mIvVipFloatClose = findViewById(R.id.iv_close_float_btn);
+        showFloatWindow();
+
+        mTvVipFloatBtn.setOnClickListener(v -> {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_vip_hover_touch", TITLE_TEXT[mLastWhichMenu]);
+            startVipActivity();
+        });
+
+        mIvVipFloatClose.setOnClickListener(v -> {
+            mIvVipFloatClose.setVisibility(View.GONE);
+            mTvVipFloatBtn.setVisibility(View.GONE);
+            CheckVipOrAdUtils.sVipFloatWindowIsClosed = true;
+            startVipActivity();
+            //每关闭一次，浮窗展示次数+1
+            BaseConstans.setVipFloatWindowShowTimes(BaseConstans.getVipFloatWindowShowTimes() + 1);
+            showVipOrEntranceAd();
+            StatisticsEventAffair.getInstance()
+                    .setFlag(BaseApplication.getInstance(), "hp_vip_hover_cancel_touch",
+                            TITLE_TEXT[mLastWhichMenu]);
+        });
+
+        iv_ad_close.setOnClickListener(view -> {
+            BaseConstans.setAdCloseTime(System.currentTimeMillis());
+            iv_ad_close.setVisibility(View.GONE);
+            ll_ad_entrance.setVisibility(View.GONE);
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(),
+                    "hp_ad_hover_cancel_touch", TITLE_TEXT[mLastWhichMenu]);
+        });
+
+        showVipOrEntranceAd();
+
     }
 
+    private void startVipActivity() {
+        if (BaseConstans.hasLogin()) {
+            Intent intent = BuyVipActivity.buildIntent(mContext, mFrom);
+            startActivity(intent);
+        } else {
+            toLogin();
+        }
+    }
+
+    private void toLogin() {
+        Intent intent = new Intent(mContext, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+    }
 
     @Override
     protected void onDestroy() {
@@ -502,66 +559,94 @@ public class HomeMainActivity extends FragmentActivity {
                 DataCleanManager.deleteFilesByDirectory(getExternalFilesDir(s));
             }
         }
+
     }
 
 
     private final NoDoubleClickListener listener = new NoDoubleClickListener() {
         @Override
         public void onNoDoubleClick(View v) {
-            switch (v.getId()) {
-                case R.id.iv_back_menu_0:
-                    whichMenuSelect(0);
-
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
-                    break;
-                case R.id.iv_back_menu_1:
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "2");
-
-                    whichMenuSelect(1);
-                    break;
-                case R.id.iv_back_menu_2:
-                    whichMenuSelect(2);
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "3");
-
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "12_news");
-                    break;
-                case R.id.iv_back_menu_3:
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "4");
-
-                    StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
-                    whichMenuSelect(3);
-                    break;
-                default:
-                    break;
+            int id = v.getId();
+            showFloatWindow();//change tab
+            if (id == R.id.iv_back_menu_0) {
+                whichMenuSelect(0);
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "1");
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "5_bj");
+            } else if (id == R.id.iv_back_menu_1) {
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "2");
+                whichMenuSelect(1);
+            } else if (id == R.id.iv_back_menu_2) {
+                whichMenuSelect(2);
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "3");
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "12_news");
+            } else if (id == R.id.iv_back_menu_3) {
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "14_home_tab_click", "4");
+                StatisticsEventAffair.getInstance().setFlag(HomeMainActivity.this, "3_mine");
+                whichMenuSelect(3);
+                hideFloatWindow();
             }
         }
     };
 
+    private void hideFloatWindow() {
+        mIvVipFloatClose.setVisibility(View.INVISIBLE);
+        mTvVipFloatBtn.setVisibility(View.INVISIBLE);
+    }
+
+    private void showFloatWindow() {
+        if (!CheckVipOrAdUtils.checkIsVip() && CheckVipOrAdUtils.checkFloatWindowShow()) {
+            StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_vip_hover_show", TITLE_TEXT[mLastWhichMenu]);
+            mIvVipFloatClose.setVisibility(View.VISIBLE);
+            mTvVipFloatBtn.setVisibility(View.VISIBLE);
+            ll_ad_entrance.setVisibility(View.GONE);
+            iv_ad_close.setVisibility(View.GONE);
+        } else {
+            hideFloatWindow();
+            showVipOrEntranceAd();
+        }
+    }
+
     private void setStatusBar() {
         changeBottomTab();
     }
-
 
     /**
      * user :TongJu  ;描述：底部栏改变
      * 时间：2018/6/6
      **/
     private void changeBottomTab() {
-        for (int i = 0; i < mIvMenuBack.length; i++) {
-            tv_main[i].setTextColor(ContextCompat.getColor(this, R.color.white));
+        for (int i = 0; i < IV_MENU_BACK.length; i++) {
+            TV_MAIN[i].setTextColor(ContextCompat.getColor(this, R.color.white));
         }
-        tv_main[LastWhichMenu].setTextColor(ContextCompat.getColor(this, R.color.new_base_blue));
+        TV_MAIN[mLastWhichMenu].setTextColor(ContextCompat.getColor(this, R.color.new_base_blue));
     }
 
     /**
      * 记录当前页面id
      */
-    private int LastWhichMenu = -1;
+    private int mLastWhichMenu = 0;
 
     public void whichMenuSelect(int whichMenu) {
-        this.LastWhichMenu = whichMenu;
+        this.mLastWhichMenu = whichMenu;
+        setFromstr();
         openMenu(whichMenu);
+    }
+
+    private void setFromstr() {
+        switch (mLastWhichMenu) {
+            case 0:
+                mFrom = "浮窗_背景";
+                break;
+            case 1:
+                mFrom = "浮窗_模板";
+                break;
+            case 2:
+                mFrom = "浮窗_闪图";
+                break;
+            default:
+                mFrom = "浮窗_背景";
+                break;
+        }
     }
 
 
@@ -577,6 +662,9 @@ public class HomeMainActivity extends FragmentActivity {
         } else {
             message_count.setVisibility(View.GONE);
         }
+        if (imageAdManager != null) {
+            imageAdManager.adResume();
+        }
     }
 
     @Override
@@ -585,7 +673,7 @@ public class HomeMainActivity extends FragmentActivity {
         MobclickAgent.onPause(this);
     }
 
-    private frag_user_center menu3F = null;
+    private UserCenterFragment menu3F = null;
 
     private void openMenu(int which) {
         setStatusBar();
@@ -595,25 +683,10 @@ public class HomeMainActivity extends FragmentActivity {
     }
 
 
-    private long exitTime = 0;
-
-
-    private void exitPressAgain() {
-        if ((System.currentTimeMillis() - exitTime) > 2000) {
-            Toast.makeText(ThisMain, "再点一次退出程序", Toast.LENGTH_SHORT).show();
-            exitTime = System.currentTimeMillis();
-        } else {
-            finish();
-        }
-    }
-
-
     @Override
     public void onBackPressed() {
-        //exitPressAgain();
         showBackMessage();
     }
-
 
     private void showBackMessage() {
         StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "load_quit_app");
@@ -625,6 +698,7 @@ public class HomeMainActivity extends FragmentActivity {
                 .setDialogBtnClickListener(new CommonMessageDialog.DialogBtnClickListener() {
                     @Override
                     public void onPositiveBtnClick(CommonMessageDialog dialog) {
+                        CheckVipOrAdUtils.sVipFloatWindowIsClosed = false;
                         dialog.dismiss();
                         finish();
                     }
@@ -634,13 +708,10 @@ public class HomeMainActivity extends FragmentActivity {
                         dialog.dismiss();
                     }
                 })
-                .setDialogDismissListener(new CommonMessageDialog.DialogDismissListener() {
-                    @Override
-                    public void onDismiss() {
-
-                    }
+                .setDialogDismissListener(() -> {
                 })
                 .build();
+
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
@@ -704,7 +775,7 @@ public class HomeMainActivity extends FragmentActivity {
      */
     private void requestMessageCount() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("user_id", BaseConstans.GetUserId());
+        params.put("user_id", BaseConstans.getUserId());
         Observable ob = Api.getDefault().getAllMessageNum(BaseConstans.getRequestHead(params));
         HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<messageCount>(this) {
                     @Override
@@ -735,6 +806,17 @@ public class HomeMainActivity extends FragmentActivity {
         if (BaseConstans.hasLogin()) {
             requestMessageCount();
         }
+    }
+
+    /**
+     * 购买会员后刷新浮窗状态
+     *
+     * @param event
+     */
+    @Subscribe
+    public void onEventMainThread(BuyVipEvent event) {
+        LogUtil.d(TAG, "refresh float status");
+        showFloatWindow();
     }
 
     @Override
@@ -830,17 +912,9 @@ public class HomeMainActivity extends FragmentActivity {
                         } else if (id == 24) {
                             //首次安装前几次无广告
                             int newUserIsVip = Integer.parseInt(config.getValue());
-                            LogUtil.d("OOM2", "newUserIsVip=" + newUserIsVip);
-                            if (BaseConstans.getOpenAppNum() < newUserIsVip - 1) {
-                                BaseConstans.setNextNewUser(true);
-                            } else {
-                                BaseConstans.setNextNewUser(false);
-                            }
-                            if (BaseConstans.getOpenAppNum() < newUserIsVip) { //新用户没广告
-                                BaseConstans.setIsNewUser(true);
-                            } else {
-                                BaseConstans.setIsNewUser(false);
-                            }
+                            BaseConstans.setNextNewUser(BaseConstans.getOpenAppNum() < newUserIsVip - 1);
+                            //新用户没广告
+                            BaseConstans.setIsNewUser(BaseConstans.getOpenAppNum() < newUserIsVip);
                         } else if (id == 25) {
                             //启动APP多少秒后显示插屏广告
                             int second = Integer.parseInt(config.getValue());
@@ -883,9 +957,17 @@ public class HomeMainActivity extends FragmentActivity {
                             //1 表示能保存 0 表示不能保存
                             LogUtil.d("OOM3", "video_error_can_save=" + video_error_can_save);
                             BaseConstans.setAdShowErrorCanSave(video_error_can_save);
-                        }else if(id==75){
+                        } else if (id == 75) {
                             BaseConstans.setCreateVideoShowAdUserNum(config.getValue());
-
+                        } else if (id == 76) {
+                            LogUtil.d(TAG, "vip_window_show_times name = " + config.getName() + " value = " + config.getValue());
+                            int value = Integer.parseInt(config.getValue());
+                            BaseConstans.setVipFloatWindowConfigShowTimes(value);
+                            changeFloatWindowShow();
+                        } else if (id == 77) {
+                            LogUtil.d(TAG, "vip_server name = " + config.getName() + " value = " + config.getValue());
+                            int value = Integer.parseInt(config.getValue());
+                            BaseConstans.setVipServerShow(value);
                         }
                     }
                 }
@@ -893,6 +975,18 @@ public class HomeMainActivity extends FragmentActivity {
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
+    private void changeFloatWindowShow() {
+        if (!CheckVipOrAdUtils.checkIsVip() && CheckVipOrAdUtils.checkFloatWindowShow()) {
+            mIvVipFloatClose.setVisibility(View.VISIBLE);
+            mTvVipFloatBtn.setVisibility(View.VISIBLE);
+            ll_ad_entrance.setVisibility(View.GONE);
+            iv_ad_close.setVisibility(View.GONE);
+        } else {
+            mIvVipFloatClose.setVisibility(View.INVISIBLE);
+            mTvVipFloatBtn.setVisibility(View.INVISIBLE);
+            showVipOrEntranceAd();
+        }
+    }
 
     private void auditModeConfig(String str) {
         LogUtil.d("AuditModeConfig", "AuditModeConfig=" + str);
@@ -916,10 +1010,8 @@ public class HomeMainActivity extends FragmentActivity {
                         } else {
                             BaseConstans.setHasAdvertising(0);
                         }
-
                         boolean video_ad_open = obArray.getBoolean("video_ad_open");
                         BaseConstans.setIncentiveVideo(video_ad_open);
-
                         boolean save_video_ad = obArray.getBoolean("save_video_ad");
                         BaseConstans.setSave_video_ad(save_video_ad);
                     }
@@ -928,8 +1020,74 @@ public class HomeMainActivity extends FragmentActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
+
+    /**
+     * description ：请求互动广告入口
+     * creation date: 2021/5/21
+     * user : zhangtongju
+     */
+    private void loadImageAd() {
+        imageAdManager = new ImageAdManager();
+        imageAdManager.setNtAdUserId(BaseConstans.getUserId());
+        imageAdManager.showImageAd(this, AdConfigs.APP_FUDONG, ll_ad_entrance, null, new ImageAdCallBack() {
+            @Override
+            public void onImageAdShow(View adView, String adId, String adPlaceId, AdInfoBean adInfoBean) {
+                if (adView != null) {
+                    ll_ad_entrance.removeAllViews();
+                    ll_ad_entrance.addView(adView);
+                    ll_ad_entrance.setVisibility(View.VISIBLE);
+                    iv_ad_close.setVisibility(View.VISIBLE);
+                    StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_ad_hover_show", TITLE_TEXT[mLastWhichMenu]);
+                }
+            }
+
+            @Override
+            public void onImageAdError(String error) {
+                LogUtil.e("ImageAdError = " + error);
+            }
+
+            @Override
+            public void onImageAdClose() {
+
+            }
+
+            @Override
+            public boolean onImageAdClicked(String title, String url, boolean isNtAd, boolean openURLInSystemBrowser) {
+                StatisticsEventAffair.getInstance().setFlag(BaseApplication.getInstance(), "hp_ad_hover_touch", TITLE_TEXT[mLastWhichMenu]);
+                return false;
+            }
+        });
+    }
+
+
+    /**
+     * description ：互动广告逻辑：1.优先显示会员悬浮窗
+     * 2.用户关闭会员悬浮窗之后 、才显示互动广告
+     * 3、会员悬浮窗和互动悬浮窗每天只显示1次
+     * creation date: 2021/5/21
+     * user : zhangtongju
+     */
+    private void showVipOrEntranceAd() {
+        if (mTvVipFloatBtn.getVisibility() != View.VISIBLE && canShowVipLogo()&&ll_ad_entrance.getVisibility()!=View.VISIBLE&&BaseConstans.getHasAdvertising() == 1 && !BaseConstans.getIsNewUser()) {
+            //如果vip 按钮没有显示，那么请求互动入口
+            loadImageAd();
+        }
+    }
+
+
+    /**
+     * description ：当前是否可以显示logo
+     * creation date: 2021/5/21
+     * user : zhangtongju
+     */
+    private boolean canShowVipLogo() {
+        long nowCurrentTime = System.currentTimeMillis();
+        long lastCloseTime = BaseConstans.getAdCloseTime();
+        long intervalTime = nowCurrentTime - lastCloseTime;
+        intervalTime = intervalTime / 1000 / 60 / 60 / 24;
+        return intervalTime >= 24;
+    }
 
 }
