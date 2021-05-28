@@ -1,8 +1,6 @@
 package com.flyingeffects.com.ui.view.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
@@ -22,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bigkoo.convenientbanner.utils.ScreenUtil;
 import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateViewPager;
@@ -52,11 +49,9 @@ import com.imaginstudio.imagetools.pixellab.ZoomWidget;
 import com.imaginstudio.imagetools.pixellab.imageinfo.displayInfo;
 import com.imaginstudio.imagetools.pixellab.textContainer;
 import com.lansosdk.videoeditor.MediaInfo;
-import com.xj.anchortask.library.log.LogUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -296,7 +291,6 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     private void initBottomLayout() {
-        initViewAddWord();
         initViewForChooseMusic();
         TemplateViewPager templateViewPager = new TemplateViewPager(listForInitBottom);
         mBinding.viewPager.setAdapter(templateViewPager);
@@ -401,7 +395,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
     private void onClickAddWordBtn() {
         seekBarViewIsShow(false);
-        chooseTab(0);
+//        chooseTab(0);
         setTextColor(0);
 //        seekBarViewIsShow(false);
 //        chooseTab(0);
@@ -1375,41 +1369,6 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (isIntoPause && exoPlayer != null) {
-            exoPlayer.prepare(mediaSource, true, false);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    pauseExoPlayer();
-                    destroyTimer();
-                }
-            }, 200);
-            isIntoPause = false;
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        videoToPause();
-        isIntoPause = true;
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        EventBus.getDefault().unregister(this);
-        destroyTimer();
-        videoStop();
-        if (bgmPlayer != null) {
-            bgmPlayer.pause();
-            bgmPlayer.release();
-        }
-        super.onDestroy();
-    }
-
-    @Override
     public void objectTouch() {
 
     }
@@ -1464,5 +1423,39 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isIntoPause && exoPlayer != null) {
+            exoPlayer.prepare(mediaSource, true, false);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    pauseExoPlayer();
+                    destroyTimer();
+                }
+            }, 200);
+            isIntoPause = false;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        videoToPause();
+        isIntoPause = true;
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        destroyTimer();
+        videoStop();
+        if (bgmPlayer != null) {
+            bgmPlayer.pause();
+            bgmPlayer.release();
+        }
+        super.onDestroy();
+    }
 
 }
