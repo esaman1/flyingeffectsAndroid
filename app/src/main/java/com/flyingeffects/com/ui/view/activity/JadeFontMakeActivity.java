@@ -21,6 +21,7 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.databinding.ActivityJadeFontMakeBinding;
+import com.flyingeffects.com.enity.CutSuccess;
 import com.flyingeffects.com.enity.SubtitleEntity;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.view.JadeFontMakeMvpView;
@@ -40,12 +41,15 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.lansosdk.videoeditor.MediaInfo;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.core.content.ContextCompat;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 
 
 /**
@@ -72,7 +76,6 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     /**是不是横屏*/
     private boolean nowUiIsLandscape = false;
     private boolean isPlaying= false;
-    private boolean isNeedPlayBjMusic = false;
     private boolean isEndDestroy = false;
     private boolean isPlayComplete = false;
     private boolean isIntoPause = false;
@@ -109,13 +112,23 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
      */
     private MediaPlayer bgmPlayer;
     private MediaSource mediaSource;
+    /**
+     * 是否初始化过播放器
+     */
+    private boolean isInitVideoLayer = false;
+
     AutoIdentifySubtitlesDialog mSubtitlesDialog;
 
     JadeFontMakePresenter mPresenter;
 
-    String mVideoInAudioPath = "";
     String mChangeMusicPath ="";
+    /**
+     * 获得背景视频音乐
+     */
+    private String bgmPath;
     List<View> listForInitBottom = new ArrayList<>();
+    /**玉体字view的id，创建一个自增一个*/
+    int mJadeFontViewIndex = 0;
 
     @Override
     protected int getLayoutId() {
@@ -145,6 +158,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         //设置预览界面大小
         initViewLayerRelative();
         initBottomLayout();
+        EventBus.getDefault().register(this);
     }
 
     private void initBottomLayout() {
@@ -168,36 +182,42 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     private void onViewClicked(View view) {
-        if (view == mBinding.tvTopSubmit) {
+        if (!DoubleClick.getInstance().isFastDoubleClick()) {
+            if (view == mBinding.tvTopSubmit) {
 
-        } else if (view == mBinding.llPlay) {
-            onPlayClick();
-        } else if (view == mBinding.ivAddSticker) {
+            } else if (view == mBinding.llPlay) {
+                onPlayClick();
+            } else if (view == mBinding.ivAddSticker) {
 //            addSticker();
-        } else if (view == mBinding.ivTopBack) {
-            onBackPressed();
-        } else if (view == mBinding.tvAddWord) {
-            onClickAddWordBtn();
-        } else if (view == mBinding.tvIdentifySubtitles) {
-            if (!TextUtils.isEmpty(mImagePath)) {
-                if (TextUtils.isEmpty(mChangeMusicPath)) {
-                    ToastUtil.showToast("请选择一个音频文件再识别哟~");
+            } else if (view == mBinding.ivTopBack) {
+                onBackPressed();
+            } else if (view == mBinding.tvAddWord) {
+                onClickAddWordBtn();
+            } else if (view == mBinding.tvIdentifySubtitles) {
+                if (!TextUtils.isEmpty(mImagePath)) {
+                    if (TextUtils.isEmpty(bgmPath)) {
+                        ToastUtil.showToast("请选择一个音频文件再识别哟~");
+                    } else {
+                        mSubtitlesDialog.show();
+                    }
                 } else {
-                    mSubtitlesDialog.show();
+                    if (musicChooseIndex == 2) {
+                        if (TextUtils.isEmpty(bgmPath)) {
+                            ToastUtil.showToast("没有音频文件可以识别~");
+                        } else {
+                            mSubtitlesDialog.show();
+                        }
+                    } else {
+                        mSubtitlesDialog.show();
+                    }
                 }
-            } else {
-                if (TextUtils.isEmpty(mVideoInAudioPath)) {
-                    mSubtitlesDialog.show();
-                } else {
-                    ToastUtil.showToast("当前音频文件已识别了~");
-                }
+            } else if (view == mBinding.tvChangeMusic) {
+                onClickMusicBtn();
+            } else if (view == mBinding.ivChangeUi) {
+                changeLandscape();
+            } else if (view == mBinding.rlCreationContainer) {
+                mBinding.progressBarView.hindArrow();
             }
-        } else if (view == mBinding.tvChangeMusic) {
-            onClickMusicBtn();
-        } else if (view == mBinding.ivChangeUi) {
-            changeLandscape();
-        } else if (view == mBinding.rlCreationContainer) {
-            mBinding.progressBarView.hindArrow();
         }
     }
 
@@ -233,7 +253,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     public void chooseTab(int pageNum) {
-        mBinding.viewPager.setCurrentItem(pageNum);
+        mBinding.viewPager.setCurrentItem(pageNum,false);
     }
 
     /**
@@ -250,7 +270,8 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         chooseTab(0);
         setTextColor(0);
         mBinding.jakeFontSeekBarView.addTemplateMaterialItemView(mCutEndTime, "", getCurrentPos(), getCurrentPos() + 5000, true,
-                "是单个玉体字的文本", 0, null, -1, mBinding.progressBarView.progressTotalWidth);
+                "是单个玉体字的文本", mJadeFontViewIndex, null, -1, mBinding.progressBarView.progressTotalWidth);
+        mJadeFontViewIndex++;
     }
 
     /**
@@ -261,6 +282,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         listForInitBottom.add(addJadeFontView);
     }
 
+    boolean isPlayVideoInAudio = false;
      /**
      * 初始化选音乐页面
      */
@@ -280,6 +302,8 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         });
 
         tvAddMusic.setOnClickListener(view -> {
+            isPlayVideoInAudio = false;
+            videoToPause();
             Intent intent = new Intent(this, ChooseMusicActivity.class);
             intent.putExtra("needDuration", allVideoDuration);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -299,9 +323,15 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         tv_1.setText("素材音乐");
         tv_2.setText("提取音乐");
 
+        //是选择的图片作为背景的话 就没有背景音乐
+        if (!TextUtils.isEmpty(mImagePath)) {
+            tv_0.setVisibility(View.GONE);
+            check_box_0.setVisibility(View.GONE);
+        }
         tv_1.setVisibility(View.GONE);
         check_box_1.setVisibility(View.GONE);
         if (!TextUtils.isEmpty(mVideoPath)) {
+            isPlayVideoInAudio  = true;
             chooseCheckBox(0);
         }
 
@@ -309,20 +339,31 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             switch (view.getId()) {
                 case R.id.iv_check_box_0:
                 case R.id.tv_0:
-                    mPresenter.chooseVideoInAudio();
+                    musicChooseIndex = 0;
+                    if (!TextUtils.isEmpty(mVideoPath)) {
+                        if (isPlayVideoInAudio) {
+                            clearCheckBox();
+                            isPlayVideoInAudio = false;
+                            if (exoPlayer != null) {
+                                exoPlayer.setVolume(0f);
+                            }
+                           getBgmPath("");
+                        } else {
+                            mPresenter.chooseVideoInAudio(0);
+                            isPlayVideoInAudio = true;
+                        }
+                    } else {
+                        ToastUtil.showToast("图片没有背景音乐哟");
+                    }
                     break;
                 case R.id.tv_1:
                 case R.id.iv_check_box_1:
-                    mPresenter.chooseNowStickerMaterialMusic();
+                    mPresenter.chooseNowStickerMaterialMusic(1);
                     break;
                 case R.id.tv_2:
                 case R.id.iv_check_box_2:
-                    if(true){
-                        mPresenter.extractedAudio();
-                        //把提取的音频文件路径 传给背景音乐播放器
-                    }else {
-                        ToastUtil.showToast("请添加一个音频文件后再提取哟~");
-                    }
+                    isPlayVideoInAudio = false;
+                    mPresenter.extractedAudio(mChangeMusicPath,2);
                     break;
                 default:
                     break;
@@ -340,8 +381,6 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         check_box_3.setOnClickListener(tvMusicListener);
 
         listForInitBottom.add(viewForChooseMusic);
-
-//        mPresenter.chooseInitMusic();
     }
 
     /**
@@ -395,7 +434,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             @Override
             public void progress(long progress, boolean isDrag) {
                 LogUtil.d("OOM4", "mProgressBarViewProgress=" + progress);
-                setgsyVideoProgress(progress);
+                setGSYVideoProgress(progress);
 
                 if (progress < mCutStartTime) {
                     progress = mCutStartTime;
@@ -414,13 +453,13 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                     mBinding.jakeFontSeekBarView.scrollToPosition(progress);
                 }
                 progressBarProgress = progress;
-//                mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTimeViewShow(progressBarProgress, mCutEndTime);
                 mBinding.tvCurrentTime.setText(String.format("%ss", TimeUtils.timeParse(progress - mCutStartTime)));
             }
 
             @Override
             public void cutInterval(long starTime, long endTime, boolean isDirection) {
-
+                videoToPause();
                 if (starTime < mCutStartTime) {
                     mBinding.tvCurrentTime.setText(String.format("%ss", TimeUtils.timeParse(0)));
                     mCutStartTime = starTime;
@@ -439,31 +478,28 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 if (isDirection) {
                     mBinding.jakeFontSeekBarView.scrollToPosition(starTime);
                     //--------------ztj   解决bug拖动主进度条，素材音乐没修改的情况
-//                    if (musicStartTime < starTime) {
-//
-//                        musicStartFirstTime = starTime;
-//                        musicStartTime = starTime;
-//                        LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
-//                    }
+                    if (musicStartTime < starTime) {
+                        musicStartTime = starTime;
+                        LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
+                    }
                     //ztj  音乐向后挤 ，然后音乐就是最短位置1000+end
-//                    if (musicEndTime < starTime) {
-//                        musicEndFirstTime = musicStartTime + 1000;
-//                        musicEndTime = musicEndFirstTime;
-//                        LogUtil.d("oom44", "音乐向后挤musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
-//                    }
+                    if (musicEndTime < starTime) {
+                        musicEndTime = musicStartTime + 1000;
+                        LogUtil.d("oom44", "音乐向后挤musicEndTime=" + musicEndTime + "musicStartTime=" + musicStartTime);
+                    }
 
                 } else {
                     LogUtil.d("oom444", "xx=");
                     mBinding.jakeFontSeekBarView.scrollToPosition(endTime);
                 }
 
-//                mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTimeViewShow(progressBarProgress, mCutEndTime);
             }
 
             @Override
             public void onTouchEnd() {
                 videoToPause();
-//                mPresenter.getNowPlayingTime(progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTimeViewShow(progressBarProgress, mCutEndTime);
             }
         });
     }
@@ -666,6 +702,8 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 mBinding.progressBarView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mCutStartTime = 0;
                 mCutEndTime = allVideoDuration;
+                musicStartTime = 0;
+                musicEndTime = allVideoDuration;
                 mBinding.tvTotal.setText(TimeUtils.timeParse(mCutEndTime - mCutStartTime) + "s");
                 mBinding.progressBarView.addProgressBarView(allVideoDuration, !TextUtils.isEmpty(mVideoPath) ? mVideoPath : mImagePath);
             }
@@ -712,11 +750,11 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         pauseExoPlayer();
     }
 
-    private void setgsyVideoProgress(long progress) {
+    private void setGSYVideoProgress(long progress) {
         LogUtil.d("OOM", "videoProgress=" + progress);
         if (!isPlaying) {
             seekToVideo(progress);
-//            seekToMusic(progress);
+            seekToMusic(progress);
         }
     }
 
@@ -726,7 +764,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     private void onPlayClick() {
         if (!DoubleClick.getInstance().isFastZDYDoubleClick(500)) {
             if (isPlaying) {
-//                pauseBgmMusic();
+                pauseBgmMusic();
                 isIntoPause = false;
                 isPlayComplete = false;
                 videoToPause();//点击播放暂定
@@ -734,7 +772,44 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 nowStateIsPlaying(false);
             } else {
                 nowStateIsPlaying(true);
-                videoPlay();
+                if (!TextUtils.isEmpty(mVideoPath)) {
+                    seekToVideo(mCutStartTime);
+                    seekToMusic(mCutStartTime);
+                    if (isPlayComplete) {
+                        videoPlay();
+                        isIntoPause = false;
+                    } else {
+                        if (isInitVideoLayer) {
+                            if (!isIntoPause) {
+                                videoPlay();
+                            } else {
+                                videoPlay();
+                                isIntoPause = false;
+                                isInitVideoLayer = true;
+                            }
+                        } else {
+                            isIntoPause = false;
+                            isInitVideoLayer = true;
+                            videoPlay();
+                        }
+                    }
+                } else {
+                    //播放背景音乐,如果有背景音乐且是第一次初始化
+                    if (!TextUtils.isEmpty(bgmPath) && musicEndTime == 0) {
+                        if (bgmPlayer != null) {
+                            //继续播放
+                            bgmPlayer.start();
+                            LogUtil.d("playBGMMusic", " bgmPlayer.start()");
+                        } else {
+                            seekToVideo(mCutStartTime);
+                            seekToMusic(mCutStartTime);
+                            LogUtil.d("playBGMMusic", "animIsComplate");
+                            playBGMMusic();
+                        }
+                    }
+                }
+                isPlaying = true;
+                startTimer();
             }
             mSeekBarViewManualDrag = false;
         }
@@ -746,7 +821,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         isPlaying = false;
         videoToPause();
         seekToVideo(mCutStartTime);
-//        seekToMusic(mCutStartTime);
+        seekToMusic(mCutStartTime);
         nowStateIsPlaying(false);
     }
 
@@ -765,7 +840,6 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             exoPlayer.stop();
             exoPlayer.release();
         }
-
     }
 
     /**
@@ -778,11 +852,19 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         isPlayComplete = false;
         if (exoPlayer != null) {
             LogUtil.d("video", "play");
-//            if (!TextUtils.isEmpty(bgmPath)) {
-//                exoPlayer.setVolume(0f);
-//            } else {
-                exoPlayer.setVolume(1f);
-//            }
+            if (!TextUtils.isEmpty(bgmPath)) {
+                exoPlayer.setVolume(0f);
+            } else {
+                if (!TextUtils.isEmpty(mVideoPath)) {
+                    if (noBgMusicPlay) {
+                        exoPlayer.setVolume(0f);
+                    } else {
+                        exoPlayer.setVolume(1f);
+                    }
+                } else {
+                    exoPlayer.setVolume(1f);
+                }
+            }
             if (getCurrentPos() >= mCutEndTime) {
                 exoPlayer.seekTo(mCutStartTime);
             } else if (getCurrentPos() < mCutStartTime) {
@@ -821,12 +903,90 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         }
     }
 
+    private void seekToMusic(long to) {
+        if (bgmPlayer != null) {
+            bgmPlayer.seekTo((int) to);
+        }
+    }
+
+    private void playBGMMusic() {
+        bgmPlayer = new MediaPlayer();
+        try {
+            bgmPlayer.setDataSource(bgmPath);
+            bgmPlayer.prepare();
+            bgmPlayer.start();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void pauseBgmMusic() {
+        if (bgmPlayer != null && bgmPlayer.isPlaying()) {
+            bgmPlayer.pause();
+        }
+    }
+
+    /**
+     * 拖动后时候可以播放音乐
+     */
+
+    private void bjMusicControl() {
+        if (!isEndDestroy) {
+            LogUtil.d("playBGMMusic", "bjMusicControl");
+            if (!TextUtils.isEmpty(bgmPath)) {
+                if (musicEndTime != 0) {
+                    float needMusicStartTime = musicStartTime;
+                    float needTime = totalPlayTime;
+                    LogUtil.d("playBGMMusic", "totalPlayTime=" + totalPlayTime + "mCutStartTime=" + mCutStartTime + "needTime=" + needTime + "musicStartTime=" + musicStartTime + "needMusicStartTime=" + needMusicStartTime);
+                    if (needTime > musicEndTime || needTime < needMusicStartTime) {
+                        LogUtil.d("playBGMMusic2", "需要暂停音乐");
+                        isNeedPlayBjMusic = false;
+                        pauseBgmMusic();
+                    } else {
+                        if (!isNeedPlayBjMusic) {
+                            LogUtil.d("playBGMMusic2", "播放音乐");
+                            LogUtil.d("playBGMMusic2", "totalPlayTime=" + totalPlayTime + "mCutStartTime=" + mCutStartTime + "needTime=" + needTime + "musicStartTime=" + musicStartTime + "needMusicStartTime=" + needMusicStartTime);
+                            playBjMusic();
+                        }
+                        isNeedPlayBjMusic = true;
+                    }
+                } else {
+                    LogUtil.d("playBGMMusic", "musicEndTime=" + musicEndTime);
+                    if (!isNeedPlayBjMusic) {
+                        LogUtil.d("playBGMMusic", "播放音乐");
+                        playBjMusic();
+                    }
+                    isNeedPlayBjMusic = true;
+                }
+            } else {
+                LogUtil.d("playBGMMusic", "bgmPath==null");
+            }
+        }
+
+    }
+
+
+    private void playBjMusic() {
+        LogUtil.d("playBGMMusic", "playBjMusic");
+        if (!TextUtils.isEmpty(bgmPath)) {
+            if (bgmPlayer != null) {
+                bgmPlayer.start();
+                seekToMusic(mCutStartTime);
+            } else {
+                seekToMusic(mCutStartTime);
+                playBGMMusic();
+            }
+        }
+    }
+
     private Timer timer;
     private TimerTask task;
     private long nowTime = 5;
-    //自己计算的播放时间
+    /**自己计算的播放时间*/
     private long totalPlayTime;
-    private boolean isNeedPlayBjMusci = false;
+    private boolean isNeedPlayBjMusic = false;
 
     private void startTimer() {
 
@@ -864,7 +1024,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-//                bjMusicControl();
+                bjMusicControl();
                 if (!TextUtils.isEmpty(mVideoPath)) {
                     if (isPlaying) {
                         long nowCurrentPos = getCurrentPos();
@@ -946,11 +1106,13 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         mSeekBarViewManualDrag = manualDrag;
         videoToPause();
         //做玉体字view的显示隐藏逻辑判断
+        mPresenter.getNowPlayingTimeViewShow(progressBarProgress, mCutEndTime);
     }
 
     @Override
-    public void timelineChange(long startTime, long endTime, String id,boolean isSubtitle) {
+    public void timelineChange(long startTime, long endTime, String id, boolean isSubtitle) {
         //玉体字view的起止时间修改和玉体字view的显示隐藏逻辑判断
+        mPresenter.getNowPlayingTimeViewShow(progressBarProgress, mCutEndTime);
     }
 
     @Override
@@ -964,38 +1126,68 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     @Override
-    public void clearSubtitle(boolean isClear) {
-
-    }
-
-    @Override
     public void startIdentifySubtitle() {
-        if (!TextUtils.isEmpty(mVideoPath)) {
-             mPresenter.startIdentify(true,mVideoPath,"");
-        } else {
-            mPresenter.startIdentify(true,"","音频文件路径");
+        videoToPause();
+        if (musicChooseIndex == 0) {
+            mPresenter.startIdentify(true, mVideoPath, "");
+        }
+        if (musicChooseIndex == 2) {
+            mPresenter.startIdentify(false, "", bgmPath);
         }
     }
 
+
     @Override
-    public void identifySubtitle(List<SubtitleEntity> subtitles,boolean isVideoInAudio,String audioPath) {
-        if (isVideoInAudio) {
-            mVideoInAudioPath = audioPath;
-        } else {
-            mChangeMusicPath = audioPath;
+    public void identifySubtitle(List<SubtitleEntity> subtitles, boolean isVideoInAudio, String audioPath) {
+        if (mBinding.jakeFontSeekBarView.subtitleIndex != -1) {
+            //清空已识别的字幕  删除字幕时间轴和字幕的玉体字的view
+            mBinding.jakeFontSeekBarView.deleteSubtitleView(mBinding.jakeFontSeekBarView.subtitleIndex);
         }
         mBinding.jakeFontSeekBarView.addTemplateMaterialItemView(allVideoDuration, "", 0, 0, false,
-                "", -1, subtitles, 0, mBinding.progressBarView.progressTotalWidth);
+                "", -1, subtitles, mJadeFontViewIndex, mBinding.progressBarView.progressTotalWidth);
         mBinding.jakeFontSeekBarView.setCutEndTime(mCutEndTime);
+        mBinding.jakeFontSeekBarView.scrollToTheBottom();
+        mJadeFontViewIndex++;
     }
 
     @Override
     public void getBgmPath(String bgmPath) {
-
+        this.bgmPath = bgmPath;
+        if (TextUtils.isEmpty(bgmPath)) {
+            if (isPlaying) {
+                videoToPause();
+            }
+        } else {
+            if (isPlaying) {
+                if (!TextUtils.isEmpty(bgmPath)) {
+                    if (exoPlayer != null) {
+                        exoPlayer.setVolume(0f);
+                    }
+                    pauseBgmMusic();
+                    playBGMMusic();
+                    if (bgmPlayer != null) {
+                        if (exoPlayer != null) {
+                            bgmPlayer.seekTo((int) getCurrentPos());
+                        } else {
+                            bgmPlayer.seekTo((int) totalPlayTime);
+                        }
+                    }
+                } else {
+                    if (exoPlayer != null) {
+                        exoPlayer.setVolume(1f);
+                    }
+                    pauseBgmMusic();
+                }
+            } else {
+                videoToStart();
+            }
+        }
     }
 
+    boolean noBgMusicPlay = false;
     @Override
     public void clearCheckBox() {
+        noBgMusicPlay = true;
         check_box_0.setImageResource(R.mipmap.template_btn_unselected);
         check_box_1.setImageResource(R.mipmap.template_btn_unselected);
         check_box_2.setImageResource(R.mipmap.template_btn_unselected);
@@ -1006,6 +1198,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     public void chooseCheckBox(int i) {
         switch (i) {
             case 0:
+                noBgMusicPlay = false;
                 check_box_0.setImageResource(R.mipmap.template_btn_selected);
                 break;
             case 1:
@@ -1022,8 +1215,39 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         }
     }
 
+    @Subscribe
+    public void onEventMainThread(CutSuccess cutSuccess) {
+        mChangeMusicPath = cutSuccess.getFilePath();
+        mPresenter.setExtractedAudioBjMusicPath(mChangeMusicPath);
+        musicChooseIndex = 2;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isIntoPause && exoPlayer != null) {
+            exoPlayer.prepare(mediaSource, true, false);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    pauseExoPlayer();
+                    destroyTimer();
+                }
+            }, 200);
+            isIntoPause = false;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        videoToPause();
+        isIntoPause = true;
+        super.onPause();
+    }
+
     @Override
     public void onDestroy() {
+        EventBus.getDefault().unregister(this);
         destroyTimer();
         videoStop();
         if (bgmPlayer != null) {

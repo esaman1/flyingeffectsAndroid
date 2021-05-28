@@ -1,7 +1,6 @@
 package com.flyingeffects.com.ui.presenter;
 
 import android.app.Activity;
-import android.view.View;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
 import com.flyingeffects.com.enity.SubtitleEntity;
@@ -36,18 +35,18 @@ public class JadeFontMakePresenter extends BasePresenter implements JadeFontMake
     }
 
     @Override
-    public void chooseVideoInAudio() {
-        mMakeModel.chooseVideoInAudio();
+    public void chooseVideoInAudio(int index) {
+        mMakeModel.chooseVideoInAudio(index);
     }
 
     @Override
-    public void chooseNowStickerMaterialMusic() {
-        mMakeModel.chooseNowStickerMaterialMusic();
+    public void chooseNowStickerMaterialMusic(int index) {
+        mMakeModel.chooseNowStickerMaterialMusic(index);
     }
 
     @Override
-    public void extractedAudio() {
-
+    public void extractedAudio(String path,int index) {
+        mMakeModel.extractedAudio(path,index);
     }
 
     @Override
@@ -62,6 +61,14 @@ public class JadeFontMakePresenter extends BasePresenter implements JadeFontMake
 
     public void startIdentify(boolean isVideoInAudio, String videoPath, String audioPath) {
         mMakeModel.startIdentify(isVideoInAudio, videoPath, audioPath);
+    }
+
+    public void setExtractedAudioBjMusicPath(String bjMusicPath){
+        mMakeModel.setExtractedAudioBjMusicPath(bjMusicPath);
+    }
+
+    public void getNowPlayingTimeViewShow(long progressBarProgress, long endTime) {
+
     }
 
 }

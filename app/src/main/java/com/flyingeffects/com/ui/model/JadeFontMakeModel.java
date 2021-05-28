@@ -3,10 +3,10 @@ package com.flyingeffects.com.ui.model;
 import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
-import com.flyingeffects.com.enity.IdentifySubtitleEntity;
+import com.flyingeffects.com.constans.BaseConstans;
+import com.flyingeffects.com.enity.SubtitleEntity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -17,11 +17,13 @@ import com.flyingeffects.com.ui.interfaces.model.JadeFontMakeMvpCallback;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import rx.subjects.PublishSubject;
 
@@ -38,7 +40,9 @@ public class JadeFontMakeModel {
     String soundFolder;
     JadeFontMakeMvpCallback mCallback;
     Activity context;
-
+    /**如果videoPath不为空  -1和0代表默认使用视频中的音频 2为提取音频 如果videoPath为空 -1没有音频 2为提取音频*/
+    int changeMusicIndex = -1;
+    String chooseExtractedAudioBjMusicPath = "";
 
 
     public JadeFontMakeModel(Activity context,String videoPath, JadeFontMakeMvpCallback  callback) {
@@ -102,11 +106,18 @@ public class JadeFontMakeModel {
             public void isSuccess(String str) {
                 if (!TextUtils.isEmpty(str)) {
                     String path = str.substring(str.lastIndexOf("=") + 1, str.length() - 1);
+                    MediaInfo mediaInfo = new MediaInfo(audioPath);
+                    mediaInfo.prepare();
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            HttpUtil.getInstance().toSubscribe(Api.getDefault().identifySubtitle(path),
-                                    new ProgressSubscriber<IdentifySubtitleEntity>(context) {
+                            Map<String,String> map = new HashMap<>();
+                            map.put("audiourl",path);
+                            map.put("token", BaseConstans.GetUserToken());
+                            map.put("duration", String.valueOf(mediaInfo.aDuration));
+                            mediaInfo.release();
+                            HttpUtil.getInstance().toSubscribe(Api.getDefault().identifySubtitle(map),
+                                    new ProgressSubscriber<List<SubtitleEntity>>(context) {
                                         @Override
                                         protected void onSubError(String message) {
                                             ToastUtil.showToast(message);
@@ -114,10 +125,10 @@ public class JadeFontMakeModel {
                                         }
 
                                         @Override
-                                        protected void onSubNext(IdentifySubtitleEntity data) {
+                                        protected void onSubNext(List<SubtitleEntity> data) {
                                             WaitingDialog.closeProgressDialog();
-                                            if (data != null && !data.speechResult.isEmpty()) {
-                                                mCallback.identifySubtitle(data.speechResult, isVideoInAudio,audioPath);
+                                            if (data != null && !data.isEmpty()) {
+                                                mCallback.identifySubtitle(data, isVideoInAudio,audioPath);
                                             }
                                         }
                                     }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -131,20 +142,19 @@ public class JadeFontMakeModel {
     /**
      * 播放视频中的音频
      */
-    public void chooseVideoInAudio() {
+    public void chooseVideoInAudio(int index) {
         if (!TextUtils.isEmpty(videoPath)) {
             mCallback.clearCheckBox();
-            mCallback.chooseCheckBox(1);
+            mCallback.chooseCheckBox(0);
             mCallback.getBgmPath("");
-        } else {
-            ToastUtil.showToast("没有背景音乐");
+            changeMusicIndex = index;
         }
     }
 
     /**
      * 素材中的音频
      */
-    public void chooseNowStickerMaterialMusic() {
+    public void chooseNowStickerMaterialMusic(int index) {
 //        if (nowChooseStickerView != null) {
 //            if (AlbumType.isVideo(GetPathType.getInstance().getPathType(nowChooseStickerView.getOriginalPath()))) {
 //                mPresenter.clearCheckBox();
@@ -155,13 +165,29 @@ public class JadeFontMakeModel {
 //                ToastUtil.showToast("当前素材不是视频");
 //            }
 //        }
+        changeMusicIndex = index;
+    }
+
+    public void setExtractedAudioBjMusicPath(String path) {
+        chooseExtractedAudioBjMusicPath = path;
+        extractedAudio(chooseExtractedAudioBjMusicPath,2);
     }
 
     /**
      * 播放提取的音频
      */
-    public void extractedAudio(String audioPath) {
-        mCallback.clearCheckBox();
-        mCallback.chooseCheckBox(2);
+    public void extractedAudio(String audioPath,int index) {
+        if(!TextUtils.isEmpty(chooseExtractedAudioBjMusicPath)){
+            changeMusicIndex = index;
+            mCallback.clearCheckBox();
+            mCallback.chooseCheckBox(index);
+            mCallback.getBgmPath(audioPath);
+        }else {
+            ToastUtil.showToast("没有提取音乐");
+        }
+    }
+
+    public void getNowPlayingTimeViewShow(long progressBarProgress, long endTime) {
+
     }
 }

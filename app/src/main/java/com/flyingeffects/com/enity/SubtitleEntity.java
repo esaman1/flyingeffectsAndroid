@@ -6,31 +6,31 @@ package com.flyingeffects.com.enity;
  * 字幕实体
  */
 public class SubtitleEntity {
-    private long startTime;
-    private long endTime;
-    private String sentences;
+    private long bg;
+    private long ed;
+    private String onebest;
 
     public long getStartTime() {
-        return startTime;
+        return bg;
     }
 
     public void setStartTime(long startTime) {
-        this.startTime = startTime;
+        this.bg = startTime;
     }
 
     public long getEndTime() {
-        return endTime;
+        return ed;
     }
 
     public void setEndTime(long endTime) {
-        this.endTime = endTime;
+        this.ed = endTime;
     }
 
     public String getText() {
-        return sentences;
+        return onebest;
     }
 
     public void setText(String text) {
-        this.sentences = text;
+        this.onebest = text;
     }
 }

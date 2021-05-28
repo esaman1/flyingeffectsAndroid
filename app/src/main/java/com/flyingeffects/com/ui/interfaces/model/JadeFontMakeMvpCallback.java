@@ -15,11 +15,11 @@ public interface JadeFontMakeMvpCallback {
 
     void getBgmPath(String bgmPath);
 
-    void chooseVideoInAudio();
+    void chooseVideoInAudio(int index);
 
-    void chooseNowStickerMaterialMusic();
+    void chooseNowStickerMaterialMusic(int index);
 
-    void extractedAudio();
+    void extractedAudio(String path,int index);
 
     void chooseCheckBox(int i);
 

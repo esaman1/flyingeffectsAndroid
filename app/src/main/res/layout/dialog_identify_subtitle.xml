@@ -21,29 +21,16 @@
         android:textSize="@dimen/sp_18"
         android:textStyle="bold"/>
 
-    <LinearLayout
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="16dp">
-
-        <CheckBox
-            android:id="@+id/check_box_subtitle"
-            android:layout_width="@dimen/dp_16"
-            android:layout_height="@dimen/dp_16"
-            android:button="@null"
-            android:focusable="true"
-            android:background="@drawable/signout_button_confirm"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="11dp"
-            android:text="同时清空已识别的字幕"
-            android:textSize="14sp"
-            android:textColor="#22292C"/>
-    </LinearLayout>
+        android:layout_marginTop="16dp"
+        android:drawableLeft="@mipmap/icon_signout_ex"
+        android:drawablePadding="11dp"
+        android:text="同时清空已识别的字幕"
+        android:textColor="#22292C"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/tv_start_identify"

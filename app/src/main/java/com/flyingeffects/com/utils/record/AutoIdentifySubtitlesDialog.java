@@ -7,8 +7,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.utils.screenUtil;
@@ -43,15 +41,6 @@ public class AutoIdentifySubtitlesDialog extends Dialog {
         window.setAttributes(lp);
         window.setGravity(Gravity.CENTER);
 
-        CheckBox checkBox = findViewById(R.id.check_box_subtitle);
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (mSubtitleListener != null) {
-                    mSubtitleListener.clearSubtitle(isChecked);
-                }
-            }
-        });
         findViewById(R.id.tv_start_identify).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,8 +59,6 @@ public class AutoIdentifySubtitlesDialog extends Dialog {
     }
 
     public interface OnIdentifySubtitleListener {
-
-        void clearSubtitle(boolean isClear);
 
         void startIdentifySubtitle();
 

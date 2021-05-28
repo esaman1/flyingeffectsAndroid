@@ -54,6 +54,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
     long cutStartTime;
     long cutEndTime;
     boolean isGreenScreen;
+    public int subtitleIndex =-1;
 
 
     public JakeFontMakeSeekBarView(Context context) {
@@ -322,6 +323,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
             RelativeLayout mDragSubtitleLl = new RelativeLayout(getContext());
             mDragSubtitleLl.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, frameContainerHeight));
             mLlDragItem.addView(mDragSubtitleLl);
+            subtitleIndex = subtitleListId;
             //先添加一个所有字幕的容器  在把字幕的view添加到这个容器去
 
             for (int i = 0; i < subtitles.size(); i++) {
@@ -408,7 +410,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
         }
     }
 
-    /**删除当前字幕时间轴的view*/
+    /**删除当前字幕时间轴的某view*/
     public void deleteSubtitleMaterialItemView(String id,int listId) {
         for (int i = 0; i < mDragSubtitleItemViews.size(); i++) {
             if (mDragSubtitleItemViews.get(i) != null) {
@@ -419,6 +421,14 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
                     break;
                 }
             }
+        }
+    }
+
+    /**删除当前所有字幕时间轴的view*/
+    public void deleteSubtitleView(int listId) {
+        if (mLlDragItem.getChildAt(listId) != null) {
+            mLlDragItem.removeView(mLlDragItem.getChildAt(listId));
+            mDragSubtitleItemViews.clear();
         }
     }
 
