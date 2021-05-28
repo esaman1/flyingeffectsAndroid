@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="jade_option">
+        <item>键盘</item>
+        <item>玉体字 </item>
+        <item>颜色</item>
+        <item>字体</item>
+        <item>内发光</item>
+        <item>光线</item>
+        <item>3D</item>
+    </string-array>
+</resources>

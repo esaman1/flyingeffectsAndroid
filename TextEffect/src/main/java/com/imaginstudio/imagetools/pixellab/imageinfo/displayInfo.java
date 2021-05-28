@@ -1,6 +1,7 @@
 package com.imaginstudio.imagetools.pixellab.imageinfo;
 
 import android.graphics.PointF;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
 
@@ -11,11 +12,11 @@ import com.imaginstudio.imagetools.pixellab.textContainer;
 public class displayInfo {
     private GridPanel gridPanel;
     private ScrollView layerHolderScroll;
-    FrameLayout previewPanel;
+    ViewGroup previewPanel;
     private textContainer textContain;
     ZoomWidget zoom_widget;
 
-    public displayInfo(FrameLayout previewPanelInstance, ZoomWidget zoom_widget2) {
+    public displayInfo(ViewGroup previewPanelInstance, ZoomWidget zoom_widget2) {
         this.previewPanel = previewPanelInstance;
         this.zoom_widget = zoom_widget2;
     }

@@ -111,4 +111,9 @@
     <color name="color_progress_track">#E7E7E7</color>
     <color name="color_progress">#53b0ff</color>
 
+    <color name="jade_bunker">#2D2D2D</color>
+    <color name="jade_adjust_background">#232323</color>
+    <color name="jade_text_unselect">#787878</color>
+    <color name="line">#302E30</color>
+    <color name="cornflower_blue">#5EA7FF</color>
 </resources>

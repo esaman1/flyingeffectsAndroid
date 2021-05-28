@@ -8,6 +8,7 @@ import android.graphics.BlurMaskFilter;
 import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.EmbossMaskFilter;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
@@ -36,6 +37,7 @@ import android.widget.Toast;
 
 
 import com.imaginstudio.imagetools.pixellab.DrawingPanelRenderer;
+import com.imaginstudio.imagetools.pixellab.RectUtil;
 import com.imaginstudio.imagetools.pixellab.appStateConstants;
 import com.imaginstudio.imagetools.pixellab.commonFuncs;
 import com.imaginstudio.imagetools.pixellab.font.customTypeface;
@@ -449,9 +451,12 @@ public class TextComponent extends View {
         this.paintSelected.setColor(-1);
         this.paintSelected.setStyle(Paint.Style.STROKE);
         this.paintSelected.setStrokeWidth(commonFuncs.dpToPx(1));
-        this.paintSelectedBorder.setColor(Color.argb(70, 0, 0, 0));
+
+        this.paintSelectedBorder.setPathEffect(new DashPathEffect(new float[]{10, 10}, 0));
+        this.paintSelectedBorder.setColor(Color.WHITE);
         this.paintSelectedBorder.setStyle(Paint.Style.STROKE);
-        this.paintSelectedBorder.setStrokeWidth(commonFuncs.dpToPx(2));
+        this.paintSelectedBorder.setStrokeWidth(commonFuncs.dpToPx(1));
+
         this.paintSelectedBg.setColor(Color.argb(40, 255, 255, 255));
         this.paintHandles.setColor(-1);
         this.paintHandlesBorder.setColor(Color.argb(60, 0, 0, 0));
@@ -867,6 +872,11 @@ public class TextComponent extends View {
         this.lastClick = System.currentTimeMillis();
     }
 
+    private int ACTION_TYPE_DELETE = 0;
+    private int ACTION_TYPE_MOVE = 1;
+    private int ACTION_TYPE_SCALE_AND_ROTATE = 2;
+    private int ACTION_TYPE = 0;
+
     public boolean onTouchEvent(MotionEvent event) {
         if (this.locked || (isHidden() && !this.isSelected)) {
             return false;
@@ -879,12 +889,20 @@ public class TextComponent extends View {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
 
-                if (leftTopDstRect.contains(x,y)) {
-                    Log.d(TAG, "leftTopDstRect() called with: event = [" + event + "]");
+                if (leftTopDstRect.contains(x, y)) {
+                    Log.d(TAG, "ACTION_DOWN ACTION_TYPE_DELETE() called with");
+                    ACTION_TYPE = ACTION_TYPE_DELETE;
                     if (callback != null) {
                         callback.stickerOnclick(LEFT_TOP_MODE);
                     }
-                }else {
+                } else if (rightBottomDstRect.contains(x, y)) {
+                    Log.d(TAG, "ACTION_DOWN ACTION_TYPE_SCALE_AND_ROTATE() called with");
+                    ACTION_TYPE = ACTION_TYPE_SCALE_AND_ROTATE;
+
+                } else {
+                    Log.d(TAG, "ACTION_DOWN ACTION_TYPE_MOVE() called with");
+                    ACTION_TYPE = ACTION_TYPE_MOVE;
+
                     this.downX = rx;
                     this.downY = ry;
                     this.dX = 0.0f;
@@ -894,11 +912,12 @@ public class TextComponent extends View {
                     if (this.SelectListener != null && !this.isSelected) {
                         this.SelectListener.onEvent_SelectText(this.assigned_id);
                     }
-                    if (!(Math.abs(this.maxWidther.getX() - event.getX()) <= ((float) getBiggerRadius()) && this.handleEnabled) || this.isCurved) {
-                        this.dragID = this.DRAG_ID_WHOLE;
-                    } else {
-                        this.dragID = this.DRAG_ID_MAX_WIDTHER;
-                    }
+//                    if (!(Math.abs(this.maxWidther.getX() - event.getX()) <= ((float) getBiggerRadius()) && this.handleEnabled) || this.isCurved) {
+//                        this.dragID = this.DRAG_ID_WHOLE;
+//                    } else {
+//                        this.dragID = this.DRAG_ID_MAX_WIDTHER;
+//                    }
+                    this.dragID = this.DRAG_ID_WHOLE;
                     invalidate();
                     this.oldMaxW = (float) this.textDraw.userMaxWidth;
                     this.oldPosX = getX();
@@ -911,49 +930,54 @@ public class TextComponent extends View {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (Math.abs(this.downX - rx) <= this.clickTolerance && Math.abs(this.downY - ry) <= this.clickTolerance) {
-                    clicked();
+                if (ACTION_TYPE == ACTION_TYPE_MOVE) {
+                    if (Math.abs(this.downX - rx) <= this.clickTolerance && Math.abs(this.downY - ry) <= this.clickTolerance) {
+                        clicked();
+                    }
+                    helperClass.motionActionUp();
+                    float newPosX = getX();
+                    float newPosY = getY();
+                    float newMaxW = (float) this.textDraw.userMaxWidth;
+                    if (!((newPosX == this.oldPosX && newPosY == this.oldPosY && newMaxW == this.oldMaxW) || this.SelectListener == null)) {
+                        this.SelectListener.onEvent_MoveMaxText(this.oldPosX, this.oldPosY, this.oldMaxW, this.dragID == this.DRAG_ID_WHOLE, this.reference);
+                    }
+                    this.dragID = -1;
+                    invalidate();
                 }
-                helperClass.motionActionUp();
-                float newPosX = getX();
-                float newPosY = getY();
-                float newMaxW = (float) this.textDraw.userMaxWidth;
-                if (!((newPosX == this.oldPosX && newPosY == this.oldPosY && newMaxW == this.oldMaxW) || this.SelectListener == null)) {
-                    this.SelectListener.onEvent_MoveMaxText(this.oldPosX, this.oldPosY, this.oldMaxW, this.dragID == this.DRAG_ID_WHOLE, this.reference);
-                }
-                this.dragID = -1;
-                invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.d(TAG, "ACTION_MOVE() called with: event = [" + event + "]");
-                if (rightBottomDstRect.contains(x,y)) {
-                    Log.d(TAG, "rightBottomDstRect() called with: event = [" + event + "]");
+                if (ACTION_TYPE == ACTION_TYPE_SCALE_AND_ROTATE) {
+                    Log.d(TAG, "ACTION_MOVE ACTION_TYPE_SCALE_AND_ROTATE() called with");
                     // 旋转 缩放文字操作
                     // 旋转 缩放文字操作
                     float dx = x - lastX;
                     float dy = y - lastY;
                     updateRotateAndScale(dx, dy);
-//                    invalidate();
+                    invalidate();
                     lastX = x;
                     lastY = y;
-                }else {
-//                    if (this.dragID != this.DRAG_ID_WHOLE) {
-//                        if (this.dragID == this.DRAG_ID_MAX_WIDTHER) {
-//                            float difference = (float) this.textWidth;
-//                            setMax(((int) this.angle) == 0 ? helperClass.snapPosX(event.getX() + getX(), false) - getX() : event.getX());
-//                            this.textDraw.measure(0, 0);
-//                            setX(getX() + ((difference - ((float) this.textDraw.getMeasuredWidth())) * Math.signum(this.angle) * (this.angle / 180.0f)));
-//                            break;
-//                        }
-//                    } else {
-//                        this.dX = (rx - this.previousX) / getZoomFactor();
-//                        this.dY = (ry - this.previousY) / getZoomFactor();
-//                        setX(helperClass.snapPosX(getX() + this.dX, ((float) this.textWidth) * 0.5f, true));
-//                        setY(helperClass.snapPosY(getY() + this.dY, ((float) this.textHeight) * 0.5f, true));
-//                        this.previousX = rx;
-//                        this.previousY = ry;
-//                        break;
-//                    }
+                } else if (ACTION_TYPE == ACTION_TYPE_MOVE) {
+                    Log.d(TAG, "ACTION_MOVE ACTION_TYPE_MOVE() called with");
+
+                    if (this.dragID != this.DRAG_ID_WHOLE) {
+                        if (this.dragID == this.DRAG_ID_MAX_WIDTHER) {
+                            Log.d(TAG, "ACTION_MOVE ACTION_TYPE_MOVE()1 called with");
+                            float difference = (float) this.textWidth;
+                            setMax(((int) this.angle) == 0 ? helperClass.snapPosX(event.getX() + getX(), false) - getX() : event.getX());
+                            this.textDraw.measure(0, 0);
+                            setX(getX() + ((difference - ((float) this.textDraw.getMeasuredWidth())) * Math.signum(this.angle) * (this.angle / 180.0f)));
+                            break;
+                        }
+                    } else {
+                        Log.d(TAG, "ACTION_MOVE ACTION_TYPE_MOVE()2 called with");
+                        this.dX = (rx - this.previousX) / getZoomFactor();
+                        this.dY = (ry - this.previousY) / getZoomFactor();
+                        setX(helperClass.snapPosX(getX() + this.dX, ((float) this.textWidth) * 0.5f, true));
+                        setY(helperClass.snapPosY(getY() + this.dY, ((float) this.textHeight) * 0.5f, true));
+                        this.previousX = rx;
+                        this.previousY = ry;
+                        break;
+                    }
                 }
                 break;
         }
@@ -1130,11 +1154,12 @@ public class TextComponent extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Paint paint2;
         this.viewCenter = new PointF(((float) ((getWidth() - getPaddingLeft()) - getPaddingRight())) / 2.0f, ((float) ((getHeight() - getPaddingTop()) - getPaddingBottom())) / 2.0f);
+
         this.textWidth = this.textWidth > 0 ? this.textWidth : 1;
         this.textHeight = this.textHeight > 0 ? this.textHeight : 1;
         int threeDDepthPx = Math.max(1, dpToPixels(this.threeDDepth));
+
         this.boundingWidth = this.textWidth + this.ADDITIONAL_SPACE_HANDLE;
         this.boundingHeight = this.textHeight;
         updateHandlePos();
@@ -1146,15 +1171,20 @@ public class TextComponent extends View {
         this.paint.setColor(Color.parseColor("#40FFFFFF"));
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setColor(Color.parseColor("#007de3"));
+
         this.textDraw.layout(0, 0, this.textWidth + this.textDraw.getPaddingRight(), this.textHeight);
         Camera rotation3d = new Camera();
         rotation3d.rotateY((float) clipAngle(this.textRotationY));
         rotation3d.rotateX((float) clipAngle(this.textRotationX));
+
         Camera rotation_translation3D = new Camera();
         rotation_translation3D.rotateY((float) clipAngle(this.textRotationY));
         rotation_translation3D.rotateX((float) clipAngle(this.textRotationX));
         rotation_translation3D.translate(0.0f, 0.0f, (float) threeDDepthPx);
         canvas.save();
+        canvas.scale(mScale, mScale, viewCenter.x, viewCenter.y);
+        canvas.rotate(mRotateAngle, viewCenter.x, viewCenter.y);
+
         applyCamera(canvas, rotation3d);
         if (this.isBackgroundEnabled && !this.hidden) {
             Paint bgPaint = new Paint(1);
@@ -1177,7 +1207,7 @@ public class TextComponent extends View {
                 canvas.save();
                 applyCamera(canvas, rotation_translation3D);
             }
-            canvas.drawRoundRect(background_rect, (float) this.background_border_radius, (float) this.background_border_radius, bgPaint);
+//            canvas.drawRoundRect(background_rect, (float) this.background_border_radius, (float) this.background_border_radius, bgPaint);
             if (this.threeDEnabled) {
                 canvas.restore();
                 canvas.save();
@@ -1441,11 +1471,14 @@ public class TextComponent extends View {
             resetAlphaToPaint(this.paint);
         }
         canvas.restore();
+        canvas.scale(mScale, mScale, viewCenter.x, viewCenter.y);
+        canvas.rotate(mRotateAngle, viewCenter.x, viewCenter.y);
         if (this.isSelected && !this.renderMode) {
-            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBg);
-            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBorder);
-            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelected);
+//            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBg);
+            canvas.drawRoundRect(mHelpBoxRect, 10, 10,this.paintSelectedBorder);
+//            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelected);
         }
+        RectUtil.scaleRect(mHelpBoxRect, mScale);
         if (this.handleEnabled && this.isSelected && !this.isCurved && !this.renderMode) {
 //            canvas.drawCircle(this.maxWidther.getX(), this.maxWidther.getY(), (float) getBiggerRadius(), this.paintHandlesBorder);
 //            float x = this.maxWidther.getX();
@@ -1463,19 +1496,26 @@ public class TextComponent extends View {
             mHelpBoxRect.set(rectF);
 //
             if (leftTopBitmap != null) {
+                RectUtil.rotateRect(leftTopDstRect, mHelpBoxRect.centerX(),
+                        mHelpBoxRect.centerY(), mRotateAngle);
                 int offsetValue = ((int) leftTopDstRect.width()) >> 1;
                 leftTopDstRect.offsetTo(mHelpBoxRect.left - offsetValue,
                         mHelpBoxRect.top - offsetValue);
                 leftTopBitmap.setBounds((int) leftTopDstRect.left, (int) leftTopDstRect.top, (int) leftTopDstRect.right, (int) leftTopDstRect.bottom);
                 leftTopBitmap.draw(canvas);
+
             }
 
             if (rightBottomBitmap != null) {
+                RectUtil.rotateRect(rightBottomDstRect, mHelpBoxRect.centerX(),
+                        mHelpBoxRect.centerY(), mRotateAngle);
                 int offsetValue = ((int) rightBottomDstRect.width()) >> 1;
                 rightBottomDstRect.offsetTo(mHelpBoxRect.right - offsetValue,
                         mHelpBoxRect.bottom - offsetValue);
                 rightBottomBitmap.setBounds((int) rightBottomDstRect.left, (int) rightBottomDstRect.top, (int) rightBottomDstRect.right, (int) rightBottomDstRect.bottom);
                 rightBottomBitmap.draw(canvas);
+
+
             }
         }
     }
@@ -2723,8 +2763,9 @@ public class TextComponent extends View {
         moveX = mHelpBoxRect.right;
         moveY = mHelpBoxRect.bottom;
 
-
-        rotateText(mRotateAngle);
+        Log.d(TAG, "updateRotateAndScale() called with: mRotateAngle = [" + mRotateAngle + "]");
+        Log.d(TAG, "updateRotateAndScale() called with: angle = [" + angle + "]");
+//        rotateText(mRotateAngle);
     }
 
     /**

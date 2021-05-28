@@ -508,6 +508,8 @@
     <dimen name="sp_42">42sp</dimen>
     <dimen name="sp_48">48sp</dimen>
 
+    <dimen name="jade_content_padding">15dp</dimen>
+
 
 
 

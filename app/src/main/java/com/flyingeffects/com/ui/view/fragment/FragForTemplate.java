@@ -19,6 +19,7 @@ import com.flyingeffects.com.http.ProgressSubscriber;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
 import com.flyingeffects.com.ui.interfaces.view.home_fagMvpView;
 import com.flyingeffects.com.ui.presenter.home_fagMvpPresenter;
+import com.flyingeffects.com.ui.view.activity.JadeFontMakeActivity;
 import com.flyingeffects.com.ui.view.activity.MainActivity2;
 import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
 import com.flyingeffects.com.utils.LogUtil;
@@ -219,7 +220,8 @@ public class FragForTemplate extends BaseFragment implements home_fagMvpView {
 //                Intent intent = new Intent(getActivity(), TemplateSearchActivity.class);
 //                intent.putExtra("isFrom", 1);
 //                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                Intent intent = new Intent(getActivity(), MainActivity2.class);
+//                Intent intent = new Intent(getActivity(), MainActivity2.class);
+                Intent intent = new Intent(getActivity(), JadeFontMakeActivity.class);
                 startActivity(intent);
                 break;
             default:
