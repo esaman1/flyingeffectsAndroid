@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -49,8 +50,13 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.imaginstudio.imagetools.pixellab.GradientMaker;
 import com.imaginstudio.imagetools.pixellab.TextObject.StickerItemOnitemclick;
+import com.imaginstudio.imagetools.pixellab.TextObject.TextComponent;
 import com.imaginstudio.imagetools.pixellab.ZoomWidget;
+import com.imaginstudio.imagetools.pixellab.font.customTypeface;
+import com.imaginstudio.imagetools.pixellab.functions.interval;
+import com.imaginstudio.imagetools.pixellab.functions.spansIntervals;
 import com.imaginstudio.imagetools.pixellab.imageinfo.displayInfo;
 import com.imaginstudio.imagetools.pixellab.textContainer;
 import com.lansosdk.videoeditor.MediaInfo;
@@ -204,11 +210,73 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             @Override
             public void onInnerColorChange(boolean enabled, float radius, float dx, float dy, int color) {
                 try {
-                    JadeFontMakeActivity.this.textContain.getCurrentText().setInnerShadow(enabled, radius, dx, dy, color);
+                    TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                    if (currentText != null) {
+                        currentText.setInnerShadow(enabled, radius, dx, dy, color);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
+            }
+
+            @Override
+            public void onEmossChange(boolean enabled, int LightAngle, int Intensity, int Ambient, int Hardness, int Bevel) {
+                try {
+                    TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                    if (currentText != null) {
+                        currentText.setEmboss(enabled, LightAngle, Intensity, Ambient, Hardness, Bevel);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void on3Dchange(int Depth, int DepthDarken, int Quality, boolean StokeInclude, int obliqueAngle, int color) {
+                try {
+                    TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                    if (currentText != null) {
+                        currentText.set3dEnabled(true);
+                        currentText.set3dViewType(3);
+                        currentText.set3dDepth(((int) Depth), DepthDarken, Quality, true);
+                        currentText.set3dDepthColor(1, color, null, false);
+                        currentText.set3dObliqueAngle(obliqueAngle);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onTextColorChange(int color, int start, int end, boolean isSimple) {
+                TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                if (currentText != null) {
+                    if (isSimple) {
+                        currentText.setColorFill(color);
+                    } else {
+                        currentText.setColorFill(color, start, end);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onTextColorChange(GradientMaker.GradientFill gradientFill) {
+                TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                if (currentText != null) {
+                    currentText.setGradientFill(gradientFill);
+                }
+            }
+
+            @Override
+            public void onTypeFaceChange(String path) {
+                TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                if (currentText != null) {
+                    spansIntervals spans = new spansIntervals();
+                    spans.addInterval(new interval(0, currentText.returnText().length(), new customTypeface(path, createFontFromPath(path))));
+                    currentText.setTextFont(spans);
+                }
             }
         };
         jadeAdjustFragment = new JadeAdjustFragment(onAdjustParamsChangeCallBack);
@@ -235,7 +303,11 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         stickerItemOnitemclick = new StickerItemOnitemclick() {
             @Override
             public void stickerOnclick(int type) {
+                fragmentTransaction.hide(jadeAdjustFragment);
                 textContain.removeView(textContain.getCurrentText());
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.commit();
+                seekBarViewIsShow(true);
             }
 
             @Override
@@ -275,7 +347,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
                 int selectedTabPosition = jadeAdjustFragment.getTabLayout().getSelectedTabPosition();
                 if (selectedTabPosition == 0) {
-                    jadeAdjustFragment.getTabLayout().selectTab(jadeAdjustFragment.getTabLayout().getTabAt(1));
+                    jadeAdjustFragment.getTabLayout().selectTab(jadeAdjustFragment.getTabLayout().getTabAt(jadeAdjustFragment.getLastPosition()));
                 }
 
             }
@@ -340,6 +412,19 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         textContain.addNewText(Color.parseColor("#ffffff"), helperClass,
                 ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.sticker_delete),
                 ContextCompat.getDrawable(JadeFontMakeActivity.this, R.mipmap.sticker_redact), stickerItemOnitemclick);
+    }
+
+    public Typeface createFontFromPath(String path) {
+        Typeface t = Typeface.DEFAULT;
+        try {
+            return Typeface.createFromAsset(getAssets(), path);
+        } catch (Exception e) {
+            try {
+                return Typeface.createFromFile(path);
+            } catch (Exception e2) {
+                return t;
+            }
+        }
     }
 
     @Override
@@ -456,12 +541,9 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     private void onClickAddWordBtn() {
         seekBarViewIsShow(false);
 //        chooseTab(0);
-        setTextColor(0);
-//        seekBarViewIsShow(false);
-//        chooseTab(0);
 //        setTextColor(0);
-//        mBinding.jakeFontSeekBarView.addTemplateMaterialItemView(mCutEndTime, "", getCurrentPos(), getCurrentPos() + 5000, true,
-//                "是单个玉体字的文本", 0, null, -1, mBinding.progressBarView.progressTotalWidth);
+//        seekBarViewIsShow(false);
+        chooseTab(0);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         if (jadeAdjustFragment.isVisible()) {
             fragmentTransaction.hide(jadeAdjustFragment);
@@ -470,9 +552,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         }
         fragmentTransaction.commit();
 
-        if (textContain.getCurrentText() == null) {
-            addJadeFont();
-        }
+        addJadeFont();
 
     }
 
@@ -1469,7 +1549,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
     @Override
     public void onTextDelete(Bundle bundle, int i, String str) {
-
+        Log.d(TAG, "onTextDelete() called with: bundle = [" + bundle + "], i = [" + i + "], str = [" + str + "]");
     }
 
     @Override

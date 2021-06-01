@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/colorPane"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/addColor"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="3dp"
+            />
+
+        <ImageButton
+            android:id="@+id/removeColor"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="3dp"
+            />
+
+        <ImageButton
+            android:id="@+id/select_left"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:layout_margin="3dp"
+            />
+
+        <ImageButton
+            android:id="@+id/flipPos"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:layout_margin="3dp"
+            />
+
+        <ImageButton
+            android:id="@+id/select_right"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="3dp"
+            />
+
+        <ImageButton
+            android:id="@+id/select_color"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="3dp"
+            />
+    </LinearLayout>
+</LinearLayout>

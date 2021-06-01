@@ -17,15 +17,23 @@ import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.FragmentJadeAdjustBinding;
 import com.flyingeffects.com.enity.FontColor;
+import com.flyingeffects.com.enity.FontEnity;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
+import com.flyingeffects.com.manager.DownloadVideoManage;
+import com.flyingeffects.com.manager.FileManager;
+import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.flyingeffects.com.view.mine.CreateViewForAddText;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.imaginstudio.imagetools.pixellab.GradientMaker;
+import com.shixing.sxve.ui.view.WaitingDialog;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,6 +43,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -55,23 +64,32 @@ public class JadeAdjustFragment extends Fragment {
 
     private JadePagerAdapter jadePagerAdapter;
 
+    private int lastPosition;
+
+    private downCallback callback;
+
+    private String mTTFFolder;
+
+
     public JadeAdjustFragment(JadeAdjustFragment.onAdjustParamsChangeCallBack onAdjustParamsChangeCallBack) {
         this.onAdjustParamsChangeCallBack = onAdjustParamsChangeCallBack;
     }
-
-
-
-
-
-
-
-
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setStyle(BottomSheetDialogFragment.STYLE_NORMAL, R.style.TransBottomSheetDialogStyle);
+        FileManager fileManager = new FileManager();
+        mTTFFolder = fileManager.getFileCachePath(getActivity(), "fontStyle");
+        callback = new downCallback() {
+            @Override
+            public void isSuccess(String path) {
+                if (onAdjustParamsChangeCallBack != null) {
+                    onAdjustParamsChangeCallBack.onTypeFaceChange(path);
+                }
+            }
+        };
     }
 
     @Override
@@ -86,8 +104,25 @@ public class JadeAdjustFragment extends Fragment {
         stringArray = getResources().getStringArray(R.array.jade_option);
         initTabLayoutWithViewPager();
         initInputEditText();
-
         getColors();
+        getFonts();
+    }
+
+    private void getFonts() {
+        HashMap<String, String> params = new HashMap<>();
+        Observable ob = Api.getDefault().fontList(BaseConstans.getRequestHead(params));
+        HttpUtil.getInstance().toSubscribe(ob, new ProgressSubscriber<List<FontEnity>>(getActivity()) {
+            @Override
+            protected void onSubError(String message) {
+
+            }
+
+            @Override
+            protected void onSubNext(List<FontEnity> data) {
+                jadePagerAdapter.setFontEnityList(data);
+                jadePagerAdapter.notifyDataSetChanged();
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
 
@@ -131,10 +166,13 @@ public class JadeAdjustFragment extends Fragment {
                     tvTabText.setTextColor(Color.parseColor("#ffffff"));
                 }
                 if (tab.getPosition() == 0) {
-                    showSoftInput(binding.input);
+                    if (isVisible()) {
+                        showSoftInput(binding.input);
+                    }
                 } else {
                     hideSoftInput();
                     binding.input.clearFocus();
+                    lastPosition = tab.getPosition();
                 }
             }
 
@@ -154,8 +192,14 @@ public class JadeAdjustFragment extends Fragment {
             }
         });
 
-        jadePagerAdapter = new JadePagerAdapter(stringArray);
+        jadePagerAdapter = new JadePagerAdapter(stringArray, getActivity());
         jadePagerAdapter.setOnAdjustParamsChangeCallBack(onAdjustParamsChangeCallBack);
+        jadePagerAdapter.setOnTypeFaceClick(new JadePagerAdapter.onTypeFaceClick() {
+            @Override
+            public void onClick(FontEnity fontEnity) {
+                downFile(fontEnity.getFile());
+            }
+        });
         binding.viewpager.setOffscreenPageLimit(10);
         binding.viewpager.setAdapter(jadePagerAdapter);
         new TabLayoutMediator(binding.tlTabsBj, binding.viewpager, true, true, (tab, position) -> {
@@ -217,6 +261,16 @@ public class JadeAdjustFragment extends Fragment {
 
     public interface onAdjustParamsChangeCallBack {
         void onInnerColorChange(boolean enabled, float radius, float dx, float dy, int color);
+
+        void onEmossChange(boolean enabled, int LightAngle, int Intensity, int Ambient, int Hardness, int Bevel);
+
+        void on3Dchange(int Depth, int DepthDarken, int Quality, boolean StokeInclude, int obliqueAngle, int color);
+
+        void onTextColorChange(int color, int start, int end, boolean isSimple);
+
+        void onTextColorChange(GradientMaker.GradientFill gradientFill);
+
+        void onTypeFaceChange(String path);
     }
 
     public onAdjustParamsChangeCallBack getOnAdjustParamsChange() {
@@ -236,6 +290,7 @@ public class JadeAdjustFragment extends Fragment {
     }
 
     private void getColors() {
+        //单色
         HashMap<String, String> params = new HashMap<>();
         params.put("type", "1");
         Observable ob = Api.getDefault().fontColor(BaseConstans.getRequestHead(params));
@@ -247,10 +302,58 @@ public class JadeAdjustFragment extends Fragment {
 
             @Override
             protected void onSubNext(List<FontColor> data) {
-                jadePagerAdapter.setInnerSimpleColors(data);
+                jadePagerAdapter.setSimpleColors(data);
                 jadePagerAdapter.notifyDataSetChanged();
 //                jadePagerAdapter.notifyItemChanged(4);
             }
         }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+
+
+        //渐变
+        HashMap<String, String> params2 = new HashMap<>();
+        params2.put("type", "2");
+        Observable ob2 = Api.getDefault().fontColor(BaseConstans.getRequestHead(params2));
+        HttpUtil.getInstance().toSubscribe(ob2, new ProgressSubscriber<List<FontColor>>(getActivity()) {
+            @Override
+            protected void onSubError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void onSubNext(List<FontColor> data) {
+                jadePagerAdapter.setGradientColors(data);
+                jadePagerAdapter.notifyDataSetChanged();
+//                jadePagerAdapter.notifyItemChanged(4);
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
+    }
+
+    public int getLastPosition() {
+        return lastPosition;
+    }
+
+    private void downFile(String path) {
+        int index = path.lastIndexOf("/");
+        String newStr = path.substring(index);
+        String name = mTTFFolder + newStr;
+        File file = new File(name);
+        if (file.exists()) {
+            if (callback != null) {
+                callback.isSuccess(name);
+            }
+        } else {
+            WaitingDialog.openPragressDialog(getActivity());
+            Observable.just(path).subscribeOn(Schedulers.io()).subscribe(s -> {
+                DownloadVideoManage manage = new DownloadVideoManage(isSuccess -> {
+                    callback.isSuccess(name);
+                    WaitingDialog.closeProgressDialog();
+                });
+                manage.downloadVideo(path, name);
+            });
+        }
+    }
+
+    public interface downCallback {
+        void isSuccess(String path);
     }
 }

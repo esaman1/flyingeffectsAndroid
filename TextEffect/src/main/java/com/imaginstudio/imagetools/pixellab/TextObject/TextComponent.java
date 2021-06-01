@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 
 import com.imaginstudio.imagetools.pixellab.DrawingPanelRenderer;
+import com.imaginstudio.imagetools.pixellab.GradientMaker;
 import com.imaginstudio.imagetools.pixellab.RectUtil;
 import com.imaginstudio.imagetools.pixellab.appStateConstants;
 import com.imaginstudio.imagetools.pixellab.commonFuncs;
@@ -62,14 +63,17 @@ public class TextComponent extends View {
     private static final String TAG = "TextComponent";
 
     private displayInfo helperClass;
+
     public static final int FILL_TYPE_COLOR = 1;
     public static final int FILL_TYPE_GRADIENT = 2;
     public static final int threeD_TYPE_OBLIQUE = 3;
     public static final int threeD_TYPE_PERSPECTIVE = 1;
+
     int ADDITIONAL_SPACE_HANDLE = dpToPixels(this.ADDITIONAL_SPACE_HANDLE_DP);
     int ADDITIONAL_SPACE_HANDLE_DP = 0;
     int DRAG_ID_MAX_WIDTHER = 1;
     int DRAG_ID_WHOLE = 2;
+
     private int EmbossAmbient = 50;
     private int EmbossBevel = 30;
     private boolean EmbossEnabled = false;
@@ -77,6 +81,7 @@ public class TextComponent extends View {
     private boolean EmbossIncludeStroke = false;
     private int EmbossIntensity = 60;
     private int EmbossLightAngle = 90;
+
     OnSelectEventListener SelectListener;
     public float angle = 0.0f;
     public int assigned_id;
@@ -87,7 +92,8 @@ public class TextComponent extends View {
     private int background_border_radius = 0;
     private int background_color = Color.argb(180, 0, 0, 0);
     private int background_fill_type = 1;
-    //    GradientMaker.GradientFill background_usedGradient = new GradientMaker.GradientFill();
+    GradientMaker.GradientFill background_usedGradient = new GradientMaker.GradientFill();
+
     public Bundle bezierMaskBundle = null;
     private boolean bezierMaskConfirmed = false;
     public boolean bezierMaskEnabled = true;
@@ -182,7 +188,7 @@ public class TextComponent extends View {
     int threeDDepthColorFill = -16776961;
     int threeDDepthDarken = 30;
     int threeDDepthFillType = 1;
-    //    GradientMaker.GradientFill threeDDepthGradientFill = new GradientMaker.GradientFill();
+    GradientMaker.GradientFill threeDDepthGradientFill = new GradientMaker.GradientFill();
     boolean threeDEnabled = false;
     boolean threeDLightingEnabled = true;
     int threeDLightingIntensity = 80;
@@ -195,9 +201,404 @@ public class TextComponent extends View {
     Canvas tmpCanvas = new Canvas();
     private boolean tmpHidden = false;
     int top_padding = 0;
-    //    GradientMaker.GradientFill usedGradient = new GradientMaker.GradientFill();
+    GradientMaker.GradientFill usedGradient = new GradientMaker.GradientFill();
     PointF viewCenter;
     private boolean firstInflate = true;
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        this.textDraw.measure(0, 0);
+        this.textWidth = this.textDraw.getMeasuredWidth();
+        this.textHeight = this.textDraw.getMeasuredHeight();
+        this.boundingWidth = this.textWidth;
+        this.boundingHeight = this.textHeight;
+        setMeasuredDimension(this.boundingWidth + this.smallBallRadiusPx + this.ADDITIONAL_SPACE_HANDLE, this.boundingHeight);
+        setPivotX(((float) this.textWidth) / 2.0f);
+        setPivotY(((float) this.textHeight) / 2.0f);
+
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (firstInflate) {
+            int x = ((helperClass.getContainerWidth() - getWidth()) / 2);
+            int y = ((helperClass.getContainerHeight() - getHeight()) / 2);
+            setX(x);
+            setY(y);
+            firstInflate = false;
+        }
+        mMeasureWidth = getWidth();
+        mMeasureHeight = getHeight();
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        this.viewCenter = new PointF(((float) ((getWidth() - getPaddingLeft()) - getPaddingRight())) / 2.0f, ((float) ((getHeight() - getPaddingTop()) - getPaddingBottom())) / 2.0f);
+
+        this.textWidth = this.textWidth > 0 ? this.textWidth : 1;
+        this.textHeight = this.textHeight > 0 ? this.textHeight : 1;
+        int threeDDepthPx = Math.max(1, dpToPixels(this.threeDDepth));
+
+        this.boundingWidth = this.textWidth + this.ADDITIONAL_SPACE_HANDLE;
+        this.boundingHeight = this.textHeight;
+        updateHandlePos();
+        this.paint.setAntiAlias(true);
+        this.paint.setDither(true);
+        this.paint.setStrokeJoin(Paint.Join.ROUND);
+        this.paint.setStrokeWidth(1.0f);
+        this.paint.setStyle(Paint.Style.FILL);
+        this.paint.setColor(Color.parseColor("#40FFFFFF"));
+        this.paint.setStyle(Paint.Style.STROKE);
+        this.paint.setColor(Color.parseColor("#007de3"));
+
+        this.textDraw.layout(0, 0, this.textWidth + this.textDraw.getPaddingRight(), this.textHeight);
+        Camera rotation3d = new Camera();
+        rotation3d.rotateY((float) clipAngle(this.textRotationY));
+        rotation3d.rotateX((float) clipAngle(this.textRotationX));
+
+        Camera rotation_translation3D = new Camera();
+        rotation_translation3D.rotateY((float) clipAngle(this.textRotationY));
+        rotation_translation3D.rotateX((float) clipAngle(this.textRotationX));
+        rotation_translation3D.translate(0.0f, 0.0f, (float) threeDDepthPx);
+        canvas.save();
+//        canvas.scale(mScale, mScale, viewCenter.x, viewCenter.y);
+//        canvas.rotate(mRotateAngle, viewCenter.x, viewCenter.y);
+
+        applyCamera(canvas, rotation3d);
+        if (this.isBackgroundEnabled && !this.hidden) {
+            Paint bgPaint = new Paint(1);
+            bgPaint.setDither(true);
+            bgPaint.setStyle(Paint.Style.FILL);
+            RectF background_rect = new RectF(-this.background_addHorizontalL, -this.background_addVerticalT, ((float) this.textWidth) + this.background_addHorizontalR, ((float) this.textHeight) + this.background_addVerticalB);
+            if (this.background_fill_type == 1) {
+                bgPaint.setColor(this.background_color);
+                if (Color.alpha(this.background_color) == 255) {
+                    applyAlphaToPaint(bgPaint);
+                }
+            } else if (this.background_fill_type == 2) {
+                bgPaint.setShader(this.background_usedGradient.getShader(background_rect));
+                if (!this.background_usedGradient.hasAlpha()) {
+                    applyAlphaToPaint(bgPaint);
+                }
+            }
+            if (this.threeDEnabled) {
+                canvas.restore();
+                canvas.save();
+                applyCamera(canvas, rotation_translation3D);
+            }
+            canvas.drawRoundRect(background_rect, (float) this.background_border_radius, (float) this.background_border_radius, bgPaint);
+            if (this.threeDEnabled) {
+                canvas.restore();
+                canvas.save();
+                applyCamera(canvas, rotation3d);
+            }
+        }
+        if (this.textureSrc.checkValid() && this.textureBmb == null) {
+            loadTexture();
+        }
+        if (this.textureBmb == null || !this.textureSrc.checkValid()) {
+            this.textDraw.setTextureShader(null);
+        } else {
+            BitmapShader textTexture = new BitmapShader(this.textureBmb, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+            Matrix matrix = new Matrix();
+            float initScaleX = ((float) this.textWidth) / ((float) this.textureBmb.getWidth());
+            float initScaleY = ((float) this.textHeight) / ((float) this.textureBmb.getHeight());
+            if (this.textureMaintainAspect) {
+                matrix.preScale(initScaleX, initScaleY);
+            } else {
+                matrix.preScale(Math.min(initScaleX, initScaleY), Math.min(initScaleX, initScaleY));
+            }
+            matrix.postScale(((float) this.textureScale) / 10.0f, ((float) this.textureScale) / 10.0f);
+            textTexture.setLocalMatrix(matrix);
+            this.textDraw.setTextureShader(textTexture);
+        }
+        if ((this.need_redraw && this.dragID != this.DRAG_ID_WHOLE) || this.renderMode) {
+            this.bitmap_cache = Bitmap.createBitmap((int) (((float) this.textWidth) * getRenderScaleF()), (int) (((float) this.textHeight) * getRenderScaleF()), Bitmap.Config.ARGB_8888);
+            this.tmpCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+            this.tmpCanvas.setBitmap(this.bitmap_cache);
+            this.tmpCanvas.save();
+            this.tmpCanvas.scale(getRenderScaleF(), getRenderScaleF());
+            this.paint.setFilterBitmap(true);
+            this.paint.setDither(true);
+            this.textDraw.setMaskFilter(getCurrEmbossEffect());
+            this.textDraw.setIncludeEmbossInStroke(isEmbossIncludeStroke());
+            this.textDraw.gradient_bounds = null;
+            if (this.fill_type == 2) {
+                this.textDraw.removeColorSpans();
+            }
+            this.textDraw.drawMaskListener = null;
+            if (this.bezierMaskEnabled) {
+                if (this.bezierMaskPath == null) {
+                    recreateBezierMaskPath();
+                }
+                if (this.bezierMaskPath != null && commonFuncs.isValidRect(this.bezierMaskRect)) {
+                    final Paint pntEraser = new Paint(1);
+                    pntEraser.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                    this.textDraw.drawMaskListener = new CustomTextView.onFinishDraw() {
+                        /* class com.imaginstudio.imagetools.pixellab.TextObject.TextComponent.AnonymousClass1 */
+
+                        @Override
+                        // com.imaginstudio.imagetools.pixellab.TextObject.CustomTextView.onFinishDraw
+                        public void done(Canvas tmpCanvas) {
+                            tmpCanvas.save();
+                            tmpCanvas.scale(((float) TextComponent.this.textWidth) / TextComponent.this.bezierMaskRect.width(), ((float) TextComponent.this.textHeight) / TextComponent.this.bezierMaskRect.height());
+                            tmpCanvas.translate(-TextComponent.this.bezierMaskRect.left, -TextComponent.this.bezierMaskRect.top);
+                            if (TextComponent.this.bezierMaskIn) {
+                                Iterator it = TextComponent.this.bezierMaskPath.iterator();
+                                while (it.hasNext()) {
+                                    tmpCanvas.drawPath((Path) it.next(), pntEraser);
+                                }
+                            } else {
+                                tmpCanvas.drawPath(commonFuncs.invertPath(TextComponent.this.bezierMaskPath, TextComponent.this.bezierMaskRect.left, TextComponent.this.bezierMaskRect.top, TextComponent.this.bezierMaskRect.right, TextComponent.this.bezierMaskRect.bottom), pntEraser);
+                            }
+                            tmpCanvas.restore();
+                        }
+                    };
+                }
+            }
+            this.textDraw.draw(this.tmpCanvas);
+            if ((this.bitmap_cache != null && (this.fill_type == 2 || ((this.threeDEnabled && this.threeDDepthFillType == 2) || (this.textDraw.stroke_enabled && this.textDraw.strokeFillType == 2)))) || this.reflectionEnabled || this.shadow_3d_enabled) {
+                this.top_padding = getBitmapTopPadding(this.bitmap_cache);
+                this.bottom_padding = getBitmapBottomPadding(this.bitmap_cache);
+            }
+            Rect content_bounds = new Rect(0, 0, this.textWidth, this.textHeight);
+            if (this.bitmap_cache != null && (this.fill_type == 2 || ((this.threeDEnabled && this.threeDDepthFillType == 2) || (this.textDraw.stroke_enabled && this.textDraw.strokeFillType == 2)))) {
+                content_bounds = new Rect(this.textDraw.getPaddingLeft(), (int) (((float) this.top_padding) / getRenderScaleF()), ((int) (((float) this.bitmap_cache.getWidth()) / getRenderScaleF())) - this.textDraw.getPaddingRight(), (int) (((float) (this.bitmap_cache.getHeight() - this.bottom_padding)) / getRenderScaleF()));
+                if (this.fill_type == 2 || this.textDraw.strokeFillType == 2) {
+                    if (this.fill_type == 2) {
+                        this.textDraw.getPaint().setShader(this.usedGradient.getShader(content_bounds));
+                    }
+                    if (this.textDraw.strokeFillType == 2) {
+                        this.textDraw.gradient_bounds = new Rect(content_bounds.left, content_bounds.top, content_bounds.right, content_bounds.bottom);
+                    }
+                    this.tmpCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+                    this.textDraw.draw(this.tmpCanvas);
+                }
+            }
+            this.textDraw.setIncludeEmbossInStroke(true);
+            try {
+                this.tmpCanvas.restore();
+            } catch (IllegalStateException e) {
+            }
+            if (this.threeDEnabled) {
+                this.bitmap_3d_cache = Bitmap.createBitmap((int) (((float) this.textWidth) * getRenderScaleF()), (int) (((float) this.textHeight) * getRenderScaleF()), Bitmap.Config.ARGB_8888);
+                Canvas tmp3dCanvas = new Canvas();
+                tmp3dCanvas.scale(getRenderScaleF(), getRenderScaleF());
+                tmp3dCanvas.setBitmap(this.bitmap_3d_cache);
+                tmp3dCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+                int oldColor = this.textDraw.getPaint().getColor();
+                boolean oldStrokeEnabled = getStrokeEnabled();
+                if (!this.threeDStokeInclude) {
+                    this.textDraw.stroke_enabled = false;
+                }
+                this.textDraw.setMaskFilter(getCurr3DEmbossEffect());
+                if (!this.threeDDepthColorAutomatic) {
+                    this.textDraw.removeColorSpans();
+                    this.textDraw.setTextureShader(null);
+                    if (this.threeDDepthFillType == 1) {
+                        this.textDraw.tmp_drawing3DDepth = true;
+                        this.textDraw.getPaint().setShader(null);
+                        this.textDraw.setTextColor(this.threeDDepthColorFill);
+                        this.textDraw.getPaint().setColor(this.threeDDepthColorFill);
+                    } else if (this.threeDDepthFillType == 2) {
+                        this.textDraw.getPaint().setShader(this.threeDDepthGradientFill.getShader(content_bounds));
+                    }
+                }
+                this.textDraw.draw(tmp3dCanvas);
+                this.textDraw.tmp_drawing3DDepth = false;
+                restoreTextStyle(oldColor, oldStrokeEnabled);
+                this.bitmap_3d_cache = blurMask(this.bitmap_3d_cache);
+            }
+            this.textDraw.drawMaskListener = null;
+            if (this.outer_shadow_enabled.booleanValue()) {
+                this.bitmap_shadow_outer = updateOuter_Shadow(this.bitmap_cache, getRenderScaleF());
+            }
+            if (this.shadow_3d_enabled) {
+                this.left_padding = getBitmapLeftPadding(this.bitmap_cache);
+                this.right_padding = getBitmapRightPadding(this.bitmap_cache);
+                this.bitmap_shadow_3d = createShadow3d((int) (((float) this.textWidth) - (((float) (this.left_padding + this.right_padding)) / getRenderScaleF())), threeDDepthPx, getRenderScaleF());
+            }
+            if (this.reflectionEnabled) {
+                this.bitmap_cache_reflection = flipBitmap(this.bitmap_cache);
+                if (this.outer_shadow_enabled.booleanValue()) {
+                    this.bitmap_shadow_outer_reflection = flipBitmap(this.bitmap_shadow_outer);
+                }
+            }
+            this.textDraw.setMaskFilter(null);
+            this.need_redraw = false;
+        }
+        if (!this.hidden) {
+            if (this.shadow_3d_enabled) {
+                draw3dShadow(canvas, rotation3d, threeDDepthPx, getRenderScaleF());
+            }
+            if (this.threeDEnabled) {
+                Paint paint3d = new Paint();
+                paint3d.setAntiAlias(true);
+                paint3d.setDither(true);
+                paint3d.setFilterBitmap(true);
+                applyAlphaToPaint(paint3d);
+                paint3d.setColorFilter(new PorterDuffColorFilter(Color.argb((int) ((((float) this.threeDDepthDarken) / 100.0f) * 220.0f), 0, 0, 0), PorterDuff.Mode.SRC_ATOP));
+                float stepDist = 1.0f / ((float) Math.max(this.threeDQuality, 1));
+                int steps = (int) Math.ceil((double) (((float) threeDDepthPx) / stepDist));
+                Rect rectDraw1 = new Rect(0, 0, this.bitmap_3d_cache.getWidth(), this.bitmap_3d_cache.getHeight());
+                Rect rectDraw2 = new Rect(0, 0, this.textWidth, this.textHeight);
+                if (this.threeDViewType == 1) {
+                    canvas.restore();
+                    if (this.outer_shadow_enabled.booleanValue()) {
+                        canvas.save();
+                        applyCamera(canvas, rotation_translation3D);
+                        Paint pt = new Paint();
+                        pt.setColorFilter(new PorterDuffColorFilter(solidColor(this.outer_shadow_color), PorterDuff.Mode.SRC_ATOP));
+                        pt.setFilterBitmap(true);
+                        pt.setDither(true);
+                        pt.setAlpha(Color.alpha(this.outer_shadow_color));
+                        if (isTextOpacityShadowInclude()) {
+                            applyAlphaToPaint(pt);
+                        }
+                        canvas.save();
+                        canvas.translate((float) this.outer_shadow_dx, (float) this.outer_shadow_dy);
+                        canvas.drawBitmap(this.bitmap_shadow_outer, new Rect(0, 0, this.bitmap_shadow_outer.getWidth(), this.bitmap_shadow_outer.getHeight()), new Rect(-this.outer_shadow_padding, -this.outer_shadow_padding, this.textWidth + this.outer_shadow_padding, this.textHeight + this.outer_shadow_padding), pt);
+                        canvas.restore();
+                        canvas.restore();
+                    }
+                    for (int i = 0; i < steps; i++) {
+                        canvas.save();
+                        rotation_translation3D.translate(0.0f, 0.0f, -1.0f * stepDist);
+                        applyCamera(canvas, rotation_translation3D);
+                        canvas.drawBitmap(this.bitmap_3d_cache, rectDraw1, rectDraw2, paint3d);
+                        canvas.restore();
+                    }
+                    canvas.save();
+                    applyCamera(canvas, rotation3d);
+                } else if (this.threeDViewType == 3) {
+                    canvas.save();
+                    PointF translationVector = new PointF(((float) Math.cos(Math.toRadians((double) this.threeDObliqueAngle))) * ((float) threeDDepthPx), -1.0f * ((float) Math.sin(Math.toRadians((double) this.threeDObliqueAngle))) * ((float) threeDDepthPx));
+                    PointF smallVector = invertVector(divideVector(translationVector, steps));
+                    canvas.translate(translationVector.x, translationVector.y);
+                    if (this.outer_shadow_enabled.booleanValue()) {
+                        Paint pt2 = new Paint();
+                        pt2.setColorFilter(new PorterDuffColorFilter(solidColor(this.outer_shadow_color), PorterDuff.Mode.SRC_ATOP));
+                        pt2.setFilterBitmap(true);
+                        pt2.setAlpha(Color.alpha(this.outer_shadow_color));
+                        if (isTextOpacityShadowInclude()) {
+                            applyAlphaToPaint(pt2);
+                        }
+                        pt2.setDither(true);
+                        canvas.save();
+                        canvas.translate((float) this.outer_shadow_dx, (float) this.outer_shadow_dy);
+                        canvas.drawBitmap(this.bitmap_shadow_outer, new Rect(0, 0, this.bitmap_shadow_outer.getWidth(), this.bitmap_shadow_outer.getHeight()), new Rect(-this.outer_shadow_padding, -this.outer_shadow_padding, this.textWidth + this.outer_shadow_padding, this.textHeight + this.outer_shadow_padding), pt2);
+                        canvas.restore();
+                    }
+                    for (int i2 = 0; i2 < steps; i2++) {
+                        canvas.translate(smallVector.x, smallVector.y);
+                        canvas.drawBitmap(this.bitmap_3d_cache, (Rect) null, rectDraw2, paint3d);
+                    }
+                    canvas.restore();
+                }
+            }
+            if (this.reflectionEnabled && !this.threeDEnabled) {
+                canvas.save();
+                canvas.translate(0.0f, (((float) (this.bitmap_cache.getHeight() - (this.bottom_padding * 2))) / getRenderScaleF()) + ((float) this.reflection_dy));
+                if (this.outer_shadow_enabled.booleanValue()) {
+                    Paint pt3 = new Paint();
+                    pt3.setColorFilter(new PorterDuffColorFilter(solidColor(this.outer_shadow_color), PorterDuff.Mode.SRC_ATOP));
+                    pt3.setFilterBitmap(true);
+                    pt3.setDither(true);
+                    pt3.setAlpha(Color.alpha(this.outer_shadow_color));
+                    if (isTextOpacityShadowInclude()) {
+                        applyAlphaToPaint(pt3);
+                    }
+                    canvas.save();
+                    canvas.translate((float) this.outer_shadow_dx, (float) this.outer_shadow_dy);
+                    canvas.drawBitmap(this.bitmap_shadow_outer_reflection, new Rect(0, 0, this.bitmap_shadow_outer.getWidth(), this.bitmap_shadow_outer.getHeight()), new Rect(-this.outer_shadow_padding, -this.outer_shadow_padding, this.textWidth + this.outer_shadow_padding, this.textHeight + this.outer_shadow_padding), pt3);
+                    canvas.restore();
+                }
+                canvas.restore();
+            }
+            this.paint.setColorFilter(null);
+            this.paint.setXfermode(null);
+            this.paint.setFilterBitmap(true);
+            if (this.outer_shadow_enabled.booleanValue() && !this.threeDEnabled) {
+                Paint pt4 = new Paint();
+                pt4.setColorFilter(new PorterDuffColorFilter(solidColor(this.outer_shadow_color), PorterDuff.Mode.SRC_ATOP));
+                pt4.setAlpha(Color.alpha(this.outer_shadow_color));
+                pt4.setFilterBitmap(true);
+                pt4.setDither(true);
+                if (isTextOpacityShadowInclude()) {
+                    applyAlphaToPaint(pt4);
+                }
+                canvas.save();
+                canvas.translate((float) this.outer_shadow_dx, (float) this.outer_shadow_dy);
+                canvas.drawBitmap(this.bitmap_shadow_outer, new Rect(0, 0, this.bitmap_shadow_outer.getWidth(), this.bitmap_shadow_outer.getHeight()), new Rect(-this.outer_shadow_padding, -this.outer_shadow_padding, this.textWidth + this.outer_shadow_padding, this.textHeight + this.outer_shadow_padding), pt4);
+                canvas.restore();
+            }
+            if (this.reflectionEnabled) {
+                canvas.save();
+                canvas.translate(0.0f, (((float) (this.bitmap_cache.getHeight() - (this.bottom_padding * 2))) / getRenderScaleF()) + ((float) this.reflection_dy));
+                this.paint.setFilterBitmap(true);
+                this.paint.setDither(true);
+                applyAlphaToPaint(this.paint);
+                canvas.drawBitmap(this.bitmap_cache_reflection, new Rect(0, 0, this.bitmap_cache.getWidth(), this.bitmap_cache.getHeight()), new Rect(0, 0, this.textWidth, this.textHeight), this.paint);
+                resetAlphaToPaint(this.paint);
+                canvas.restore();
+            }
+            this.paint.setFilterBitmap(true);
+            this.paint.setDither(true);
+            this.paint.setAntiAlias(true);
+            applyAlphaToPaint(this.paint);
+            canvas.drawBitmap(this.bitmap_cache, (Rect) null, new Rect(0, 0, this.textWidth, this.textHeight), this.paint);
+            resetAlphaToPaint(this.paint);
+        }
+        canvas.restore();
+        canvas.scale(mScale, mScale, viewCenter.x, viewCenter.y);
+        canvas.rotate(mRotateAngle, viewCenter.x, viewCenter.y);
+        if (this.isSelected && !this.renderMode) {
+//            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBg);
+            canvas.drawRoundRect(mHelpBoxRect, 10, 10, this.paintSelectedBorder);
+//            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelected);
+        }
+        RectUtil.scaleRect(mHelpBoxRect, mScale);
+        if (this.handleEnabled && this.isSelected && !this.isCurved && !this.renderMode) {
+//            canvas.drawCircle(this.maxWidther.getX(), this.maxWidther.getY(), (float) getBiggerRadius(), this.paintHandlesBorder);
+//            float x = this.maxWidther.getX();
+//            float y = this.maxWidther.getY();
+//            float biggerRadius = (float) getBiggerRadius();
+//            if (this.dragID == this.DRAG_ID_MAX_WIDTHER) {
+//                paint2 = this.paintHandlesHighlight;
+//            } else {
+//                paint2 = this.paintHandles;
+//            }
+//            canvas.drawCircle(x, y, biggerRadius, paint2);
+
+            RectF rectF = new RectF(0, 0, mMeasureWidth, mMeasureHeight);
+//            rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
+            mHelpBoxRect.set(rectF);
+//
+            if (leftTopBitmap != null) {
+                RectUtil.rotateRect(leftTopDstRect, mHelpBoxRect.centerX(),
+                        mHelpBoxRect.centerY(), mRotateAngle);
+                int offsetValue = ((int) leftTopDstRect.width()) >> 1;
+                leftTopDstRect.offsetTo(mHelpBoxRect.left - offsetValue,
+                        mHelpBoxRect.top - offsetValue);
+                leftTopBitmap.setBounds((int) leftTopDstRect.left, (int) leftTopDstRect.top, (int) leftTopDstRect.right, (int) leftTopDstRect.bottom);
+                leftTopBitmap.draw(canvas);
+
+            }
+
+            if (rightBottomBitmap != null) {
+                RectUtil.rotateRect(rightBottomDstRect, mHelpBoxRect.centerX(),
+                        mHelpBoxRect.centerY(), mRotateAngle);
+                int offsetValue = ((int) rightBottomDstRect.width()) >> 1;
+                rightBottomDstRect.offsetTo(mHelpBoxRect.right - offsetValue,
+                        mHelpBoxRect.bottom - offsetValue);
+                rightBottomBitmap.setBounds((int) rightBottomDstRect.left, (int) rightBottomDstRect.top, (int) rightBottomDstRect.right, (int) rightBottomDstRect.bottom);
+                rightBottomBitmap.draw(canvas);
+
+
+            }
+        }
+    }
 
 
     public interface OnSelectEventListener {
@@ -571,13 +972,13 @@ public class TextComponent extends View {
         fullRedraw();
     }
 
-//    public void set3dDepthColor(int DepthFillType, int DepthColorFill, GradientMaker.GradientFill DepthGradientFill, boolean DepthColorAutomatic) {
-//        this.threeDDepthFillType = DepthFillType;
-//        this.threeDDepthColorFill = DepthColorFill;
-//        this.threeDDepthGradientFill = DepthGradientFill;
-//        this.threeDDepthColorAutomatic = DepthColorAutomatic;
-//        fullRedraw();
-//    }
+    public void set3dDepthColor(int DepthFillType, int DepthColorFill, GradientMaker.GradientFill DepthGradientFill, boolean DepthColorAutomatic) {
+        this.threeDDepthFillType = DepthFillType;
+        this.threeDDepthColorFill = DepthColorFill;
+        this.threeDDepthGradientFill = DepthGradientFill;
+        this.threeDDepthColorAutomatic = DepthColorAutomatic;
+        fullRedraw();
+    }
 
     public void set3dDepth(int Depth, int DepthDarken, int Quality, boolean StokeInclude) {
         this.threeDDepth = Depth;
@@ -643,15 +1044,15 @@ public class TextComponent extends View {
         fullRedraw();
     }
 
-//    public void setGradientFill(GradientMaker.GradientFill gradient) {
-//        this.fill_type = 2;
-//        this.usedGradient = gradient != null ? gradient.copy() : null;
-//        fullRedraw();
-//    }
+    public void setGradientFill(GradientMaker.GradientFill gradient) {
+        this.fill_type = 2;
+        this.usedGradient = gradient != null ? gradient.copy() : null;
+        fullRedraw();
+    }
 
-//    public GradientMaker.GradientFill getGradientFill() {
-//        return this.usedGradient;
-//    }
+    public GradientMaker.GradientFill getGradientFill() {
+        return this.usedGradient;
+    }
 
     public void setTextFont(spansIntervals fonts) {
         this.textDraw.setFonts(fonts);
@@ -1009,20 +1410,20 @@ public class TextComponent extends View {
         return this.textDraw.isJustifyAlign();
     }
 
-//    public void updateBackground(boolean enabled, int fill_type2, int color, GradientMaker.GradientFill gradient, float addHorizontalL, float addHorizontalR, float addVerticalT, float addVerticalB, int border_radius) {
-//        this.isBackgroundEnabled = enabled;
-//        if (this.isBackgroundEnabled) {
-//            this.background_fill_type = fill_type2;
-//            this.background_usedGradient = gradient != null ? gradient.copy() : null;
-//            this.background_color = color;
-//            this.background_addHorizontalL = addHorizontalL;
-//            this.background_addHorizontalR = addHorizontalR;
-//            this.background_addVerticalT = addVerticalT;
-//            this.background_addVerticalB = addVerticalB;
-//            this.background_border_radius = border_radius;
-//        }
-//        invalidate();
-//    }
+    public void updateBackground(boolean enabled, int fill_type2, int color, GradientMaker.GradientFill gradient, float addHorizontalL, float addHorizontalR, float addVerticalT, float addVerticalB, int border_radius) {
+        this.isBackgroundEnabled = enabled;
+        if (this.isBackgroundEnabled) {
+            this.background_fill_type = fill_type2;
+            this.background_usedGradient = gradient != null ? gradient.copy() : null;
+            this.background_color = color;
+            this.background_addHorizontalL = addHorizontalL;
+            this.background_addHorizontalR = addHorizontalR;
+            this.background_addVerticalT = addVerticalT;
+            this.background_addVerticalB = addVerticalB;
+            this.background_border_radius = border_radius;
+        }
+        invalidate();
+    }
 
     public int getBackground_color() {
         return this.background_color;
@@ -1048,9 +1449,9 @@ public class TextComponent extends View {
         return this.background_border_radius;
     }
 
-//    public GradientMaker.GradientFill getBackground_usedGradient() {
-//        return this.background_usedGradient;
-//    }
+    public GradientMaker.GradientFill getBackground_usedGradient() {
+        return this.background_usedGradient;
+    }
 
     public int getBackground_usedType() {
         return this.background_fill_type;
@@ -1152,373 +1553,6 @@ public class TextComponent extends View {
         }
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        this.viewCenter = new PointF(((float) ((getWidth() - getPaddingLeft()) - getPaddingRight())) / 2.0f, ((float) ((getHeight() - getPaddingTop()) - getPaddingBottom())) / 2.0f);
-
-        this.textWidth = this.textWidth > 0 ? this.textWidth : 1;
-        this.textHeight = this.textHeight > 0 ? this.textHeight : 1;
-        int threeDDepthPx = Math.max(1, dpToPixels(this.threeDDepth));
-
-        this.boundingWidth = this.textWidth + this.ADDITIONAL_SPACE_HANDLE;
-        this.boundingHeight = this.textHeight;
-        updateHandlePos();
-        this.paint.setAntiAlias(true);
-        this.paint.setDither(true);
-        this.paint.setStrokeJoin(Paint.Join.ROUND);
-        this.paint.setStrokeWidth(1.0f);
-        this.paint.setStyle(Paint.Style.FILL);
-        this.paint.setColor(Color.parseColor("#40FFFFFF"));
-        this.paint.setStyle(Paint.Style.STROKE);
-        this.paint.setColor(Color.parseColor("#007de3"));
-
-        this.textDraw.layout(0, 0, this.textWidth + this.textDraw.getPaddingRight(), this.textHeight);
-        Camera rotation3d = new Camera();
-        rotation3d.rotateY((float) clipAngle(this.textRotationY));
-        rotation3d.rotateX((float) clipAngle(this.textRotationX));
-
-        Camera rotation_translation3D = new Camera();
-        rotation_translation3D.rotateY((float) clipAngle(this.textRotationY));
-        rotation_translation3D.rotateX((float) clipAngle(this.textRotationX));
-        rotation_translation3D.translate(0.0f, 0.0f, (float) threeDDepthPx);
-        canvas.save();
-        canvas.scale(mScale, mScale, viewCenter.x, viewCenter.y);
-        canvas.rotate(mRotateAngle, viewCenter.x, viewCenter.y);
-
-        applyCamera(canvas, rotation3d);
-        if (this.isBackgroundEnabled && !this.hidden) {
-            Paint bgPaint = new Paint(1);
-            bgPaint.setDither(true);
-            bgPaint.setStyle(Paint.Style.FILL);
-            RectF background_rect = new RectF(-this.background_addHorizontalL, -this.background_addVerticalT, ((float) this.textWidth) + this.background_addHorizontalR, ((float) this.textHeight) + this.background_addVerticalB);
-            if (this.background_fill_type == 1) {
-                bgPaint.setColor(this.background_color);
-                if (Color.alpha(this.background_color) == 255) {
-                    applyAlphaToPaint(bgPaint);
-                }
-            } else if (this.background_fill_type == 2) {
-//                bgPaint.setShader(this.background_usedGradient.getShader(background_rect));
-//                if (!this.background_usedGradient.hasAlpha()) {
-//                    applyAlphaToPaint(bgPaint);
-//                }
-            }
-            if (this.threeDEnabled) {
-                canvas.restore();
-                canvas.save();
-                applyCamera(canvas, rotation_translation3D);
-            }
-//            canvas.drawRoundRect(background_rect, (float) this.background_border_radius, (float) this.background_border_radius, bgPaint);
-            if (this.threeDEnabled) {
-                canvas.restore();
-                canvas.save();
-                applyCamera(canvas, rotation3d);
-            }
-        }
-        if (this.textureSrc.checkValid() && this.textureBmb == null) {
-            loadTexture();
-        }
-        if (this.textureBmb == null || !this.textureSrc.checkValid()) {
-            this.textDraw.setTextureShader(null);
-        } else {
-            BitmapShader textTexture = new BitmapShader(this.textureBmb, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
-            Matrix matrix = new Matrix();
-            float initScaleX = ((float) this.textWidth) / ((float) this.textureBmb.getWidth());
-            float initScaleY = ((float) this.textHeight) / ((float) this.textureBmb.getHeight());
-            if (this.textureMaintainAspect) {
-                matrix.preScale(initScaleX, initScaleY);
-            } else {
-                matrix.preScale(Math.min(initScaleX, initScaleY), Math.min(initScaleX, initScaleY));
-            }
-            matrix.postScale(((float) this.textureScale) / 10.0f, ((float) this.textureScale) / 10.0f);
-            textTexture.setLocalMatrix(matrix);
-            this.textDraw.setTextureShader(textTexture);
-        }
-        if ((this.need_redraw && this.dragID != this.DRAG_ID_WHOLE) || this.renderMode) {
-            this.bitmap_cache = Bitmap.createBitmap((int) (((float) this.textWidth) * getRenderScaleF()), (int) (((float) this.textHeight) * getRenderScaleF()), Bitmap.Config.ARGB_8888);
-            this.tmpCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
-            this.tmpCanvas.setBitmap(this.bitmap_cache);
-            this.tmpCanvas.save();
-            this.tmpCanvas.scale(getRenderScaleF(), getRenderScaleF());
-            this.paint.setFilterBitmap(true);
-            this.paint.setDither(true);
-            this.textDraw.setMaskFilter(getCurrEmbossEffect());
-            this.textDraw.setIncludeEmbossInStroke(isEmbossIncludeStroke());
-            this.textDraw.gradient_bounds = null;
-            if (this.fill_type == 2) {
-                this.textDraw.removeColorSpans();
-            }
-            this.textDraw.drawMaskListener = null;
-            if (this.bezierMaskEnabled) {
-                if (this.bezierMaskPath == null) {
-                    recreateBezierMaskPath();
-                }
-                if (this.bezierMaskPath != null && commonFuncs.isValidRect(this.bezierMaskRect)) {
-                    final Paint pntEraser = new Paint(1);
-                    pntEraser.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-                    this.textDraw.drawMaskListener = new CustomTextView.onFinishDraw() {
-                        /* class com.imaginstudio.imagetools.pixellab.TextObject.TextComponent.AnonymousClass1 */
-
-                        @Override
-                        // com.imaginstudio.imagetools.pixellab.TextObject.CustomTextView.onFinishDraw
-                        public void done(Canvas tmpCanvas) {
-                            tmpCanvas.save();
-                            tmpCanvas.scale(((float) TextComponent.this.textWidth) / TextComponent.this.bezierMaskRect.width(), ((float) TextComponent.this.textHeight) / TextComponent.this.bezierMaskRect.height());
-                            tmpCanvas.translate(-TextComponent.this.bezierMaskRect.left, -TextComponent.this.bezierMaskRect.top);
-                            if (TextComponent.this.bezierMaskIn) {
-                                Iterator it = TextComponent.this.bezierMaskPath.iterator();
-                                while (it.hasNext()) {
-                                    tmpCanvas.drawPath((Path) it.next(), pntEraser);
-                                }
-                            } else {
-                                tmpCanvas.drawPath(commonFuncs.invertPath(TextComponent.this.bezierMaskPath, TextComponent.this.bezierMaskRect.left, TextComponent.this.bezierMaskRect.top, TextComponent.this.bezierMaskRect.right, TextComponent.this.bezierMaskRect.bottom), pntEraser);
-                            }
-                            tmpCanvas.restore();
-                        }
-                    };
-                }
-            }
-            this.textDraw.draw(this.tmpCanvas);
-            if ((this.bitmap_cache != null && (this.fill_type == 2 || ((this.threeDEnabled && this.threeDDepthFillType == 2) || (this.textDraw.stroke_enabled && this.textDraw.strokeFillType == 2)))) || this.reflectionEnabled || this.shadow_3d_enabled) {
-                this.top_padding = getBitmapTopPadding(this.bitmap_cache);
-                this.bottom_padding = getBitmapBottomPadding(this.bitmap_cache);
-            }
-            Rect content_bounds = new Rect(0, 0, this.textWidth, this.textHeight);
-            if (this.bitmap_cache != null && (this.fill_type == 2 || ((this.threeDEnabled && this.threeDDepthFillType == 2) || (this.textDraw.stroke_enabled && this.textDraw.strokeFillType == 2)))) {
-                content_bounds = new Rect(this.textDraw.getPaddingLeft(), (int) (((float) this.top_padding) / getRenderScaleF()), ((int) (((float) this.bitmap_cache.getWidth()) / getRenderScaleF())) - this.textDraw.getPaddingRight(), (int) (((float) (this.bitmap_cache.getHeight() - this.bottom_padding)) / getRenderScaleF()));
-                if (this.fill_type == 2 || this.textDraw.strokeFillType == 2) {
-                    if (this.fill_type == 2) {
-//                        this.textDraw.getPaint().setShader(this.usedGradient.getShader(content_bounds));
-                    }
-                    if (this.textDraw.strokeFillType == 2) {
-                        this.textDraw.gradient_bounds = new Rect(content_bounds.left, content_bounds.top, content_bounds.right, content_bounds.bottom);
-                    }
-                    this.tmpCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
-                    this.textDraw.draw(this.tmpCanvas);
-                }
-            }
-            this.textDraw.setIncludeEmbossInStroke(true);
-            try {
-                this.tmpCanvas.restore();
-            } catch (IllegalStateException e) {
-            }
-            if (this.threeDEnabled) {
-                this.bitmap_3d_cache = Bitmap.createBitmap((int) (((float) this.textWidth) * getRenderScaleF()), (int) (((float) this.textHeight) * getRenderScaleF()), Bitmap.Config.ARGB_8888);
-                Canvas tmp3dCanvas = new Canvas();
-                tmp3dCanvas.scale(getRenderScaleF(), getRenderScaleF());
-                tmp3dCanvas.setBitmap(this.bitmap_3d_cache);
-                tmp3dCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
-                int oldColor = this.textDraw.getPaint().getColor();
-                boolean oldStrokeEnabled = getStrokeEnabled();
-                if (!this.threeDStokeInclude) {
-                    this.textDraw.stroke_enabled = false;
-                }
-                this.textDraw.setMaskFilter(getCurr3DEmbossEffect());
-                if (!this.threeDDepthColorAutomatic) {
-                    this.textDraw.removeColorSpans();
-                    this.textDraw.setTextureShader(null);
-                    if (this.threeDDepthFillType == 1) {
-                        this.textDraw.tmp_drawing3DDepth = true;
-                        this.textDraw.getPaint().setShader(null);
-                        this.textDraw.setTextColor(this.threeDDepthColorFill);
-                        this.textDraw.getPaint().setColor(this.threeDDepthColorFill);
-                    } else if (this.threeDDepthFillType == 2) {
-//                        this.textDraw.getPaint().setShader(this.threeDDepthGradientFill.getShader(content_bounds));
-                    }
-                }
-                this.textDraw.draw(tmp3dCanvas);
-                this.textDraw.tmp_drawing3DDepth = false;
-                restoreTextStyle(oldColor, oldStrokeEnabled);
-                this.bitmap_3d_cache = blurMask(this.bitmap_3d_cache);
-            }
-            this.textDraw.drawMaskListener = null;
-            if (this.outer_shadow_enabled.booleanValue()) {
-                this.bitmap_shadow_outer = updateOuter_Shadow(this.bitmap_cache, getRenderScaleF());
-            }
-            if (this.shadow_3d_enabled) {
-                this.left_padding = getBitmapLeftPadding(this.bitmap_cache);
-                this.right_padding = getBitmapRightPadding(this.bitmap_cache);
-                this.bitmap_shadow_3d = createShadow3d((int) (((float) this.textWidth) - (((float) (this.left_padding + this.right_padding)) / getRenderScaleF())), threeDDepthPx, getRenderScaleF());
-            }
-            if (this.reflectionEnabled) {
-                this.bitmap_cache_reflection = flipBitmap(this.bitmap_cache);
-                if (this.outer_shadow_enabled.booleanValue()) {
-                    this.bitmap_shadow_outer_reflection = flipBitmap(this.bitmap_shadow_outer);
-                }
-            }
-            this.textDraw.setMaskFilter(null);
-            this.need_redraw = false;
-        }
-        if (!this.hidden) {
-            if (this.shadow_3d_enabled) {
-                draw3dShadow(canvas, rotation3d, threeDDepthPx, getRenderScaleF());
-            }
-            if (this.threeDEnabled) {
-                Paint paint3d = new Paint();
-                paint3d.setAntiAlias(true);
-                paint3d.setDither(true);
-                paint3d.setFilterBitmap(true);
-                applyAlphaToPaint(paint3d);
-                paint3d.setColorFilter(new PorterDuffColorFilter(Color.argb((int) ((((float) this.threeDDepthDarken) / 100.0f) * 220.0f), 0, 0, 0), PorterDuff.Mode.SRC_ATOP));
-                float stepDist = 1.0f / ((float) Math.max(this.threeDQuality, 1));
-                int steps = (int) Math.ceil((double) (((float) threeDDepthPx) / stepDist));
-                Rect rectDraw1 = new Rect(0, 0, this.bitmap_3d_cache.getWidth(), this.bitmap_3d_cache.getHeight());
-                Rect rectDraw2 = new Rect(0, 0, this.textWidth, this.textHeight);
-                if (this.threeDViewType == 1) {
-                    canvas.restore();
-                    if (this.outer_shadow_enabled.booleanValue()) {
-                        canvas.save();
-                        applyCamera(canvas, rotation_translation3D);
-                        Paint pt = new Paint();
-                        pt.setColorFilter(new PorterDuffColorFilter(solidColor(this.outer_shadow_color), PorterDuff.Mode.SRC_ATOP));
-                        pt.setFilterBitmap(true);
-                        pt.setDither(true);
-                        pt.setAlpha(Color.alpha(this.outer_shadow_color));
-                        if (isTextOpacityShadowInclude()) {
-                            applyAlphaToPaint(pt);
-                        }
-                        canvas.save();
-                        canvas.translate((float) this.outer_shadow_dx, (float) this.outer_shadow_dy);
-                        canvas.drawBitmap(this.bitmap_shadow_outer, new Rect(0, 0, this.bitmap_shadow_outer.getWidth(), this.bitmap_shadow_outer.getHeight()), new Rect(-this.outer_shadow_padding, -this.outer_shadow_padding, this.textWidth + this.outer_shadow_padding, this.textHeight + this.outer_shadow_padding), pt);
-                        canvas.restore();
-                        canvas.restore();
-                    }
-                    for (int i = 0; i < steps; i++) {
-                        canvas.save();
-                        rotation_translation3D.translate(0.0f, 0.0f, -1.0f * stepDist);
-                        applyCamera(canvas, rotation_translation3D);
-                        canvas.drawBitmap(this.bitmap_3d_cache, rectDraw1, rectDraw2, paint3d);
-                        canvas.restore();
-                    }
-                    canvas.save();
-                    applyCamera(canvas, rotation3d);
-                } else if (this.threeDViewType == 3) {
-                    canvas.save();
-                    PointF translationVector = new PointF(((float) Math.cos(Math.toRadians((double) this.threeDObliqueAngle))) * ((float) threeDDepthPx), -1.0f * ((float) Math.sin(Math.toRadians((double) this.threeDObliqueAngle))) * ((float) threeDDepthPx));
-                    PointF smallVector = invertVector(divideVector(translationVector, steps));
-                    canvas.translate(translationVector.x, translationVector.y);
-                    if (this.outer_shadow_enabled.booleanValue()) {
-                        Paint pt2 = new Paint();
-                        pt2.setColorFilter(new PorterDuffColorFilter(solidColor(this.outer_shadow_color), PorterDuff.Mode.SRC_ATOP));
-                        pt2.setFilterBitmap(true);
-                        pt2.setAlpha(Color.alpha(this.outer_shadow_color));
-                        if (isTextOpacityShadowInclude()) {
-                            applyAlphaToPaint(pt2);
-                        }
-                        pt2.setDither(true);
-                        canvas.save();
-                        canvas.translate((float) this.outer_shadow_dx, (float) this.outer_shadow_dy);
-                        canvas.drawBitmap(this.bitmap_shadow_outer, new Rect(0, 0, this.bitmap_shadow_outer.getWidth(), this.bitmap_shadow_outer.getHeight()), new Rect(-this.outer_shadow_padding, -this.outer_shadow_padding, this.textWidth + this.outer_shadow_padding, this.textHeight + this.outer_shadow_padding), pt2);
-                        canvas.restore();
-                    }
-                    for (int i2 = 0; i2 < steps; i2++) {
-                        canvas.translate(smallVector.x, smallVector.y);
-                        canvas.drawBitmap(this.bitmap_3d_cache, (Rect) null, rectDraw2, paint3d);
-                    }
-                    canvas.restore();
-                }
-            }
-            if (this.reflectionEnabled && !this.threeDEnabled) {
-                canvas.save();
-                canvas.translate(0.0f, (((float) (this.bitmap_cache.getHeight() - (this.bottom_padding * 2))) / getRenderScaleF()) + ((float) this.reflection_dy));
-                if (this.outer_shadow_enabled.booleanValue()) {
-                    Paint pt3 = new Paint();
-                    pt3.setColorFilter(new PorterDuffColorFilter(solidColor(this.outer_shadow_color), PorterDuff.Mode.SRC_ATOP));
-                    pt3.setFilterBitmap(true);
-                    pt3.setDither(true);
-                    pt3.setAlpha(Color.alpha(this.outer_shadow_color));
-                    if (isTextOpacityShadowInclude()) {
-                        applyAlphaToPaint(pt3);
-                    }
-                    canvas.save();
-                    canvas.translate((float) this.outer_shadow_dx, (float) this.outer_shadow_dy);
-                    canvas.drawBitmap(this.bitmap_shadow_outer_reflection, new Rect(0, 0, this.bitmap_shadow_outer.getWidth(), this.bitmap_shadow_outer.getHeight()), new Rect(-this.outer_shadow_padding, -this.outer_shadow_padding, this.textWidth + this.outer_shadow_padding, this.textHeight + this.outer_shadow_padding), pt3);
-                    canvas.restore();
-                }
-                canvas.restore();
-            }
-            this.paint.setColorFilter(null);
-            this.paint.setXfermode(null);
-            this.paint.setFilterBitmap(true);
-            if (this.outer_shadow_enabled.booleanValue() && !this.threeDEnabled) {
-                Paint pt4 = new Paint();
-                pt4.setColorFilter(new PorterDuffColorFilter(solidColor(this.outer_shadow_color), PorterDuff.Mode.SRC_ATOP));
-                pt4.setAlpha(Color.alpha(this.outer_shadow_color));
-                pt4.setFilterBitmap(true);
-                pt4.setDither(true);
-                if (isTextOpacityShadowInclude()) {
-                    applyAlphaToPaint(pt4);
-                }
-                canvas.save();
-                canvas.translate((float) this.outer_shadow_dx, (float) this.outer_shadow_dy);
-                canvas.drawBitmap(this.bitmap_shadow_outer, new Rect(0, 0, this.bitmap_shadow_outer.getWidth(), this.bitmap_shadow_outer.getHeight()), new Rect(-this.outer_shadow_padding, -this.outer_shadow_padding, this.textWidth + this.outer_shadow_padding, this.textHeight + this.outer_shadow_padding), pt4);
-                canvas.restore();
-            }
-            if (this.reflectionEnabled) {
-                canvas.save();
-                canvas.translate(0.0f, (((float) (this.bitmap_cache.getHeight() - (this.bottom_padding * 2))) / getRenderScaleF()) + ((float) this.reflection_dy));
-                this.paint.setFilterBitmap(true);
-                this.paint.setDither(true);
-                applyAlphaToPaint(this.paint);
-                canvas.drawBitmap(this.bitmap_cache_reflection, new Rect(0, 0, this.bitmap_cache.getWidth(), this.bitmap_cache.getHeight()), new Rect(0, 0, this.textWidth, this.textHeight), this.paint);
-                resetAlphaToPaint(this.paint);
-                canvas.restore();
-            }
-            this.paint.setFilterBitmap(true);
-            this.paint.setDither(true);
-            this.paint.setAntiAlias(true);
-            applyAlphaToPaint(this.paint);
-            canvas.drawBitmap(this.bitmap_cache, (Rect) null, new Rect(0, 0, this.textWidth, this.textHeight), this.paint);
-            resetAlphaToPaint(this.paint);
-        }
-        canvas.restore();
-        canvas.scale(mScale, mScale, viewCenter.x, viewCenter.y);
-        canvas.rotate(mRotateAngle, viewCenter.x, viewCenter.y);
-        if (this.isSelected && !this.renderMode) {
-//            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBg);
-            canvas.drawRoundRect(mHelpBoxRect, 10, 10,this.paintSelectedBorder);
-//            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelected);
-        }
-        RectUtil.scaleRect(mHelpBoxRect, mScale);
-        if (this.handleEnabled && this.isSelected && !this.isCurved && !this.renderMode) {
-//            canvas.drawCircle(this.maxWidther.getX(), this.maxWidther.getY(), (float) getBiggerRadius(), this.paintHandlesBorder);
-//            float x = this.maxWidther.getX();
-//            float y = this.maxWidther.getY();
-//            float biggerRadius = (float) getBiggerRadius();
-//            if (this.dragID == this.DRAG_ID_MAX_WIDTHER) {
-//                paint2 = this.paintHandlesHighlight;
-//            } else {
-//                paint2 = this.paintHandles;
-//            }
-//            canvas.drawCircle(x, y, biggerRadius, paint2);
-
-            RectF rectF = new RectF(0, 0, mMeasureWidth, mMeasureHeight);
-//            rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
-            mHelpBoxRect.set(rectF);
-//
-            if (leftTopBitmap != null) {
-                RectUtil.rotateRect(leftTopDstRect, mHelpBoxRect.centerX(),
-                        mHelpBoxRect.centerY(), mRotateAngle);
-                int offsetValue = ((int) leftTopDstRect.width()) >> 1;
-                leftTopDstRect.offsetTo(mHelpBoxRect.left - offsetValue,
-                        mHelpBoxRect.top - offsetValue);
-                leftTopBitmap.setBounds((int) leftTopDstRect.left, (int) leftTopDstRect.top, (int) leftTopDstRect.right, (int) leftTopDstRect.bottom);
-                leftTopBitmap.draw(canvas);
-
-            }
-
-            if (rightBottomBitmap != null) {
-                RectUtil.rotateRect(rightBottomDstRect, mHelpBoxRect.centerX(),
-                        mHelpBoxRect.centerY(), mRotateAngle);
-                int offsetValue = ((int) rightBottomDstRect.width()) >> 1;
-                rightBottomDstRect.offsetTo(mHelpBoxRect.right - offsetValue,
-                        mHelpBoxRect.bottom - offsetValue);
-                rightBottomBitmap.setBounds((int) rightBottomDstRect.left, (int) rightBottomDstRect.top, (int) rightBottomDstRect.right, (int) rightBottomDstRect.bottom);
-                rightBottomBitmap.draw(canvas);
-
-
-            }
-        }
-    }
 
     /* access modifiers changed from: package-private */
     public int solidColor(int color) {
@@ -1610,9 +1644,9 @@ public class TextComponent extends View {
         return this.threeDDepthFillType;
     }
 
-//    public GradientMaker.GradientFill getThreeDDepthGradientFill() {
-//        return this.threeDDepthGradientFill;
-//    }
+    public GradientMaker.GradientFill getThreeDDepthGradientFill() {
+        return this.threeDDepthGradientFill;
+    }
 
     private int clipAngle(int angle2) {
         if (this.tempDisable3DRots) {
@@ -1931,32 +1965,6 @@ public class TextComponent extends View {
         return bmOut;
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        this.textDraw.measure(0, 0);
-        this.textWidth = this.textDraw.getMeasuredWidth();
-        this.textHeight = this.textDraw.getMeasuredHeight();
-        this.boundingWidth = this.textWidth;
-        this.boundingHeight = this.textHeight;
-        setMeasuredDimension(this.boundingWidth + this.smallBallRadiusPx + this.ADDITIONAL_SPACE_HANDLE, this.boundingHeight);
-        setPivotX(((float) this.textWidth) / 2.0f);
-        setPivotY(((float) this.textHeight) / 2.0f);
-
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-        if (firstInflate) {
-            int x = ((helperClass.getContainerWidth() - getWidth()) / 2);
-            int y = ((helperClass.getContainerHeight() - getHeight()) / 2);
-            setX(x);
-            setY(y);
-            firstInflate = false;
-        }
-        mMeasureWidth = getWidth();
-        mMeasureHeight = getHeight();
-    }
 
     private void updateHandlePos() {
         this.maxWidther.setX((float) (this.textWidth + this.ADDITIONAL_SPACE_HANDLE));
@@ -2359,7 +2367,7 @@ public class TextComponent extends View {
         bundle.putInt(appStateConstants.TEXT_LINE_SPACING, getLineSpacing());
         bundle.putBoolean(appStateConstants.TEXT_BG_ENABLED, getBackground_enabled());
         bundle.putInt(appStateConstants.TEXT_BG_COLOR, this.background_color);
-//        bundle.putString(appStateConstants.TEXT_BG_GRADIENT_V2, this.background_usedGradient.convertToStringV2());
+        bundle.putString(appStateConstants.TEXT_BG_GRADIENT_V2, this.background_usedGradient.convertToStringV2());
         bundle.putInt(appStateConstants.TEXT_BG_FILL_TYPE, this.background_fill_type);
         bundle.putInt(appStateConstants.TEXT_BG_PADDING_LEFT, (int) this.background_addHorizontalL);
         bundle.putInt(appStateConstants.TEXT_BG_PADDING_RIGHT, (int) this.background_addHorizontalR);
@@ -2397,7 +2405,7 @@ public class TextComponent extends View {
         bundle.putInt(appStateConstants.TEXT_THREE_D_DEPTH, getThreeDDepth());
         bundle.putInt(appStateConstants.TEXT_THREE_D_DEPTH_FILL_TYPE, getThreeDDepthFillType());
         bundle.putInt(appStateConstants.TEXT_THREE_D_DEPTH_COLOR_FILL, getThreeDDepthColorFill());
-//        bundle.putString(appStateConstants.TEXT_THREE_D_DEPTH_GRADIENT_FILL_V2, getThreeDDepthGradientFill().convertToStringV2());
+        bundle.putString(appStateConstants.TEXT_THREE_D_DEPTH_GRADIENT_FILL_V2, getThreeDDepthGradientFill().convertToStringV2());
         bundle.putBoolean(appStateConstants.TEXT_THREE_D_DEPTH_COLOR_AUTOMATIC, isThreeDDepthColorAutomatic());
         bundle.putInt(appStateConstants.TEXT_THREE_D_DEPTH_DARKEN, getThreeDDepthDarken());
         bundle.putBoolean(appStateConstants.TEXT_THREE_D_STOKE_INCLUDE, isThreeDStokeInclude());
@@ -2413,7 +2421,7 @@ public class TextComponent extends View {
         bundle.putInt(appStateConstants.TEXT_THREE_D_SHADOW_TRANSPARENCY, getShadow_3d_transparency());
         bundle.putInt(appStateConstants.TEXT_THREE_D_SHADOW_BLUR, getShadow_3d_radius());
         bundle.putInt(appStateConstants.TEXT_THREE_D_SHADOW_EXPAND, getShadow_3d_expand());
-//        bundle.putString(appStateConstants.TEXT_TEXT_GRADIENT_V2, this.usedGradient.convertToStringV2());
+        bundle.putString(appStateConstants.TEXT_TEXT_GRADIENT_V2, this.usedGradient.convertToStringV2());
         bundle.putInt(appStateConstants.TEXT_TEXT_FILL_TYPE, this.fill_type);
         bundle.putInt(appStateConstants.TEXT_TEXT_CURVE, getCurve());
         bundle.putBoolean(appStateConstants.TEXT_REFLECTION_ENABLED, this.reflectionEnabled);
@@ -2442,10 +2450,10 @@ public class TextComponent extends View {
     }
 
     public void applyBundle(Bundle bundle, boolean copy, boolean isStyle) {
-//        GradientMaker.GradientFill importedGradientBG;
-//        GradientMaker.GradientFill importedGradient;
-//        GradientMaker.GradientFill importedGradientTxt;
-//        GradientMaker.GradientFill importedGradient2;
+        GradientMaker.GradientFill importedGradientBG;
+        GradientMaker.GradientFill importedGradient;
+        GradientMaker.GradientFill importedGradientTxt;
+        GradientMaker.GradientFill importedGradient2;
         freezeFullRedraw();
         if (!copy && !isStyle) {
             this.hidden = bundle.getBoolean(appStateConstants.OBJECT_HIDDEN);
@@ -2474,11 +2482,11 @@ public class TextComponent extends View {
             set3dDepth(bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH), bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH_DARKEN, getThreeDDepthDarken()), getThreeDQuality(), bundle.getBoolean(appStateConstants.TEXT_THREE_D_STOKE_INCLUDE, isThreeDStokeInclude()));
             String strGradient = bundle.getString(appStateConstants.TEXT_THREE_D_DEPTH_GRADIENT_FILL_V2);
             if (strGradient == null) {
-//                importedGradient2 = new GradientMaker.GradientFill(bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH_GRADIENT_FILL_TYPE, getThreeDDepthGradientFill().getType()), bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH_GRADIENT_FILL_START, getThreeDDepthGradientFill().getStartColor()), bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH_GRADIENT_FILL_END, getThreeDDepthGradientFill().getEndColor()));
+                importedGradient2 = new GradientMaker.GradientFill(bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH_GRADIENT_FILL_TYPE, getThreeDDepthGradientFill().getType()), bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH_GRADIENT_FILL_START, getThreeDDepthGradientFill().getStartColor()), bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH_GRADIENT_FILL_END, getThreeDDepthGradientFill().getEndColor()));
             } else {
-//                importedGradient2 = new GradientMaker.GradientFill(strGradient);
+                importedGradient2 = new GradientMaker.GradientFill(strGradient);
             }
-//            set3dDepthColor(bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH_FILL_TYPE, getThreeDDepthFillType()), bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH_COLOR_FILL, getThreeDDepthColorFill()), importedGradient2, bundle.getBoolean(appStateConstants.TEXT_THREE_D_DEPTH_COLOR_AUTOMATIC, isThreeDDepthColorAutomatic()));
+            set3dDepthColor(bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH_FILL_TYPE, getThreeDDepthFillType()), bundle.getInt(appStateConstants.TEXT_THREE_D_DEPTH_COLOR_FILL, getThreeDDepthColorFill()), importedGradient2, bundle.getBoolean(appStateConstants.TEXT_THREE_D_DEPTH_COLOR_AUTOMATIC, isThreeDDepthColorAutomatic()));
             set3dLighting(bundle.getBoolean(appStateConstants.TEXT_THREE_D_LIGHTING_ENABLED, isThreeDLightingEnabled()), bundle.getInt(appStateConstants.TEXT_EMBOSS_LIGHT_ANGLE, getEmbossLightAngle()), bundle.getInt(appStateConstants.TEXT_THREE_D_LIGHTING_INTENSITY, getThreeDLightingIntensity()), bundle.getInt(appStateConstants.TEXT_THREE_D_LIGHTING_SHADOW, getThreeDLightingShadow()), bundle.getInt(appStateConstants.TEXT_THREE_D_LIGHTING_SPECULAR_HARDNESS, getThreeDLightingSpecularHardness()));
             int obliqueAngle = bundle.getInt(appStateConstants.TEXT_THREE_D_OBLIQUE_ANGLE, -1);
             if (obliqueAngle == -1) {

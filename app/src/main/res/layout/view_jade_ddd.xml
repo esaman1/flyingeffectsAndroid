@@ -30,14 +30,14 @@
 
              <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
 
-            android:id="@+id/emoss_qiangdu"
+            android:id="@+id/ddd_arc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:stepSize="1"
             android:value="0"
             android:valueFrom="0"
-            android:valueTo="100" />
+            android:valueTo="360" />
     </LinearLayout>
 
     <LinearLayout

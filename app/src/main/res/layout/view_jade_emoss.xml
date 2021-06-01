@@ -25,107 +25,108 @@
             android:text="光线角度"
             android:textColor="@color/white" />
 
-<!--        <HorizontalScrollView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content">-->
+        <!--        <HorizontalScrollView-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content">-->
 
-<!--            <RadioGroup-->
-<!--                android:id="@+id/inner_radius"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:stepSize="1"-->
-<!--                android:value="0"-->
-<!--                android:valueFrom="0"-->
-<!--                android:valueTo="25">-->
+        <!--            <RadioGroup-->
+        <!--                android:id="@+id/inner_radius"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_weight="1"-->
+        <!--                android:orientation="horizontal"-->
+        <!--                android:stepSize="1"-->
+        <!--                android:value="0"-->
+        <!--                android:valueFrom="0"-->
+        <!--                android:valueTo="25">-->
 
-<!--                <RadioButton-->
-<!--                    android:layout_width="30dp"-->
-<!--                    android:layout_height="30dp"-->
-<!--                    android:layout_marginEnd="12dp"-->
-<!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
-<!--                    android:button="@null"-->
-<!--                    android:gravity="center"-->
-<!--                    android:paddingStart="6dp"-->
-<!--                    android:text="0°"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="13sp" />-->
+        <!--                <RadioButton-->
+        <!--                    android:layout_width="30dp"-->
+        <!--                    android:layout_height="30dp"-->
+        <!--                    android:layout_marginEnd="12dp"-->
+        <!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
+        <!--                    android:button="@null"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingStart="6dp"-->
+        <!--                    android:text="0°"-->
+        <!--                    android:textColor="@color/white"-->
+        <!--                    android:textSize="13sp" />-->
 
-<!--                <RadioButton-->
-<!--                    android:layout_width="30dp"-->
-<!--                    android:layout_height="30dp"-->
-<!--                    android:layout_marginEnd="12dp"-->
-<!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
-<!--                    android:button="@null"-->
-<!--                    android:gravity="center"-->
-<!--                    android:paddingStart="6dp"-->
+        <!--                <RadioButton-->
+        <!--                    android:layout_width="30dp"-->
+        <!--                    android:layout_height="30dp"-->
+        <!--                    android:layout_marginEnd="12dp"-->
+        <!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
+        <!--                    android:button="@null"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingStart="6dp"-->
 
-<!--                    android:text="30°"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="13sp" />-->
+        <!--                    android:text="30°"-->
+        <!--                    android:textColor="@color/white"-->
+        <!--                    android:textSize="13sp" />-->
 
-<!--                <RadioButton-->
-<!--                    android:layout_width="30dp"-->
+        <!--                <RadioButton-->
+        <!--                    android:layout_width="30dp"-->
 
-<!--                    android:layout_height="30dp"-->
-<!--                    android:layout_marginEnd="12dp"-->
-<!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
-<!--                    android:button="@null"-->
-<!--                    android:gravity="center"-->
-<!--                    android:paddingStart="6dp"-->
-<!--                    android:text="45°"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="13sp" />-->
+        <!--                    android:layout_height="30dp"-->
+        <!--                    android:layout_marginEnd="12dp"-->
+        <!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
+        <!--                    android:button="@null"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingStart="6dp"-->
+        <!--                    android:text="45°"-->
+        <!--                    android:textColor="@color/white"-->
+        <!--                    android:textSize="13sp" />-->
 
-<!--                <RadioButton-->
-<!--                    android:layout_width="30dp"-->
+        <!--                <RadioButton-->
+        <!--                    android:layout_width="30dp"-->
 
-<!--                    android:layout_height="30dp"-->
-<!--                    android:layout_marginEnd="12dp"-->
-<!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
-<!--                    android:button="@null"-->
-<!--                    android:gravity="center"-->
-<!--                    android:paddingStart="6dp"-->
-<!--                    android:text="60°"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="13sp" />-->
-
-
-<!--                <RadioButton-->
-<!--                    android:layout_width="30dp"-->
-<!--                    android:layout_height="30dp"-->
-<!--                    android:layout_marginEnd="12dp"-->
-<!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
-<!--                    android:button="@null"-->
-<!--                    android:gravity="center"-->
-<!--                    android:paddingStart="6dp"-->
-<!--                    android:text="90°"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="13sp" />-->
-
-<!--                <RadioButton-->
-<!--                    android:layout_width="30dp"-->
-<!--                    android:layout_height="30dp"-->
-<!--                    android:layout_marginEnd="12dp"-->
-<!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
-<!--                    android:button="@null"-->
-<!--                    android:gravity="center"-->
-<!--                    android:text="120°"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="13sp" />-->
+        <!--                    android:layout_height="30dp"-->
+        <!--                    android:layout_marginEnd="12dp"-->
+        <!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
+        <!--                    android:button="@null"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingStart="6dp"-->
+        <!--                    android:text="60°"-->
+        <!--                    android:textColor="@color/white"-->
+        <!--                    android:textSize="13sp" />-->
 
 
-<!--            </RadioGroup>-->
-<!--        </HorizontalScrollView>-->
+        <!--                <RadioButton-->
+        <!--                    android:layout_width="30dp"-->
+        <!--                    android:layout_height="30dp"-->
+        <!--                    android:layout_marginEnd="12dp"-->
+        <!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
+        <!--                    android:button="@null"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:paddingStart="6dp"-->
+        <!--                    android:text="90°"-->
+        <!--                    android:textColor="@color/white"-->
+        <!--                    android:textSize="13sp" />-->
 
-             <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
+        <!--                <RadioButton-->
+        <!--                    android:layout_width="30dp"-->
+        <!--                    android:layout_height="30dp"-->
+        <!--                    android:layout_marginEnd="12dp"-->
+        <!--                    android:background="@drawable/selector_jade_emoss_backgroud"-->
+        <!--                    android:button="@null"-->
+        <!--                    android:gravity="center"-->
+        <!--                    android:text="120°"-->
+        <!--                    android:textColor="@color/white"-->
+        <!--                    android:textSize="13sp" />-->
 
-            android:stepSize="1"
+
+        <!--            </RadioGroup>-->
+        <!--        </HorizontalScrollView>-->
+
+        <com.google.android.material.slider.Slider
             android:id="@+id/emoss_arc"
+
+            style="@style/Slide.Jade"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:stepSize="1"
             android:value="0"
             android:valueFrom="0"
             android:valueTo="360" />
@@ -151,16 +152,17 @@
             android:text="光线亮度"
             android:textColor="@color/white" />
 
-             <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
-
-            android:stepSize="1"
+        <com.google.android.material.slider.Slider
             android:id="@+id/emoss_qiangdu"
+
+            style="@style/Slide.Jade"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:stepSize="1"
             android:value="0"
             android:valueFrom="0"
-            android:valueTo="100"  />
+            android:valueTo="100" />
     </LinearLayout>
 
     <LinearLayout
@@ -184,16 +186,16 @@
             android:text="光线范围"
             android:textColor="@color/white" />
 
-             <com.google.android.material.slider.Slider       style="@style/Slide.Jade"
-
-            android:stepSize="1"
+        <com.google.android.material.slider.Slider
             android:id="@+id/emoss_xieijiao"
+            style="@style/Slide.Jade"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:value="0"
-            android:valueFrom="0"
-            android:valueTo="100"  />
+            android:stepSize="1"
+            android:value="1"
+            android:valueFrom="1"
+            android:valueTo="100" />
     </LinearLayout>
 
 </RelativeLayout>
