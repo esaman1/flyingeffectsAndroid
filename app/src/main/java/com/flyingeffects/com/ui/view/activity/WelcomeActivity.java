@@ -190,8 +190,7 @@ public class WelcomeActivity extends BaseActivity {
     private void noQueryAdReason() {
         if (BaseConstans.getHasAdvertising() != 1) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "后台没配置广告");
-        }
-        if (BaseConstans.getIsNewUser()) {
+        }else if (BaseConstans.getIsNewUser()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "新用户");
         } else {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "其他原因");

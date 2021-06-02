@@ -29,9 +29,9 @@ import com.flyingeffects.com.utils.FileUtil;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
-import com.flyingeffects.com.utils.VideoConvertGif;
 import com.flyingeffects.com.utils.record.SaveShareDialog;
 import com.lansosdk.videoeditor.MediaInfo;
+import com.lansosdk.videoeditor.VideoEditor;
 import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.AlbumType;
 import com.shixing.sxve.ui.view.WaitingDialog;
@@ -47,6 +47,7 @@ import java.io.IOException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -84,7 +85,7 @@ public class MemeKeepActivity extends BaseActivity {
         templateId = getIntent().getStringExtra("templateId");
         templateType = getIntent().getStringExtra("templateType");
         title = getIntent().getStringExtra("title");
-        LogUtil.d("oom22","title="+title);
+        LogUtil.d("oom22", "title=" + title);
         if (AlbumType.isVideo(GetPathTypeModel.getInstance().getMediaType(videoPath))) {
             Typematerial = 0;
             mediaInfo = new MediaInfo(videoPath);
@@ -112,26 +113,36 @@ public class MemeKeepActivity extends BaseActivity {
     @Override
     protected void initAction() {
         if (Typematerial == 0) {
-            VideoConvertGif videoConvertGif = new VideoConvertGif(this);
-            videoConvertGif.ToExtractFrame(videoPath, new VideoConvertGif.CreateGifCallback() {
+//            VideoConvertGif videoConvertGif = new VideoConvertGif(this);
+//            videoConvertGif.ToExtractFrame(videoPath, new VideoConvertGif.CreateGifCallback() {
+//                @Override
+//                public void callback(boolean isSuccess, String path, String icon) {
+//
+//                    Observable.just(isSuccess).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
+//                        @Override
+//                        public void call(Boolean aBoolean) {
+//                            if (aBoolean) {
+//                                logoPath = icon;
+//                                showGif(path);
+//                            } else {
+//                                ToastUtil.showToast(path);
+//                            }
+//                        }
+//                    });
+//
+//                }
+//            });
+            WaitingDialog.openPragressDialog(this);
+            Observable.just(videoPath).map(s -> {
+                VideoEditor videoEditor = new VideoEditor();
+                return  logoPath = videoEditor.executeConvertVideoToGifHasPalette(videoPath, videoEditor.executeConvertVideoToGlobalPalette(videoPath));
+            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<String>() {
                 @Override
-                public void callback(boolean isSuccess, String path, String icon) {
-
-                    Observable.just(isSuccess).subscribeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
-                        @Override
-                        public void call(Boolean aBoolean) {
-                            if (aBoolean) {
-                                logoPath = icon;
-                                showGif(path);
-                            } else {
-                                ToastUtil.showToast(path);
-                            }
-                        }
-                    });
-
+                public void call(String s) {
+                    showGif(logoPath);
+                    LogUtil.d("OOM2", "logoPath=" + logoPath);
                 }
             });
-            mediaInfo.release();
         } else {
             showGif(videoPath);
         }
@@ -139,8 +150,6 @@ public class MemeKeepActivity extends BaseActivity {
 
 
     private void showGif(String gifPath) {
-
-
         WaitingDialog.closeProgressDialog();
         if (!TextUtils.isEmpty(gifPath)) {
             File file = new File(gifPath);
@@ -287,10 +296,10 @@ public class MemeKeepActivity extends BaseActivity {
         Observable.just(needGifPath).observeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             new Handler().post(() -> {
                 UMEmoji emoji = new UMEmoji(MemeKeepActivity.this, s);
-                String ss="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2483784393,127887195&fm=26&gp=0.jpg";
-                if(!TextUtils.isEmpty(logoPath)){
+                String ss = "https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=2483784393,127887195&fm=26&gp=0.jpg";
+                if (!TextUtils.isEmpty(logoPath)) {
                     emoji.setThumb(new UMImage(MemeKeepActivity.this, logoPath));
-                }else{
+                } else {
                     emoji.setThumb(new UMImage(MemeKeepActivity.this, R.mipmap.logo));
                 }
                 new ShareAction(MemeKeepActivity.this)
