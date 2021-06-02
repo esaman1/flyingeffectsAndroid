@@ -1,37 +1,29 @@
 package com.flyingeffects.com.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.airbnb.lottie.animation.content.Content;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.enity.FontColor;
 import com.flyingeffects.com.enity.FontEnity;
+import com.flyingeffects.com.enity.JadeTypeFace;
 import com.flyingeffects.com.ui.GridSpacingItemDecoration;
 import com.flyingeffects.com.ui.view.fragment.JadeAdjustFragment;
 import com.flyingeffects.com.utils.PxUtils;
-import com.flyingeffects.com.view.GridItemDecoration;
 import com.google.android.material.slider.Slider;
 import com.imaginstudio.imagetools.pixellab.GradientMaker;
 
@@ -69,12 +61,20 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private List<FontColor> simpleColors = new ArrayList<>();
     private List<FontColor> gradientColors = new ArrayList<>();
 
+    private List<JadeTypeFace> jadeTypeFaces = new ArrayList<>();
+    private List<JadeTypeFace> localJadeTypeFaces = new ArrayList<>();
+
+
     private FontColor selectedInnerSimpleColor;
     private FontColor selected3DSimpleColor;
     private FontColor selectedOverlaySimpleColor;
     private FontColor selectedGradientColor;
+    private JadeTypeFace selectedJadeTypeFace;
+
 
     private List<FontEnity> fontEnityList = new ArrayList<>();
+
+    private static final String TAG = "JadePagerAdapter";
 
     public JadePagerAdapter(String[] stringArray, Context content) {
         this.content = content;
@@ -123,7 +123,7 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private void bindTypeFaceHolder(TypeFaceHolder holder) {
         holder.rv.setLayoutManager(new GridLayoutManager(holder.itemView.getContext(), 4));
         holder.rv.addItemDecoration(new GridSpacingItemDecoration(4, PxUtils.dp2px(BaseApplication.getInstance(), 8), false, 0));
-        BaseQuickAdapter<FontEnity, BaseViewHolder> adapter = new BaseQuickAdapter<FontEnity, BaseViewHolder>(R.layout.view_jade_type_face_item, fontEnityList) {
+        BaseQuickAdapter<FontEnity, BaseViewHolder> adapter = new BaseQuickAdapter<FontEnity, BaseViewHolder>(R.layout.view_jade_other_type_face_item, fontEnityList) {
             @Override
             protected void convert(BaseViewHolder helper, FontEnity item) {
                 Glide.with(helper.getView(R.id.iv))
@@ -143,18 +143,21 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 for (FontEnity fontEnity : fontEnityList) {
                     fontEnity.setSelected(false);
                 }
-                FontEnity clickItem = fontEnityList.get(position);
-                clickItem.setSelected(true);
+                if (fontEnityList != null) {
+                    FontEnity clickItem = fontEnityList.get(position);
+                    clickItem.setSelected(true);
 //                if (simpleColors == null) {
 //                    return;
 //                }
 //
 //                selectedInnerSimpleColor = simpleColors.get(position);
 //                actionInner(holder);
-                if (onTypeFaceClick != null) {
-                    onTypeFaceClick.onClick(clickItem);
+                    if (onTypeFaceClick != null) {
+                        onTypeFaceClick.onClick(clickItem);
+                    }
+                    adapter.notifyDataSetChanged();
                 }
-                adapter.notifyDataSetChanged();
+
             }
         });
         holder.rv.setAdapter(adapter);
@@ -191,6 +194,77 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             }
         });
+
+
+        holder.default_rv.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        BaseQuickAdapter<JadeTypeFace, BaseViewHolder> adapter = new BaseQuickAdapter<JadeTypeFace, BaseViewHolder>(R.layout.view_jade_jade_type_face_item, jadeTypeFaces) {
+
+            @Override
+            protected void convert(BaseViewHolder helper, JadeTypeFace item) {
+                Glide.with(helper.getView(R.id.iv))
+                        .load(item.getIcon_image())
+                        .centerCrop()
+                        .into((ImageView) helper.getView(R.id.iv));
+                if (item.isSelected()) {
+                    helper.getView(R.id.frame).setVisibility(View.VISIBLE);
+                } else {
+                    helper.getView(R.id.frame).setVisibility(View.GONE);
+                }
+                helper.addOnClickListener(R.id.root);
+                helper.addOnClickListener(R.id.iv);
+            }
+        };
+        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                Log.d(TAG, "onItemChildClick() called with: adapter = [" + adapter + "], view = [" + view + "], position = [" + position + "]");
+                if (jadeTypeFaces != null) {
+                    selectedJadeTypeFace = jadeTypeFaces.get(position);
+                    for (JadeTypeFace fontEnity : jadeTypeFaces) {
+                        fontEnity.setSelected(false);
+                    }
+                    selectedJadeTypeFace = jadeTypeFaces.get(position);
+                    selectedJadeTypeFace.setSelected(true);
+                    adapter.notifyDataSetChanged();
+                    if (onAdjustParamsChangeCallBack != null) {
+                        onAdjustParamsChangeCallBack.onJadeTypeFaceChange(selectedJadeTypeFace);
+                    }
+                }
+            }
+        });
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Log.d(TAG, "onItemClick() called with: adapter = [" + adapter + "], view = [" + view + "], position = [" + position + "]");
+            }
+        });
+        holder.default_rv.setAdapter(adapter);
+
+
+//        holder.my_rv.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+//        BaseQuickAdapter<JadeTypeFace, BaseViewHolder> adapterMy = new BaseQuickAdapter<JadeTypeFace, BaseViewHolder>(R.layout.view_jade_jade_type_face_item, localJadeTypeFaces) {
+//
+//            @Override
+//            protected void convert(BaseViewHolder helper, JadeTypeFace item) {
+//                Glide.with(helper.getView(R.id.iv))
+//                        .load(item.getIcon_image())
+//                        .centerCrop()
+//                        .into((ImageView) helper.getView(R.id.iv));
+//                helper.addOnClickListener(R.id.iv);
+//            }
+//        };
+//        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+//            @Override
+//            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+////                selectedJadeTypeFace = localJadeTypeFaces.get(position);
+////                if (onAdjustParamsChangeCallBack != null) {
+////                    int color = Color.parseColor(selectedOverlaySimpleColor.getColor());
+////                    onAdjustParamsChangeCallBack.onTextColorChange(color, 0, 0, true);
+////                }
+//            }
+//        });
+//        holder.my_rv.setAdapter(adapterMy);
+
     }
 
     private void bindColorHolder(ColorHolder holder) {
@@ -277,11 +351,14 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                selectedOverlaySimpleColor = simpleColors.get(position);
-                if (onAdjustParamsChangeCallBack != null) {
-                    int color = Color.parseColor(selectedOverlaySimpleColor.getColor());
-                    onAdjustParamsChangeCallBack.onTextColorChange(color, 0, 0, true);
+                if (simpleColors != null) {
+                    selectedOverlaySimpleColor = simpleColors.get(position);
+                    if (onAdjustParamsChangeCallBack != null) {
+                        int color = Color.parseColor(selectedOverlaySimpleColor.getColor());
+                        onAdjustParamsChangeCallBack.onTextColorChange(color, 0, 0, true);
+                    }
                 }
+
             }
         });
         holder.color.setAdapter(adapter);
@@ -305,16 +382,13 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         gradualColorRvAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-//                selectedOverlaySimpleColor = simpleColors.get(position);
-//                if (onAdjustParamsChangeCallBack != null) {
-//                    int color = Color.parseColor(selectedOverlaySimpleColor.getColor());
-//                    onAdjustParamsChangeCallBack.onTextColorChange(color, 0, 0, true);
-//                }
-                selectedGradientColor = gradientColors.get(position);
-                @NotNull int[] gradientColor = getGradientColor(selectedGradientColor);
-                GradientMaker.GradientFill gradientFill = new GradientMaker.GradientFill(currentGradientType, gradientColor[0], gradientColor[1]);
-                if (onAdjustParamsChangeCallBack != null) {
-                    onAdjustParamsChangeCallBack.onTextColorChange(gradientFill);
+                if (gradientColors != null) {
+                    selectedGradientColor = gradientColors.get(position);
+                    @NotNull int[] gradientColor = getGradientColor(selectedGradientColor);
+                    GradientMaker.GradientFill gradientFill = new GradientMaker.GradientFill(currentGradientType, gradientColor[0], gradientColor[1]);
+                    if (onAdjustParamsChangeCallBack != null) {
+                        onAdjustParamsChangeCallBack.onTextColorChange(gradientFill);
+                    }
                 }
             }
         });
@@ -325,7 +399,7 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @NotNull
     private int[] getGradientColor(FontColor item) {
-        int[] colors = new int[2];
+        int[] colors = new int[4];
         String[] split = item.getColor().split(",");
         for (int i = 0; i < split.length; i++) {
             colors[i] = Color.parseColor(split[i]);
@@ -356,8 +430,11 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                selected3DSimpleColor = simpleColors.get(position);
-                action3DAction(holder);
+                if (simpleColors != null) {
+
+                    selected3DSimpleColor = simpleColors.get(position);
+                    action3DAction(holder);
+                }
             }
         });
         holder.color.setAdapter(adapter);
@@ -657,5 +734,21 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public interface onTypeFaceClick {
         void onClick(FontEnity fontEnity);
+    }
+
+    public List<JadeTypeFace> getJadeTypeFaces() {
+        return jadeTypeFaces;
+    }
+
+    public void setJadeTypeFaces(List<JadeTypeFace> jadeTypeFaces) {
+        this.jadeTypeFaces = jadeTypeFaces;
+    }
+
+    public List<JadeTypeFace> getLocalJadeTypeFaces() {
+        return localJadeTypeFaces;
+    }
+
+    public void setLocalJadeTypeFaces(List<JadeTypeFace> localJadeTypeFaces) {
+        this.localJadeTypeFaces = localJadeTypeFaces;
     }
 }

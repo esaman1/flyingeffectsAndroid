@@ -133,7 +133,7 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
                 drawable,
                 drawable1
         );
-        new_text.setTextSize(200);
+        new_text.setTextSize(160);
         new_text.setText("输入文字", false);
         this.texts.put(Integer.valueOf(this.lastInserted), new_text);
         new_text.assigned_id = this.lastInserted;

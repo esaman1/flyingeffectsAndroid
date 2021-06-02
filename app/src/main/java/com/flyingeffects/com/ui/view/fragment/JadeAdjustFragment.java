@@ -18,6 +18,7 @@ import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.FragmentJadeAdjustBinding;
 import com.flyingeffects.com.enity.FontColor;
 import com.flyingeffects.com.enity.FontEnity;
+import com.flyingeffects.com.enity.JadeTypeFace;
 import com.flyingeffects.com.http.Api;
 import com.flyingeffects.com.http.HttpUtil;
 import com.flyingeffects.com.http.ProgressSubscriber;
@@ -29,6 +30,7 @@ import com.flyingeffects.com.view.mine.CreateViewForAddText;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.imaginstudio.imagetools.pixellab.GradientMaker;
+import com.orhanobut.hawk.Hawk;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import org.jetbrains.annotations.NotNull;
@@ -106,6 +108,31 @@ public class JadeAdjustFragment extends Fragment {
         initInputEditText();
         getColors();
         getFonts();
+        getJadeTypeFace();
+        getLocalJadeTypeFace();
+    }
+
+    private void getLocalJadeTypeFace() {
+        List<JadeTypeFace> local_jade_type_face = (List<JadeTypeFace>) Hawk.get("local_jade_type_face", null);
+        jadePagerAdapter.setLocalJadeTypeFaces(local_jade_type_face);
+        jadePagerAdapter.notifyDataSetChanged();
+    }
+
+    private void getJadeTypeFace() {
+        HashMap<String, String> params3 = new HashMap<>();
+        Observable ob3 = Api.getDefault().fontstylelist(BaseConstans.getRequestHead(params3));
+        HttpUtil.getInstance().toSubscribe(ob3, new ProgressSubscriber<List<JadeTypeFace>>(getActivity()) {
+            @Override
+            protected void onSubError(String message) {
+                ToastUtil.showToast(message);
+            }
+
+            @Override
+            protected void onSubNext(List<JadeTypeFace> data) {
+                jadePagerAdapter.setJadeTypeFaces(data);
+                jadePagerAdapter.notifyDataSetChanged();
+            }
+        }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
     }
 
     private void getFonts() {
@@ -271,6 +298,8 @@ public class JadeAdjustFragment extends Fragment {
         void onTextColorChange(GradientMaker.GradientFill gradientFill);
 
         void onTypeFaceChange(String path);
+
+        void onJadeTypeFaceChange(JadeTypeFace jadeTypeFace);
     }
 
     public onAdjustParamsChangeCallBack getOnAdjustParamsChange() {

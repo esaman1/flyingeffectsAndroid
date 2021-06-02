@@ -31,6 +31,7 @@ import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.databinding.ActivityJadeFontMakeBinding;
 import com.flyingeffects.com.enity.CutSuccess;
+import com.flyingeffects.com.enity.JadeTypeFace;
 import com.flyingeffects.com.enity.SubtitleEntity;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.view.JadeFontMakeMvpView;
@@ -217,7 +218,6 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override
@@ -276,6 +276,50 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                     spansIntervals spans = new spansIntervals();
                     spans.addInterval(new interval(0, currentText.returnText().length(), new customTypeface(path, createFontFromPath(path))));
                     currentText.setTextFont(spans);
+                }
+            }
+
+            @Override
+            public void onJadeTypeFaceChange(JadeTypeFace jadeTypeFace) {
+                try {
+                    TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                    if (currentText != null) {
+                        JadeTypeFace.DetailBean detail = jadeTypeFace.getDetail();
+                        if (detail != null) {
+                            if (
+                                    detail.getIn_bright() != null&&
+                                    detail.getRelief() != null&&
+                                    detail.getFont_3D() != null
+                            ) {
+                                currentText.setColorFill(Color.parseColor("#1B5E20"));
+
+                                int fuzzy_radius = Integer.parseInt(detail.getIn_bright().getFuzzy_radius());
+                                int x =Integer.parseInt(detail.getIn_bright().getHorizontal_shift());
+                                int y =Integer.parseInt(detail.getIn_bright().getVertical_offset());
+//                                int bright_color = Integer.parseInt(detail.getIn_bright().getBright_color());
+                                int bright_color = Color.parseColor("#C8E6C9");
+                                currentText.setInnerShadow(true, fuzzy_radius,x , y, bright_color);
+
+                                int LightAngle = Integer.parseInt(detail.getRelief().getIllumination_angle());
+                                int Intensity = Integer.parseInt(detail.getRelief().getIllumination_intensity());
+                                int Bevel = Integer.parseInt(detail.getRelief().getOblique_angle());
+                                currentText.setEmboss(true, LightAngle, Intensity, 100, 100, Bevel);
+
+                                int obliqueAngle = Integer.parseInt(detail.getFont_3D().getAngle());
+//                                int Depth = Integer.parseInt(detail.getFont_3D().getDepth());
+                                int Depth = 3;
+//                                int color = Integer.parseInt(detail.getFont_3D().getColor());
+                                currentText.set3dEnabled(true);
+                                currentText.set3dViewType(3);
+                                currentText.set3dDepth(((int) Depth), 20, 1, true);
+                                currentText.set3dDepthColor(1, Color.parseColor("#1B5E20"), null, true);
+                                currentText.set3dObliqueAngle(obliqueAngle);
+                            }
+                        }
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };
@@ -396,16 +440,6 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 //                }
 //            }
 //        });
-
-        mBinding.test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mBinding.jadeFragmentContainer.animate()
-                        .translationY(-900)
-                        .setDuration(200)
-                        .start();
-            }
-        });
     }
 
     private void addJadeFont() {

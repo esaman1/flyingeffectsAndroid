@@ -10,6 +10,7 @@ import com.flyingeffects.com.enity.FontEnity;
 import com.flyingeffects.com.enity.HttpResult;
 import com.flyingeffects.com.enity.HumanMerageResult;
 import com.flyingeffects.com.enity.ImageFrameEntity;
+import com.flyingeffects.com.enity.JadeTypeFace;
 import com.flyingeffects.com.enity.MessageData;
 import com.flyingeffects.com.enity.MineCommentEnity;
 import com.flyingeffects.com.enity.MineZanEnity;
@@ -434,6 +435,9 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("/api/message/fontcolor")
     Observable<HttpResult<List<FontColor>>> fontColor(@FieldMap Map<String,String> params);
+ @FormUrlEncoded
+    @POST("/api/message/fontstylelist")
+    Observable<HttpResult<List<JadeTypeFace>>> fontstylelist(@FieldMap Map<String,String> params);
 
 
 }
