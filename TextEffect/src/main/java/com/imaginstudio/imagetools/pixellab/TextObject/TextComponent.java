@@ -60,6 +60,13 @@ import androidx.core.view.ViewCompat;
  */
 public class TextComponent extends View {
 
+    private int id;
+    private long startTime;
+    private long endTime;
+    private int mJadeFontViewIndex;
+    private boolean isSubTitle;
+    private int subTitleTag;
+
     private static final String TAG = "TextComponent";
 
     private displayInfo helperClass;
@@ -575,6 +582,9 @@ public class TextComponent extends View {
 //            rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
             mHelpBoxRect.set(rectF);
 //
+            Log.d(TAG, "onDraw() called with: mHelpBoxRect = [" + rectF + "]");
+            Log.d(TAG, "onDraw() called with: mHelpBoxRect.centerX = [" + mHelpBoxRect.centerX() + "]");
+            Log.d(TAG, "onDraw() called with: mHelpBoxRect.centerY() = [" + mHelpBoxRect.centerY() + "]");
             if (leftTopBitmap != null) {
                 RectUtil.rotateRect(leftTopDstRect, mHelpBoxRect.centerX(),
                         mHelpBoxRect.centerY(), mRotateAngle);
@@ -1294,7 +1304,7 @@ public class TextComponent extends View {
                     Log.d(TAG, "ACTION_DOWN ACTION_TYPE_DELETE() called with");
                     ACTION_TYPE = ACTION_TYPE_DELETE;
                     if (callback != null) {
-                        callback.stickerOnclick(LEFT_TOP_MODE);
+                        callback.stickerOnclick(LEFT_TOP_MODE, TextComponent.this);
                     }
                 } else if (rightBottomDstRect.contains(x, y)) {
                     Log.d(TAG, "ACTION_DOWN ACTION_TYPE_SCALE_AND_ROTATE() called with");
@@ -2700,6 +2710,8 @@ public class TextComponent extends View {
             //相当于STICKER_BTN_HALF_SIZE*2 左移运算符
             leftTopDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
                     STICKER_BTN_HALF_SIZE << 1);
+            Log.d(TAG, "initFrameBitmap() called leftTopRect" + leftTopRect);
+            Log.d(TAG, "initFrameBitmap() called leftTopDstRect" + leftTopDstRect);
         }
 
         if (rightBottomBitmap != null) {
@@ -2707,6 +2719,8 @@ public class TextComponent extends View {
                     rightBottomBitmap.getIntrinsicHeight());
             rightBottomDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
                     STICKER_BTN_HALF_SIZE << 1);
+            Log.d(TAG, "initFrameBitmap() called rightBottomRect" + rightBottomRect);
+            Log.d(TAG, "initFrameBitmap() called rightBottomDstRect" + rightBottomDstRect);
         }
     }
 
@@ -2785,5 +2799,55 @@ public class TextComponent extends View {
      */
     private float adjustDegree(float currentDegree, float newDegree) {
         return currentDegree + newDegree;
+    }
+
+    public int getSubTitleTag() {
+        return subTitleTag;
+    }
+
+    public void setSubTitleTag(int subTitleTag) {
+        this.subTitleTag = subTitleTag;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
+
+    public boolean isSubTitle() {
+        return isSubTitle;
+    }
+
+    public void setSubTitle(boolean subTitle) {
+        isSubTitle = subTitle;
+    }
+
+    public int getmJadeFontViewIndex() {
+        return mJadeFontViewIndex;
+    }
+
+    public void setmJadeFontViewIndex(int mJadeFontViewIndex) {
+        this.mJadeFontViewIndex = mJadeFontViewIndex;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.id = id;
     }
 }
