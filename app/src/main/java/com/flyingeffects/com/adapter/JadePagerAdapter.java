@@ -464,7 +464,7 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             } else {
                 color = Color.parseColor(selected3DSimpleColor.getColor());
             }
-            onAdjustParamsChangeCallBack.on3Dchange(ddd_deep, 30, 1, true, ddd_arc, color);
+            onAdjustParamsChangeCallBack.on3Dchange(ddd_deep, 0, 1, true, ddd_arc, color);
         }
     }
 
@@ -564,7 +564,7 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             int emoss_arc = (int) holder.emoss_arc.getValue();
             int emoss_qiangdu = (int) holder.emoss_qiangdu.getValue();
             int emoss_xieijiao = (int) holder.emoss_xieijiao.getValue();
-            onAdjustParamsChangeCallBack.onEmossChange(true, emoss_arc, emoss_qiangdu, 30, 100, emoss_xieijiao);
+            onAdjustParamsChangeCallBack.onEmossChange(true, emoss_arc, emoss_qiangdu, 100, 100, emoss_xieijiao);
         }
     }
 

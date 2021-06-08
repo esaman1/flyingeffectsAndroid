@@ -11,10 +11,15 @@ public class JadeTypeFace {
     private DetailBean detail;
     private boolean selected;
 
+
     public static class DetailBean {
         private InBrightBean in_bright;
         private ReliefBean relief;
         private Font3DBean font_3D;
+        private String color;
+        private String font;
+        private String in_color;
+
 
         public InBrightBean getIn_bright() {
             return in_bright;
@@ -38,6 +43,30 @@ public class JadeTypeFace {
 
         public void setFont_3D(Font3DBean font_3D) {
             this.font_3D = font_3D;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
+            this.color = color;
+        }
+
+        public String getFont() {
+            return font;
+        }
+
+        public void setFont(String font) {
+            this.font = font;
+        }
+
+        public String getIn_color() {
+            return in_color;
+        }
+
+        public void setIn_color(String in_color) {
+            this.in_color = in_color;
         }
 
         public static class InBrightBean {
