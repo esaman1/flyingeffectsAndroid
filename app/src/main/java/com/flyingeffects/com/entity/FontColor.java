@@ -1,4 +1,4 @@
-package com.flyingeffects.com.enity;
+package com.flyingeffects.com.entity;
 
 public class FontColor {
 

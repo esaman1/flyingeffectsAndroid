@@ -28,9 +28,11 @@ import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.base.BaseApplication;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActivityJadeFontMakeBinding;
 import com.flyingeffects.com.entity.CutSuccess;
+import com.flyingeffects.com.entity.JadeTypeFace;
 import com.flyingeffects.com.entity.SubtitleEntity;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.view.JadeFontMakeMvpView;
@@ -454,7 +456,6 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     private void addJadeFont() {
-        textContain.addNewText(Color.parseColor("#ffffff"), helperClass,
         mBinding.jakeFontSeekBarView.addTemplateMaterialItemView(mCutEndTime, "", getCurrentPos(), getCurrentPos() + 5000, true,
                 "输入文字", mJadeFontViewIndex, null, -1, mBinding.progressBarView.progressTotalWidth);
          //todo 合并代码后须给玉体字view 添加一个mJadeFontViewIndex的ID  根据这个id控制该字对应的时间轴操作
