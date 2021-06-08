@@ -190,8 +190,7 @@ public class WelcomeActivity extends BaseActivity {
     private void noQueryAdReason() {
         if (BaseConstans.getHasAdvertising() != 1) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "后台没配置广告");
-        }
-        if (BaseConstans.getIsNewUser()) {
+        }else if (BaseConstans.getIsNewUser()) {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "新用户");
         } else {
             StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "start_not_request_ad", "其他原因");
@@ -212,10 +211,23 @@ public class WelcomeActivity extends BaseActivity {
 
     private void getPermission() {
         mBinding.rlAdContainer.post(() -> {
-            if (Build.VERSION.SDK_INT >= BUILD_VERSION) {
-                checkPermission();
-                StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_6");
-            } else {
+            if(canGetPermissions()){
+                BaseConstans.setLastRequestPerTime(System.currentTimeMillis());
+                if (Build.VERSION.SDK_INT >= BUILD_VERSION) {
+                    checkPermission();
+                    StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_6");
+                } else {
+                    hasPermission = true;
+                    StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6");
+                    if (BaseConstans.getHasAdvertising() == 1 ) {
+                        StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6_requestAd");
+                        showSplashAd();
+                    } else {
+                        noQueryAdReason();
+                        StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6_no_requestAd");
+                    }
+                }
+            }else{
                 hasPermission = true;
                 StatisticsEventAffair.getInstance().setFlag(WelcomeActivity.this, "test_ad_into_checkPermiss_less_6");
                 if (BaseConstans.getHasAdvertising() == 1 ) {
@@ -494,6 +506,20 @@ public class WelcomeActivity extends BaseActivity {
     }
 
 
+
+
+    /**
+     * description ：是否可以请求权限，7天后才能请求
+     * creation date: 2021/5/21
+     * user : zhangtongju
+     */
+    private boolean canGetPermissions() {
+        long nowCurrentTime = System.currentTimeMillis();
+        long lastCloseTime = BaseConstans.getLastRequestPerTime();
+        long intervalTime = nowCurrentTime - lastCloseTime;
+        intervalTime = intervalTime / 1000 / 60 / 60 / 24;
+        return intervalTime >= 24*7;
+    }
 
 
 

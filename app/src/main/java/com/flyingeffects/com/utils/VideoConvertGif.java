@@ -47,6 +47,11 @@ public class VideoConvertGif {
     }
 
 
+    /**
+     * description ：方式 1 通过自己拆成每帧，然后合成gif ,质量高，但是文件打
+     * creation date: 2021/5/31
+     * user : zhangtongju
+     */
     public void ToExtractFrame(String path, CreateGifCallback callback) {
         new Thread(() -> {
             MediaInfo mInfo = new MediaInfo(path);
@@ -67,6 +72,7 @@ public class VideoConvertGif {
                     mExtractFrame.setBitmapWH(mInfo.vWidth / 3, mInfo.vHeight / 3);
                 }
             }
+//            mExtractFrame.setBitmapWH(200,200);
             int allFrame = mInfo.vTotalFrames;
             //设置提取多少帧
             mExtractFrame.setExtractSomeFrame(allFrame);
@@ -132,10 +138,10 @@ public class VideoConvertGif {
         localAnimatedGifEncoder.finish();//finish
 //        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/GIFMakerDemo");
 //        if (!file.exists()) file.mkdir();
-        String path = gifCatch+"/show.gif";
-        String path2 = gifCatch+"/show.jpg";
-        File fileFrom=new File(extractFrameFolder + File.separator + frameCount + ".jpg");
-        FileUtil.copyFile(fileFrom ,path2);
+        String path = gifCatch + "/show.gif";
+        String path2 = gifCatch + "/show.jpg";
+        File fileFrom = new File(extractFrameFolder + File.separator + frameCount + ".jpg");
+        FileUtil.copyFile(fileFrom, path2);
 
         LogUtil.d("OOM2", "createGif: ---->" + path);
         try {
@@ -146,11 +152,11 @@ public class VideoConvertGif {
             baos.close();
             fos.close();
             DataCleanManager.deleteFilesByDirectory(context.getExternalFilesDir("ExtractFrame"));
-            uploadDressUpImage(path2,callback,path);
+            uploadDressUpImage(path2, callback, path);
 //            compressGif(path, path2, callback);
         } catch (IOException e) {
             if (callback != null) {
-                callback.callback(false, e.getMessage(),"");
+                callback.callback(false, e.getMessage(), "");
             }
             e.printStackTrace();
         }
@@ -163,17 +169,18 @@ public class VideoConvertGif {
      * user : zhangtongju
      */
     public interface CreateGifCallback {
-        void callback(boolean isSuccess, String path,String iconPath);
+        void callback(boolean isSuccess, String path, String iconPath);
     }
 
     private String needGifPath;
-    private void uploadDressUpImage(String path,CreateGifCallback callback,String orginPath) {
+
+    private void uploadDressUpImage(String path, CreateGifCallback callback, String orginPath) {
         new Thread(() -> {
             String type = path.substring(path.length() - 4);
             String nowTime = StringUtil.getCurrentTimeymd();
             String copyPath = "media/android/upGif/" + nowTime + "/" + System.currentTimeMillis() + type;
             needGifPath = "http://cdn.flying.flyingeffect.com/" + copyPath;
-            uploadHuawei(path, copyPath,callback,orginPath);
+            uploadHuawei(path, copyPath, callback, orginPath);
         }).start();
     }
 
@@ -182,14 +189,16 @@ public class VideoConvertGif {
      * creation date: 2021/4/14
      * user : zhangtongju
      */
-    private void uploadHuawei(String path, String copyPath,CreateGifCallback callback,String  orginPath) {
+    private void uploadHuawei(String path, String copyPath, CreateGifCallback callback, String orginPath) {
         LogUtil.d("OOM2", "needGifPath=" + needGifPath);
         huaweiObs.getInstance().uploadFileToHawei(path, copyPath, str -> Observable.just(str).subscribeOn(AndroidSchedulers.mainThread()).subscribe(s -> {
             if (callback != null) {
-                callback.callback(true, orginPath,needGifPath);
+                callback.callback(true, orginPath, needGifPath);
             }
 
         }));
     }
+
+
 
 }

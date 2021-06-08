@@ -3604,4 +3604,80 @@ public class VideoEditor {
 //    }
 //}
 
+
+
+    /**
+     * 把视频转换为一张全局调色板
+     * @param videoPath 视频的完整路径
+     * "ffmpeg "ffmpeg -ss " + startTime + " -t " + duration + " -i " + videoPath + " -b 568k -r 20 -vf fps=20,scale=320:-1:flags=lanczos,palettegen -y " + globalPalettePicPath;
+     * @return
+     * scale=200:-1:flags=lanczos,palettegen
+     */
+    public  String executeConvertVideoToGlobalPalette(String videoPath) {
+        List<String> cmdList = new ArrayList<>();
+        String dstPath=LanSongFileUtil.createFileInBox(".png");
+        String filter = String.format("scale=250:-1:flags=lanczos,palettegen");
+        cmdList.add("-i");
+        cmdList.add(videoPath);
+        cmdList.add("-an");
+        cmdList.add("-vf");
+        cmdList.add(filter);
+        cmdList.add("-y");
+        cmdList.add(dstPath);
+        String[] command = new String[cmdList.size()];
+        for (int i = 0; i < cmdList.size(); i++) {
+            command[i] = cmdList.get(i);
+        }
+        int ret= executeVideoEditor(command);
+        if(ret==0){
+            return dstPath;
+        }else{
+            LanSongFileUtil.deleteFile(dstPath);
+            return null;
+        }
+    }
+
+
+
+
+    /**
+     * 把视频转换为gif ，合成的gif颜色值不会有差异
+     * @param videoPath 视频的完整路径
+     * @param platettePath 调色盘
+     * @return
+     */
+    public String executeConvertVideoToGifHasPalette(String videoPath,String platettePath) {
+        List<String> cmdList = new ArrayList<String>();
+        String dstPath=LanSongFileUtil.createGIFFileInBox();
+        String filter = String.format("scale=250:-1:flags=lanczos,paletteuse=dither=floyd_steinberg");
+
+        cmdList.add("-i");
+        cmdList.add(videoPath);
+
+        cmdList.add("-i");
+        cmdList.add(platettePath);
+
+        cmdList.add("-r");
+        cmdList.add(String.valueOf(20));
+
+        cmdList.add("-lavfi");
+        cmdList.add(filter);
+
+        cmdList.add("-y");
+        cmdList.add(dstPath);
+
+        String[] command = new String[cmdList.size()];
+        for (int i = 0; i < cmdList.size(); i++) {
+            command[i] = cmdList.get(i);
+        }
+        int ret= executeVideoEditor(command);
+        if(ret==0){
+            return dstPath;
+        }else{
+            LanSongFileUtil.deleteFile(dstPath);
+            return null;
+        }
+    }
+
+
 }

@@ -542,6 +542,21 @@ public class BaseConstans {
     }
 
 
+
+    /**
+     * 得到上次请求权限的时间
+     */
+    public static long getLastRequestPerTime() {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        return spUtil.getLong("lastPerTime", 0);
+    }
+
+    public static void setLastRequestPerTime(long time) {
+        SPHelper spUtil = new SPHelper(BaseApplication.getInstance(), "fileName");
+        spUtil.putLong("lastPerTime", time);
+    }
+
+
 //    /**
 //     * 关闭vip的时间
 //     */
