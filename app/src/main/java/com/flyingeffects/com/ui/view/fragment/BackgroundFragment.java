@@ -15,14 +15,15 @@ import com.flyingeffects.com.base.BaseFragment;
 import com.flyingeffects.com.commonlyModel.TemplateDown;
 import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.FagBjBinding;
-import com.flyingeffects.com.enity.FirstLevelTypeEntity;
-import com.flyingeffects.com.enity.NewFragmentTemplateItem;
-import com.flyingeffects.com.enity.SecondChoosePageListener;
-import com.flyingeffects.com.enity.fromKuaishou;
+import com.flyingeffects.com.entity.FirstLevelTypeEntity;
+import com.flyingeffects.com.entity.NewFragmentTemplateItem;
+import com.flyingeffects.com.entity.SecondChoosePageListener;
+import com.flyingeffects.com.entity.fromKuaishou;
 import com.flyingeffects.com.manager.AlbumManager;
 import com.flyingeffects.com.manager.CompressionCuttingManage;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.manager.StatisticsEventAffair;
+import com.flyingeffects.com.ui.interfaces.AlbumChooseCallback;
 import com.flyingeffects.com.ui.interfaces.view.FagBjMvpView;
 import com.flyingeffects.com.ui.model.FromToTemplate;
 import com.flyingeffects.com.ui.model.GetPathTypeModel;
@@ -30,6 +31,7 @@ import com.flyingeffects.com.ui.model.MattingImage;
 import com.flyingeffects.com.ui.presenter.FagBjMvpPresenter;
 import com.flyingeffects.com.ui.view.activity.ContentAllianceActivity;
 import com.flyingeffects.com.ui.view.activity.CreationTemplateActivity;
+import com.flyingeffects.com.ui.view.activity.JadeFontMakeActivity;
 import com.flyingeffects.com.ui.view.activity.LoginActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateActivity;
 import com.flyingeffects.com.ui.view.activity.TemplateSearchActivity;
@@ -40,6 +42,7 @@ import com.flyingeffects.com.utils.PermissionUtil;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.shixing.sxve.ui.AlbumType;
+import com.yanzhenjie.album.AlbumFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +118,8 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
         mBinding.llCratePhotographAlbum2.setOnClickListener(this::onViewClicked);
         mBinding.llClickCreateVideo.setOnClickListener(this::onViewClicked);
         mBinding.ivSearch.setOnClickListener(this::onViewClicked);
+        mBinding.llJadeFont.setOnClickListener(this::onViewClicked);
+        mBinding.llJadeFont2.setOnClickListener(this::onViewClicked);
     }
 
     @Override
@@ -356,7 +361,7 @@ public class BackgroundFragment extends BaseFragment implements FagBjMvpView, Ap
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (getActivity() != null) {
-            if (requestCode == 1 || requestCode == 2) {
+            if (requestCode == 1 || requestCode == 2 || requestCode == 3) {
                 ArrayList<String> deniedPermission = new ArrayList<>();
                 for (int i = 0; i < permissions.length; i++) {
                     String permission = permissions[i];

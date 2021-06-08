@@ -3,25 +3,27 @@ package com.flyingeffects.com.ui.presenter;
 import android.app.Activity;
 
 import com.flyingeffects.com.base.mvpBase.BasePresenter;
-import com.flyingeffects.com.enity.SubtitleEntity;
+import com.flyingeffects.com.entity.SubtitleEntity;
 import com.flyingeffects.com.ui.interfaces.model.JadeFontMakeMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.JadeFontMakeMvpView;
 import com.flyingeffects.com.ui.model.JadeFontMakeModel;
 
 import java.util.List;
 
+import androidx.lifecycle.LifecycleObserver;
+
 /**
  * @author ZhouGang
  * @date 2021/5/25
  */
-public class JadeFontMakePresenter extends BasePresenter implements JadeFontMakeMvpCallback {
+public class JadeFontMakePresenter extends BasePresenter implements JadeFontMakeMvpCallback, LifecycleObserver {
 
     JadeFontMakeMvpView mMvpView;
     JadeFontMakeModel mMakeModel;
 
-    public JadeFontMakePresenter(Activity context, JadeFontMakeMvpView mMvpView, String videoPath) {
+    public JadeFontMakePresenter(Activity context, JadeFontMakeMvpView mMvpView, String videoPath,String imagePath) {
         this.mMvpView = mMvpView;
-        mMakeModel = new JadeFontMakeModel(context, videoPath, this);
+        mMakeModel = new JadeFontMakeModel(context, videoPath,imagePath, this);
     }
 
     @Override
@@ -59,6 +61,21 @@ public class JadeFontMakePresenter extends BasePresenter implements JadeFontMake
         mMvpView.clearCheckBox();
     }
 
+    @Override
+    public void showLoadingDialog() {
+        mMvpView.showLoadingDialog();
+    }
+
+    @Override
+    public void setDialogProgress(String title, int dialogProgress, String content) {
+        mMvpView.setDialogProgress(title,dialogProgress,content);
+    }
+
+    @Override
+    public void dismissLoadingDialog() {
+        mMvpView.dismissLoadingDialog();
+    }
+
     public void startIdentify(boolean isVideoInAudio, String videoPath, String audioPath) {
         mMakeModel.startIdentify(isVideoInAudio, videoPath, audioPath);
     }
@@ -69,6 +86,10 @@ public class JadeFontMakePresenter extends BasePresenter implements JadeFontMake
 
     public void getNowPlayingTimeViewShow(long progressBarProgress, long endTime) {
 
+    }
+
+    public void saveVideo(long cutStartTime, long cutEndTime, boolean nowUiIsLandscape, float percentageH) {
+        mMakeModel.saveVideo(cutStartTime,cutEndTime,nowUiIsLandscape,percentageH);
     }
 
 }

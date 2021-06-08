@@ -24,12 +24,14 @@ import com.bumptech.glide.Glide;
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
+import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActivityJadeFontMakeBinding;
-import com.flyingeffects.com.enity.CutSuccess;
-import com.flyingeffects.com.enity.SubtitleEntity;
+import com.flyingeffects.com.entity.CutSuccess;
+import com.flyingeffects.com.entity.SubtitleEntity;
 import com.flyingeffects.com.manager.DoubleClick;
 import com.flyingeffects.com.ui.interfaces.view.JadeFontMakeMvpView;
 import com.flyingeffects.com.ui.presenter.JadeFontMakePresenter;
+import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.ui.view.fragment.JadeAdjustFragment;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
@@ -151,6 +153,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     List<View> listForInitBottom = new ArrayList<>();
     /**玉体字view的id，创建一个自增一个*/
     int mJadeFontViewIndex = 0;
+    LoadingDialog mLoadingDialog;
 
 
     private displayInfo helperClass;
@@ -174,8 +177,10 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
         mVideoPath = getIntent().getStringExtra("videoPath");
         mImagePath = getIntent().getStringExtra("imagePath");
-        mPresenter = new JadeFontMakePresenter(this, this, mVideoPath);
+        mPresenter = new JadeFontMakePresenter(this, this, mVideoPath,mImagePath);
 
+        mLoadingDialog = buildLoadingDialog();
+        getLifecycle().addObserver(mLoadingDialog);
         setOnClickListener();
         setDefaultVideoPlayerView();
         setProgressBarListener();
@@ -186,8 +191,16 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         initJadeAdjustView();
 
     }
-    private int mWindowHeight = 0;
 
+    private LoadingDialog buildLoadingDialog() {
+        return LoadingDialog.getBuilder(this)
+                .setHasAd(true)
+                .setTitle("飞闪预览处理中")
+                .setMessage("请耐心等待，不要离开")
+                .build();
+    }
+
+    private int mWindowHeight = 0;
     private void initJadeAdjustView() {
         jadeAdjustFragment = new JadeAdjustFragment();
         jadeAdjustFragment.setOnInputChangeCallBack(new JadeAdjustFragment.OnInputChangeCallBack() {
@@ -277,9 +290,13 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     private void addJadeFont() {
+        mBinding.jakeFontSeekBarView.addTemplateMaterialItemView(mCutEndTime, "", getCurrentPos(), getCurrentPos() + 5000, true,
+                "输入文字", mJadeFontViewIndex, null, -1, mBinding.progressBarView.progressTotalWidth);
+         //todo 合并代码后须给玉体字view 添加一个mJadeFontViewIndex的ID  根据这个id控制该字对应的时间轴操作
         textContain.addNewText(Color.parseColor("#252B3B"), helperClass,
                 ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.sticker_delete),
                 ContextCompat.getDrawable(JadeFontMakeActivity.this, R.mipmap.sticker_redact), stickerItemOnitemclick);
+        mJadeFontViewIndex++;
     }
 
     @Override
@@ -312,7 +329,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     private void onViewClicked(View view) {
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             if (view == mBinding.tvTopSubmit) {
-
+                videoToPause();
             } else if (view == mBinding.llPlay) {
                 onPlayClick();
             } else if (view == mBinding.ivAddSticker) {
@@ -395,13 +412,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
     private void onClickAddWordBtn() {
         seekBarViewIsShow(false);
-//        chooseTab(0);
         setTextColor(0);
-//        seekBarViewIsShow(false);
-//        chooseTab(0);
-//        setTextColor(0);
-//        mBinding.jakeFontSeekBarView.addTemplateMaterialItemView(mCutEndTime, "", getCurrentPos(), getCurrentPos() + 5000, true,
-//                "是单个玉体字的文本", 0, null, -1, mBinding.progressBarView.progressTotalWidth);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         if (jadeAdjustFragment.isVisible()) {
             fragmentTransaction.hide(jadeAdjustFragment);
@@ -416,13 +427,6 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
     }
 
-    /**
-     * 初始化加字页面
-     */
-    private void initViewAddWord() {
-        View addJadeFontView = LayoutInflater.from(this).inflate(R.layout.view_add_jade_font, mBinding.viewPager, false);
-        listForInitBottom.add(addJadeFontView);
-    }
 
     boolean isPlayVideoInAudio = false;
      /**
@@ -854,7 +858,6 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 mBinding.progressBarView.addProgressBarView(allVideoDuration, !TextUtils.isEmpty(mVideoPath) ? mVideoPath : mImagePath);
             }
         });
-        mBinding.jakeFontSeekBarView.setGreenScreen(false);
     }
 
     private void initExo(String videoPath) {
@@ -1359,6 +1362,23 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             default:
                 break;
         }
+    }
+
+    @Override
+    public void showLoadingDialog() {
+        mLoadingDialog.show();
+    }
+
+    @Override
+    public void setDialogProgress(String title, int dialogProgress, String content) {
+        mLoadingDialog.setTitleStr(title);
+        mLoadingDialog.setProgress(dialogProgress);
+        mLoadingDialog.setContentStr(content);
+    }
+
+    @Override
+    public void dismissLoadingDialog() {
+        mLoadingDialog.dismiss();
     }
 
     @Subscribe

@@ -344,6 +344,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
+            android:textSize="16sp"
             android:text="加字"
             android:textColor="@color/white" />
 
@@ -354,6 +355,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="识别字幕"
+            android:textSize="16sp"
             android:textColor="@color/white" />
 
         <TextView
@@ -363,6 +365,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="换音乐"
+            android:textSize="16sp"
             android:textColor="@color/white" />
 
     </LinearLayout>

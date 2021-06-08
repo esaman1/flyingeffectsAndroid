@@ -19,6 +19,7 @@ import com.flyingeffects.com.entity.SearchTemplateInfoEntity;
 import com.flyingeffects.com.entity.SearchUserEntity;
 import com.flyingeffects.com.entity.StickerList;
 import com.flyingeffects.com.entity.StickerTypeEntity;
+import com.flyingeffects.com.entity.SubtitleEntity;
 import com.flyingeffects.com.entity.SystemMessageCountAllEntiy;
 import com.flyingeffects.com.entity.SystemMessageDetailAllEnity;
 import com.flyingeffects.com.entity.UserInfo;

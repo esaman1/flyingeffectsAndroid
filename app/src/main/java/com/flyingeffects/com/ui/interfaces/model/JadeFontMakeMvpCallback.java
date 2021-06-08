@@ -1,6 +1,6 @@
 package com.flyingeffects.com.ui.interfaces.model;
 
-import com.flyingeffects.com.enity.SubtitleEntity;
+import com.flyingeffects.com.entity.SubtitleEntity;
 
 import java.util.List;
 
@@ -25,4 +25,9 @@ public interface JadeFontMakeMvpCallback {
 
     void clearCheckBox();
 
+    void showLoadingDialog();
+
+    void setDialogProgress(String title, int dialogProgress, String content);
+
+    void dismissLoadingDialog();
 }

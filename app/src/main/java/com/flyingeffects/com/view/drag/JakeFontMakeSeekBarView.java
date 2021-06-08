@@ -13,7 +13,7 @@ import android.widget.ScrollView;
 
 import com.flyingeffects.com.R;
 import com.flyingeffects.com.commonlyModel.GetPathType;
-import com.flyingeffects.com.enity.SubtitleEntity;
+import com.flyingeffects.com.entity.SubtitleEntity;
 import com.flyingeffects.com.utils.screenUtil;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.AlbumType;
