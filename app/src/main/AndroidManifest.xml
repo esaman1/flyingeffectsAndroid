@@ -238,9 +238,10 @@
             android:windowSoftInputMode="adjustNothing" />
 
         <activity
+            android:theme="@style/Theme.TextEditDemo"
             android:name="com.flyingeffects.com.ui.view.activity.JadeFontMakeActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
             />
 
         <activity

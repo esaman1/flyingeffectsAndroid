@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/include_radio_group"
+        layout="@layout/view_jade_common_radio_group" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/default_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/include_radio_group"
+        android:layout_marginTop="16dp"
+        android:paddingStart="15dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/my_rv"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/include_radio_group"
+
+        android:layout_marginTop="16dp"
+        android:paddingStart="15dp" />
+
+
+</RelativeLayout>

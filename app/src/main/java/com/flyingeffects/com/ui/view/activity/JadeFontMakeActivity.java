@@ -1,12 +1,15 @@
 package com.flyingeffects.com.ui.view.activity;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.renderscript.ScriptGroup;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -14,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,6 +37,7 @@ import com.flyingeffects.com.ui.interfaces.view.JadeFontMakeMvpView;
 import com.flyingeffects.com.ui.presenter.JadeFontMakePresenter;
 import com.flyingeffects.com.ui.view.dialog.LoadingDialog;
 import com.flyingeffects.com.ui.view.fragment.JadeAdjustFragment;
+import com.flyingeffects.com.utils.KeyBoardHelper;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.TimeUtils;
 import com.flyingeffects.com.utils.ToastUtil;
@@ -46,8 +51,13 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.imaginstudio.imagetools.pixellab.GradientMaker;
 import com.imaginstudio.imagetools.pixellab.TextObject.StickerItemOnitemclick;
+import com.imaginstudio.imagetools.pixellab.TextObject.TextComponent;
 import com.imaginstudio.imagetools.pixellab.ZoomWidget;
+import com.imaginstudio.imagetools.pixellab.font.customTypeface;
+import com.imaginstudio.imagetools.pixellab.functions.interval;
+import com.imaginstudio.imagetools.pixellab.functions.spansIntervals;
 import com.imaginstudio.imagetools.pixellab.imageinfo.displayInfo;
 import com.imaginstudio.imagetools.pixellab.textContainer;
 import com.lansosdk.videoeditor.MediaInfo;
@@ -93,7 +103,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
      * 是不是横屏
      */
     private boolean nowUiIsLandscape = false;
-    private boolean isPlaying= false;
+    private boolean isPlaying = false;
     private boolean isEndDestroy = false;
     private boolean isPlayComplete = false;
     private boolean isIntoPause = false;
@@ -145,13 +155,15 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
     JadeFontMakePresenter mPresenter;
 
-    String mChangeMusicPath ="";
+    String mChangeMusicPath = "";
     /**
      * 获得背景视频音乐
      */
     private String bgmPath;
     List<View> listForInitBottom = new ArrayList<>();
-    /**玉体字view的id，创建一个自增一个*/
+    /**
+     * 玉体字view的id，创建一个自增一个
+     */
     int mJadeFontViewIndex = 0;
     LoadingDialog mLoadingDialog;
 
@@ -163,6 +175,8 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     private JadeAdjustFragment jadeAdjustFragment;
     private StickerItemOnitemclick stickerItemOnitemclick;
     private FragmentManager fragmentManager;
+    ObjectAnimator animatorUp;
+    ObjectAnimator animatorDown;
 
     @Override
     protected int getLayoutId() {
@@ -192,6 +206,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
     }
 
+
     private LoadingDialog buildLoadingDialog() {
         return LoadingDialog.getBuilder(this)
                 .setHasAd(true)
@@ -202,7 +217,124 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
     private int mWindowHeight = 0;
     private void initJadeAdjustView() {
-        jadeAdjustFragment = new JadeAdjustFragment();
+        JadeAdjustFragment.onAdjustParamsChangeCallBack onAdjustParamsChangeCallBack = new JadeAdjustFragment.onAdjustParamsChangeCallBack() {
+            //内发光参数变化
+            @Override
+            public void onInnerColorChange(boolean enabled, float radius, float dx, float dy, int color) {
+                try {
+                    TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                    if (currentText != null) {
+                        currentText.setInnerShadow(enabled, radius, dx, dy, color);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onEmossChange(boolean enabled, int LightAngle, int Intensity, int Ambient, int Hardness, int Bevel) {
+                try {
+                    TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                    if (currentText != null) {
+                        currentText.setEmboss(enabled, LightAngle, Intensity, Ambient, Hardness, Bevel);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void on3Dchange(int Depth, int DepthDarken, int Quality, boolean StokeInclude, int obliqueAngle, int color) {
+                try {
+                    TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                    if (currentText != null) {
+                        currentText.set3dEnabled(true);
+                        currentText.set3dViewType(3);
+                        currentText.set3dDepth(((int) Depth), DepthDarken, Quality, true);
+                        currentText.set3dDepthColor(1, color, null, false);
+                        currentText.set3dObliqueAngle(obliqueAngle);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onTextColorChange(int color, int start, int end, boolean isSimple) {
+                TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                if (currentText != null) {
+                    if (isSimple) {
+                        currentText.setColorFill(color);
+                    } else {
+                        currentText.setColorFill(color, start, end);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onTextColorChange(GradientMaker.GradientFill gradientFill) {
+                TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                if (currentText != null) {
+                    currentText.setGradientFill(gradientFill);
+                }
+            }
+
+            @Override
+            public void onTypeFaceChange(String path) {
+                TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                if (currentText != null) {
+                    spansIntervals spans = new spansIntervals();
+                    spans.addInterval(new interval(0, currentText.returnText().length(), new customTypeface(path, createFontFromPath(path))));
+                    currentText.setTextFont(spans);
+                }
+            }
+
+            @Override
+            public void onJadeTypeFaceChange(JadeTypeFace jadeTypeFace) {
+                try {
+                    TextComponent currentText = JadeFontMakeActivity.this.textContain.getCurrentText();
+                    if (currentText != null) {
+                        JadeTypeFace.DetailBean detail = jadeTypeFace.getDetail();
+                        if (detail != null) {
+                            if (
+                                    detail.getIn_bright() != null&&
+                                    detail.getRelief() != null&&
+                                    detail.getFont_3D() != null
+                            ) {
+                                currentText.setColorFill(Color.parseColor("#1B5E20"));
+
+                                int fuzzy_radius = Integer.parseInt(detail.getIn_bright().getFuzzy_radius());
+                                int x =Integer.parseInt(detail.getIn_bright().getHorizontal_shift());
+                                int y =Integer.parseInt(detail.getIn_bright().getVertical_offset());
+//                                int bright_color = Integer.parseInt(detail.getIn_bright().getBright_color());
+                                int bright_color = Color.parseColor("#C8E6C9");
+                                currentText.setInnerShadow(true, fuzzy_radius,x , y, bright_color);
+
+                                int LightAngle = Integer.parseInt(detail.getRelief().getIllumination_angle());
+                                int Intensity = Integer.parseInt(detail.getRelief().getIllumination_intensity());
+                                int Bevel = Integer.parseInt(detail.getRelief().getOblique_angle());
+                                currentText.setEmboss(true, LightAngle, Intensity, 100, 100, Bevel);
+
+                                int obliqueAngle = Integer.parseInt(detail.getFont_3D().getAngle());
+//                                int Depth = Integer.parseInt(detail.getFont_3D().getDepth());
+                                int Depth = 3;
+//                                int color = Integer.parseInt(detail.getFont_3D().getColor());
+                                currentText.set3dEnabled(true);
+                                currentText.set3dViewType(3);
+                                currentText.set3dDepth(((int) Depth), 20, 1, true);
+                                currentText.set3dDepthColor(1, Color.parseColor("#1B5E20"), null, true);
+                                currentText.set3dObliqueAngle(obliqueAngle);
+                            }
+                        }
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        jadeAdjustFragment = new JadeAdjustFragment(onAdjustParamsChangeCallBack);
         jadeAdjustFragment.setOnInputChangeCallBack(new JadeAdjustFragment.OnInputChangeCallBack() {
             @Override
             public void onChange(String string) {
@@ -226,7 +358,11 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         stickerItemOnitemclick = new StickerItemOnitemclick() {
             @Override
             public void stickerOnclick(int type) {
+                fragmentTransaction.hide(jadeAdjustFragment);
                 textContain.removeView(textContain.getCurrentText());
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.commit();
+                seekBarViewIsShow(true);
             }
 
             @Override
@@ -234,62 +370,91 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
             }
         };
-        mBinding.rlCreationContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        KeyBoardHelper keyBoardHelper = new KeyBoardHelper(this);
+        keyBoardHelper.setOnKeyBoardStatusChangeListener(new KeyBoardHelper.OnKeyBoardStatusChangeListener() {
             @Override
-            public void onGlobalLayout() {
-                Rect rect = new Rect();
-                // 获取root在窗体的可视区域
-                getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+            public void OnKeyBoardPop(int keyBoardheight) {
+                Log.d(TAG, "OnKeyBoardPop() called with: keyBoardheight = [" + keyBoardheight + "]");
+//                rootView.scrollTo(0, keyBoardheight - loginViewtoBottom);
+                //如果每次弹出的键盘高度不一致，就不要这个判断，每次都新创建动画（密码键盘可能和普通键盘高度不一致）
+                int translationY = keyBoardheight - screenUtil.dip2px(BaseApplication.getInstance(), 200);
+                animatorUp = ObjectAnimator.ofFloat(mBinding.jadeFragmentContainer, "translationY", 0, -translationY);
+                animatorUp.setDuration(360);
+                animatorUp.setInterpolator(new AccelerateDecelerateInterpolator());
+                animatorUp.start();
 
-//                int height = rect.height();
-//                if (mWindowHeight == 0) {
-//                    //一般情况下，这是原始的窗口高度
-//                    mWindowHeight = height;
-//                } else {
-//                    if (mWindowHeight != height) {
-//                        //两次窗口高度相减，就是软键盘高度
-//                        int softKeyboardHeight = mWindowHeight - height;
-//                        System.out.println("SoftKeyboard height = " + softKeyboardHeight);
-//                    }
-//                }
-
-
-                Log.d(TAG, "获取root在窗体的可视区域() called" + rect.toString());
-                // 获取root在窗体的不可视区域高度(被其他View遮挡的区域高度)
-                int rootInvisibleHeight = mBinding.rlCreationContainer.getRootView().getHeight() - rect.bottom;
-                Log.d(TAG, "获取root在窗体的不可视区域高度() called" + rootInvisibleHeight);
-                // 若不可视区域高度大于200，则键盘显示,其实相当于键盘的高度
-                if (rootInvisibleHeight > 200) {
-                    // 显示键盘时
-                    int srollHeight = rootInvisibleHeight - (mBinding.rlCreationContainer.getBottom() - mBinding.jadeFragmentContainer.getBottom()) - screenUtil.getNavigationBarHeight();
-                    if (srollHeight > 0) {//当键盘高度覆盖按钮时
-                        mBinding.jadeFragmentContainer.scrollTo(0, srollHeight);
-//                        mBinding.jadeFragmentContainer.animate()
-//                                .translationY(-srollHeight)
-//                                .setDuration(200)
-//                                .start();
-                        Log.d(TAG, "动画启动() called" + rootInvisibleHeight);
-
-                    }
-                } else {
-                    // 隐藏键盘时
-                    mBinding.jadeFragmentContainer.scrollTo(0, 0);
+                int selectedTabPosition = jadeAdjustFragment.getTabLayout().getSelectedTabPosition();
+                if (selectedTabPosition != 0) {
+                    jadeAdjustFragment.getTabLayout().selectTab(jadeAdjustFragment.getTabLayout().getTabAt(0));
                 }
+
+            }
+
+            @Override
+            public void OnKeyBoardClose(int oldKeyBoardheight) {
+                Log.d(TAG, "OnKeyBoardClose() called with: oldKeyBoardheight = [" + oldKeyBoardheight + "]");
+//                rootView.scrollTo(0, 0);
+                int translationY = oldKeyBoardheight - screenUtil.dip2px(BaseApplication.getInstance(), 200);
+                animatorDown = ObjectAnimator.ofFloat(mBinding.jadeFragmentContainer, "translationY", -translationY, 0);
+                animatorDown.setDuration(360);
+                animatorDown.setInterpolator(new AccelerateDecelerateInterpolator());
+                animatorDown.start();
+
+                int selectedTabPosition = jadeAdjustFragment.getTabLayout().getSelectedTabPosition();
+                if (selectedTabPosition == 0) {
+                    jadeAdjustFragment.getTabLayout().selectTab(jadeAdjustFragment.getTabLayout().getTabAt(jadeAdjustFragment.getLastPosition()));
+                }
+
             }
         });
 
-        mBinding.test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mBinding.jadeFragmentContainer.animate()
-                        .translationY(-900)
-                        .setDuration(200)
-                        .start();
-            }
-        });
+//        mBinding.rlCreationContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                Rect rect = new Rect();
+//                // 获取root在窗体的可视区域
+//                getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+//
+////                int height = rect.height();
+////                if (mWindowHeight == 0) {
+////                    //一般情况下，这是原始的窗口高度
+////                    mWindowHeight = height;
+////                } else {
+////                    if (mWindowHeight != height) {
+////                        //两次窗口高度相减，就是软键盘高度
+////                        int softKeyboardHeight = mWindowHeight - height;
+////                        System.out.println("SoftKeyboard height = " + softKeyboardHeight);
+////                    }
+////                }
+//
+//
+//                Log.d(TAG, "获取root在窗体的可视区域() called" + rect.toString());
+//                // 获取root在窗体的不可视区域高度(被其他View遮挡的区域高度)
+//                int rootInvisibleHeight = mBinding.rlCreationContainer.getRootView().getHeight() - rect.bottom;
+//                Log.d(TAG, "获取root在窗体的不可视区域高度() called" + rootInvisibleHeight);
+//                // 若不可视区域高度大于200，则键盘显示,其实相当于键盘的高度
+//                if (rootInvisibleHeight > 200) {
+//                    // 显示键盘时
+//                    int srollHeight = rootInvisibleHeight - (mBinding.rlCreationContainer.getBottom() - jadeAdjustFragment.getTabLayout().getBottom()) - screenUtil.getNavigationBarHeight();
+//                    if (srollHeight > 0) {//当键盘高度覆盖按钮时
+//                        mBinding.jadeFragmentContainer.scrollTo(0, srollHeight);
+////                        mBinding.jadeFragmentContainer.animate()
+////                                .translationY(-srollHeight)
+////                                .setDuration(200)
+////                                .start();
+//                        Log.d(TAG, "动画启动() called" + rootInvisibleHeight);
+//
+//                    }
+//                } else {
+//                    // 隐藏键盘时
+//                    mBinding.jadeFragmentContainer.scrollTo(0, 0);
+//                }
+//            }
+//        });
     }
 
     private void addJadeFont() {
+        textContain.addNewText(Color.parseColor("#ffffff"), helperClass,
         mBinding.jakeFontSeekBarView.addTemplateMaterialItemView(mCutEndTime, "", getCurrentPos(), getCurrentPos() + 5000, true,
                 "输入文字", mJadeFontViewIndex, null, -1, mBinding.progressBarView.progressTotalWidth);
          //todo 合并代码后须给玉体字view 添加一个mJadeFontViewIndex的ID  根据这个id控制该字对应的时间轴操作
@@ -297,6 +462,19 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.sticker_delete),
                 ContextCompat.getDrawable(JadeFontMakeActivity.this, R.mipmap.sticker_redact), stickerItemOnitemclick);
         mJadeFontViewIndex++;
+    }
+
+    public Typeface createFontFromPath(String path) {
+        Typeface t = Typeface.DEFAULT;
+        try {
+            return Typeface.createFromAsset(getAssets(), path);
+        } catch (Exception e) {
+            try {
+                return Typeface.createFromFile(path);
+            } catch (Exception e2) {
+                return t;
+            }
+        }
     }
 
     @Override
@@ -398,7 +576,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     public void chooseTab(int pageNum) {
-        mBinding.viewPager.setCurrentItem(pageNum,false);
+        mBinding.viewPager.setCurrentItem(pageNum, false);
     }
 
     /**
@@ -421,16 +599,15 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         }
         fragmentTransaction.commit();
 
-        if (textContain.getCurrentText() == null) {
-            addJadeFont();
-        }
+        addJadeFont();
 
     }
 
 
     boolean isPlayVideoInAudio = false;
-     /**
+
     /**
+     * /**
      * 初始化选音乐页面
      */
     private void initViewForChooseMusic() {
@@ -478,7 +655,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         tv_1.setVisibility(View.GONE);
         check_box_1.setVisibility(View.GONE);
         if (!TextUtils.isEmpty(mVideoPath)) {
-            isPlayVideoInAudio  = true;
+            isPlayVideoInAudio = true;
             chooseCheckBox(0);
         }
 
@@ -494,7 +671,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                             if (exoPlayer != null) {
                                 exoPlayer.setVolume(0f);
                             }
-                           getBgmPath("");
+                            getBgmPath("");
                         } else {
                             mPresenter.chooseVideoInAudio(0);
                             isPlayVideoInAudio = true;
@@ -510,7 +687,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 case R.id.tv_2:
                 case R.id.iv_check_box_2:
                     isPlayVideoInAudio = false;
-                    mPresenter.extractedAudio(mChangeMusicPath,2);
+                    mPresenter.extractedAudio(mChangeMusicPath, 2);
                     break;
                 default:
                     break;
@@ -1133,7 +1310,9 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     private Timer timer;
     private TimerTask task;
     private long nowTime = 5;
-    /**自己计算的播放时间*/
+    /**
+     * 自己计算的播放时间
+     */
     private long totalPlayTime;
     private boolean isNeedPlayBjMusic = false;
 
@@ -1334,6 +1513,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     boolean noBgMusicPlay = false;
+
     @Override
     public void clearCheckBox() {
         noBgMusicPlay = true;
@@ -1425,7 +1605,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
     @Override
     public void onTextDelete(Bundle bundle, int i, String str) {
-
+        Log.d(TAG, "onTextDelete() called with: bundle = [" + bundle + "], i = [" + i + "], str = [" + str + "]");
     }
 
     @Override

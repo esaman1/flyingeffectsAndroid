@@ -444,5 +444,13 @@ public interface ApiService {
     @POST("/api/yitu/identify")
     Observable<HttpResult<List<SubtitleEntity>>> identifySubtitle(@FieldMap Map<String,String> params);
 
+  /**识别音频中的字幕*/
+    @FormUrlEncoded
+    @POST("/api/message/fontcolor")
+    Observable<HttpResult<List<FontColor>>> fontColor(@FieldMap Map<String,String> params);
+ @FormUrlEncoded
+    @POST("/api/message/fontstylelist")
+    Observable<HttpResult<List<JadeTypeFace>>> fontstylelist(@FieldMap Map<String,String> params);
+
 
 }

@@ -6,14 +6,14 @@
     android:layout_height="44dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingStart="@dimen/jade_content_padding"
    >
 
     <ImageView
-        android:id="@+id/del"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_jade_del" />
+        android:id="@+id/forbidden"
+        android:layout_width="50dp"
+        android:layout_height="36dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_jade_forbidden" />
 
     <com.google.android.material.tabs.TabLayout
         android:layout_width="wrap_content"
