@@ -3,13 +3,12 @@ package com.flyingeffects.com.ui.view.activity;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.renderscript.ScriptGroup;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -29,7 +28,6 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.adapter.TemplateViewPager;
 import com.flyingeffects.com.base.BaseActivity;
 import com.flyingeffects.com.base.BaseApplication;
-import com.flyingeffects.com.constans.BaseConstans;
 import com.flyingeffects.com.databinding.ActivityJadeFontMakeBinding;
 import com.flyingeffects.com.entity.CutSuccess;
 import com.flyingeffects.com.entity.JadeTypeFace;
@@ -193,7 +191,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
         mVideoPath = getIntent().getStringExtra("videoPath");
         mImagePath = getIntent().getStringExtra("imagePath");
-        mPresenter = new JadeFontMakePresenter(this, this, mVideoPath,mImagePath);
+        mPresenter = new JadeFontMakePresenter(this, this, mVideoPath, mImagePath);
 
         mLoadingDialog = buildLoadingDialog();
         getLifecycle().addObserver(mLoadingDialog);
@@ -218,6 +216,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     private int mWindowHeight = 0;
+
     private void initJadeAdjustView() {
         JadeAdjustFragment.onAdjustParamsChangeCallBack onAdjustParamsChangeCallBack = new JadeAdjustFragment.onAdjustParamsChangeCallBack() {
             //内发光参数变化
@@ -300,18 +299,18 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                         JadeTypeFace.DetailBean detail = jadeTypeFace.getDetail();
                         if (detail != null) {
                             if (
-                                    detail.getIn_bright() != null&&
-                                    detail.getRelief() != null&&
-                                    detail.getFont_3D() != null
+                                    detail.getIn_bright() != null &&
+                                            detail.getRelief() != null &&
+                                            detail.getFont_3D() != null
                             ) {
                                 currentText.setColorFill(Color.parseColor("#1B5E20"));
 
                                 int fuzzy_radius = Integer.parseInt(detail.getIn_bright().getFuzzy_radius());
-                                int x =Integer.parseInt(detail.getIn_bright().getHorizontal_shift());
-                                int y =Integer.parseInt(detail.getIn_bright().getVertical_offset());
+                                int x = Integer.parseInt(detail.getIn_bright().getHorizontal_shift());
+                                int y = Integer.parseInt(detail.getIn_bright().getVertical_offset());
 //                                int bright_color = Integer.parseInt(detail.getIn_bright().getBright_color());
                                 int bright_color = Color.parseColor("#C8E6C9");
-                                currentText.setInnerShadow(true, fuzzy_radius,x , y, bright_color);
+                                currentText.setInnerShadow(true, fuzzy_radius, x, y, bright_color);
 
                                 int LightAngle = Integer.parseInt(detail.getRelief().getIllumination_angle());
                                 int Intensity = Integer.parseInt(detail.getRelief().getIllumination_intensity());
@@ -359,7 +358,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         this.textContain.setSelectionListener(this);
         stickerItemOnitemclick = new StickerItemOnitemclick() {
             @Override
-            public void stickerOnclick(int type) {
+            public void stickerOnclick(int type, TextComponent textComponent) {
                 fragmentTransaction.hide(jadeAdjustFragment);
                 textContain.removeView(textContain.getCurrentText());
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -368,7 +367,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             }
 
             @Override
-            public void stickerMove() {
+            public void stickerMove(TextComponent textComponent) {
 
             }
         };
@@ -456,12 +455,28 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     private void addJadeFont() {
+        //手动加字id传-1
         mBinding.jakeFontSeekBarView.addTemplateMaterialItemView(mCutEndTime, "", getCurrentPos(), getCurrentPos() + 5000, true,
                 "输入文字", mJadeFontViewIndex, null, -1, mBinding.progressBarView.progressTotalWidth);
-         //todo 合并代码后须给玉体字view 添加一个mJadeFontViewIndex的ID  根据这个id控制该字对应的时间轴操作
-        textContain.addNewText(Color.parseColor("#252B3B"), helperClass,
-                ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.sticker_delete),
-                ContextCompat.getDrawable(JadeFontMakeActivity.this, R.mipmap.sticker_redact), stickerItemOnitemclick);
+        //todo 合并代码后须给玉体字view 添加一个mJadeFontViewIndex的ID  根据这个id控制该字对应的时间轴操作
+
+
+        int initColor = Color.parseColor("#252B3B");
+        Drawable leftTopD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.sticker_delete);
+        Drawable rightBottomD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.mipmap.sticker_redact);
+        TextComponent new_text = new TextComponent(JadeFontMakeActivity.this,
+                initColor,
+                "reference",
+                helperClass,
+                leftTopD,
+                rightBottomD
+        );
+        new_text.setId(-1);
+        new_text.setSubTitle(true);
+        // TODO: 2021/6/8 显示控制，时间控制没写
+        textContain.addNewText(new_text, stickerItemOnitemclick,helperClass );
+
+
         mJadeFontViewIndex++;
     }
 
@@ -1476,6 +1491,28 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 "", -1, subtitles, mJadeFontViewIndex, mBinding.progressBarView.progressTotalWidth);
         mBinding.jakeFontSeekBarView.setCutEndTime(mCutEndTime);
         mBinding.jakeFontSeekBarView.scrollToTheBottom();
+        //添加字幕id传0到size-1
+        for (int i = 0; i < subtitles.size(); i++) {
+            SubtitleEntity subtitleEntity = subtitles.get(i);
+
+            int initColor = Color.parseColor("#252B3B");
+            Drawable leftTopD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.sticker_delete);
+            Drawable rightBottomD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.mipmap.sticker_redact);
+            TextComponent new_text = new TextComponent(JadeFontMakeActivity.this,
+                    initColor,
+                    "reference",
+                    helperClass,
+                    leftTopD,
+                    rightBottomD
+            );
+            new_text.setId(i);
+            new_text.setSubTitle(true);
+            new_text.setStartTime(subtitleEntity.getStartTime());
+            new_text.setEndTime(subtitleEntity.getEndTime());
+            // TODO: 2021/6/8 显示控制
+            new_text.setVisibility(View.GONE);
+            textContain.addNewText(new_text, stickerItemOnitemclick,helperClass );
+        }
         mJadeFontViewIndex++;
     }
 

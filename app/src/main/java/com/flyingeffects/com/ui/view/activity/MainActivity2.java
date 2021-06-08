@@ -10,13 +10,13 @@ import com.flyingeffects.com.R;
 import com.flyingeffects.com.databinding.ActivityMain2Binding;
 import com.google.android.material.slider.Slider;
 import com.imaginstudio.imagetools.pixellab.TextObject.StickerItemOnitemclick;
+import com.imaginstudio.imagetools.pixellab.TextObject.TextComponent;
 import com.imaginstudio.imagetools.pixellab.ZoomWidget;
 import com.imaginstudio.imagetools.pixellab.imageinfo.displayInfo;
 import com.imaginstudio.imagetools.pixellab.textContainer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
 public class MainActivity2 extends AppCompatActivity implements textContainer.OnSelectionChangedListener {
@@ -49,21 +49,20 @@ public class MainActivity2 extends AppCompatActivity implements textContainer.On
         this.textContain.setSelectionListener(this);
         StickerItemOnitemclick stickerItemOnitemclick = new StickerItemOnitemclick() {
             @Override
-            public void stickerOnclick(int type) {
+            public void stickerOnclick(int type, TextComponent textComponent) {
                 textContain.removeView(textContain.getCurrentText());
             }
 
             @Override
-            public void stickerMove() {
+            public void stickerMove(TextComponent textComponent) {
 
             }
         };
         this.workingArea.post(new Runnable() {
             @Override
             public void run() {
-                textContain.addNewText(Color.parseColor("#252B3B"), helperClass,
-                        ContextCompat.getDrawable(MainActivity2.this, R.drawable.sticker_delete),
-                        ContextCompat.getDrawable(MainActivity2.this, R.mipmap.sticker_redact), stickerItemOnitemclick);
+//                textContain.addNewText(
+//                        , stickerItemOnitemclick, );
             }
         });
 

@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,17 +121,11 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         }
     }
 
-    public String addNewText(int initColor, displayInfo helperClass, Drawable drawable, Drawable drawable1, StickerItemOnitemclick StickerItemOnitemclick) {
+    public String addNewText(TextComponent new_text, StickerItemOnitemclick StickerItemOnitemclick, displayInfo helperClass) {
         this.lastInserted++;
         this.helperClass = helperClass;
         String reference = "上海自来水来自海上";
-        TextComponent new_text = new TextComponent(getContext(),
-                initColor,
-                reference,
-                helperClass,
-                drawable,
-                drawable1
-        );
+
         new_text.setTextSize(160);
         new_text.setText("输入文字", false);
         this.texts.put(Integer.valueOf(this.lastInserted), new_text);
@@ -150,6 +143,8 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         }
         return reference;
     }
+
+
 
 //    public String addNewShape(int shapeType, ImageSource imgSource, boolean atOrigin, float x, float y, float width, float height) {
 //        this.lastInserted_shape++;
