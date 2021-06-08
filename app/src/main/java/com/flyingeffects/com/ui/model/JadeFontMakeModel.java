@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.flyingeffects.com.base.ActivityLifeCycleEvent;
 import com.flyingeffects.com.constans.BaseConstans;
@@ -23,6 +24,8 @@ import com.flyingeffects.com.utils.BitmapUtils;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
+import com.imaginstudio.imagetools.pixellab.TextObject.TextComponent;
+import com.imaginstudio.imagetools.pixellab.textContainer;
 import com.lansosdk.box.LSOScaleType;
 import com.lansosdk.box.LSOVideoOption;
 import com.lansosdk.box.Layer;
@@ -40,7 +43,6 @@ import java.util.Map;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -243,11 +245,29 @@ public class JadeFontMakeModel {
 
     /**
      * 控制玉体字view的展示或隐藏
-     * @param progressBarProgress 当前播放所处的位置
-     * @param endTime  视频结束位置
+     * @param progress 当前播放所处的位置
+     * @param totalTime  视频结束位置
      */
-    public void getNowPlayingTimeViewShow(long progressBarProgress, long endTime) {
-
+    public void getNowPlayingTimeViewShow(textContainer textContain, long progress, long totalTime) {
+        for (int i = 0; i < textContain.getChildCount(); i++) {
+            TextComponent textComponent = (TextComponent) textContain.getChildAt(i);
+            if (textComponent != null) {
+                long startTime = textComponent.getStartTime();
+                long endTime = textComponent.getEndTime();
+                LogUtil.d("OOM4", "endTime" + endTime + "startTime" + startTime + "progress=" + progress);
+                if (endTime != 0) {
+                    if (startTime <= progress && progress <= endTime) {
+                        textComponent.setVisibility(View.VISIBLE);
+                        LogUtil.d("OOM4", "setVisibility");
+                    } else if (startTime <= progress && (totalTime - endTime <= 100 || (progress > totalTime && progress - totalTime <= 1))) {
+                        textComponent.setVisibility(View.VISIBLE);
+                    } else {
+                        textComponent.setVisibility(View.GONE);
+                        LogUtil.d("OOM4", "setVisibilityGONE");
+                    }
+                }
+            }
+        }
     }
 
     public void saveVideo(long cutStartTime, long cutEndTime, boolean nowUiIsLandscape, float percentageH) {

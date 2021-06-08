@@ -124,10 +124,10 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
     public String addNewText(TextComponent new_text, StickerItemOnitemclick StickerItemOnitemclick, displayInfo helperClass) {
         this.lastInserted++;
         this.helperClass = helperClass;
-        String reference = "上海自来水来自海上";
+        String reference = new_text.getContent();
 
         new_text.setTextSize(160);
-        new_text.setText("输入文字", false);
+        new_text.setText(new_text.getContent(), false);
         this.texts.put(Integer.valueOf(this.lastInserted), new_text);
         new_text.assigned_id = this.lastInserted;
         selectShapeId(-1);

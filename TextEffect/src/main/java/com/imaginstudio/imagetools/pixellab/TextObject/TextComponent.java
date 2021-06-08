@@ -35,7 +35,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-
 import com.imaginstudio.imagetools.pixellab.DrawingPanelRenderer;
 import com.imaginstudio.imagetools.pixellab.GradientMaker;
 import com.imaginstudio.imagetools.pixellab.RectUtil;
@@ -64,6 +63,7 @@ public class TextComponent extends View {
     private long startTime;
     private long endTime;
     private int mJadeFontViewIndex;
+    private String content;
     private boolean isSubTitle;
     private int subTitleTag;
 
@@ -2839,6 +2839,14 @@ public class TextComponent extends View {
 
     public void setmJadeFontViewIndex(int mJadeFontViewIndex) {
         this.mJadeFontViewIndex = mJadeFontViewIndex;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     @Override

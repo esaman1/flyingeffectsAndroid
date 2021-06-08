@@ -7,6 +7,7 @@ import com.flyingeffects.com.entity.SubtitleEntity;
 import com.flyingeffects.com.ui.interfaces.model.JadeFontMakeMvpCallback;
 import com.flyingeffects.com.ui.interfaces.view.JadeFontMakeMvpView;
 import com.flyingeffects.com.ui.model.JadeFontMakeModel;
+import com.imaginstudio.imagetools.pixellab.textContainer;
 
 import java.util.List;
 
@@ -84,8 +85,8 @@ public class JadeFontMakePresenter extends BasePresenter implements JadeFontMake
         mMakeModel.setExtractedAudioBjMusicPath(bjMusicPath);
     }
 
-    public void getNowPlayingTimeViewShow(long progressBarProgress, long endTime) {
-
+    public void getNowPlayingTimeViewShow(textContainer textContain, long progressBarProgress, long endTime) {
+        mMakeModel.getNowPlayingTimeViewShow(textContain, progressBarProgress, endTime);
     }
 
     public void saveVideo(long cutStartTime, long cutEndTime, boolean nowUiIsLandscape, float percentageH) {

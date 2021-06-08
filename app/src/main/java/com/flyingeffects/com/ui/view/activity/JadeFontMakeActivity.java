@@ -364,6 +364,13 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.commit();
                 seekBarViewIsShow(true);
+
+                if (textComponent.isSubTitle()) {
+                    mBinding.jakeFontSeekBarView.deleteSubtitleMaterialItemView(
+                            Integer.toString(textComponent.getId()), textComponent.getmJadeFontViewIndex());
+                } else {
+                    mBinding.jakeFontSeekBarView.deleteTemplateMaterialItemView(Integer.toString(textComponent.getmJadeFontViewIndex()));
+                }
             }
 
             @Override
@@ -456,7 +463,8 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
     private void addJadeFont() {
         //手动加字id传-1
-        mBinding.jakeFontSeekBarView.addTemplateMaterialItemView(mCutEndTime, "", getCurrentPos(), getCurrentPos() + 5000, true,
+        long endFontTime = Math.min(getCurrentPos() + 5000, allVideoDuration);
+        mBinding.jakeFontSeekBarView.addTemplateMaterialItemView(mCutEndTime, "", getCurrentPos(), endFontTime, true,
                 "输入文字", mJadeFontViewIndex, null, -1, mBinding.progressBarView.progressTotalWidth);
         //todo 合并代码后须给玉体字view 添加一个mJadeFontViewIndex的ID  根据这个id控制该字对应的时间轴操作
 
@@ -472,10 +480,12 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 rightBottomD
         );
         new_text.setId(-1);
-        new_text.setSubTitle(true);
-        // TODO: 2021/6/8 显示控制，时间控制没写
+        new_text.setSubTitle(false);
+        new_text.setStartTime(getCurrentPos());
+        new_text.setEndTime(endFontTime);
+        new_text.setContent("输入文字");
+        new_text.setmJadeFontViewIndex(mJadeFontViewIndex);
         textContain.addNewText(new_text, stickerItemOnitemclick,helperClass );
-
 
         mJadeFontViewIndex++;
     }
@@ -533,6 +543,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             } else if (view == mBinding.tvAddWord) {
                 onClickAddWordBtn();
             } else if (view == mBinding.tvIdentifySubtitles) {
+                videoToPause();
                 if (!TextUtils.isEmpty(mImagePath)) {
                     if (TextUtils.isEmpty(bgmPath)) {
                         ToastUtil.showToast("请选择一个音频文件再识别哟~");
@@ -605,6 +616,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     }
 
     private void onClickAddWordBtn() {
+        videoToPause();
         seekBarViewIsShow(false);
         setTextColor(0);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -796,7 +808,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                     mBinding.jakeFontSeekBarView.scrollToPosition(progress);
                 }
                 progressBarProgress = progress;
-                mPresenter.getNowPlayingTimeViewShow(progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTimeViewShow(textContain, progressBarProgress, mCutEndTime);
                 mBinding.tvCurrentTime.setText(String.format("%ss", TimeUtils.timeParse(progress - mCutStartTime)));
             }
 
@@ -836,13 +848,13 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                     mBinding.jakeFontSeekBarView.scrollToPosition(endTime);
                 }
 
-                mPresenter.getNowPlayingTimeViewShow(progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTimeViewShow(textContain,progressBarProgress, mCutEndTime);
             }
 
             @Override
             public void onTouchEnd() {
                 videoToPause();
-                mPresenter.getNowPlayingTimeViewShow(progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTimeViewShow(textContain,progressBarProgress, mCutEndTime);
             }
         });
     }
@@ -1450,13 +1462,13 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         mSeekBarViewManualDrag = manualDrag;
         videoToPause();
         //做玉体字view的显示隐藏逻辑判断
-        mPresenter.getNowPlayingTimeViewShow(progressBarProgress, mCutEndTime);
+        mPresenter.getNowPlayingTimeViewShow(textContain,progressBarProgress, mCutEndTime);
     }
 
     @Override
     public void timelineChange(long startTime, long endTime, String id, boolean isSubtitle) {
         //玉体字view的起止时间修改和玉体字view的显示隐藏逻辑判断
-        mPresenter.getNowPlayingTimeViewShow(progressBarProgress, mCutEndTime);
+        mPresenter.getNowPlayingTimeViewShow(textContain,progressBarProgress, mCutEndTime);
     }
 
     @Override
@@ -1509,9 +1521,10 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             new_text.setSubTitle(true);
             new_text.setStartTime(subtitleEntity.getStartTime());
             new_text.setEndTime(subtitleEntity.getEndTime());
-            // TODO: 2021/6/8 显示控制
+            new_text.setContent(subtitleEntity.getText());
+            new_text.setmJadeFontViewIndex(mJadeFontViewIndex);
             new_text.setVisibility(View.GONE);
-            textContain.addNewText(new_text, stickerItemOnitemclick,helperClass );
+            textContain.addNewText(new_text, stickerItemOnitemclick,helperClass);
         }
         mJadeFontViewIndex++;
     }
