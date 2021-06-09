@@ -107,14 +107,6 @@
 
         </activity>
 
-        <activity android:name="com.flyingeffects.com.ui.view.activity.MainActivity2"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.TextEditDemo"
-            android:windowSoftInputMode="stateVisible|adjustPan">
-        </activity>
-
-
         <activity
             android:name="com.flyingeffects.com.ui.view.activity.ChooseBackgroundTemplateActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

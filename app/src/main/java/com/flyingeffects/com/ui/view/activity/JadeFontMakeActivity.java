@@ -340,6 +340,11 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             @Override
             public void onChange(String string) {
                 if (textContain.getCurrentText() != null) {
+                    TextComponent textComponent = textContain.getCurrentText();
+                    int index = textComponent.isSubTitle() ? textComponent.getId() : -1;
+                    int id = textComponent.getmJadeFontViewIndex();
+                    mBinding.jakeFontSeekBarView.modifyMaterialOrSubtitle(
+                            "",Integer.toString(id),index,textComponent.isSubTitle(),string);
                     textContain.getCurrentText().setText(string, false);
                 }
             }
@@ -477,15 +482,14 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 "reference",
                 helperClass,
                 leftTopD,
-                rightBottomD
-        );
+                rightBottomD);
         new_text.setId(-1);
         new_text.setSubTitle(false);
         new_text.setStartTime(getCurrentPos());
         new_text.setEndTime(endFontTime);
         new_text.setContent("输入文字");
         new_text.setmJadeFontViewIndex(mJadeFontViewIndex);
-        textContain.addNewText(new_text, stickerItemOnitemclick,helperClass );
+        textContain.addNewText(new_text, stickerItemOnitemclick, helperClass);
 
         mJadeFontViewIndex++;
     }
@@ -827,7 +831,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
                 mBinding.tvTotal.setText(String.format("%ss", TimeUtils.timeParse(mCutEndTime - mCutStartTime)));
                 mBinding.jakeFontSeekBarView.setCutStartAndEndTime(starTime, endTime);
-//                stickerTimeLineOffset();
+                stickerTimeLineOffset();
 //                LogUtil.d("oom44", "musicStartTime=" + musicStartTime + "starTime=" + starTime + "musicEndTime=" + musicEndTime + "mCutStartTime=" + mCutStartTime);
 
                 if (isDirection) {
@@ -1461,13 +1465,30 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     public void manualDrag(boolean manualDrag) {
         mSeekBarViewManualDrag = manualDrag;
         videoToPause();
-        //做玉体字view的显示隐藏逻辑判断
         mPresenter.getNowPlayingTimeViewShow(textContain,progressBarProgress, mCutEndTime);
     }
 
     @Override
-    public void timelineChange(long startTime, long endTime, String id, boolean isSubtitle) {
-        //玉体字view的起止时间修改和玉体字view的显示隐藏逻辑判断
+    public void timelineChange(long startTime, long endTime, String id,int listId, boolean isSubtitle) {
+        for (int i = 0; i < textContain.getChildCount(); i++) {
+            TextComponent textComponent = (TextComponent) textContain.getChildAt(i);
+            if (textComponent != null) {
+                if (isSubtitle) {
+                    if (TextUtils.equals(id, String.valueOf(textComponent.getId())) &&
+                            TextUtils.equals(String.valueOf(listId), String.valueOf(textComponent.getmJadeFontViewIndex()))) {
+                        textComponent.setStartTime(startTime);
+                        textComponent.setEndTime(endTime);
+                        break;
+                    }
+                } else {
+                    if (TextUtils.equals(id, String.valueOf(textComponent.getmJadeFontViewIndex()))) {
+                        textComponent.setStartTime(startTime);
+                        textComponent.setEndTime(endTime);
+                        break;
+                    }
+                }
+            }
+        }
         mPresenter.getNowPlayingTimeViewShow(textContain,progressBarProgress, mCutEndTime);
     }
 
@@ -1672,6 +1693,53 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     @Override
     public void onTextSelectionChanged(boolean z) {
 
+    }
+
+    private void stickerTimeLineOffset() {
+
+        for (int i = 0; i < textContain.getChildCount(); i++) {
+
+             TextComponent textComponent = (TextComponent) textContain.getChildAt(i);
+
+            if (!textComponent.isSubTitle()) {
+                 if (textComponent.getStartTime() > mCutStartTime && textComponent.getEndTime() < mCutEndTime) {
+                     continue;
+                 }
+
+                 if (textComponent.getStartTime() < mCutStartTime && textComponent.getEndTime() > mCutEndTime) {
+                     textComponent.setStartTime(mCutStartTime);
+                     textComponent.setEndTime(mCutEndTime);
+                 }
+
+                 if (textComponent.getStartTime() > mCutStartTime && textComponent.getEndTime() > mCutEndTime) {
+                     textComponent.setStartTime(mCutEndTime - (textComponent.getEndTime() - textComponent.getStartTime()));
+                     textComponent.setEndTime(mCutEndTime);
+                 }
+
+                 if (textComponent.getStartTime() > mCutStartTime && mCutEndTime - textComponent.getStartTime() < 1000) {
+                     textComponent.setStartTime(mCutStartTime);
+                 }
+
+                 if (textComponent.getEndTime() < mCutStartTime) {
+                     textComponent.setStartTime(mCutStartTime);
+                     textComponent.setEndTime(mCutStartTime + 1000);
+                 }
+
+                 if (textComponent.getEndTime() > mCutEndTime) {
+                     textComponent.setEndTime(mCutEndTime);
+                     if (mCutEndTime - textComponent.getStartTime() <= 1000) {
+                         textComponent.setStartTime(mCutEndTime - 1000);
+                     }
+                 }
+
+                 if (textComponent.getStartTime() < mCutStartTime) {
+                     textComponent.setStartTime(mCutStartTime);
+                     if (textComponent.getEndTime() - mCutStartTime <= 1000) {
+                         textComponent.setEndTime(mCutStartTime + 1000);
+                     }
+                 }
+             }
+        }
     }
 
     @Override

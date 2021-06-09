@@ -261,7 +261,7 @@ public class JadeFontMakeModel {
                         LogUtil.d("OOM4", "setVisibility");
                     } else if (startTime <= progress && (totalTime - endTime <= 100 || (progress > totalTime && progress - totalTime <= 1))) {
                         textComponent.setVisibility(View.VISIBLE);
-                    } else {
+                    }  else {
                         textComponent.setVisibility(View.GONE);
                         LogUtil.d("OOM4", "setVisibilityGONE");
                     }

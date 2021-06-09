@@ -174,23 +174,6 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
                 itemView.setLayoutParams(params);
             }
         }
-        for (int j = 0; j < mDragSubtitleItemViews.size(); j++) {
-            if (mDragSubtitleItemViews.get(j) != null) {
-                DragSubtitleItemView subtitleItemView = mDragSubtitleItemViews.get(j);
-                if (j == 0) {
-                    subtitleItemView.setStartTime(cutStartTime);
-                    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) subtitleItemView.getLayoutParams();
-                    subtitleItemView.setWidthAndHeight((int) ((subtitleItemView.getEndTime() - subtitleItemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
-                    params.setMargins((int) (subtitleItemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
-                            screenUtil.dip2px(getContext(), 5), 0, 0);
-                    subtitleItemView.setLayoutParams(params);
-                }
-                if (j == mDragSubtitleItemViews.size() - 1) {
-                    subtitleItemView.setEndTime(cutEndTime);
-                    subtitleItemView.setWidthAndHeight((int) ((subtitleItemView.getEndTime() - subtitleItemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
-                }
-            }
-        }
     }
 
 
@@ -230,9 +213,10 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
      * @param path 新的素材路径
      * @param id 素材ID
      * @param isSubtitles 是否字幕
+     * @param index 对应字幕的下标
      */
-    public void modifyMaterialOrSubtitle(String path, String id, boolean isSubtitles,String text) {
-        if(!isSubtitles){
+    public void modifyMaterialOrSubtitle(String path, String id,int index, boolean isSubtitles,String text) {
+        if (!isSubtitles) {
             for (int i = 0; i < mTemplateMaterialItemViews.size(); i++) {
                 if (mTemplateMaterialItemViews.get(i) != null) {
                     if (TextUtils.equals(String.valueOf(mTemplateMaterialItemViews.get(i).getIdentityID()), id)) {
@@ -248,7 +232,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
                             long minDuration = Math.min(duration, cutEndTime);
                             itemView.setEndTime(minDuration);
                             itemView.setDuration(minDuration);
-                            itemView.setWidthAndHeight((int) ((itemView.getEndTime()-itemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
+                            itemView.setWidthAndHeight((int) ((itemView.getEndTime() - itemView.getStartTime()) / PER_MS_IN_PX), frameContainerHeight);
                             params.setMargins((int) (itemView.getStartTime() / PER_MS_IN_PX + frameListPadding - TemplateMaterialItemView.ARROW_WIDTH),
                                     screenUtil.dip2px(getContext(), 5), 0, 0);
                             itemView.setLayoutParams(params);
@@ -264,7 +248,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
         } else {
             for (int i = 0; i < mDragSubtitleItemViews.size(); i++) {
                 if (mDragSubtitleItemViews.get(i) != null) {
-                    if (TextUtils.equals(String.valueOf(mDragSubtitleItemViews.get(i).getSubtitleListId()), id)) {
+                    if (TextUtils.equals(String.valueOf(mDragSubtitleItemViews.get(i).getSubtitleListId()), String.valueOf(index))) {
                         DragSubtitleItemView subtitleItemView = mDragSubtitleItemViews.get(i);
                         subtitleItemView.setTvStickerViewText(text);
                     }
@@ -489,7 +473,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
                     screenUtil.dip2px(getContext(), 5), 0, 0);
             materialItemView.setLayoutParams(params);
             if (mProgressListener != null) {
-                mProgressListener.timelineChange(materialItemView.getStartTime(), materialItemView.getEndTime(), String.valueOf(materialItemView.getIdentityID()),false);
+                mProgressListener.timelineChange(materialItemView.getStartTime(), materialItemView.getEndTime(), String.valueOf(materialItemView.getIdentityID()),-1,false);
                 mProgressListener.trackPause();
             }
         }
@@ -536,7 +520,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
                     screenUtil.dip2px(getContext(), 5), 0, 0);
             materialItemView.setLayoutParams(params);
             if (mProgressListener != null) {
-                mProgressListener.timelineChange(materialItemView.getStartTime(), materialItemView.getEndTime(), String.valueOf(materialItemView.getIdentityID()),false);
+                mProgressListener.timelineChange(materialItemView.getStartTime(), materialItemView.getEndTime(), String.valueOf(materialItemView.getIdentityID()),-1,false);
                 mProgressListener.trackPause();
             }
         }
@@ -580,7 +564,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
                     screenUtil.dip2px(getContext(), 5), 0, 0);
             view.setLayoutParams(params);
             if (mProgressListener != null) {
-                mProgressListener.timelineChange(view.getStartTime(), view.getEndTime(), String.valueOf(view.getIdentityID()),false);
+                mProgressListener.timelineChange(view.getStartTime(), view.getEndTime(), String.valueOf(view.getIdentityID()),-1,false);
                 mProgressListener.trackPause();
             }
         }
@@ -718,7 +702,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
             params.setMargins((int) (subtitles.get(position).getStartTime() / PER_MS_IN_PX), 0, 0, 0);
             materialItemView.setLayoutParams(params);
             if (mProgressListener != null) {
-                mProgressListener.timelineChange(materialItemView.getStartTime(), materialItemView.getEndTime(), String.valueOf(materialItemView.getIdentityID()),true);
+                mProgressListener.timelineChange(subtitles.get(position).getStartTime(), subtitles.get(position).getEndTime(), String.valueOf(materialItemView.getIdentityID()),materialItemView.getSubtitleListId(),true);
                 mProgressListener.trackPause();
             }
         }
@@ -818,7 +802,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
             params.setMargins((int) (subtitles.get(position).getStartTime() / PER_MS_IN_PX), 0, 0, 0);
             materialItemView.setLayoutParams(params);
             if (mProgressListener != null) {
-                mProgressListener.timelineChange(materialItemView.getStartTime(), materialItemView.getEndTime(), String.valueOf(materialItemView.getIdentityID()),true);
+                mProgressListener.timelineChange(subtitles.get(position).getStartTime(), subtitles.get(position).getEndTime(), String.valueOf(materialItemView.getIdentityID()),materialItemView.getSubtitleListId(),true);
                 mProgressListener.trackPause();
             }
         }
@@ -874,7 +858,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
                 }
             }
             if (mProgressListener != null) {
-                mProgressListener.timelineChange(view.getStartTime(), view.getEndTime(), String.valueOf(view.getIdentityID()),true);
+                mProgressListener.timelineChange(subtitles.get(position).getStartTime(), subtitles.get(position).getEndTime(), String.valueOf(view.getIdentityID()),view.getSubtitleListId(),true);
                 mProgressListener.trackPause();
             }
         }
@@ -909,7 +893,7 @@ public class JakeFontMakeSeekBarView extends RelativeLayout implements TemplateM
 
         void manualDrag(boolean manualDrag);
 
-        void timelineChange(long startTime,long endTime,String id,boolean isSubtitle);
+        void timelineChange(long startTime,long endTime,String id,int listId,boolean isSubtitle);
 
         void currentViewSelected(String id);
 
