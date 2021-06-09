@@ -90,7 +90,12 @@ public class JadeFontMakePresenter extends BasePresenter implements JadeFontMake
     }
 
     public void saveVideo(long cutStartTime, long cutEndTime, boolean nowUiIsLandscape, float percentageH) {
-        mMakeModel.saveVideo(cutStartTime,cutEndTime,nowUiIsLandscape,percentageH);
+      //  mMakeModel.saveVideo(cutStartTime,cutEndTime,nowUiIsLandscape,percentageH);
+    }
+
+
+    public void GetAllTextBitPath(textContainer container){
+        mMakeModel.GetAllTextBitPath(container);
     }
 
 }
