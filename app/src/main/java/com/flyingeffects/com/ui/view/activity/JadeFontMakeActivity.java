@@ -539,7 +539,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             if (view == mBinding.tvTopSubmit) {
                 videoToPause();
-                mPresenter.GetAllTextBitPath(textContain);
+                mPresenter.saveVideo(mCutStartTime,mCutEndTime,nowUiIsLandscape,percentageH,textContain);
             } else if (view == mBinding.llPlay) {
                 onPlayClick();
             } else if (view == mBinding.ivAddSticker) {

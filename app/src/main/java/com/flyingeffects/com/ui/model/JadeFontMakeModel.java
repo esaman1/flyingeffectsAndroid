@@ -30,7 +30,6 @@ import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +47,6 @@ import rx.subjects.PublishSubject;
 public class JadeFontMakeModel {
 
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
-
-
 
     String videoPath;
     String imagePath;
@@ -263,50 +260,53 @@ public class JadeFontMakeModel {
         }
     }
 
-
-
-
-
     /**
-     * 获得文字贴纸图片
+     * 保存视频
+     * @param cutStartTime 裁剪的开始时间
+     * @param cutEndTime 裁剪的结束时间
+     * @param nowUiIsLandscape  横竖屏
+     * @param percentageH  在屏幕中高度的百分比
+     * @param textContain  玉体字view的父容器
      */
-    public void GetAllTextBitPath(textContainer container) {
-        WaitingDialog.openPragressDialog(context);
-        for (int i = 0; i < container.getChildCount(); i++) {
-            TextComponent textComponent = (TextComponent) container.getChildAt(i);
-            if(textComponent!=null){
-                Bitmap bp=   ViewToBitmap(textComponent);
+    public void saveVideo(long cutStartTime, long cutEndTime, boolean nowUiIsLandscape, float percentageH, textContainer textContain) {
+        WaitingDialog.openPragressDialog(context, "开始保存");
+        boolean isScreenshotsSuccess = true;
+        //先获得所有的玉体字view的截图
+        for (int i = 0; i < textContain.getChildCount(); i++) {
+            TextComponent textComponent = (TextComponent) textContain.getChildAt(i);
+            if (textComponent != null) {
+                Bitmap bp = viewToBitmap(textComponent);
                 String path = Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath();
                 String needPath = path + File.separator + UUID.randomUUID() + ".png";
-                BitmapManager.getInstance().saveBitmapToPath(bp,needPath);
+                BitmapManager.getInstance().saveBitmapToPath(bp, needPath);
                 textComponent.setTextJadePath(needPath);
-            }else{
-
+            } else {
+                isScreenshotsSuccess = false;
             }
         }
-        JadeFontMaleSaveDraw jadeFontMaleDraw=new JadeFontMaleSaveDraw(context,videoPath,changeMusicIndex,chooseExtractedAudioBjMusicPath,imagePath, container);
-        jadeFontMaleDraw.saveVideo(0, 10 * 1000, false, 0, new JadeFontMaleSaveDraw.jadeFontMaleSaveCallback() {
+        if (!isScreenshotsSuccess) {
+            WaitingDialog.closeProgressDialog();
+            ToastUtil.showToast("保存失败");
+            return;
+        }
+        JadeFontMaleSaveDraw jadeFontMaleDraw = new JadeFontMaleSaveDraw(context, videoPath, changeMusicIndex, chooseExtractedAudioBjMusicPath, imagePath, textContain);
+        jadeFontMaleDraw.saveVideo(cutStartTime, cutEndTime, nowUiIsLandscape, percentageH, new JadeFontMaleSaveDraw.jadeFontMaleSaveCallback() {
             @Override
             public void drawCompleted(String path) {
                 WaitingDialog.closeProgressDialog();
                 Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
                 Bundle bundle = new Bundle();
-//                bundle.putStringArrayList("titleEffect", (ArrayList<String>) GetAllStickerDataModel.getInstance().GettitleEffect());
-//                bundle.putStringArrayList("titleStyle", (ArrayList<String>) GetAllStickerDataModel.getInstance().GetTitleStyle());
-//                bundle.putStringArrayList("titleFrame", (ArrayList<String>) GetAllStickerDataModel.getInstance().GetTitleFrame());
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 bundle.putString("path", path);
-                bundle.putBoolean("nowUiIsLandscape", false);
+                bundle.putBoolean("nowUiIsLandscape", nowUiIsLandscape);
                 bundle.putString("templateTitle", "");
                 intent.putExtra("bundle", bundle);
                 context.startActivity(intent);
-
-
             }
 
             @Override
             public void ProgressListener(int progress) {
-
+                WaitingDialog.openPragressDialog(context, "保存" + progress + "%");
             }
         });
     }
@@ -315,13 +315,10 @@ public class JadeFontMakeModel {
     /**
      * view 转成图片
      */
-    public Bitmap ViewToBitmap(View v) {
+    public Bitmap viewToBitmap(View v) {
         Bitmap bmp = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bmp);
-     //   c.drawColor(Color.WHITE);
         v.draw(c);
         return bmp;
     }
-
-
 }
