@@ -41,6 +41,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -66,11 +67,12 @@ public class JadeAdjustFragment extends Fragment {
 
     private JadePagerAdapter jadePagerAdapter;
 
-    private int lastPosition;
+    private int lastPosition = 1;
 
     private downCallback callback;
 
     private String mTTFFolder;
+    private AppCompatEditText inputEdit;
 
 
     public JadeAdjustFragment(JadeAdjustFragment.onAdjustParamsChangeCallBack onAdjustParamsChangeCallBack) {
@@ -110,6 +112,12 @@ public class JadeAdjustFragment extends Fragment {
         getFonts();
         getJadeTypeFace();
         getLocalJadeTypeFace();
+        initCommitBtn();
+    }
+
+    private void initCommitBtn() {
+        hideSoftInput();
+
     }
 
     private void getLocalJadeTypeFace() {
@@ -154,7 +162,8 @@ public class JadeAdjustFragment extends Fragment {
 
 
     private void initInputEditText() {
-        binding.input.addTextChangedListener(new TextWatcher() {
+        inputEdit = binding.input;
+        inputEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -246,6 +255,28 @@ public class JadeAdjustFragment extends Fragment {
     public void onPause() {
         lifecycleSubject.onNext(ActivityLifeCycleEvent.PAUSE);
         super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {  //不在最前端界面显示
+            hideSoftInput();
+            binding.input.clearFocus();
+            lastPosition = tabLayout.getSelectedTabPosition();
+        } else {  //重新显示到最前端
+            if (tabLayout.getSelectedTabPosition() == 0) {
+                if (isVisible()) {
+                    showSoftInput(binding.input);
+                }
+            }
+        }
     }
 
     @Override
@@ -384,5 +415,9 @@ public class JadeAdjustFragment extends Fragment {
 
     public interface downCallback {
         void isSuccess(String path);
+    }
+
+    public AppCompatEditText getInputEdit() {
+        return inputEdit;
     }
 }

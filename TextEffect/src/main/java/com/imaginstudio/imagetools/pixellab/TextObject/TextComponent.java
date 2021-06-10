@@ -30,9 +30,11 @@ import android.os.Bundle;
 import android.text.TextPaint;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.imaginstudio.imagetools.pixellab.DrawingPanelRenderer;
@@ -109,12 +111,16 @@ public class TextComponent extends View {
     private RectF bezierMaskRect = new RectF();
     int bigBallRadiusDp = 10;
     int bigBallRadiusPx = dpToPixels(this.bigBallRadiusDp);
+
+
     private Bitmap bitmap_3d_cache = null;
     private Bitmap bitmap_cache = null;
     private Bitmap bitmap_cache_reflection = null;
     private Bitmap bitmap_shadow_3d = null;
     private Bitmap bitmap_shadow_outer = null;
     private Bitmap bitmap_shadow_outer_reflection = null;
+
+
     int bottom_padding = 0;
     int boundingHeight = 0;
     int boundingWidth = 0;
@@ -124,6 +130,7 @@ public class TextComponent extends View {
     final long doubleClickDuration = 300;
     float downX = 0.0f;
     float downY = 0.0f;
+
     private int dragID = -1;
     int fill_type = 1;
     private boolean frozen;
@@ -144,6 +151,7 @@ public class TextComponent extends View {
     float oldMaxW;
     float oldPosX;
     float oldPosY;
+
     private boolean outer_glow_enabled = false;
     private int outer_shadow_color = ViewCompat.MEASURED_STATE_MASK;
     private int outer_shadow_dx = 0;
@@ -151,6 +159,8 @@ public class TextComponent extends View {
     private Boolean outer_shadow_enabled = false;
     private int outer_shadow_padding = 0;
     private float outer_shadow_radius = 10.0f;
+
+
     private Paint paint;
     Paint paintHandles = new Paint(1);
     Paint paintHandlesBorder = new Paint(1);
@@ -158,6 +168,8 @@ public class TextComponent extends View {
     Paint paintSelected = new Paint(1);
     Paint paintSelectedBg = new Paint(1);
     Paint paintSelectedBorder = new Paint(1);
+
+
     float previousX;
     float previousY;
     public String reference = "0";
@@ -167,12 +179,16 @@ public class TextComponent extends View {
     float renderScaleF = 1.0f;
     int right_padding = 0;
     textContainer root;
+
+
     private int shadow_3d_color = ViewCompat.MEASURED_STATE_MASK;
     private boolean shadow_3d_enabled = false;
     private int shadow_3d_expand = 10;
     private int shadow_3d_radius = 25;
     private int shadow_3d_transparency = 40;
-    int smallBallRadiusDp = 7;
+
+
+    int smallBallRadiusDp = 0;
     int smallBallRadiusPx = dpToPixels(this.smallBallRadiusDp);
     private boolean tempDisable3DRots;
     CustomTextView textDraw;
@@ -211,6 +227,7 @@ public class TextComponent extends View {
     GradientMaker.GradientFill usedGradient = new GradientMaker.GradientFill();
     PointF viewCenter;
     private boolean firstInflate = true;
+    private float defaultTextSize;
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -219,36 +236,49 @@ public class TextComponent extends View {
         this.textHeight = this.textDraw.getMeasuredHeight();
         this.boundingWidth = this.textWidth;
         this.boundingHeight = this.textHeight;
-        setMeasuredDimension(this.boundingWidth + this.smallBallRadiusPx + this.ADDITIONAL_SPACE_HANDLE, this.boundingHeight);
-        setPivotX(((float) this.textWidth) / 2.0f);
-        setPivotY(((float) this.textHeight) / 2.0f);
+        Log.d(TAG, "xxxxonMeasure() called with: textWidth = [" + textWidth + "], textHeight = [" + textHeight + "]");
+        Log.d(TAG, "xxxxonMeasure() called with: boundingWidth = [" + boundingWidth + "], boundingHeight = [" + boundingHeight + "]");
+//        setMeasuredDimension(this.boundingWidth /*+ this.smallBallRadiusPx*/ + this.ADDITIONAL_SPACE_HANDLE , this.boundingHeight );
+        setMeasuredDimension(this.textWidth /*+ this.smallBallRadiusPx*/ + this.ADDITIONAL_SPACE_HANDLE + 60, this.textHeight + 60);
+//        setPivotX(((float) this.textWidth+60) / 2.0f);
+//        setPivotY(((float) this.textHeight+60) / 2.0f);
 
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-        if (firstInflate) {
-            int x = ((helperClass.getContainerWidth() - getWidth()) / 2);
-            int y = ((helperClass.getContainerHeight() - getHeight()) / 2);
-            setX(x);
-            setY(y);
-            firstInflate = false;
-        }
+//        super.onLayout(changed, left, top, right, bottom);
+//        if (firstInflate) {
+//            int x = ((helperClass.getContainerWidth() - getWidth()) / 2);
+//            int y = ((helperClass.getContainerHeight() - getHeight()) / 2);
+//            setX(x);
+//            setY(y);
+//            firstInflate = false;
+//        }
         mMeasureWidth = getWidth();
         mMeasureHeight = getHeight();
+
+
+        Log.d(TAG, "xxxxonLayout() called with: changed = [" + changed + "], left = [" + left + "], top = [" + top + "], right = [" + right + "], bottom = [" + bottom + "]");
+        Log.d(TAG, "xxxxonLayout() called with: mMeasureWidth = [" + mMeasureWidth + "], mMeasureHeight = [" + mMeasureHeight + "]");
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        this.viewCenter = new PointF(((float) ((getWidth() - getPaddingLeft()) - getPaddingRight())) / 2.0f, ((float) ((getHeight() - getPaddingTop()) - getPaddingBottom())) / 2.0f);
+//        this.viewCenter = new PointF(((float) ((getWidth() - getPaddingLeft()) - getPaddingRight())) / 2.0f, ((float) ((getHeight() - getPaddingTop()) - getPaddingBottom())) / 2.0f);
+        this.viewCenter = new PointF(mMeasureWidth / 2.0f, mMeasureHeight / 2.0f);
+        Log.d(TAG, "xxxxonDraw() called with: viewCenter = [" + viewCenter + "]");
 
         this.textWidth = this.textWidth > 0 ? this.textWidth : 1;
         this.textHeight = this.textHeight > 0 ? this.textHeight : 1;
-        int threeDDepthPx = Math.max(1, dpToPixels(this.threeDDepth));
 
         this.boundingWidth = this.textWidth + this.ADDITIONAL_SPACE_HANDLE;
         this.boundingHeight = this.textHeight;
+
+        Log.d(TAG, "xxxxonDraw() called with: textWidth = [" + textWidth + "], textHeight = [" + textHeight + "]");
+        Log.d(TAG, "xxxxonDraw() called with: boundingWidth = [" + boundingWidth + "], boundingHeight = [" + boundingHeight + "]");
+        int threeDDepthPx = Math.max(1, dpToPixels(this.threeDDepth));
+
         updateHandlePos();
         this.paint.setAntiAlias(true);
         this.paint.setDither(true);
@@ -259,7 +289,19 @@ public class TextComponent extends View {
         this.paint.setStyle(Paint.Style.STROKE);
         this.paint.setColor(Color.parseColor("#007de3"));
 
-        this.textDraw.layout(0, 0, this.textWidth + this.textDraw.getPaddingRight(), this.textHeight);
+        textDraw.setPadding(0, 0, 0, 0);
+//        ViewGroup.LayoutParams layoutParams = textDraw.getLayoutParams();
+//        ViewGroup.MarginLayoutParams marginParams = null;
+//        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+//            marginParams = (ViewGroup.MarginLayoutParams) layoutParams;
+//        } else {
+//            marginParams = new ViewGroup.MarginLayoutParams(layoutParams);
+//        }
+//        marginParams.setMargins(30, 30, 0, 0);
+//        this.textDraw.setLayoutParams(marginParams);
+//        this.textDraw.layout(0, 0, this.textWidth, this.textHeight);
+        this.textDraw.layout(0, 0, this.textWidth, this.textHeight);
+
         Camera rotation3d = new Camera();
         rotation3d.rotateY((float) clipAngle(this.textRotationY));
         rotation3d.rotateX((float) clipAngle(this.textRotationX));
@@ -558,14 +600,17 @@ public class TextComponent extends View {
             resetAlphaToPaint(this.paint);
         }
         canvas.restore();
-        canvas.scale(mScale, mScale, viewCenter.x, viewCenter.y);
-        canvas.rotate(mRotateAngle, viewCenter.x, viewCenter.y);
+//        canvas.scale(mScale, mScale, viewCenter.x, viewCenter.y);
+//        canvas.rotate(mRotateAngle, viewCenter.x, viewCenter.y);
         if (this.isSelected && !this.renderMode) {
 //            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBg);
+            RectF rectF = new RectF(30, 30, (float) this.boundingWidth + 30, (float) this.boundingHeight + 30);
+            mHelpBoxRect.set(rectF);
+
             canvas.drawRoundRect(mHelpBoxRect, 10, 10, this.paintSelectedBorder);
 //            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelected);
         }
-        RectUtil.scaleRect(mHelpBoxRect, mScale);
+//        RectUtil.scaleRect(mHelpBoxRect, mScale);
         if (this.handleEnabled && this.isSelected && !this.isCurved && !this.renderMode) {
 //            canvas.drawCircle(this.maxWidther.getX(), this.maxWidther.getY(), (float) getBiggerRadius(), this.paintHandlesBorder);
 //            float x = this.maxWidther.getX();
@@ -578,13 +623,10 @@ public class TextComponent extends View {
 //            }
 //            canvas.drawCircle(x, y, biggerRadius, paint2);
 
-            RectF rectF = new RectF(0, 0, mMeasureWidth, mMeasureHeight);
+            RectF rectF = new RectF(30, 30, (float) this.boundingWidth + 30, (float) this.boundingHeight + 30);
 //            rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY());
             mHelpBoxRect.set(rectF);
 //
-            Log.d(TAG, "onDraw() called with: mHelpBoxRect = [" + rectF + "]");
-            Log.d(TAG, "onDraw() called with: mHelpBoxRect.centerX = [" + mHelpBoxRect.centerX() + "]");
-            Log.d(TAG, "onDraw() called with: mHelpBoxRect.centerY() = [" + mHelpBoxRect.centerY() + "]");
             if (leftTopBitmap != null) {
                 RectUtil.rotateRect(leftTopDstRect, mHelpBoxRect.centerX(),
                         mHelpBoxRect.centerY(), mRotateAngle);
@@ -607,9 +649,29 @@ public class TextComponent extends View {
 
 
             }
+
+            if (leftBottomBitMap != null) {
+                RectUtil.rotateRect(leftBottomDstRect, mHelpBoxRect.centerX(),
+                        mHelpBoxRect.centerY(), mRotateAngle);
+                int offsetValue = ((int) leftBottomDstRect.width()) >> 1;
+                leftBottomDstRect.offsetTo(mHelpBoxRect.left - offsetValue,
+                        mHelpBoxRect.bottom - offsetValue);
+                leftBottomBitMap.setBounds((int) leftBottomDstRect.left, (int) leftBottomDstRect.top, (int) leftBottomDstRect.right, (int) leftBottomDstRect.bottom);
+                leftBottomBitMap.draw(canvas);
+
+
+            }
+
         }
     }
 
+    public float getDefaultTextSize() {
+        return defaultTextSize;
+    }
+
+    public void setDefaultTextSize(float defaultTextSize) {
+        this.defaultTextSize = defaultTextSize;
+    }
 
     public interface OnSelectEventListener {
         void onEvent_MoveMaxText(float f, float f2, float f3, boolean z, String str);
@@ -898,11 +960,12 @@ public class TextComponent extends View {
     }
 
     @SuppressLint({"NewApi"})
-    public TextComponent(Context context, int initialColor, String reference2, displayInfo helperClass, Drawable leftTopBitmap, Drawable rightBottomBitmap) {
+    public TextComponent(Context context, int initialColor, String reference2, displayInfo helperClass, Drawable leftTopBitmap, Drawable rightBottomBitmap, Drawable leftBottomBitMap) {
         super(context);
         this.helperClass = helperClass;
         this.leftTopBitmap = leftTopBitmap;
         this.rightBottomBitmap = rightBottomBitmap;
+        this.leftBottomBitMap = leftBottomBitMap;
         init(context);
         this.reference = reference2;
         setColorFill(initialColor);
@@ -1283,11 +1346,14 @@ public class TextComponent extends View {
         this.lastClick = System.currentTimeMillis();
     }
 
-    private int ACTION_TYPE_DELETE = 0;
-    private int ACTION_TYPE_MOVE = 1;
-    private int ACTION_TYPE_SCALE_AND_ROTATE = 2;
-    private int ACTION_TYPE = 0;
+    public static final int ACTION_TYPE_DELETE = 0;
+    public static final int ACTION_TYPE_EDIT = 5;
+    public static final int ACTION_TYPE_MOVE = 1;
+    public static final int ACTION_TYPE_SCALE_AND_ROTATE = 2;
+    public int ACTION_TYPE = 0;
 
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (this.locked || (isHidden() && !this.isSelected)) {
             return false;
@@ -1301,10 +1367,17 @@ public class TextComponent extends View {
             case MotionEvent.ACTION_DOWN:
 
                 if (leftTopDstRect.contains(x, y)) {
-                    Log.d(TAG, "ACTION_DOWN ACTION_TYPE_DELETE() called with");
+                    Log.d(TAG, "ACTION_DOWN ACTION_TYPE_DELETE() called with" + leftTopDstRect);
                     ACTION_TYPE = ACTION_TYPE_DELETE;
                     if (callback != null) {
-                        callback.stickerOnclick(LEFT_TOP_MODE, TextComponent.this);
+                        callback.stickerOnclick(ACTION_TYPE, TextComponent.this);
+                    }
+                }
+                if (leftBottomDstRect.contains(x, y)) {
+                    Log.d(TAG, "ACTION_DOWN ACTION_TYPE_EDIT() called with" + leftBottomDstRect);
+                    ACTION_TYPE = ACTION_TYPE_EDIT;
+                    if (callback != null) {
+                        callback.stickerOnclick(ACTION_TYPE, TextComponent.this);
                     }
                 } else if (rightBottomDstRect.contains(x, y)) {
                     Log.d(TAG, "ACTION_DOWN ACTION_TYPE_SCALE_AND_ROTATE() called with");
@@ -1364,7 +1437,7 @@ public class TextComponent extends View {
                     float dx = x - lastX;
                     float dy = y - lastY;
                     updateRotateAndScale(dx, dy);
-                    invalidate();
+//                    invalidate();
                     lastX = x;
                     lastY = y;
                 } else if (ACTION_TYPE == ACTION_TYPE_MOVE) {
@@ -1993,6 +2066,7 @@ public class TextComponent extends View {
 
     public void rotateText(float n_angle) {
         this.angle = n_angle % 360.0f;
+        Log.d(TAG, "rotateText() called with: n_angle = [" + n_angle + "]");
         setRotation(this.angle);
     }
 
@@ -2663,15 +2737,18 @@ public class TextComponent extends View {
 
     private Rect leftTopRect = new Rect();
     private Rect rightBottomRect = new Rect();
+    private Rect leftBottomRect = new Rect();
 
     private RectF leftTopDstRect = new RectF();
     private RectF rightBottomDstRect = new RectF();
+    private RectF leftBottomDstRect = new RectF();
     private RectF mHelpBoxRect = new RectF();
 
     private float mMeasureWidth;
     private float mMeasureHeight;
 
     private Drawable leftTopBitmap;
+    private Drawable leftBottomBitMap;
     private Drawable rightBottomBitmap;
 
     public float mScale = 1;
@@ -2722,6 +2799,15 @@ public class TextComponent extends View {
             Log.d(TAG, "initFrameBitmap() called rightBottomRect" + rightBottomRect);
             Log.d(TAG, "initFrameBitmap() called rightBottomDstRect" + rightBottomDstRect);
         }
+
+        if (leftBottomBitMap != null) {
+            leftBottomRect.set(0, 0, leftBottomBitMap.getIntrinsicWidth(),
+                    leftBottomBitMap.getIntrinsicHeight());
+            leftBottomDstRect = new RectF(0, 0, STICKER_BTN_HALF_SIZE << 1,
+                    STICKER_BTN_HALF_SIZE << 1);
+            Log.d(TAG, "initFrameBitmap() called leftBottomRect" + leftBottomRect);
+            Log.d(TAG, "initFrameBitmap() called leftBottomDstRect" + leftBottomDstRect);
+        }
     }
 
     public StickerItemOnitemclick getCallback() {
@@ -2738,7 +2824,7 @@ public class TextComponent extends View {
      * @param dx X坐标距离
      * @param dy Y坐标距离
      */
-    public void updateRotateAndScale(final float dx, final float dy) {
+    public void updateRotateAndScale(float dx, float dy) {
         float cx = mHelpBoxRect.centerX();
         float cy = mHelpBoxRect.centerY();
 
@@ -2787,7 +2873,10 @@ public class TextComponent extends View {
 
         Log.d(TAG, "updateRotateAndScale() called with: mRotateAngle = [" + mRotateAngle + "]");
         Log.d(TAG, "updateRotateAndScale() called with: angle = [" + angle + "]");
-//        rotateText(mRotateAngle);
+//        rotateText(TextComponent.this.angle + angle);
+        Log.d(TAG, "updateRotateAndScale() called with: mScale = [" + mScale + "]");
+        float v = defaultTextSize * mScale;
+        setTextSize(v);
     }
 
     /**
@@ -2858,4 +2947,6 @@ public class TextComponent extends View {
     public void setId(int id) {
         this.id = id;
     }
+
+
 }

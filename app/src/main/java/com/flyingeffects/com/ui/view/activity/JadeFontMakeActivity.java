@@ -1,6 +1,7 @@
 package com.flyingeffects.com.ui.view.activity;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -177,6 +179,8 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     private FragmentManager fragmentManager;
     ObjectAnimator animatorUp;
     ObjectAnimator animatorDown;
+    private KeyBoardHelper keyBoardHelper;
+    private boolean isFirstAdd = true;
 
     @Override
     protected int getLayoutId() {
@@ -344,7 +348,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                     int index = textComponent.isSubTitle() ? textComponent.getId() : -1;
                     int id = textComponent.getmJadeFontViewIndex();
                     mBinding.jakeFontSeekBarView.modifyMaterialOrSubtitle(
-                            "",Integer.toString(id),index,textComponent.isSubTitle(),string);
+                            "", Integer.toString(id), index, textComponent.isSubTitle(), string);
                     textContain.getCurrentText().setText(string, false);
                 }
             }
@@ -364,10 +368,26 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         stickerItemOnitemclick = new StickerItemOnitemclick() {
             @Override
             public void stickerOnclick(int type, TextComponent textComponent) {
-                fragmentTransaction.hide(jadeAdjustFragment);
-                textContain.removeView(textContain.getCurrentText());
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.commit();
+                switch (type) {
+                    case TextComponent.ACTION_TYPE_DELETE:
+                        fragmentTransaction.hide(jadeAdjustFragment);
+                        textContain.removeView(textContain.getCurrentText());
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.commit();
+                        break;
+                    case TextComponent.ACTION_TYPE_EDIT:
+                        FragmentTransaction fragmentTransactionEdit = fragmentManager.beginTransaction();
+                        fragmentTransactionEdit.show(jadeAdjustFragment);
+                        fragmentTransactionEdit.commit();
+
+                        //显示软键盘
+                        if (jadeAdjustFragment.getInputEdit() != null) {
+                            InputMethodManager imm = (InputMethodManager) JadeFontMakeActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.showSoftInput(jadeAdjustFragment.getInputEdit(), 0);
+                        }
+                        break;
+                }
+
                 seekBarViewIsShow(true);
 
                 if (textComponent.isSubTitle()) {
@@ -383,7 +403,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
             }
         };
-        KeyBoardHelper keyBoardHelper = new KeyBoardHelper(this);
+        keyBoardHelper = new KeyBoardHelper(this);
         keyBoardHelper.setOnKeyBoardStatusChangeListener(new KeyBoardHelper.OnKeyBoardStatusChangeListener() {
             @Override
             public void OnKeyBoardPop(int keyBoardheight) {
@@ -475,14 +495,16 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
 
         int initColor = Color.parseColor("#252B3B");
-        Drawable leftTopD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.sticker_delete);
+        Drawable leftTopD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.ic_jade_close);
+        Drawable leftBottomD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.ic_jade_edit);
         Drawable rightBottomD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.mipmap.sticker_redact);
         TextComponent new_text = new TextComponent(JadeFontMakeActivity.this,
                 initColor,
                 "reference",
                 helperClass,
                 leftTopD,
-                rightBottomD);
+                rightBottomD,
+                leftBottomD);
         new_text.setId(-1);
         new_text.setSubTitle(false);
         new_text.setStartTime(getCurrentPos());
@@ -621,17 +643,12 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
     private void onClickAddWordBtn() {
         videoToPause();
-        seekBarViewIsShow(false);
-        setTextColor(0);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        if (jadeAdjustFragment.isVisible()) {
-            fragmentTransaction.hide(jadeAdjustFragment);
-        } else {
-            fragmentTransaction.show(jadeAdjustFragment);
-        }
-        fragmentTransaction.commit();
+        seekBarViewIsShow(true);
+        setTextColor(-1);
+
 
         addJadeFont();
+
 
     }
 
@@ -852,13 +869,13 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                     mBinding.jakeFontSeekBarView.scrollToPosition(endTime);
                 }
 
-                mPresenter.getNowPlayingTimeViewShow(textContain,progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTimeViewShow(textContain, progressBarProgress, mCutEndTime);
             }
 
             @Override
             public void onTouchEnd() {
                 videoToPause();
-                mPresenter.getNowPlayingTimeViewShow(textContain,progressBarProgress, mCutEndTime);
+                mPresenter.getNowPlayingTimeViewShow(textContain, progressBarProgress, mCutEndTime);
             }
         });
     }
@@ -1465,11 +1482,11 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     public void manualDrag(boolean manualDrag) {
         mSeekBarViewManualDrag = manualDrag;
         videoToPause();
-        mPresenter.getNowPlayingTimeViewShow(textContain,progressBarProgress, mCutEndTime);
+        mPresenter.getNowPlayingTimeViewShow(textContain, progressBarProgress, mCutEndTime);
     }
 
     @Override
-    public void timelineChange(long startTime, long endTime, String id,int listId, boolean isSubtitle) {
+    public void timelineChange(long startTime, long endTime, String id, int listId, boolean isSubtitle) {
         for (int i = 0; i < textContain.getChildCount(); i++) {
             TextComponent textComponent = (TextComponent) textContain.getChildAt(i);
             if (textComponent != null) {
@@ -1489,7 +1506,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                 }
             }
         }
-        mPresenter.getNowPlayingTimeViewShow(textContain,progressBarProgress, mCutEndTime);
+        mPresenter.getNowPlayingTimeViewShow(textContain, progressBarProgress, mCutEndTime);
     }
 
     @Override
@@ -1529,14 +1546,17 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             SubtitleEntity subtitleEntity = subtitles.get(i);
 
             int initColor = Color.parseColor("#252B3B");
-            Drawable leftTopD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.sticker_delete);
+            Drawable leftTopD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.ic_jade_close);
             Drawable rightBottomD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.mipmap.sticker_redact);
+            Drawable leftBottomD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.ic_jade_edit);
+
             TextComponent new_text = new TextComponent(JadeFontMakeActivity.this,
                     initColor,
                     "reference",
                     helperClass,
                     leftTopD,
-                    rightBottomD
+                    rightBottomD,
+                    leftBottomD
             );
             new_text.setId(i);
             new_text.setSubTitle(true);
@@ -1545,7 +1565,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             new_text.setContent(subtitleEntity.getText());
             new_text.setmJadeFontViewIndex(mJadeFontViewIndex);
             new_text.setVisibility(View.GONE);
-            textContain.addNewText(new_text, stickerItemOnitemclick,helperClass);
+            textContain.addNewText(new_text, stickerItemOnitemclick, helperClass);
         }
         mJadeFontViewIndex++;
     }
@@ -1693,52 +1713,66 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
     @Override
     public void onTextSelectionChanged(boolean z) {
 
+        Log.d(TAG, "onTextSelectionChanged() called with: z = [" + z + "]");
+        if (z) {
+//            if (isFirstAdd) {
+//                isFirstAdd = false;
+//                return;
+//            }
+//            FragmentTransaction fragmentTransactionEdit = fragmentManager.beginTransaction();
+//            fragmentTransactionEdit.show(jadeAdjustFragment);
+//            fragmentTransactionEdit.commit();
+        } else {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.hide(jadeAdjustFragment);
+            fragmentTransaction.commit();
+        }
     }
 
     private void stickerTimeLineOffset() {
 
         for (int i = 0; i < textContain.getChildCount(); i++) {
 
-             TextComponent textComponent = (TextComponent) textContain.getChildAt(i);
+            TextComponent textComponent = (TextComponent) textContain.getChildAt(i);
 
             if (!textComponent.isSubTitle()) {
-                 if (textComponent.getStartTime() > mCutStartTime && textComponent.getEndTime() < mCutEndTime) {
-                     continue;
-                 }
+                if (textComponent.getStartTime() > mCutStartTime && textComponent.getEndTime() < mCutEndTime) {
+                    continue;
+                }
 
-                 if (textComponent.getStartTime() < mCutStartTime && textComponent.getEndTime() > mCutEndTime) {
-                     textComponent.setStartTime(mCutStartTime);
-                     textComponent.setEndTime(mCutEndTime);
-                 }
+                if (textComponent.getStartTime() < mCutStartTime && textComponent.getEndTime() > mCutEndTime) {
+                    textComponent.setStartTime(mCutStartTime);
+                    textComponent.setEndTime(mCutEndTime);
+                }
 
-                 if (textComponent.getStartTime() > mCutStartTime && textComponent.getEndTime() > mCutEndTime) {
-                     textComponent.setStartTime(mCutEndTime - (textComponent.getEndTime() - textComponent.getStartTime()));
-                     textComponent.setEndTime(mCutEndTime);
-                 }
+                if (textComponent.getStartTime() > mCutStartTime && textComponent.getEndTime() > mCutEndTime) {
+                    textComponent.setStartTime(mCutEndTime - (textComponent.getEndTime() - textComponent.getStartTime()));
+                    textComponent.setEndTime(mCutEndTime);
+                }
 
-                 if (textComponent.getStartTime() > mCutStartTime && mCutEndTime - textComponent.getStartTime() < 1000) {
-                     textComponent.setStartTime(mCutStartTime);
-                 }
+                if (textComponent.getStartTime() > mCutStartTime && mCutEndTime - textComponent.getStartTime() < 1000) {
+                    textComponent.setStartTime(mCutStartTime);
+                }
 
-                 if (textComponent.getEndTime() < mCutStartTime) {
-                     textComponent.setStartTime(mCutStartTime);
-                     textComponent.setEndTime(mCutStartTime + 1000);
-                 }
+                if (textComponent.getEndTime() < mCutStartTime) {
+                    textComponent.setStartTime(mCutStartTime);
+                    textComponent.setEndTime(mCutStartTime + 1000);
+                }
 
-                 if (textComponent.getEndTime() > mCutEndTime) {
-                     textComponent.setEndTime(mCutEndTime);
-                     if (mCutEndTime - textComponent.getStartTime() <= 1000) {
-                         textComponent.setStartTime(mCutEndTime - 1000);
-                     }
-                 }
+                if (textComponent.getEndTime() > mCutEndTime) {
+                    textComponent.setEndTime(mCutEndTime);
+                    if (mCutEndTime - textComponent.getStartTime() <= 1000) {
+                        textComponent.setStartTime(mCutEndTime - 1000);
+                    }
+                }
 
-                 if (textComponent.getStartTime() < mCutStartTime) {
-                     textComponent.setStartTime(mCutStartTime);
-                     if (textComponent.getEndTime() - mCutStartTime <= 1000) {
-                         textComponent.setEndTime(mCutStartTime + 1000);
-                     }
-                 }
-             }
+                if (textComponent.getStartTime() < mCutStartTime) {
+                    textComponent.setStartTime(mCutStartTime);
+                    if (textComponent.getEndTime() - mCutStartTime <= 1000) {
+                        textComponent.setEndTime(mCutStartTime + 1000);
+                    }
+                }
+            }
         }
     }
 

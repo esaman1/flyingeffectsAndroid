@@ -125,8 +125,9 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         this.lastInserted++;
         this.helperClass = helperClass;
         String reference = new_text.getContent();
-
-        new_text.setTextSize(160);
+        new_text.setDefaultTextSize(80);
+        new_text.setTextSize(80);
+//        new_text.setPadding(30, 30, 0, 0);
         new_text.setText(new_text.getContent(), false);
         this.texts.put(Integer.valueOf(this.lastInserted), new_text);
         new_text.assigned_id = this.lastInserted;
@@ -143,7 +144,6 @@ public class textContainer extends RelativeLayout implements TextComponent.OnSel
         }
         return reference;
     }
-
 
 
 //    public String addNewShape(int shapeType, ImageSource imgSource, boolean atOrigin, float x, float y, float width, float height) {
