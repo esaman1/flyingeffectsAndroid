@@ -208,6 +208,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
 
         initJadeAdjustView();
 
+
     }
 
 
@@ -560,6 +561,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         if (!DoubleClick.getInstance().isFastDoubleClick()) {
             if (view == mBinding.tvTopSubmit) {
                 videoToPause();
+                mPresenter.saveVideo(mCutStartTime,mCutEndTime,nowUiIsLandscape,percentageH,textContain);
             } else if (view == mBinding.llPlay) {
                 onPlayClick();
             } else if (view == mBinding.ivAddSticker) {
@@ -1568,6 +1570,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             textContain.addNewText(new_text, stickerItemOnitemclick, helperClass);
         }
         mJadeFontViewIndex++;
+        mBinding.progressBarView.scrollToPosition(10);
     }
 
     @Override

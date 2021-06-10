@@ -2949,4 +2949,15 @@ public class TextComponent extends View {
     }
 
 
+    public String getTextJadePath() {
+        return textJadePath;
+    }
+
+    public void setTextJadePath(String textJadePath) {
+        this.textJadePath = textJadePath;
+    }
+
+    private String textJadePath;
+
+
 }

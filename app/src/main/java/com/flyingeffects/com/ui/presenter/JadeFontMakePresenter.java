@@ -89,8 +89,8 @@ public class JadeFontMakePresenter extends BasePresenter implements JadeFontMake
         mMakeModel.getNowPlayingTimeViewShow(textContain, progressBarProgress, endTime);
     }
 
-    public void saveVideo(long cutStartTime, long cutEndTime, boolean nowUiIsLandscape, float percentageH) {
-        mMakeModel.saveVideo(cutStartTime,cutEndTime,nowUiIsLandscape,percentageH);
+    public void saveVideo(long cutStartTime, long cutEndTime, boolean nowUiIsLandscape, float percentageH,textContainer textContain) {
+        mMakeModel.saveVideo(cutStartTime,cutEndTime,nowUiIsLandscape,percentageH,textContain);
     }
 
 }

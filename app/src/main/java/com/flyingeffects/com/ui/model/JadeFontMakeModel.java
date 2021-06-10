@@ -1,10 +1,10 @@
 package com.flyingeffects.com.ui.model;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Message;
+import android.graphics.Canvas;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -20,18 +20,12 @@ import com.flyingeffects.com.manager.FileManager;
 import com.flyingeffects.com.manager.huaweiObs;
 import com.flyingeffects.com.manager.mediaManager;
 import com.flyingeffects.com.ui.interfaces.model.JadeFontMakeMvpCallback;
-import com.flyingeffects.com.utils.BitmapUtils;
+import com.flyingeffects.com.ui.view.activity.CreationTemplatePreviewActivity;
 import com.flyingeffects.com.utils.LogUtil;
 import com.flyingeffects.com.utils.StringUtil;
 import com.flyingeffects.com.utils.ToastUtil;
 import com.imaginstudio.imagetools.pixellab.TextObject.TextComponent;
 import com.imaginstudio.imagetools.pixellab.textContainer;
-import com.lansosdk.box.LSOScaleType;
-import com.lansosdk.box.LSOVideoOption;
-import com.lansosdk.box.Layer;
-import com.lansosdk.box.OnLanSongSDKCompletedListener;
-import com.lansosdk.box.OnLanSongSDKProgressListener;
-import com.lansosdk.videoeditor.DrawPadAllExecute2;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.view.WaitingDialog;
 
@@ -39,11 +33,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 
@@ -56,52 +48,49 @@ public class JadeFontMakeModel {
 
     public final PublishSubject<ActivityLifeCycleEvent> lifecycleSubject = PublishSubject.create();
 
-    private static int DRAWPADWIDTH = 720;
-    private static int DRAWPADHEIGHT = 1280;
-    private static final int FRAME_RATE = 20;
-    private DrawPadAllExecute2 execute;
-
     String videoPath;
     String imagePath;
     String soundFolder;
     JadeFontMakeMvpCallback mCallback;
     Activity context;
-    /**如果videoPath不为空  -1和0代表默认使用视频中的音频 2为提取音频 如果videoPath为空 -1没有音频 2为提取音频*/
+    /**
+     * 如果videoPath不为空  -1和0代表默认使用视频中的音频 2为提取音频 如果videoPath为空 -1没有音频 2为提取音频
+     */
     int changeMusicIndex = -1;
     String chooseExtractedAudioBjMusicPath = "";
 
 
-    private int dialogProgress;
+//    private int dialogProgress;
+//
+//    @SuppressLint("HandlerLeak")
+//    Handler handler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            super.handleMessage(msg);
+//            String title;
+//            String content;
+//            if (dialogProgress <= 25) {
+//                title = "飞闪预览处理中";
+//                content = "请耐心等待 不要离开";
+//            } else if (dialogProgress <= 40) {
+//                title = "飞闪音频添加中";
+//                content = "快了，友友稍等片刻";
+//            } else if (dialogProgress <= 60) {
+//                title = "飞闪视频处理中";
+//                content = "即将生成";
+//            } else if (dialogProgress <= 80) {
+//                title = "飞闪视频合成中";
+//                content = "马上就好，不要离开";
+//            } else {
+//                title = "视频即将呈现啦";
+//                content = "最后合成中，请稍后";
+//            }
+//            mCallback.setDialogProgress(title, dialogProgress, content);
+//        }
+//    };
 
-    @SuppressLint("HandlerLeak")
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            String title;
-            String content;
-            if (dialogProgress <= 25) {
-                title = "飞闪预览处理中";
-                content = "请耐心等待 不要离开";
-            } else if (dialogProgress <= 40) {
-                title = "飞闪音频添加中";
-                content = "快了，友友稍等片刻";
-            } else if (dialogProgress <= 60) {
-                title = "飞闪视频处理中";
-                content = "即将生成";
-            } else if (dialogProgress <= 80) {
-                title = "飞闪视频合成中";
-                content = "马上就好，不要离开";
-            } else {
-                title = "视频即将呈现啦";
-                content = "最后合成中，请稍后";
-            }
-            mCallback.setDialogProgress(title, dialogProgress, content);
-        }
-    };
 
-
-    public JadeFontMakeModel(Activity context,String videoPath,String imagePath, JadeFontMakeMvpCallback  callback) {
+    public JadeFontMakeModel(Activity context, String videoPath, String imagePath, JadeFontMakeMvpCallback callback) {
         this.videoPath = videoPath;
         this.imagePath = imagePath;
         this.mCallback = callback;
@@ -116,7 +105,7 @@ public class JadeFontMakeModel {
             getVideoVoice(videoPath, soundFolder, true);
         } else {
             //直接识别音频文件
-            uploadHuaweiCloudAndIdentifySubtitle(audioPath,isVideoInAudio);
+            uploadHuaweiCloudAndIdentifySubtitle(audioPath, isVideoInAudio);
         }
     }
 
@@ -126,7 +115,7 @@ public class JadeFontMakeModel {
      * user : zhangtongju
      * true isIdentify 要识别字幕   false 只提取音频
      */
-    private void getVideoVoice(String videoPath, String outputPath,boolean isIdentify) {
+    private void getVideoVoice(String videoPath, String outputPath, boolean isIdentify) {
         WaitingDialog.openPragressDialog(context);
         mediaManager manager = new mediaManager(context);
 
@@ -136,7 +125,7 @@ public class JadeFontMakeModel {
                 LogUtil.d("OOM2", "分离出来的因为地址为" + outputPath);
                 String audioPath = outputPath + File.separator + "bgm.mp3";
                 if (isIdentify) {
-                    uploadHuaweiCloudAndIdentifySubtitle(audioPath,true);
+                    uploadHuaweiCloudAndIdentifySubtitle(audioPath, true);
                 } else {
                     mCallback.getBgmPath(audioPath);
                 }
@@ -151,11 +140,11 @@ public class JadeFontMakeModel {
         });
     }
 
-    private void uploadHuaweiCloudAndIdentifySubtitle(String audioPath,boolean isVideoInAudio){
+    private void uploadHuaweiCloudAndIdentifySubtitle(String audioPath, boolean isVideoInAudio) {
         String type = audioPath.substring(audioPath.length() - 4);
         String nowTime = StringUtil.getCurrentTimeymd();
         String huaweiAudioPath = "media/android/audio_identify/" + nowTime + "/" + System.currentTimeMillis() + type;
-        WaitingDialog.openPragressDialog(context,"识别中...");
+        WaitingDialog.openPragressDialog(context, "识别中...");
         Log.d("OOM2", "uploadFileToHuawei" + "当前上传的地址为" + audioPath + "当前的名字为" + huaweiAudioPath);
         new Thread(() -> huaweiObs.getInstance().uploadFileToHawei(audioPath, huaweiAudioPath, new huaweiObs.Callback() {
             @Override
@@ -167,8 +156,8 @@ public class JadeFontMakeModel {
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Map<String,String> map = new HashMap<>();
-                            map.put("audiourl",path);
+                            Map<String, String> map = new HashMap<>();
+                            map.put("audiourl", path);
                             map.put("token", BaseConstans.getUserToken());
                             map.put("duration", String.valueOf(mediaInfo.aDuration));
                             mediaInfo.release();
@@ -184,7 +173,7 @@ public class JadeFontMakeModel {
                                         protected void onSubNext(List<SubtitleEntity> data) {
                                             WaitingDialog.closeProgressDialog();
                                             if (data != null && !data.isEmpty()) {
-                                                mCallback.identifySubtitle(data, isVideoInAudio,audioPath);
+                                                mCallback.identifySubtitle(data, isVideoInAudio, audioPath);
                                             }
                                         }
                                     }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -226,27 +215,28 @@ public class JadeFontMakeModel {
 
     public void setExtractedAudioBjMusicPath(String path) {
         chooseExtractedAudioBjMusicPath = path;
-        extractedAudio(chooseExtractedAudioBjMusicPath,2);
+        extractedAudio(chooseExtractedAudioBjMusicPath, 2);
     }
 
     /**
      * 播放提取的音频
      */
-    public void extractedAudio(String audioPath,int index) {
-        if(!TextUtils.isEmpty(chooseExtractedAudioBjMusicPath)){
+    public void extractedAudio(String audioPath, int index) {
+        if (!TextUtils.isEmpty(chooseExtractedAudioBjMusicPath)) {
             changeMusicIndex = index;
             mCallback.clearCheckBox();
             mCallback.chooseCheckBox(index);
             mCallback.getBgmPath(audioPath);
-        }else {
+        } else {
             ToastUtil.showToast("没有提取音乐");
         }
     }
 
     /**
      * 控制玉体字view的展示或隐藏
-     * @param progress 当前播放所处的位置
-     * @param totalTime  视频结束位置
+     *
+     * @param progress  当前播放所处的位置
+     * @param totalTime 视频结束位置
      */
     public void getNowPlayingTimeViewShow(textContainer textContain, long progress, long totalTime) {
         for (int i = 0; i < textContain.getChildCount(); i++) {
@@ -261,8 +251,8 @@ public class JadeFontMakeModel {
                         LogUtil.d("OOM4", "setVisibility");
                     } else if (startTime <= progress && (totalTime - endTime <= 100 || (progress > totalTime && progress - totalTime <= 1))) {
                         textComponent.setVisibility(View.VISIBLE);
-                    }  else {
-                        textComponent.setVisibility(View.GONE);
+                    } else {
+                        textComponent.setVisibility(View.INVISIBLE);
                         LogUtil.d("OOM4", "setVisibilityGONE");
                     }
                 }
@@ -270,98 +260,65 @@ public class JadeFontMakeModel {
         }
     }
 
-    public void saveVideo(long cutStartTime, long cutEndTime, boolean nowUiIsLandscape, float percentageH) {
-        long duration = cutEndTime - cutStartTime;
-        try {
-            if (nowUiIsLandscape) {
-                DRAWPADWIDTH = 1280;
-                DRAWPADHEIGHT = 720;
+    /**
+     * 保存视频
+     * @param cutStartTime 裁剪的开始时间
+     * @param cutEndTime 裁剪的结束时间
+     * @param nowUiIsLandscape  横竖屏
+     * @param percentageH  在屏幕中高度的百分比
+     * @param textContain  玉体字view的父容器
+     */
+    public void saveVideo(long cutStartTime, long cutEndTime, boolean nowUiIsLandscape, float percentageH, textContainer textContain) {
+        WaitingDialog.openPragressDialog(context, "开始保存");
+        boolean isScreenshotsSuccess = true;
+        //先获得所有的玉体字view的截图
+        for (int i = 0; i < textContain.getChildCount(); i++) {
+            TextComponent textComponent = (TextComponent) textContain.getChildAt(i);
+            if (textComponent != null) {
+                Bitmap bp = viewToBitmap(textComponent);
+                String path = Objects.requireNonNull(context.getExternalFilesDir("runCatch/")).getPath();
+                String needPath = path + File.separator + UUID.randomUUID() + ".png";
+                BitmapManager.getInstance().saveBitmapToPath(bp, needPath);
+                textComponent.setTextJadePath(needPath);
             } else {
-                DRAWPADWIDTH = 720;
-                DRAWPADHEIGHT = 1280;
+                isScreenshotsSuccess = false;
             }
-            execute = new DrawPadAllExecute2(context, DRAWPADWIDTH, DRAWPADHEIGHT, duration * 1000);
-            execute.setFrameRate(FRAME_RATE);
-            execute.setEncodeBitrate(5 * 1024 * 1024);
-            execute.setOnLanSongSDKErrorListener(i -> mCallback.dismissLoadingDialog());
-            execute.setOnLanSongSDKProgressListener(new OnLanSongSDKProgressListener() {
-                @Override
-                public void onLanSongSDKProgress(long l, int i) {
-                    dialogProgress = i;
-                    handler.sendEmptyMessage(1);
-                }
-            });
-            execute.setOnLanSongSDKCompletedListener(new OnLanSongSDKCompletedListener() {
-                @Override
-                public void onLanSongSDKCompleted(String s) {
-                    //TODO  s为生成的视频的路径  然后跳转后面的导出页面
-                    mCallback.dismissLoadingDialog();
-                    execute.release();
-                }
-            });
-            Observable.create(new Observable.OnSubscribe<Boolean>() {
-                @Override
-                public void call(Subscriber<? super Boolean> subscriber) {
-                    if (!TextUtils.isEmpty(videoPath)) {
-                        try {
-                             LSOVideoOption option = new LSOVideoOption(videoPath);
-                             option.setLooping(false);
-                             //使用视频中的音频
-                             if (changeMusicIndex == -1 || changeMusicIndex == 0) {
-                                 option.setAudioVolume(1f);
-                             } else {
-                                 option.setAudioMute();
-                                 //选择了提取音频作为视频的背景音频
-                                 if (!TextUtils.isEmpty(chooseExtractedAudioBjMusicPath) && changeMusicIndex == 2) {
-                                     execute.addAudioLayer(chooseExtractedAudioBjMusicPath, 0, 0, cutEndTime);
-                                 }
-                             }
-                             option.setCutDurationUs(cutStartTime * 1000, cutEndTime * 1000);
-                             Layer bgLayer = execute.addVideoLayer(option, cutStartTime * 1000, Long.MAX_VALUE, false, true);
-                            if (!nowUiIsLandscape) {
-                                bgLayer.setScaledToPadSize();
-                                bgLayer.setScaleType(LSOScaleType.VIDEO_SCALE_TYPE);
-                            } else {
-                                float LayerWidth = bgLayer.getLayerWidth();
-                                float scale = DRAWPADWIDTH / (float) LayerWidth;
-                                float LayerHeight = bgLayer.getLayerHeight();
-                                float needDrawHeight = LayerHeight * scale;
-                                bgLayer.setScaledValue(DRAWPADWIDTH, needDrawHeight);
-                                float halft = needDrawHeight / (float) 2;
-                                float top = needDrawHeight * percentageH;
-                                float needHeight = halft - top;
-                                bgLayer.setPosition(bgLayer.getPositionX(), needHeight);
-                            }
-                         } catch (Exception e) {
-                             e.printStackTrace();
-                         }
-                    } else {
-                        Bitmap bt_nj = BitmapManager.getInstance().getOrientationBitmap(imagePath);
-                        bt_nj = BitmapUtils.zoomImg2(bt_nj, execute.getPadWidth() / 16 * 16, execute.getPadHeight() / 16 * 16);
-                        execute.addBitmapLayer(bt_nj, 0, Long.MAX_VALUE);
-                        if (!TextUtils.isEmpty(chooseExtractedAudioBjMusicPath) && changeMusicIndex == 2) {
-                            execute.addAudioLayer(chooseExtractedAudioBjMusicPath, 0, 0, cutEndTime);
-                        }
-                    }
-                    addBitmapLayer();
-                    boolean started = execute.start();
-                    subscriber.onNext(started);
-                    subscriber.onCompleted();
-                }
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(aBoolean -> {
-                if (!aBoolean) {
-                    ToastUtil.showToast("导出失败");
-                }
-            }, throwable -> throwable.printStackTrace());
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        if (!isScreenshotsSuccess) {
+            WaitingDialog.closeProgressDialog();
+            ToastUtil.showToast("保存失败");
+            return;
+        }
+        JadeFontMaleSaveDraw jadeFontMaleDraw = new JadeFontMaleSaveDraw(context, videoPath, changeMusicIndex, chooseExtractedAudioBjMusicPath, imagePath, textContain);
+        jadeFontMaleDraw.saveVideo(cutStartTime, cutEndTime, nowUiIsLandscape, percentageH, new JadeFontMaleSaveDraw.jadeFontMaleSaveCallback() {
+            @Override
+            public void drawCompleted(String path) {
+                WaitingDialog.closeProgressDialog();
+                Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
+                Bundle bundle = new Bundle();
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                bundle.putString("path", path);
+                bundle.putBoolean("nowUiIsLandscape", nowUiIsLandscape);
+                bundle.putString("templateTitle", "");
+                intent.putExtra("bundle", bundle);
+                context.startActivity(intent);
+            }
+
+            @Override
+            public void ProgressListener(int progress) {
+                WaitingDialog.openPragressDialog(context, "保存" + progress + "%");
+            }
+        });
     }
 
+
     /**
-     * 添加字幕或者单个文本的玉体字的layer
+     * view 转成图片
      */
-    private void addBitmapLayer() {
-       //TODO 每段玉体字的展示添加逻辑
+    public Bitmap viewToBitmap(View v) {
+        Bitmap bmp = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+        v.draw(c);
+        return bmp;
     }
 }
