@@ -10,7 +10,7 @@
         android:scaleType="center"
         android:src="@drawable/ic_jade_forbidden" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.flyingeffects.com.view.JadeRecyclerview
         android:id="@+id/color"
         android:layout_width="match_parent"
         android:nestedScrollingEnabled="true"

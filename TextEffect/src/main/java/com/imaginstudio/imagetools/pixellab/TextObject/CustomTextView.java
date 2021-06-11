@@ -505,8 +505,8 @@ public class CustomTextView extends TextView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        canvas.translate(30, 30);
-        canvas.drawColor(Color.parseColor("#34DE72"));
+        canvas.translate(30, 30);
+//        canvas.drawColor(Color.parseColor("#34DE72"));
         int strokeColorTmp;
         Bitmap strokeMap;
         if (this.letterSpacing == 0) {
@@ -889,7 +889,7 @@ public class CustomTextView extends TextView {
         if (this.isCurved) {
             setMeasuredDimension(((int) this.arcChord) + getPaddingLeft() + this.additionalWidthSpace, ((int) this.arcHeight) + this.additionalHeightSpace + getPaddingTop());
         } else {
-            setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight());
+            setMeasuredDimension(getMeasuredWidth()+60, getMeasuredHeight()+60);
         }
     }
 

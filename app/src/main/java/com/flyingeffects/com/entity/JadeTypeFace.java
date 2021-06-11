@@ -1,25 +1,112 @@
 package com.flyingeffects.com.entity;
 
+
 public class JadeTypeFace {
 
-    private int id;
+    private Integer id;
     private String title;
-    private int create_time;
-    private int status;
+    private Integer create_time;
+    private Integer status;
     private String icon_image;
-    private int sort;
+    private Integer sort;
     private DetailBean detail;
-    private boolean selected;
+    private String color;
+    private String font;
+    private String in_color;
+    private boolean isSelected;
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(Integer create_time) {
+        this.create_time = create_time;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getIcon_image() {
+        return icon_image;
+    }
+
+    public void setIcon_image(String icon_image) {
+        this.icon_image = icon_image;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
+    public DetailBean getDetail() {
+        return detail;
+    }
+
+    public void setDetail(DetailBean detail) {
+        this.detail = detail;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getFont() {
+        return font;
+    }
+
+    public void setFont(String font) {
+        this.font = font;
+    }
+
+    public String getIn_color() {
+        return in_color;
+    }
+
+    public void setIn_color(String in_color) {
+        this.in_color = in_color;
+    }
 
     public static class DetailBean {
         private InBrightBean in_bright;
         private ReliefBean relief;
         private Font3DBean font_3D;
-        private String color;
-        private String font;
-        private String in_color;
-
 
         public InBrightBean getIn_bright() {
             return in_bright;
@@ -45,35 +132,20 @@ public class JadeTypeFace {
             this.font_3D = font_3D;
         }
 
-        public String getColor() {
-            return color;
-        }
-
-        public void setColor(String color) {
-            this.color = color;
-        }
-
-        public String getFont() {
-            return font;
-        }
-
-        public void setFont(String font) {
-            this.font = font;
-        }
-
-        public String getIn_color() {
-            return in_color;
-        }
-
-        public void setIn_color(String in_color) {
-            this.in_color = in_color;
-        }
-
         public static class InBrightBean {
             private String bright_color;
             private String fuzzy_radius;
             private String horizontal_shift;
             private String vertical_offset;
+            private boolean enable;
+
+            public boolean isEnable() {
+                return enable;
+            }
+
+            public void setEnable(boolean enable) {
+                this.enable = enable;
+            }
 
             public String getBright_color() {
                 return bright_color;
@@ -112,6 +184,15 @@ public class JadeTypeFace {
             private String illumination_angle;
             private String illumination_intensity;
             private String oblique_angle;
+            private boolean enable;
+
+            public boolean isEnable() {
+                return enable;
+            }
+
+            public void setEnable(boolean enable) {
+                this.enable = enable;
+            }
 
             public String getIllumination_angle() {
                 return illumination_angle;
@@ -142,7 +223,15 @@ public class JadeTypeFace {
             private String angle;
             private String depth;
             private String color;
+            private boolean enable;
 
+            public boolean isEnable() {
+                return enable;
+            }
+
+            public void setEnable(boolean enable) {
+                this.enable = enable;
+            }
             public String getAngle() {
                 return angle;
             }
@@ -167,69 +256,5 @@ public class JadeTypeFace {
                 this.color = color;
             }
         }
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getCreate_time() {
-        return create_time;
-    }
-
-    public void setCreate_time(int create_time) {
-        this.create_time = create_time;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public String getIcon_image() {
-        return icon_image;
-    }
-
-    public void setIcon_image(String icon_image) {
-        this.icon_image = icon_image;
-    }
-
-    public int getSort() {
-        return sort;
-    }
-
-    public void setSort(int sort) {
-        this.sort = sort;
-    }
-
-    public DetailBean getDetail() {
-        return detail;
-    }
-
-    public void setDetail(DetailBean detail) {
-        this.detail = detail;
-    }
-
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
     }
 }

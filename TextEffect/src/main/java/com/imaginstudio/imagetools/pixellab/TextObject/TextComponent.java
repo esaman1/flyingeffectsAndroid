@@ -91,6 +91,8 @@ public class TextComponent extends View {
     private int EmbossIntensity = 60;
     private int EmbossLightAngle = 90;
 
+
+
     OnSelectEventListener SelectListener;
     public float angle = 0.0f;
     public int assigned_id;
@@ -228,6 +230,7 @@ public class TextComponent extends View {
     PointF viewCenter;
     private boolean firstInflate = true;
     private float defaultTextSize;
+    private int textColor;
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -267,7 +270,7 @@ public class TextComponent extends View {
     protected void onDraw(Canvas canvas) {
 //        this.viewCenter = new PointF(((float) ((getWidth() - getPaddingLeft()) - getPaddingRight())) / 2.0f, ((float) ((getHeight() - getPaddingTop()) - getPaddingBottom())) / 2.0f);
         this.viewCenter = new PointF(mMeasureWidth / 2.0f, mMeasureHeight / 2.0f);
-        Log.d(TAG, "xxxxonDraw() called with: viewCenter = [" + viewCenter + "]");
+//        Log.d(TAG, "xxxxonDraw() called with: viewCenter = [" + viewCenter + "]");
 
         this.textWidth = this.textWidth > 0 ? this.textWidth : 1;
         this.textHeight = this.textHeight > 0 ? this.textHeight : 1;
@@ -275,8 +278,8 @@ public class TextComponent extends View {
         this.boundingWidth = this.textWidth + this.ADDITIONAL_SPACE_HANDLE;
         this.boundingHeight = this.textHeight;
 
-        Log.d(TAG, "xxxxonDraw() called with: textWidth = [" + textWidth + "], textHeight = [" + textHeight + "]");
-        Log.d(TAG, "xxxxonDraw() called with: boundingWidth = [" + boundingWidth + "], boundingHeight = [" + boundingHeight + "]");
+//        Log.d(TAG, "xxxxonDraw() called with: textWidth = [" + textWidth + "], textHeight = [" + textHeight + "]");
+//        Log.d(TAG, "xxxxonDraw() called with: boundingWidth = [" + boundingWidth + "], boundingHeight = [" + boundingHeight + "]");
         int threeDDepthPx = Math.max(1, dpToPixels(this.threeDDepth));
 
         updateHandlePos();
@@ -604,7 +607,7 @@ public class TextComponent extends View {
 //        canvas.rotate(mRotateAngle, viewCenter.x, viewCenter.y);
         if (this.isSelected && !this.renderMode) {
 //            canvas.drawRect(0.0f, 0.0f, (float) this.boundingWidth, (float) this.boundingHeight, this.paintSelectedBg);
-            RectF rectF = new RectF(30, 30, (float) this.boundingWidth + 30, (float) this.boundingHeight + 30);
+            RectF rectF = new RectF(30, 30, (float) this.textWidth -30, (float) this.textHeight -30);
             mHelpBoxRect.set(rectF);
 
             canvas.drawRoundRect(mHelpBoxRect, 10, 10, this.paintSelectedBorder);
@@ -642,8 +645,8 @@ public class TextComponent extends View {
                 RectUtil.rotateRect(rightBottomDstRect, mHelpBoxRect.centerX(),
                         mHelpBoxRect.centerY(), mRotateAngle);
                 int offsetValue = ((int) rightBottomDstRect.width()) >> 1;
-                rightBottomDstRect.offsetTo(mHelpBoxRect.right - offsetValue,
-                        mHelpBoxRect.bottom - offsetValue);
+                rightBottomDstRect.offsetTo(mHelpBoxRect.right - (offsetValue*3),
+                        mHelpBoxRect.bottom - (offsetValue*3));
                 rightBottomBitmap.setBounds((int) rightBottomDstRect.left, (int) rightBottomDstRect.top, (int) rightBottomDstRect.right, (int) rightBottomDstRect.bottom);
                 rightBottomBitmap.draw(canvas);
 
@@ -655,11 +658,9 @@ public class TextComponent extends View {
                         mHelpBoxRect.centerY(), mRotateAngle);
                 int offsetValue = ((int) leftBottomDstRect.width()) >> 1;
                 leftBottomDstRect.offsetTo(mHelpBoxRect.left - offsetValue,
-                        mHelpBoxRect.bottom - offsetValue);
+                        mHelpBoxRect.bottom - (offsetValue*3));
                 leftBottomBitMap.setBounds((int) leftBottomDstRect.left, (int) leftBottomDstRect.top, (int) leftBottomDstRect.right, (int) leftBottomDstRect.bottom);
                 leftBottomBitMap.draw(canvas);
-
-
             }
 
         }
@@ -1114,7 +1115,16 @@ public class TextComponent extends View {
         this.textDraw.getPaint().setShader(null);
         this.textDraw.setColorToSelection(color, start, end);
         this.textDraw.invalidate();
+        textColor = color;
         fullRedraw();
+    }
+
+    public int getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
     }
 
     public void setGradientFill(GradientMaker.GradientFill gradient) {
@@ -1265,6 +1275,14 @@ public class TextComponent extends View {
         this.hasInnerShadow = enabled;
         this.textDraw.setInnerShadow(enabled, radius, dx, dy, color);
         fullRedraw();
+    }
+
+    public CustomTextView getTextDraw() {
+        return textDraw;
+    }
+
+    public void setTextDraw(CustomTextView textDraw) {
+        this.textDraw = textDraw;
     }
 
     public void clearInnerShadow() {

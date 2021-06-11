@@ -303,34 +303,38 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
                     if (currentText != null) {
                         JadeTypeFace.DetailBean detail = jadeTypeFace.getDetail();
                         if (detail != null) {
+                            JadeTypeFace.DetailBean.Font3DBean font_3D = detail.getFont_3D();
                             if (
                                     detail.getIn_bright() != null &&
                                             detail.getRelief() != null &&
-                                            detail.getFont_3D() != null
+                                            font_3D != null
                             ) {
-                                currentText.setColorFill(Color.parseColor("#1B5E20"));
+                                currentText.setColorFill(Color.parseColor(jadeTypeFace.getColor()));
 
                                 int fuzzy_radius = Integer.parseInt(detail.getIn_bright().getFuzzy_radius());
                                 int x = Integer.parseInt(detail.getIn_bright().getHorizontal_shift());
                                 int y = Integer.parseInt(detail.getIn_bright().getVertical_offset());
 //                                int bright_color = Integer.parseInt(detail.getIn_bright().getBright_color());
-                                int bright_color = Color.parseColor("#C8E6C9");
-                                currentText.setInnerShadow(true, fuzzy_radius, x, y, bright_color);
+                                int bright_color = Color.parseColor(jadeTypeFace.getIn_color());
+                                boolean enabled1 = detail.getIn_bright().isEnable();
+                                currentText.setInnerShadow(enabled1, fuzzy_radius, x, y, bright_color);
 
                                 int LightAngle = Integer.parseInt(detail.getRelief().getIllumination_angle());
                                 int Intensity = Integer.parseInt(detail.getRelief().getIllumination_intensity());
                                 int Bevel = Integer.parseInt(detail.getRelief().getOblique_angle());
-                                currentText.setEmboss(true, LightAngle, Intensity, 100, 100, Bevel);
+                                boolean enabled2 = detail.getRelief().isEnable();
+                                currentText.setEmboss(enabled2, LightAngle, Intensity, 100, 100, Bevel);
 
-                                int obliqueAngle = Integer.parseInt(detail.getFont_3D().getAngle());
-//                                int Depth = Integer.parseInt(detail.getFont_3D().getDepth());
-                                int Depth = 3;
+                                int obliqueAngle = Integer.parseInt(font_3D.getAngle());
+                                int Depth = Integer.parseInt(detail.getFont_3D().getDepth());
+//                                int Depth = 3;
 //                                int color = Integer.parseInt(detail.getFont_3D().getColor());
-                                currentText.set3dEnabled(true);
+                                boolean enabled3 = font_3D.isEnable();
                                 currentText.set3dViewType(3);
                                 currentText.set3dDepth(((int) Depth), 20, 1, true);
-                                currentText.set3dDepthColor(1, Color.parseColor("#1B5E20"), null, true);
+                                currentText.set3dDepthColor(1, Color.parseColor(jadeTypeFace.getIn_color()), null, true);
                                 currentText.set3dObliqueAngle(obliqueAngle);
+                                currentText.set3dEnabled(enabled3);
                             }
                         }
 
@@ -495,7 +499,7 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
         //todo 合并代码后须给玉体字view 添加一个mJadeFontViewIndex的ID  根据这个id控制该字对应的时间轴操作
 
 
-        int initColor = Color.parseColor("#252B3B");
+        int initColor = Color.parseColor("#ffffff");
         Drawable leftTopD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.ic_jade_close);
         Drawable leftBottomD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.drawable.ic_jade_edit);
         Drawable rightBottomD = ContextCompat.getDrawable(JadeFontMakeActivity.this, R.mipmap.sticker_redact);

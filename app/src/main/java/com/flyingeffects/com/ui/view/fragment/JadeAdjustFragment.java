@@ -36,6 +36,7 @@ import com.shixing.sxve.ui.view.WaitingDialog;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -121,7 +122,8 @@ public class JadeAdjustFragment extends Fragment {
     }
 
     private void getLocalJadeTypeFace() {
-        List<JadeTypeFace> local_jade_type_face = (List<JadeTypeFace>) Hawk.get("local_jade_type_face", null);
+        List<JadeTypeFace> local_jade_type_face_default=new ArrayList<>();
+        List<JadeTypeFace> local_jade_type_face = Hawk.get("local_jade_type_face", local_jade_type_face_default);
         jadePagerAdapter.setLocalJadeTypeFaces(local_jade_type_face);
         jadePagerAdapter.notifyDataSetChanged();
     }
@@ -137,6 +139,11 @@ public class JadeAdjustFragment extends Fragment {
 
             @Override
             protected void onSubNext(List<JadeTypeFace> data) {
+                for (JadeTypeFace datum : data) {
+                    datum.getDetail().getFont_3D().setEnable(true);
+                    datum.getDetail().getIn_bright().setEnable(true);
+                    datum.getDetail().getRelief().setEnable(true);
+                }
                 jadePagerAdapter.setJadeTypeFaces(data);
                 jadePagerAdapter.notifyDataSetChanged();
             }

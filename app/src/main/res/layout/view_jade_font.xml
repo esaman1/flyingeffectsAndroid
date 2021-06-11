@@ -10,7 +10,7 @@
         android:id="@+id/include_radio_group"
         layout="@layout/view_jade_common_radio_group" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.flyingeffects.com.view.JadeRecyclerview
         android:id="@+id/default_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,16 +18,38 @@
         android:layout_marginTop="16dp"
         android:paddingStart="15dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/my_rv"
-        android:visibility="gone"
-        tools:visibility="visible"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/include_radio_group"
 
-        android:layout_marginTop="16dp"
-        android:paddingStart="15dp" />
+        android:layout_marginTop="16dp">
+
+        <TextView
+
+            android:id="@+id/save"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:layout_marginStart="16dp"
+            android:background="#2D2D2D"
+            android:drawableTop="@drawable/ic_jade_save_font"
+            android:drawablePadding="4dp"
+            android:gravity="center_horizontal"
+            android:paddingTop="13dp"
+            android:text="保存样式"
+            android:textColor="#C8C8C8"
+            android:textSize="13sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.flyingeffects.com.view.JadeRecyclerview
+            android:id="@+id/my_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="15dp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </LinearLayout>
 
 
 </RelativeLayout>

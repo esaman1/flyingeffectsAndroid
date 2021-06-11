@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="76dp"
     android:layout_height="76dp"
-    android:id="@+id/root"
+    android:layout_marginEnd="14dp"
     android:background="#4C4B50">
 
     <ImageView
         android:id="@+id/iv"
-        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clickable="true"
         android:scaleType="centerInside">
 
     </ImageView>
@@ -20,6 +21,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/shape_jade_blue_rect"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/delete_my_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:paddingStart="10dp"
+        android:paddingTop="10dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_jade_delete_my_style"
         android:visibility="gone"
         tools:visibility="visible" />
 </FrameLayout>

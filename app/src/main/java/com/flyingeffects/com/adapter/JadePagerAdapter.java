@@ -8,10 +8,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -22,10 +24,15 @@ import com.flyingeffects.com.entity.FontColor;
 import com.flyingeffects.com.entity.FontEnity;
 import com.flyingeffects.com.entity.JadeTypeFace;
 import com.flyingeffects.com.ui.GridSpacingItemDecoration;
+import com.flyingeffects.com.ui.view.activity.JadeFontMakeActivity;
 import com.flyingeffects.com.ui.view.fragment.JadeAdjustFragment;
 import com.flyingeffects.com.utils.PxUtils;
+import com.flyingeffects.com.view.JadeRecyclerview;
 import com.google.android.material.slider.Slider;
+import com.google.gson.Gson;
 import com.imaginstudio.imagetools.pixellab.GradientMaker;
+import com.imaginstudio.imagetools.pixellab.TextObject.TextComponent;
+import com.orhanobut.hawk.Hawk;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +43,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import static com.imaginstudio.imagetools.pixellab.appDefault.HOR;
 import static com.imaginstudio.imagetools.pixellab.appDefault.RAD;
@@ -170,13 +178,14 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 selectedOverlaySimpleColor = null;
                 if (onAdjustParamsChangeCallBack != null) {
                     int color = Color.parseColor("#ffffff");
-//                    onAdjustParamsChangeCallBack.onTextColorChange(color, 0, 0, true);
+                    onAdjustParamsChangeCallBack.onTextColorChange(color, 0, 0, true);
                 }
             }
         });
 
         ((RadioButton) holder.group.getChildAt(0)).setText("默认样式");
         ((RadioButton) holder.group.getChildAt(1)).setText("我的样式");
+
         holder.group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -184,10 +193,12 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     case R.id.choose1:
                         holder.default_rv.setVisibility(View.VISIBLE);
                         holder.my_rv.setVisibility(View.GONE);
+                        holder.save.setVisibility(View.GONE);
                         break;
                     case R.id.choose2:
                         holder.default_rv.setVisibility(View.GONE);
                         holder.my_rv.setVisibility(View.VISIBLE);
+                        holder.save.setVisibility(View.VISIBLE);
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + checkedId);
@@ -241,29 +252,181 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         holder.default_rv.setAdapter(adapter);
 
 
-//        holder.my_rv.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
-//        BaseQuickAdapter<JadeTypeFace, BaseViewHolder> adapterMy = new BaseQuickAdapter<JadeTypeFace, BaseViewHolder>(R.layout.view_jade_jade_type_face_item, localJadeTypeFaces) {
+        holder.my_rv.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        BaseQuickAdapter<JadeTypeFace, BaseViewHolder> adapterMy = new BaseQuickAdapter<JadeTypeFace, BaseViewHolder>(R.layout.view_jade_jade_type_face_item, localJadeTypeFaces) {
+
+            @Override
+            protected void convert(BaseViewHolder helper, JadeTypeFace item) {
+                Glide.with(helper.getView(R.id.iv))
+                        .load(item.getIcon_image())
+                        .centerCrop()
+                        .into((ImageView) helper.getView(R.id.iv));
+                helper.addOnClickListener(R.id.iv);
+                helper.addOnClickListener(R.id.delete_my_style);
+                helper.getView(R.id.delete_my_style).setVisibility(View.VISIBLE);
+            }
+        };
+        adapterMy.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+//                selectedJadeTypeFace = localJadeTypeFaces.get(position);
+//                if (onAdjustParamsChangeCallBack != null) {
+//                    int color = Color.parseColor(selectedOverlaySimpleColor.getColor());
+//                    onAdjustParamsChangeCallBack.onTextColorChange(color, 0, 0, true);
+//                }
+                if (view.getId() == R.id.iv) {
+                    if (localJadeTypeFaces != null) {
+                        selectedJadeTypeFace = localJadeTypeFaces.get(position);
+                        for (JadeTypeFace fontEnity : localJadeTypeFaces) {
+                            fontEnity.setSelected(false);
+                        }
+                        selectedJadeTypeFace = localJadeTypeFaces.get(position);
+                        selectedJadeTypeFace.setSelected(true);
+                        adapterMy.notifyDataSetChanged();
+                        if (onAdjustParamsChangeCallBack != null) {
+                            onAdjustParamsChangeCallBack.onJadeTypeFaceChange(selectedJadeTypeFace);
+                        }
+                    }
+                } else if (view.getId() == R.id.delete_my_style) {
+                    if (localJadeTypeFaces != null) {
+                        localJadeTypeFaces.remove(position);
+                        adapterMy.notifyItemRemoved(position);
+                        Hawk.put("local_jade_type_face", localJadeTypeFaces);
+                    }
+                }
+            }
+        });
+        holder.my_rv.setAdapter(adapterMy);
+
+        holder.save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (JadePagerAdapter.this.content != null) {
+                    JadeFontMakeActivity content = (JadeFontMakeActivity) JadePagerAdapter.this.content;
+                    if (content.textContain != null) {
+                        TextComponent currentText = content.textContain.getCurrentText();
+                        if (currentText != null) {
+                            JadeTypeFace jadeTypeFace = createJadeTypeFace(currentText);
+                            localJadeTypeFaces.add(0, jadeTypeFace);
+                            adapterMy.notifyItemInserted(0);
+                            Hawk.put("local_jade_type_face", localJadeTypeFaces);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    public JadeTypeFace createJadeTypeFace(
+            TextComponent currentText
+    ) {
+
+
+        String hexColor = String.format("#%06X", (0xFFFFFF & currentText.getInnerColor()));
+        String textColor = String.format("#%06X", (0xFFFFFF & currentText.getTextColor()));
+
+
+        JadeTypeFace jadeTypeFace1 = new JadeTypeFace();
+        jadeTypeFace1.setIn_color(hexColor);
+        jadeTypeFace1.setColor(textColor);
+
+        JadeTypeFace.DetailBean detailBean = new JadeTypeFace.DetailBean();
+
+        JadeTypeFace.DetailBean.InBrightBean inBrightBean = new JadeTypeFace.DetailBean.InBrightBean();
+        inBrightBean.setEnable(currentText.getInnerEnabled());
+        inBrightBean.setFuzzy_radius(String.valueOf(currentText.getInnerRadius()));
+        inBrightBean.setHorizontal_shift(String.valueOf(currentText.getInnerDx()));
+        inBrightBean.setVertical_offset(String.valueOf(currentText.getInnerDy()));
+        JadeTypeFace.DetailBean.ReliefBean reliefBean = new JadeTypeFace.DetailBean.ReliefBean();
+        reliefBean.setEnable(currentText.isEmbossEnabled());
+        reliefBean.setIllumination_angle(String.valueOf(currentText.getEmbossLightAngle()));
+        reliefBean.setIllumination_intensity(String.valueOf(currentText.getEmbossIntensity()));
+        reliefBean.setOblique_angle(String.valueOf(currentText.getEmbossBevel()));
+        JadeTypeFace.DetailBean.Font3DBean font3DBean = new JadeTypeFace.DetailBean.Font3DBean();
+        font3DBean.setEnable(currentText.isThreeDEnabled());
+        font3DBean.setAngle(String.valueOf(currentText.getThreeDObliqueAngle()));
+        font3DBean.setDepth(String.valueOf(currentText.getThreeDDepth()));
+
+        detailBean.setFont_3D(font3DBean);
+        detailBean.setIn_bright(inBrightBean);
+        detailBean.setRelief(reliefBean);
+
+        jadeTypeFace1.setDetail(detailBean);
+//        String json = "{\n" +
+//                "\n" +
+//                "  \"code\": 1,\n" +
+//                "\n" +
+//                "  \"msg\": \"请求成功\",\n" +
+//                "\n" +
+//                "  \"time\": \"1622624784\",\n" +
+//                "\n" +
+//                "  \"data\": [\n" +
+//                "\n" +
+//                "    {\n" +
+//                "\n" +
+//                "      \"id\": 1,\n" +
+//                "\n" +
+//                "      \"title\": \"玉体字样式1\",\n" +
+//                "\n" +
+//                "      \"create_time\": 1622538453,\n" +
+//                "\n" +
+//                "      \"status\": 1,\n" +
+//                "\n" +
+//                "      \"icon_image\": \"http://cdn.flying.flyingeffect.com/admin/20201022/5f914fd4f1d08%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20201022172400.png\",\n" +
+//                "\n" +
+//                "      \"sort\": 1,\n" +
+//                "\n" +
+//                "      \"detail\": {\n" +
+//                "\n" +
+//                "        \"in_bright\": {\n" +
+//                "\n" +
+//                "          \"bright_color\": \"白色\",\n" +
+//                "\n" +
+//                "          \"fuzzy_radius\":" + currentText.getInnerRadius() + ",\n" +
+//                "\n" +
+//                "          \"horizontal_shift\": " + currentText.getInnerDx() + ",\n" +
+//                "\n" +
+//                "          \"vertical_offset\": " + currentText.getInnerDy() + "\n" +
+//                "\n" +
+//                "        },\n" +
+//                "\n" +
+//                "        \"relief\": {\n" +
+//                "\n" +
+//                "          \"illumination_angle\":" + currentText.getEmbossLightAngle() + ",\n" +
+//                "\n" +
+//                "          \"illumination_intensity\": " + currentText.getEmbossIntensity() + ",\n" +
+//                "\n" +
+//                "          \"oblique_angle\": " + currentText.getEmbossBevel() + "\n" +
+//                "\n" +
+//                "        },\n" +
+//                "\n" +
+//                "        \"font_3D\": {\n" +
+//                "\n" +
+//                "          \"angle\": " + currentText.getThreeDObliqueAngle() + ",\n" +
+//                "\n" +
+//                "          \"depth\": " + currentText.getThreeDDepth() + ",\n" +
+//                "\n" +
+//                "          \"color\": \"跟随原色\"\n" +
+//                "\n" +
+//                "        }\n" +
+//                "\n" +
+//                "      },\n" +
+//                "\n" +
+//                "      \"color\": \"#FFE626,#FF6680,#FFF738\",\n" +
+//                "\n" +
+//                "      \"font\": \"http://cdn.flying.flyingeffect.com/admin/20210602/60b740c674f16%E6%A2%85%E8%8A%B1%E9%BB%91%E7%B2%97%E5%AE%8B.ttf\",\n" +
+//                "\n" +
+//                "      \"in_color\": " + hexColor + "\n" +
+//                "\n" +
+//                "    }\n" +
+//                "\n" +
+//                "  ]\n" +
+//                "\n" +
+//                "}";
 //
-//            @Override
-//            protected void convert(BaseViewHolder helper, JadeTypeFace item) {
-//                Glide.with(helper.getView(R.id.iv))
-//                        .load(item.getIcon_image())
-//                        .centerCrop()
-//                        .into((ImageView) helper.getView(R.id.iv));
-//                helper.addOnClickListener(R.id.iv);
-//            }
-//        };
-//        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-//            @Override
-//            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-////                selectedJadeTypeFace = localJadeTypeFaces.get(position);
-////                if (onAdjustParamsChangeCallBack != null) {
-////                    int color = Color.parseColor(selectedOverlaySimpleColor.getColor());
-////                    onAdjustParamsChangeCallBack.onTextColorChange(color, 0, 0, true);
-////                }
-//            }
-//        });
-//        holder.my_rv.setAdapter(adapterMy);
+//        JadeTypeFace jadeTypeFace = new Gson().fromJson(json, JadeTypeFace.class);
+        Log.d(TAG, "createJadeTypeFace() called with: currentText = [" + jadeTypeFace1.toString() + "]");
+        return jadeTypeFace1;
 
     }
 
@@ -494,12 +657,20 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             @Override
             public void onClick(View v) {
                 if (onAdjustParamsChangeCallBack != null
-                        && selectedInnerSimpleColor != null) {
-                    float radius = holder.inner_radius.getValue();
-                    float dx = holder.inner_dx.getValue();
-                    float dy = holder.inner_dy.getValue();
-                    int color = Color.parseColor(selectedInnerSimpleColor.getColor());
-                    onAdjustParamsChangeCallBack.onInnerColorChange(false, radius, dx, dy, color);
+                ) {
+                    if (selectedInnerSimpleColor != null) {
+                        float radius = holder.inner_radius.getValue();
+                        float dx = holder.inner_dx.getValue();
+                        float dy = holder.inner_dy.getValue();
+                        int color = Color.parseColor(selectedInnerSimpleColor.getColor());
+                        onAdjustParamsChangeCallBack.onInnerColorChange(false, radius, dx, dy, color);
+                    } else {
+                        float radius = holder.inner_radius.getValue();
+                        float dx = holder.inner_dx.getValue();
+                        float dy = holder.inner_dy.getValue();
+                        int color = Color.parseColor(selectedInnerSimpleColor.getColor());
+                        onAdjustParamsChangeCallBack.onInnerColorChange(false, radius, dx, dy, Color.parseColor("#ffffff"));
+                    }
                 }
             }
         });
@@ -581,8 +752,9 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public static class JadeFontHOlder extends RecyclerView.ViewHolder {
         public ImageView forbidden;
         public RadioGroup group;
-        public RecyclerView default_rv;
-        public RecyclerView my_rv;
+        public JadeRecyclerview default_rv;
+        public JadeRecyclerview my_rv;
+        public TextView save;
 
         public JadeFontHOlder(@NonNull View itemView) {
             super(itemView);
@@ -590,6 +762,7 @@ public class JadePagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             group = itemView.findViewById(R.id.group);
             default_rv = itemView.findViewById(R.id.default_rv);
             my_rv = itemView.findViewById(R.id.my_rv);
+            save = itemView.findViewById(R.id.save);
         }
     }
 

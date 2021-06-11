@@ -20,7 +20,7 @@
             android:orientation="horizontal"
             android:paddingStart="@dimen/jade_content_padding">
 
-            <androidx.recyclerview.widget.RecyclerView
+            <com.flyingeffects.com.view.JadeRecyclerview
                 android:id="@+id/color"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
                     android:textColor="@color/white"
                     android:textSize="14sp" />
 
-                <androidx.recyclerview.widget.RecyclerView
+                <com.flyingeffects.com.view.JadeRecyclerview
                     android:id="@+id/gradual_rv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
