@@ -28,6 +28,7 @@ import com.imaginstudio.imagetools.pixellab.TextObject.TextComponent;
 import com.imaginstudio.imagetools.pixellab.textContainer;
 import com.lansosdk.videoeditor.MediaInfo;
 import com.shixing.sxve.ui.view.WaitingDialog;
+import com.shixing.sxve.ui.view.WaitingDialog_progress;
 
 import java.io.File;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ public class JadeFontMakeModel {
      */
     int changeMusicIndex = -1;
     String chooseExtractedAudioBjMusicPath = "";
+    WaitingDialog_progress dialogProgress;
 
 
 //    private int dialogProgress;
@@ -174,6 +176,8 @@ public class JadeFontMakeModel {
                                             WaitingDialog.closeProgressDialog();
                                             if (data != null && !data.isEmpty()) {
                                                 mCallback.identifySubtitle(data, isVideoInAudio, audioPath);
+                                            } else {
+                                                ToastUtil.showToast("音频转字幕失败");
                                             }
                                         }
                                     }, "cacheKey", ActivityLifeCycleEvent.DESTROY, lifecycleSubject, false, true, false);
@@ -268,8 +272,10 @@ public class JadeFontMakeModel {
      * @param percentageH  在屏幕中高度的百分比
      * @param textContain  玉体字view的父容器
      */
+
     public void saveVideo(long cutStartTime, long cutEndTime, boolean nowUiIsLandscape, float percentageH, textContainer textContain) {
-        WaitingDialog.openPragressDialog(context, "开始保存");
+        dialogProgress = new WaitingDialog_progress(context);
+        dialogProgress.openProgressDialog("开始保存");
         boolean isScreenshotsSuccess = true;
         //先获得所有的玉体字view的截图
         for (int i = 0; i < textContain.getChildCount(); i++) {
@@ -285,7 +291,7 @@ public class JadeFontMakeModel {
             }
         }
         if (!isScreenshotsSuccess) {
-            WaitingDialog.closeProgressDialog();
+            dialogProgress.closeProgressDialog();
             ToastUtil.showToast("保存失败");
             return;
         }
@@ -293,7 +299,7 @@ public class JadeFontMakeModel {
         jadeFontMaleDraw.saveVideo(cutStartTime, cutEndTime, nowUiIsLandscape, percentageH, new JadeFontMaleSaveDraw.jadeFontMaleSaveCallback() {
             @Override
             public void drawCompleted(String path) {
-                WaitingDialog.closeProgressDialog();
+                dialogProgress.closeProgressDialog();
                 Intent intent = new Intent(context, CreationTemplatePreviewActivity.class);
                 Bundle bundle = new Bundle();
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -306,7 +312,7 @@ public class JadeFontMakeModel {
 
             @Override
             public void ProgressListener(int progress) {
-                WaitingDialog.openPragressDialog(context, "保存" + progress + "%");
+                dialogProgress.setProgress("保存" + progress + "%");
             }
         });
     }
