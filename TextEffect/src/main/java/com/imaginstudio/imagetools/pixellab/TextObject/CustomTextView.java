@@ -85,7 +85,7 @@ public class CustomTextView extends TextView {
     public int spacing = 0;
     public int strokeColor = ViewCompat.MEASURED_STATE_MASK;
     public int strokeFillType = 1;
-//    public GradientMaker.GradientFill strokeGradient = new GradientMaker.GradientFill();
+    //    public GradientMaker.GradientFill strokeGradient = new GradientMaker.GradientFill();
     public float strokeWidth = 4.0f;
     public boolean stroke_enabled;
     private Bitmap tempBitmap;
@@ -498,12 +498,15 @@ public class CustomTextView extends TextView {
         invalidate();
     }
 
-        @Override
+    @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
     }
 
-    public void onDraw(Canvas canvas) {
+    @Override
+    protected void onDraw(Canvas canvas) {
+//        canvas.translate(30, 30);
+        canvas.drawColor(Color.parseColor("#34DE72"));
         int strokeColorTmp;
         Bitmap strokeMap;
         if (this.letterSpacing == 0) {
@@ -644,12 +647,11 @@ public class CustomTextView extends TextView {
         }
     }
 
-        @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-    }
+
+
 
     public void draw(Canvas canvas) {
+//        canvas.translate(30, 30);
         if (this.embossFilter != null) {
             float[] f = new float[9];
             canvas.getMatrix().getValues(f);
@@ -881,11 +883,11 @@ public class CustomTextView extends TextView {
         postInvalidate();
     }
 
-        @Override
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (this.isCurved) {
-            setMeasuredDimension(((int) this.arcChord) + getPaddingLeft() + getPaddingRight() + this.additionalWidthSpace, ((int) this.arcHeight) + this.additionalHeightSpace + getPaddingTop() + getPaddingBottom());
+            setMeasuredDimension(((int) this.arcChord) + getPaddingLeft() + this.additionalWidthSpace, ((int) this.arcHeight) + this.additionalHeightSpace + getPaddingTop());
         } else {
             setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight());
         }
@@ -948,5 +950,10 @@ public class CustomTextView extends TextView {
         if (!this.frozen) {
             super.invalidate(l, t, r, b);
         }
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
     }
 }
