@@ -1574,7 +1574,6 @@ public class JadeFontMakeActivity extends BaseActivity implements JakeFontMakeSe
             textContain.addNewText(new_text, stickerItemOnitemclick, helperClass);
         }
         mJadeFontViewIndex++;
-        mBinding.progressBarView.scrollToPosition(10);
     }
 
     @Override
